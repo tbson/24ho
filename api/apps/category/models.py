@@ -49,9 +49,6 @@ class Category(models.Model):
         db_table = "categories"
         ordering = ['-id']
         permissions = (
-            ("list_category", "Can list category"),
-            ("retrieve_category", "Can retrieve category"),
-            ("delete_list_category", "Can delete list category"),
             ("change_translation_category", "Can change translation category"),
         )
 

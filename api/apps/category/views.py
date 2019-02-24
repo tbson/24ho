@@ -15,15 +15,7 @@ from utils.common_classes.custom_pagination import NoPagination
 
 
 class CategoryViewSet(GenericViewSet):
-    permissions = (
-        'list_category',
-        'retrieve_category',
-        'add_category',
-        'change_category',
-        'change_translate_category',
-        'delete_category',
-        'delete_list_category',
-    )
+
     name = 'category'
     serializer_class = CategoryBaseSerializer
     permission_classes = (CustomPermission, )
