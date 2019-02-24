@@ -1,0 +1,107 @@
+/*
+input:invalid {
+    border-color: #dc3545;
+}
+*/
+
+.invalid-feedback {
+    display: block !important;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.right {
+    text-align: right;
+}
+
+.center {
+    text-align: center;
+}
+
+.left {
+    text-align: left;
+}
+
+.float-right {
+    float: right;
+}
+
+.input-group-addon {
+    width: 41px;
+}
+
+.link {
+    color: #0c65ff;
+}
+
+.no-select {
+  -webkit-user-select: none;  /* Chrome all / Safari all */
+  -moz-user-select: none;     /* Firefox all */
+  -ms-user-select: none;      /* IE 10+ */
+  user-select: none;          /* Likely future */
+}
+
+.button-success,
+.button-error,
+.button-warning,
+.button-secondary {
+    color: white;
+    border-radius: 2px;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+}
+.button-success {
+    background: rgb(28, 184, 65); /* this is a green */
+}
+
+.button-error {
+    background: rgb(202, 60, 60); /* this is a maroon */
+}
+
+.button-warning {
+    background: rgb(223, 117, 20); /* this is an orange */
+}
+.button-secondary {
+    background: rgb(66, 184, 221); /* this is a light blue */
+}
+
+.red {
+    color: red;
+}
+
+.green {
+    color: green;
+}
+
+.red-dot::after {
+    content: ' *';
+    color: red;
+}
+
+.row25 {
+    min-width: 25px;
+    width: 25px;
+}
+
+.row50 {
+    min-width: 50px;
+    width: 50px;
+}
+
+.row80 {
+    min-width: 80px;
+    width: 80px;
+}
+
+.row150 {
+    min-width: 150px;
+    width: 150px;
+}
+
+.md-block-image-inner-container img {
+    width: 100%;
+}
+.note-toolbar {
+    z-index: 1 !important;
+}

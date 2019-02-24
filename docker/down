@@ -1,0 +1,7 @@
+NGINX=../../../docker/nginx
+
+rm -rf $NGINX/conf.d/24ho.conf
+docker-compose -f $NGINX/docker-compose.yml restart
+
+docker-compose down
+

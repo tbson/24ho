@@ -1,0 +1,30 @@
+{
+    "defaultLang": "vi",
+    "translated": [
+        {
+            "vi": "Chưa có sản phẩm nào",
+            "en": "No product found",
+            "fr": "Aucun produit trouvé"
+        },
+        {
+            "vi": "Chưa có bài viết nào",
+            "en": "No article found",
+            "fr": "\u001dAucun article trouvé"
+        },
+        {
+            "vi": "Liên hệ",
+            "en": "Contact",
+            "fr": "Contact"
+        },
+        {
+            "vi": "Về 24ho",
+            "en": "About 6thM\u001cay",
+            "fr": "À propos de 24ho"
+        },
+        {
+            "vi": "Trang chủ",
+            "en": "Home page",
+            "fr": "\u001dPage d'accueil"
+        }
+    ]
+}
