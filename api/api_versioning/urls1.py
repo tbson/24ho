@@ -25,10 +25,6 @@ urlpatterns = (
         include('apps.group.urls', namespace='group'),
     ),
     path(
-        'config/',
-        include('apps.config.urls', namespace='config'),
-    ),
-    path(
         'variable/',
         include('apps.variable.urls', namespace='variable'),
     ),

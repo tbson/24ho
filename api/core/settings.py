@@ -43,7 +43,6 @@ REQUIRED_APPS = [
 
 PROJECT_APPS = [
     'utils',
-    'apps.config',
     'apps.variable',
     'apps.administrator',
     'apps.freelancer',
