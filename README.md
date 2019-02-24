@@ -31,7 +31,7 @@ Prepare accounts for logging
 
 Then go to django admin interface: [https://24ho.test/dadmin/](https://24ho.test/dadmin/)
 
-- Create new user in `Users` section
+- Create new user in `Users` section and give this user all permissions.
 - Add an administrator in `Administrators` section using newly created user.
 - Login: [https://24ho.test/admin/](https://24ho.test/admin/)
 
