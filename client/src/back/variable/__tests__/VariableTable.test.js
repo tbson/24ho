@@ -3,14 +3,14 @@ import Adapter from 'enzyme-adapter-react-16';
 import React from 'react';
 import {shallow, mount, render} from 'enzyme';
 import 'src/__mocks__/FormData';
-import ConfigTable from '../tables/ConfigTable';
+import VariableTable from '../tables/VariableTable';
 import {seeding, defaultFormValues} from '../_data';
 import LoadingLabel from 'src/utils/components/LoadingLabel';
 import Tools from 'src/utils/helpers/Tools';
 
-Enzyme.configure({adapter: new Adapter()});
+Enzyme.variableure({adapter: new Adapter()});
 
-describe('ConfigTable component', () => {
+describe('VariableTable component', () => {
     beforeAll(() => {
         const response = {
             status: 200,
@@ -27,7 +27,7 @@ describe('ConfigTable component', () => {
     });
 
     it('Init data', done => {
-        const wrapper = shallow(<ConfigTable />);
+        const wrapper = shallow(<VariableTable />);
         const instance = wrapper.instance();
 
         jest.spyOn(instance, 'setInitData');
@@ -46,7 +46,7 @@ describe('ConfigTable component', () => {
     });
 
     it('Check all', () => {
-        const wrapper = shallow(<ConfigTable list={seeding(10)} />);
+        const wrapper = shallow(<VariableTable list={seeding(10)} />);
         const instance = wrapper.instance();
 
         jest.spyOn(instance, 'handleToggleCheckAll');
@@ -60,7 +60,7 @@ describe('ConfigTable component', () => {
     });
 
     it('Add', () => {
-        const wrapper = shallow(<ConfigTable list={seeding(10)} />);
+        const wrapper = shallow(<VariableTable list={seeding(10)} />);
         const instance = wrapper.instance();
 
         jest.spyOn(instance, 'toggleModal');
@@ -80,7 +80,7 @@ describe('ConfigTable component', () => {
         });
 
         it('No check', () => {
-            const wrapper = shallow(<ConfigTable list={seeding(10)} />);
+            const wrapper = shallow(<VariableTable list={seeding(10)} />);
             const instance = wrapper.instance();
             jest.spyOn(instance, 'handleRemove').mockImplementation(() => null);
 
@@ -94,7 +94,7 @@ describe('ConfigTable component', () => {
         });
 
         it('Check all', () => {
-            const wrapper = shallow(<ConfigTable list={seeding(10)} />);
+            const wrapper = shallow(<VariableTable list={seeding(10)} />);
             const instance = wrapper.instance();
 
             jest.spyOn(instance, 'handleRemove').mockImplementation(() => null);
@@ -115,7 +115,7 @@ describe('ConfigTable component', () => {
     });
 });
 
-describe('ConfigTable methods', () => {
+describe('VariableTable methods', () => {
     beforeEach(() => {
         jest.restoreAllMocks();
     });
@@ -123,7 +123,7 @@ describe('ConfigTable methods', () => {
     describe('toggleModal', () => {
         let wrapper, instance;
         beforeEach(() => {
-            wrapper = shallow(<ConfigTable list={seeding(10)} />);
+            wrapper = shallow(<VariableTable list={seeding(10)} />);
             instance = wrapper.instance();
         });
 
@@ -155,7 +155,7 @@ describe('ConfigTable methods', () => {
             jest.spyOn(Tools, 'getList').mockImplementation(async () => null);
 
             // Init component
-            const wrapper = shallow(<ConfigTable list={seeding(10)}/>);
+            const wrapper = shallow(<VariableTable list={seeding(10)}/>);
             const instance = wrapper.instance();
 
             // Spy setInitData function
@@ -164,8 +164,8 @@ describe('ConfigTable methods', () => {
             // Execute
             await wrapper.instance().getList();
 
-            // setInitData will call after ConfigTable mount
-            expect(Tools.getList.mock.calls[0][0]).toEqual('http://localhost/api/v1/config/');
+            // setInitData will call after VariableTable mount
+            expect(Tools.getList.mock.calls[0][0]).toEqual('http://localhost/api/v1/variable/');
             expect(Tools.getList.mock.calls[0][1]).toEqual({});
             expect(instance.setInitData).not.toHaveBeenCalled();
         });
@@ -179,7 +179,7 @@ describe('ConfigTable methods', () => {
             jest.spyOn(Tools, 'getList').mockImplementation(async () => response);
 
             // Init component
-            const wrapper = shallow(<ConfigTable list={seeding(10)}/>);
+            const wrapper = shallow(<VariableTable list={seeding(10)}/>);
             const instance = wrapper.instance();
 
             // Spy setInitData function
@@ -188,8 +188,8 @@ describe('ConfigTable methods', () => {
             // Execute
             await wrapper.instance().getList();
 
-            // setInitData will call after ConfigTable mount
-            expect(Tools.getList.mock.calls[0][0]).toEqual('http://localhost/api/v1/config/');
+            // setInitData will call after VariableTable mount
+            expect(Tools.getList.mock.calls[0][0]).toEqual('http://localhost/api/v1/variable/');
             expect(Tools.getList.mock.calls[0][1]).toEqual({});
             expect(instance.setInitData).toHaveBeenCalled();
             expect(instance.setInitData.mock.calls[0][0]).toEqual(response);
@@ -208,7 +208,7 @@ describe('ConfigTable methods', () => {
             jest.spyOn(Tools, 'formDataToObj').mockImplementation(() => data);
 
             // Init component
-            const wrapper = shallow(<ConfigTable list={seeding(10)}/>);
+            const wrapper = shallow(<VariableTable list={seeding(10)}/>);
             const instance = wrapper.instance();
             jest.spyOn(instance, 'getList').mockImplementation(() => {});
 
@@ -226,7 +226,7 @@ describe('ConfigTable methods', () => {
             jest.spyOn(Tools, 'formDataToObj').mockImplementation(() => data);
 
             // Init component
-            const wrapper = shallow(<ConfigTable list={seeding(10)}/>);
+            const wrapper = shallow(<VariableTable list={seeding(10)}/>);
             const instance = wrapper.instance();
             jest.spyOn(instance, 'getList').mockImplementation(() => {});
 
@@ -243,7 +243,7 @@ describe('ConfigTable methods', () => {
             jest.spyOn(Tools, 'formDataToObj').mockImplementation(() => data);
 
             // Init component
-            const wrapper = shallow(<ConfigTable list={seeding(10)}/>);
+            const wrapper = shallow(<VariableTable list={seeding(10)}/>);
             const instance = wrapper.instance();
             jest.spyOn(instance, 'getList').mockImplementation(() => {});
 
@@ -262,7 +262,7 @@ describe('ConfigTable methods', () => {
         let instance;
         beforeEach(() => {
             const list = seeding(3);
-            wrapper = shallow(<ConfigTable list={list} />);
+            wrapper = shallow(<VariableTable list={list} />);
             instance = wrapper.instance();
         });
 
@@ -289,7 +289,7 @@ describe('ConfigTable methods', () => {
         let instance;
         beforeEach(() => {
             const list = seeding(5);
-            wrapper = shallow(<ConfigTable list={list} />);
+            wrapper = shallow(<VariableTable list={list} />);
             instance = wrapper.instance();
         });
 
@@ -315,7 +315,7 @@ describe('ConfigTable methods', () => {
         let instance;
         beforeEach(() => {
             const list = seeding(1);
-            wrapper = shallow(<ConfigTable list={list} />);
+            wrapper = shallow(<VariableTable list={list} />);
             instance = wrapper.instance();
         });
 

@@ -16,8 +16,8 @@ type States = {
     formErrors: Object
 };
 
-export default class ConfigForm extends React.Component<Props, States> {
-    name = 'config';
+export default class VariableForm extends React.Component<Props, States> {
+    name = 'variable';
     id: Function;
     static defaultProps = {
         handleClose: () => {}

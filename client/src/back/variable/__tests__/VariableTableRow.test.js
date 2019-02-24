@@ -4,9 +4,9 @@ import React from 'react';
 import {shallow, mount, render} from 'enzyme';
 import Tools from 'src/utils/helpers/Tools';
 import {seeding} from '../_data';
-import {Row} from '../tables/ConfigTable';
+import {Row} from '../tables/VariableTable';
 
-Enzyme.configure({adapter: new Adapter()});
+Enzyme.variableure({adapter: new Adapter()});
 
 const data = seeding(1, true);
 const props = {
@@ -16,14 +16,14 @@ const props = {
     onCheck: jest.fn()
 };
 
-describe('ConfigTable', () => {
+describe('VariableTable', () => {
     let wrapper, instance;
     beforeAll(() => {
         wrapper = shallow(<Row {...props} />);
         instance = wrapper.instance();
     });
 
-    describe('ConfigTable Row component', () => {
+    describe('VariableTable Row component', () => {
         it('Check output value', () => {
             expect(wrapper.contains(<td className="uid">{data.uid}</td>)).toEqual(true);
             expect(wrapper.contains(<td className="value">{data.value}</td>)).toEqual(true);
@@ -57,7 +57,7 @@ describe('ConfigTable', () => {
         });
     });
 
-    describe('ConfigTable Row method', () => {
+    describe('VariableTable Row method', () => {
         describe('getItemToEdit then toggleModal', () => {
             it('Fail', async () => {
                 jest.spyOn(Tools, 'getItem').mockImplementation(() => null);

@@ -5,7 +5,7 @@ import {FIELD_TYPE, APP} from 'src/constants';
 
 const rawApiUrls = [
     {
-        controller: 'config',
+        controller: 'variable',
         endpoints: {
             crud: ''
         }

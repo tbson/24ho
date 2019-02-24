@@ -102,9 +102,9 @@ class App extends React.Component<Props, State> {
                 if (APP !== 'admin') return null;
                 return (
                     <li>
-                        <NavLink exact to="/config">
+                        <NavLink exact to="/variable">
                             <i className="fas fa-cog" />&nbsp;&nbsp;
-                            <span>Config</span>
+                            <span>Variable</span>
                         </NavLink>
                     </li>
                 );

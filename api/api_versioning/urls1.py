@@ -29,6 +29,10 @@ urlpatterns = (
         include('apps.config.urls', namespace='config'),
     ),
     path(
+        'variable/',
+        include('apps.variable.urls', namespace='variable'),
+    ),
+    path(
         'category/',
         include('apps.category.urls', namespace='category'),
     ),

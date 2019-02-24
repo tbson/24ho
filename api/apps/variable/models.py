@@ -2,7 +2,7 @@ from django.db import models
 
 
 # Create your models here.
-class Config(models.Model):
+class Variable(models.Model):
     uid = models.CharField(max_length=60, unique=True)
     value = models.CharField(max_length=250)
 
@@ -10,5 +10,5 @@ class Config(models.Model):
         return '{} - {}'.format(self.uid, self.value)
 
     class Meta:
-        db_table = "configs"
+        db_table = "variables"
         ordering = ['-id']

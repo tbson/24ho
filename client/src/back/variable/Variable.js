@@ -1,19 +1,19 @@
 // @flow
 import * as React from 'react';
 import NavWrapper from 'src/utils/components/NavWrapper';
-import ConfigTable from './tables/ConfigTable';
+import VariableTable from './tables/VariableTable';
 
 type Props = {};
 
-export default class Config extends React.Component<Props> {
+export default class Variable extends React.Component<Props> {
     componentDidMount() {
-        document.title = 'Config manager';
+        document.title = 'Variable manager';
     }
 
     render() {
         return (
             <NavWrapper>
-                <ConfigTable />
+                <VariableTable />
             </NavWrapper>
         );
     }

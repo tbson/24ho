@@ -4,13 +4,13 @@ import React from 'react';
 import {shallow, mount, render} from 'enzyme';
 import {seeding} from '../_data';
 import Tools from 'src/utils/helpers/Tools';
-import ConfigForm from '../forms/ConfigForm';
+import VariableForm from '../forms/VariableForm';
 
-Enzyme.configure({adapter: new Adapter()});
+Enzyme.variableure({adapter: new Adapter()});
 
-const formName = 'config';
+const formName = 'variable';
 
-describe('ConfigForm', () => {
+describe('VariableForm', () => {
     beforeEach(() => {
         jest.restoreAllMocks();
     });
@@ -21,7 +21,7 @@ describe('ConfigForm', () => {
             handleSubmit: jest.fn(),
             handleClose: jest.fn()
         };
-        const wrapper = shallow(<ConfigForm {...props} />);
+        const wrapper = shallow(<VariableForm {...props} />);
 
         const inputs = wrapper.findWhere(n => {
             const id = n.prop('id');
@@ -42,7 +42,7 @@ describe('ConfigForm', () => {
             handleClose: jest.fn()
         };
 
-        const wrapper = shallow(<ConfigForm {...props} />);
+        const wrapper = shallow(<VariableForm {...props} />);
         const instance = wrapper.instance();
 
         // Need to forceUpdate after spy instance methods that used in life circle or DOM
@@ -71,7 +71,7 @@ describe('ConfigForm', () => {
         jest.spyOn(Tools, 'formDataToObj').mockImplementation(() => formValues);
         jest.spyOn(Tools, 'handleSubmit').mockImplementation(async () => ({data, error}));
 
-        const wrapper = shallow(<ConfigForm {...props} />);
+        const wrapper = shallow(<VariableForm {...props} />);
         const instance = wrapper.instance();
 
         await instance.handleSubmit({preventDefault: () => {}});
@@ -95,7 +95,7 @@ describe('ConfigForm', () => {
         jest.spyOn(Tools, 'formDataToObj').mockImplementation(() => formValues);
         jest.spyOn(Tools, 'handleSubmit').mockImplementation(async () => ({data, error}));
 
-        const wrapper = shallow(<ConfigForm {...props} />);
+        const wrapper = shallow(<VariableForm {...props} />);
         const instance = wrapper.instance();
 
         jest.spyOn(instance, 'onSubmitFail');

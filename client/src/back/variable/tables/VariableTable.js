@@ -3,7 +3,7 @@ import * as React from 'react';
 import {apiUrls, defaultFormValues} from '../_data';
 import type {FormValues, FormValuesWithCheck} from '../_data';
 import type {GetListResponseData} from 'src/utils/helpers/Tools';
-import ConfigForm from '../forms/ConfigForm';
+import VariableForm from '../forms/VariableForm';
 import LoadingLabel from 'src/utils/components/LoadingLabel';
 import DefaultModal from 'src/utils/components/DefaultModal';
 import {Pagination, SearchInput} from 'src/utils/components/TableUtils';
@@ -20,7 +20,7 @@ type States = {
     formValues: FormValues
 };
 
-export default class ConfigTable extends React.Component<Props, States> {
+export default class VariableTable extends React.Component<Props, States> {
     static defaultProps = {};
     nextUrl: ?string;
     prevUrl: ?string;
@@ -119,7 +119,7 @@ export default class ConfigTable extends React.Component<Props, States> {
         if (!this.state.dataLoaded) return <LoadingLabel errorMessage={this.state.errorMessage} />;
         const {list} = this.state;
         const formValues = this.state.formValues ? this.state.formValues : defaultFormValues;
-        const modalTitle = formValues.id ? 'Update config' : 'Add new config';
+        const modalTitle = formValues.id ? 'Update variable' : 'Add new variable';
         return (
             <div>
                 <SearchInput onSearch={this.searchList} />
@@ -175,7 +175,7 @@ export default class ConfigTable extends React.Component<Props, States> {
                 </table>
 
                 <DefaultModal open={this.state.modal} title={modalTitle} handleClose={() => this.toggleModal('modal')}>
-                    <ConfigForm formValues={formValues} handleSubmit={this.handleChange} />
+                    <VariableForm formValues={formValues} handleSubmit={this.handleChange} />
                 </DefaultModal>
             </div>
         );

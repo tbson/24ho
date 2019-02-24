@@ -26,7 +26,7 @@ import Administrator from './administrator/Administrator';
 import Freelancer from './freelancer/Freelancer';
 import Employer from './employer/Employer';
 import ResetPassword from './auth/ResetPassword';
-import Config from './config/Config';
+import Variable from './variable/Variable';
 import Group from './group/Group';
 import Permission from './permission/Permission';
 import Tag from './tag/Tag';
@@ -71,7 +71,7 @@ class App extends React.Component<Props> {
                     <Route path="/administrator" component={Administrator} />
                     <Route path="/freelancer" component={Freelancer} />
                     <Route path="/employer" component={Employer} />
-                    <Route path="/config" component={Config} />
+                    <Route path="/variable" component={Variable} />
                     <Route path="/group" component={Group} />
                     <Route path="/permission" component={Permission} />
                     <Route path="/tag" component={Tag} />
