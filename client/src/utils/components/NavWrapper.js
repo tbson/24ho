@@ -78,23 +78,13 @@ class App extends React.Component<Props, State> {
                         </NavLink>
                     </li>
                 );
-            case 'freelancer':
+            case 'customer':
                 if (APP !== 'admin') return null;
                 return (
                     <li>
-                        <NavLink exact to="/freelancer">
-                            <i className="fas fa-user-ninja" />&nbsp;&nbsp;
-                            <span>Freelancer</span>
-                        </NavLink>
-                    </li>
-                );
-            case 'employer':
-                if (APP !== 'admin') return null;
-                return (
-                    <li>
-                        <NavLink exact to="/employer">
+                        <NavLink exact to="/customer">
                             <i className="fas fa-user-tie" />&nbsp;&nbsp;
-                            <span>Employer</span>
+                            <span>Customer</span>
                         </NavLink>
                     </li>
                 );
@@ -186,8 +176,7 @@ class App extends React.Component<Props, State> {
                     <ul className="sidebar-nav">
                         {renderMenu('profile')}
                         {renderMenu('administrator')}
-                        {renderMenu('freelancer')}
-                        {renderMenu('employer')}
+                        {renderMenu('customer')}
                         {renderMenu('config')}
                         {renderMenu('group')}
                         {renderMenu('permission')}

@@ -33,7 +33,7 @@
             var APP = window.location.href.split('://')[1].split('/')[1];
             var target = 'app.js?v=<%= htmlWebpackPlugin.options.version %>';
             var prefix = '/'+APP+'/';
-            if(prefix === '//' || !['/admin/', '/freelancer/', '/employer/'].includes(prefix)){
+            if(prefix === '//' || !['/admin/', '/customer/'].includes(prefix)){
                 prefix = '/';
             }
             document.getElementById("main-script").src = prefix + target;

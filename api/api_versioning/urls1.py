@@ -9,12 +9,8 @@ urlpatterns = (
         include('apps.administrator.urls', namespace='administrator'),
     ),
     path(
-        'freelancer/',
-        include('apps.freelancer.urls', namespace='freelancer'),
-    ),
-    path(
-        'employer/',
-        include('apps.employer.urls', namespace='employer'),
+        'customer/',
+        include('apps.customer.urls', namespace='customer'),
     ),
     path(
         'permission/',

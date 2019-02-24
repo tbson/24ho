@@ -8,21 +8,14 @@ from .models import Tag
 from .serializers import (
     TagBaseSerializer,
 )
-from utils.common_classes.custom_permission import CustomPermissionExp
+from utils.common_classes.custom_permission import CustomPermission
 
 
 class TagViewSet(GenericViewSet):
-    permissions = (
-        'list_tag',
-        'retrieve_tag',
-        'add_tag',
-        'change_tag',
-        'delete_tag',
-        'delete_list_tag',
-    )
+
     name = 'tag'
     serializer_class = TagBaseSerializer
-    permission_classes = (CustomPermissionExp, )
+    permission_classes = (CustomPermission, )
     search_fields = ('uid', 'value')
 
     def list(self, request):
@@ -66,4 +59,3 @@ class TagViewSet(GenericViewSet):
             raise Http404
         result.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-

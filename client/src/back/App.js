@@ -23,8 +23,7 @@ import PrivateRoute from 'src/utils/components/PrivateRoute';
 import Login from './auth/Login';
 import Profile from './auth/Profile';
 import Administrator from './administrator/Administrator';
-import Freelancer from './freelancer/Freelancer';
-import Employer from './employer/Employer';
+import Customer from './customer/Customer';
 import ResetPassword from './auth/ResetPassword';
 import Variable from './variable/Variable';
 import Group from './group/Group';
@@ -69,8 +68,7 @@ class App extends React.Component<Props> {
                     <Route path="/login" component={Login} />
                     <Route path="/reset-password/:token" component={ResetPassword} />
                     <Route path="/administrator" component={Administrator} />
-                    <Route path="/freelancer" component={Freelancer} />
-                    <Route path="/employer" component={Employer} />
+                    <Route path="/customer" component={Customer} />
                     <Route path="/variable" component={Variable} />
                     <Route path="/group" component={Group} />
                     <Route path="/permission" component={Permission} />

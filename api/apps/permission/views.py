@@ -8,21 +8,14 @@ from django.contrib.auth.models import Permission
 from .serializers import (
     PermissionBaseSerializer,
 )
-from utils.common_classes.custom_permission import CustomPermissionExp
+from utils.common_classes.custom_permission import CustomPermission
 
 
 class PermissionViewSet(GenericViewSet):
-    permissions = (
-        'list_permission',
-        'retrieve_permission',
-        'add_permission',
-        'change_permission',
-        'delete_permission',
-        'delete_list_permission',
-    )
+
     name = 'permission'
     serializer_class = PermissionBaseSerializer
-    permission_classes = (CustomPermissionExp, )
+    permission_classes = (CustomPermission, )
     search_fields = ('codename', 'name')
     ordering_fields = ('codename', 'name')
     ordering = ('content_type__app_label',)

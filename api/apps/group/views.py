@@ -1,4 +1,3 @@
-
 from django.http import Http404
 from rest_framework.decorators import action
 from rest_framework.viewsets import (GenericViewSet, )
@@ -8,21 +7,14 @@ from django.contrib.auth.models import Group
 from .serializers import (
     GroupBaseSerializer,
 )
-from utils.common_classes.custom_permission import CustomPermissionExp
+from utils.common_classes.custom_permission import CustomPermission
 
 
 class GroupViewSet(GenericViewSet):
-    permissions = (
-        'list_group',
-        'retrieve_group',
-        'add_group',
-        'change_group',
-        'delete_group',
-        'delete_list_group',
-    )
+
     name = 'group'
     serializer_class = GroupBaseSerializer
-    permission_classes = (CustomPermissionExp, )
+    permission_classes = (CustomPermission, )
     search_fields = ('name',)
 
     def list(self, request):

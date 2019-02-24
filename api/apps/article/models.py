@@ -9,22 +9,26 @@ from apps.category.models import Category
 from apps.attach.models import Attach
 from apps.tag.models import Tag
 
+
 def image_destination(instance, filename):
     # ext = filename.split('.')[-1]
     filename = "%s.%s" % (uuid.uuid4(), 'jpg')
     return os.path.join('article', filename)
 
+
 class ArticleManager(models.Manager):
     def addTranslations(self, article):
         for lang in settings.LANGUAGES:
             translationData = {
-                    "article": article,
-                    "lang": lang
+                "article": article,
+                "lang": lang
             }
             translation = ArticleTranslation(**translationData)
-            translation.save();
+            translation.save()
 
 # Create your models here.
+
+
 class Article(models.Model):
     category = models.ForeignKey(Category, related_name="articles", null=True, on_delete=models.CASCADE)
     article = models.ForeignKey('self', related_name="related_articles", null=True, on_delete=models.CASCADE)
@@ -82,11 +86,7 @@ class Article(models.Model):
     class Meta:
         db_table = "articles"
         ordering = ['-order']
-        permissions = (
-            ("list_article", "Can list article"),
-            ("retrieve_article", "Can retrieve article"),
-            ("delete_list_article", "Can delete list article"),
-        )
+
 
 class ArticleTranslation(models.Model):
     article = models.ForeignKey(Article, related_name="article_translations", on_delete=models.CASCADE)
@@ -94,6 +94,7 @@ class ArticleTranslation(models.Model):
     title = models.CharField(blank=True, max_length=256)
     description = models.TextField(blank=True)
     content = models.TextField(blank=True)
+
     class Meta:
         db_table = "article_translations"
         ordering = ['-id']

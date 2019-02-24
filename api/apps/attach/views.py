@@ -9,22 +9,15 @@ from .serializers import (
     AttachCreateSerializer,
     AttachUpdateSerializer
 )
-from utils.common_classes.custom_permission import CustomPermissionExp
+from utils.common_classes.custom_permission import CustomPermission
 from utils.helpers.tools import Tools
 
 
 class AttachViewSet(GenericViewSet):
-    permissions = (
-        'list_attach',
-        'retrieve_attach',
-        'add_attach',
-        'change_attach',
-        'delete_attach',
-        'delete_list_attach',
-    )
+
     name = 'attach'
     serializer_class = AttachBaseSerializer
-    permission_classes = (CustomPermissionExp, )
+    permission_classes = (CustomPermission, )
     search_fields = ('title',)
     filter_fields = ('parent_uuid', 'richtext_image',)
 

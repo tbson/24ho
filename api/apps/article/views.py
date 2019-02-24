@@ -14,22 +14,14 @@ from .serializers import (
     ArticleLandingListSerializer,
     ArticleLandingRetrieveSerializer
 )
-from utils.common_classes.custom_permission import CustomPermissionExp
+from utils.common_classes.custom_permission import CustomPermission
 
 
 class ArticleViewSet(GenericViewSet):
-    permissions = (
-        'list_article',
-        'retrieve_article',
-        'add_article',
-        'change_article',
-        'change_translate_article',
-        'delete_article',
-        'delete_list_article',
-    )
+
     name = 'article'
     serializer_class = ArticleBaseSerializer
-    permission_classes = (CustomPermissionExp, )
+    permission_classes = (CustomPermission, )
     search_fields = ('slug', 'value')
     filter_fields = ('category', 'article', )
 

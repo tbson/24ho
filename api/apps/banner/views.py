@@ -13,23 +13,15 @@ from .serializers import (
     BannerCreateSerializer,
     BannerUpdateSerializer,
 )
-from utils.common_classes.custom_permission import CustomPermissionExp
+from utils.common_classes.custom_permission import CustomPermission
 from utils.common_classes.custom_pagination import NoPagination
 
 
 class BannerViewSet(GenericViewSet):
-    permissions = (
-        'list_banner',
-        'retrieve_banner',
-        'add_banner',
-        'change_banner',
-        'change_translate_banner',
-        'delete_banner',
-        'delete_list_banner',
-    )
+
     name = 'banner'
     serializer_class = BannerBaseSerializer
-    permission_classes = (CustomPermissionExp, )
+    permission_classes = (CustomPermission, )
     search_fields = ('uid', 'value')
     filter_fields = ('category', 'category__uid')
 

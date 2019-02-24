@@ -10,7 +10,7 @@ from .serializers import (
     CategoryTranslationListSerializer,
     CategoryBaseSerializer,
 )
-from utils.common_classes.custom_permission import CustomPermissionExp
+from utils.common_classes.custom_permission import CustomPermission
 from utils.common_classes.custom_pagination import NoPagination
 
 
@@ -26,7 +26,7 @@ class CategoryViewSet(GenericViewSet):
     )
     name = 'category'
     serializer_class = CategoryBaseSerializer
-    permission_classes = (CustomPermissionExp, )
+    permission_classes = (CustomPermission, )
     search_fields = ('uid', 'title')
     filter_fields = ('type', )
 

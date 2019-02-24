@@ -72,11 +72,6 @@ class Attach(models.Model):
     class Meta:
         db_table = "attaches"
         ordering = ['-id']
-        permissions = (
-            ("list_attach", "Can list attach"),
-            ("retrieve_attach", "Can retrieve attach"),
-            ("delete_list_attach", "Can delete list attach"),
-        )
 
 
 '''

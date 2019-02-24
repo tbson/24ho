@@ -6,10 +6,12 @@ from django.db import models
 from utils.helpers.tools import Tools
 from apps.category.models import Category
 
+
 def image_destination(instance, filename):
     # ext = filename.split('.')[-1]
     filename = "%s.%s" % (uuid.uuid4(), 'jpg')
     return os.path.join('banner', filename)
+
 
 class BannerManager(models.Manager):
     def addTranslations(self, banner):
@@ -19,7 +21,8 @@ class BannerManager(models.Manager):
                 "lang": lang
             }
             translation = BannerTranslation(**translationData)
-            translation.save();
+            translation.save()
+
 
 class Banner(models.Model):
     category = models.ForeignKey(Category, related_name="banners", on_delete=models.CASCADE)
@@ -52,15 +55,12 @@ class Banner(models.Model):
 
     def delete(self, *args, **kwargs):
         Tools.removeFile(self.image.path, True)
-        super(Banner, self).delete(*args,**kwargs)
+        super(Banner, self).delete(*args, **kwargs)
 
     class Meta:
         db_table = "banners"
         ordering = ['-id']
         permissions = (
-            ("list_banner", "Can list banner"),
-            ("retrieve_banner", "Can retrieve banner"),
-            ("delete_list_banner", "Can delete list banner"),
             ("change_translation_banner", "Can change translation banner"),
         )
 
@@ -70,6 +70,7 @@ class BannerTranslation(models.Model):
     lang = models.CharField(max_length=5)
     title = models.CharField(blank=True, max_length=256)
     description = models.TextField(blank=True)
+
     class Meta:
         db_table = "banner_translations"
         ordering = ['-id']

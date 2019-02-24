@@ -8,13 +8,13 @@ from .models import Variable
 from .serializers import (
     VariableBaseSerializer,
 )
-from utils.common_classes.custom_permission import CustomPermissionExp
+from utils.common_classes.custom_permission import CustomPermission
 
 
 class VariableViewSet(GenericViewSet):
     name = 'variable'
     serializer_class = VariableBaseSerializer
-    permission_classes = (CustomPermissionExp, )
+    permission_classes = (CustomPermission, )
     search_fields = ('uid', 'value')
 
     def list(self, request):
