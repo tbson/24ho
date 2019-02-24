@@ -55,6 +55,6 @@ Place `db.sql` file in `docker` folder
 
 Uncomment `# - ./db.sql:/docker-entrypoint-initdb.d/db.sql`
 
-``
+```
 ./up -d
 ```
