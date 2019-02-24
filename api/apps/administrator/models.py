@@ -28,8 +28,3 @@ class Administrator(models.Model):
     class Meta:
         db_table = "administrators"
         ordering = ['-id']
-        permissions = (
-            ("view_administrator_list", "Can view administrator list"),
-            ("view_administrator_detail", "Can view administrator detail"),
-            ("view_administrator_profile", "Can view administrator profile"),
-        )

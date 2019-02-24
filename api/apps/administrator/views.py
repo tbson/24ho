@@ -25,16 +25,7 @@ from utils.helpers.tools import Tools
 
 
 class AdministratorViewSet(GenericViewSet):
-    '''
-    permissions = (
-        'list_administrator',
-        'retrieve_administrator',
-        'add_administrator',
-        'change_administrator',
-        'delete_administrator',
-        'delete_list_administrator',
-    )
-    '''
+
     name = 'administrator'
     permission_classes = (CustomPermissionExp, )
     serializer_class = AdministratorBaseSerializer

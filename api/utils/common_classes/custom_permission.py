@@ -4,12 +4,19 @@ from rest_framework import permissions
 class CustomPermissionExp(permissions.BasePermission):
 
     def has_permission(self, request, view):
-        permission = view.action + '_' + view.name
-        isAllow = False
+        action = view.action
+        action = action if action not in ['list', 'retrieve'] else 'view'
+        action = action if action not in ['delete', 'delete_list'] else 'delete'
 
+        permission = action + '_' + view.name
+
+        isAllow = False
+        print(permission)
         if request.user.user_permissions.filter(codename=permission).count():
+            print('case 1')
             isAllow = True
         if request.user.groups.filter(permissions__codename=permission).count():
+            print('case 2')
             isAllow = True
         return isAllow
 
