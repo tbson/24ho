@@ -5,7 +5,6 @@ from rest_framework_jwt.views import ObtainJSONWebToken
 
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.permissions import AllowAny
-from rest_framework.response import Response
 from rest_framework.viewsets import (GenericViewSet, )
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
@@ -22,6 +21,7 @@ from django.contrib.auth.hashers import make_password, check_password
 from django.utils import timezone
 from django.conf import settings
 from utils.helpers.tools import Tools
+from utils.helpers.res_tools import res, err_res
 
 
 class AdministratorViewSet(GenericViewSet):
@@ -41,14 +41,14 @@ class AdministratorViewSet(GenericViewSet):
     def retrieve(self, request, pk=None):
         obj = get_object_or_404(Administrator, pk=pk)
         serializer = AdministratorRetrieveSerializer(obj)
-        return Response(serializer.data)
+        return res(serializer.data)
 
     @action(methods=['post'], detail=True)
     def add(self, request):
         serializer = AdministratorCreateSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-        return Response(serializer.data)
+        return res(serializer.data)
 
     @action(methods=['put'], detail=True)
     def change(self, request, pk=None):
@@ -56,13 +56,13 @@ class AdministratorViewSet(GenericViewSet):
         serializer = AdministratorUpdateSerializer(obj, data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-        return Response(serializer.data)
+        return res(serializer.data)
 
     @action(methods=['delete'], detail=True)
     def delete(self, request, pk=None):
         obj = get_object_or_404(Administrator, pk=pk)
         obj.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return res(status=status.HTTP_204_NO_CONTENT)
 
     @action(methods=['delete'], detail=False)
     def delete_list(self, request):
@@ -72,7 +72,7 @@ class AdministratorViewSet(GenericViewSet):
         if result.count() == 0:
             raise Http404
         result.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return res(status=status.HTTP_204_NO_CONTENT)
 
 
 class LoginView(ObtainJSONWebToken):
@@ -80,7 +80,7 @@ class LoginView(ObtainJSONWebToken):
         response = super().post(request, *args, **kwargs)
         if response.status_code == 200 and response.data['user']['table'] == 'administrators':
             return response
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        return err_res('Wrong username or password.')
 
 
 class ProfileView(APIView):
@@ -91,7 +91,7 @@ class ProfileView(APIView):
 
     def get(self, request, format=None):
         serializer = AdministratorBaseSerializer(self.get_object().administrator)
-        return Response(serializer.data)
+        return res(serializer.data)
 
     def post(self, request, format=None):
         params = self.request.data
@@ -99,9 +99,9 @@ class ProfileView(APIView):
         serializer = AdministratorUpdateSerializer(administrator, data=params, partial=True)
         if serializer.is_valid() is True:
             serializer.save()
-            return Response(serializer.data)
+            return res(serializer.data)
         else:
-            raise ValidationError(serializer.errors)
+            return err_res(serializer.errors)
 
 
 class ResetPasswordView(APIView):
@@ -133,7 +133,7 @@ class ResetPasswordView(APIView):
         item.reset_password_created = None
         user.save()
         item.save()
-        return Response()
+        return res()
 
     # Reset password
     def post(self, request, format=None):
@@ -153,7 +153,7 @@ class ResetPasswordView(APIView):
         to = user.email
 
         Tools.sendEmailAsync(subject, body, to)
-        return Response({"url": url})
+        return res({"url": url})
 
 
 class ChangePasswordView(APIView):
@@ -169,9 +169,9 @@ class ChangePasswordView(APIView):
 
         # Check correct old password
         if check_password(params["oldPassword"], user.password) is False:
-            raise ValidationError({"detail": "Incorrect old password"})
+            return err_res({"detail": "Incorrect old password"})
 
         user.password = make_password(params["password"])
         user.save()
 
-        return Response()
+        return res()

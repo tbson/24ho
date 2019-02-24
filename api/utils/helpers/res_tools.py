@@ -1,3 +1,5 @@
+from rest_framework.response import Response
+from rest_framework import status
 from rest_framework_jwt.serializers import VerifyJSONWebTokenSerializer
 from apps.administrator.serializers import AdministratorBaseSerializer
 from apps.customer.serializers import CustomerBaseSerializer
@@ -30,3 +32,19 @@ def getToken(headers):
     if(result):
         return result.split(' ')[1]
     return ''
+
+
+def error_format(data):
+    if type(data) is str:
+        return {'detail': data}
+    if type(data) is dict:
+        return data
+    return {}
+
+
+def res(*args, **kwargs):
+    return Response(*args, **kwargs)
+
+
+def err_res(data, status_code=status.HTTP_400_BAD_REQUEST):
+    return Response(error_format(data), status=status_code)
