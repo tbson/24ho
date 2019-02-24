@@ -21,6 +21,20 @@ docker-compose build
 ./up
 ```
 
+### Step 4
+
+Prepare accounts for logging
+```
+./exec_api python manage.py collectstatic
+./exec_api python manage.py createsuperuser
+```
+
+Then go to django admin interface: [https://24ho.test/dadmin/](https://24ho.test/dadmin/)
+
+- Create new user in `Users` section
+- Add an administrator in `Administrators` section using newly created user.
+- Login: [https://24ho.test/admin/](https://24ho.test/admin/)
+
 ## For production environment
 
 ### Step 1
@@ -36,5 +50,11 @@ Add `- /etc/letsencrypt:/resource/ssl` to `volumes` of `nginx` if not exist.
 ```
 ./setup app_name domain.com pro
 docker-compose build
-./ -d
+```
+Place `db.sql` file in `docker` folder
+
+Uncomment `# - ./db.sql:/docker-entrypoint-initdb.d/db.sql`
+
+``
+./up -d
 ```
