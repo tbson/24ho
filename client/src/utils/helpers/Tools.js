@@ -298,96 +298,96 @@ export default class Tools {
         this.emitter.emit('TOGGLE_SPINNER', spinning);
     }
 
-    static async apiCall(
-        url: string,
-        method: string = 'GET',
-        payload: Object = {},
-        popMessage: boolean = true,
-        usingLoading: boolean = true
-    ): Promise<{status: number, success: boolean, data: Object}> {
+    static defaultRequestConfig(method: string): Object {
+        const token = Tools.getToken();
+        const config = {
+            method,
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: token ? `JWT ${token}` : undefined
+            },
+            mode: 'cors',
+            credentials: 'same-origin'
+        };
+
+        return config;
+    }
+
+    static preparePayload(data: Object, method: string): Object {
+        const config = Tools.defaultRequestConfig(method);
+        const payload = Tools.payloadFromObject(data);
+        config.body = payload.data;
+        config.headers.contentType = payload.contentType;
+
+        return {payload, config};
+    }
+
+    static isUsePayload(method: string): boolean {
+        return ['POST', 'PUT'].includes(method);
+    }
+
+    static async getJsonResponse(response: Object): Object {
+        let data = {};
         try {
-            if (usingLoading) {
-                this.toggleGlobalLoading();
+            if (response.status !== 204) {
+                data = await response.json();
             }
-            let requestConfig: Object = {
-                method: method,
-                headers: {
-                    lang: this.getLang(),
-                    'Content-Type': 'application/json',
-                    fingerprint: await this.getFingerPrint()
-                },
-                credentials: 'same-origin'
-            };
-            if (this.getToken()) {
-                requestConfig.headers.Authorization = 'JWT ' + this.getToken();
+            if (response.status === 502) {
+                data = {error: 'Internal server error'};
             }
-            if (['POST', 'PUT'].indexOf(method) !== -1) {
-                // Have payload
-                payload = this.payloadFromObject(payload);
-                requestConfig.body = payload.data;
-                if (!payload.contentType) {
-                    delete requestConfig.headers['Content-Type'];
-                }
-            } else {
-                // No payload but url encode
-                if (url.indexOf('?') === -1) {
-                    url += '?' + this.urlDataEncode(payload);
-                }
-            }
-            let response = await fetch(url, requestConfig);
-            let data = {};
-            try {
-                if (response.status !== 204) {
-                    data = await response.json();
-                }
-                if (response.status === 502) {
-                    data = {detail: 'Internal server error'};
-                }
-            } catch (error) {
-                console.log(error);
-                data = {detail: 'Internal server error'};
-            }
-            if (usingLoading) {
-                this.toggleGlobalLoading(false);
-            }
-            if (Array.isArray(data)) {
-                data = {
-                    count: data.length,
-                    items: data,
-                    links: {
-                        next: null,
-                        previous: null
-                    },
-                    page_size: data.length,
-                    pages: 1
-                };
-            }
-            let result = {
-                status: response.status,
-                success: [200, 201, 204].indexOf(response.status) === -1 ? false : true,
-                data
-            };
-            /*
-            if ([200, 201, 204].indexOf(result.status) === -1) {
-                this.popMessage(result.data, 'error');
-            }
-            */
-            if (result.status === 401) {
-                this.removeStorage('authData');
-                window.location = BASE_URL + 'login';
-            }
-            return result;
         } catch (error) {
-            console.error(error);
-            if (usingLoading) {
-                this.toggleGlobalLoading(false);
-            }
-            return {
-                status: 400,
-                success: false,
-                data: error
-            };
+            console.log(error);
+            data = {error: 'Internal server error'};
         }
+        return data;
+    }
+
+    static isSuscessResponse(status: number): boolean {
+        return ![200, 201, 204].includes(status) ? false : true;
+    }
+
+    static defaultErrorResponse(err: Object): Object {
+        return {
+            status: 400,
+            ok: false,
+            data: err
+        };
+    }
+
+    static response(data: Object, status: number): Object {
+        return {
+            status,
+            ok: Tools.isSuscessResponse(status),
+            data
+        };
+    }
+
+    static async apiCall(url: string, data: Object = {}, method: string = 'GET', usingLoading: boolean = true) {
+        usingLoading && this.toggleGlobalLoading();
+
+        let result;
+        try {
+            const usePayload = Tools.isUsePayload(method);
+            const preparePayload = Tools.preparePayload(data, method);
+
+            const config = usePayload ? preparePayload.config : Tools.defaultRequestConfig(method);
+
+            if (!usePayload) {
+                url += '?' + this.urlDataEncode(data);
+            }
+
+            const response = await fetch(url, config);
+            const status = response.status;
+            const json = await Tools.getJsonResponse(response);
+
+            result = Tools.response(json, status);
+        } catch (err) {
+            result = Tools.defaultErrorResponse(err);
+        }
+
+        usingLoading && this.toggleGlobalLoading(false);
+
+        return result;
     }
 
     static getCheckedId(listItem: Array<Object>): string {
@@ -459,7 +459,7 @@ export default class Tools {
     static commonErrorResponse(error: Object): Object {
         const detail = error.message ? error.message : 'Undefined error';
         return {
-            success: false,
+            ok: false,
             data: {
                 detail
             }
@@ -470,7 +470,7 @@ export default class Tools {
         let data = {};
         let error = {};
 
-        if (response.success) {
+        if (response.ok) {
             data = response.data;
         } else {
             error = response.data;
@@ -480,16 +480,16 @@ export default class Tools {
     }
 
     static async getItem(url: string, id: number): GetItemResponse {
-        const result = await this.apiCall(url + id.toString(), 'GET');
-        if (result.success) {
+        const result = await this.apiCall(url + id.toString());
+        if (result.ok) {
             return result.data;
         }
         return null;
     }
 
     static async getList(url: string, params: Object = {}): GetListResponse {
-        const result = await this.apiCall(url, 'GET', params);
-        if (result.success) {
+        const result = await this.apiCall(url, params);
+        if (result.ok) {
             result.data.items = result.data.items.map(item => {
                 item.checked = false;
                 return item;
@@ -502,7 +502,7 @@ export default class Tools {
 
     static async handleAdd(url: string, params: Object): Promise<Object> {
         try {
-            return await this.apiCall(url, 'POST', params);
+            return await this.apiCall(url, params, 'POST');
         } catch (error) {
             return this.commonErrorResponse(error);
         }
@@ -511,7 +511,7 @@ export default class Tools {
     static async handleEdit(url: string, params: Object): Promise<Object> {
         try {
             const id = String(params.id);
-            return await this.apiCall(url, 'PUT', params);
+            return await this.apiCall(url, params, 'PUT');
         } catch (error) {
             return this.commonErrorResponse(error);
         }
@@ -551,8 +551,8 @@ export default class Tools {
         }
         const decide = window.confirm(message);
         if (!decide) return null;
-        const result = await Tools.apiCall(url + (listId.length === 1 ? ids : '?ids=' + ids), 'DELETE');
-        return result.success ? listId.map(item => parseInt(item)) : null;
+        const result = await Tools.apiCall(url + (listId.length === 1 ? ids : '?ids=' + ids), {}, 'DELETE');
+        return result.ok ? listId.map(item => parseInt(item)) : null;
     }
 
     static checkOrUncheckAll(list: Array<Object>): Array<Object> {

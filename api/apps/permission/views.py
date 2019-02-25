@@ -9,6 +9,7 @@ from .serializers import (
     PermissionBaseSerializer,
 )
 from utils.common_classes.custom_permission import CustomPermission
+from utils.common_classes.custom_pagination import NoPagination
 
 
 class PermissionViewSet(GenericViewSet):
@@ -16,6 +17,7 @@ class PermissionViewSet(GenericViewSet):
     name = 'permission'
     serializer_class = PermissionBaseSerializer
     permission_classes = (CustomPermission, )
+    pagination_class = NoPagination
     search_fields = ('codename', 'name')
     ordering_fields = ('codename', 'name')
     ordering = ('content_type__app_label',)
@@ -24,7 +26,7 @@ class PermissionViewSet(GenericViewSet):
         queryset = Permission.objects.all()
         queryset = self.filter_queryset(queryset)
         serializer = PermissionBaseSerializer(queryset, many=True)
-        return Response(serializer.data)
+        return self.get_paginated_response(serializer.data)
 
     def retrieve(self, request, pk=None):
         obj = Permission.objects.get(pk=pk)

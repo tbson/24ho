@@ -48,6 +48,13 @@ class NoPagination(pagination.PageNumberPagination):
             items = data
 
         return Response({
+            'links': {
+                'next': '',
+                'previous': ''
+            },
+            'count': 1,
+            'pages': 1,
+            'page_size': len(items),
             'extra': extra,
             'items': items
         })

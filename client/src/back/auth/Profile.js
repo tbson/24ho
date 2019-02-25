@@ -40,14 +40,14 @@ export class Profile extends React.Component<Props, States> {
 
     componentDidMount = () => {
         document.title = 'Profile';
-        Tools.apiCall(apiUrls.profile, 'GET');
+        Tools.apiCall(apiUrls.profile);
     };
 
     updateProfile = async (event: Object) => {
         event.preventDefault();
         const data = Tools.formDataToObj(new FormData(event.target));
 
-        const result = await Tools.apiCall(apiUrls.profile, 'POST', data);
+        const result = await Tools.apiCall(apiUrls.profile, data, 'POST');
         if (result.success) {
             const authData = result.data;
             Tools.setStorageObj({authData});
@@ -63,7 +63,7 @@ export class Profile extends React.Component<Props, States> {
         event.preventDefault();
         const data = Tools.formDataToObj(new FormData(event.target));
 
-        const result = await Tools.apiCall(apiUrls.changePassword, 'POST', data);
+        const result = await Tools.apiCall(apiUrls.changePassword, data, 'POST');
         if (result.success) {
             this.toggleModal('changePasswordModal');
         } else {
@@ -78,7 +78,7 @@ export class Profile extends React.Component<Props, States> {
     };
 
     getProfileToEdit = async () => {
-        const result = await Tools.apiCall(apiUrls.profile, 'GET');
+        const result = await Tools.apiCall(apiUrls.profile);
         this.toggleModal('profileModal', result.data);
     };
 
@@ -149,7 +149,8 @@ export const ProfileModal = ({show, defaultValue, errorMessage, toggleModal, han
                 submitTitle="Update profile"
                 handleSubmit={handleSubmit}>
                 <button type="button" onClick={toggleModal} className="btn btn-light">
-                    <span className="fas fa-times" />&nbsp; Cancel
+                    <span className="fas fa-times" />
+                    &nbsp; Cancel
                 </button>
             </UpdateProfileForm>
         </CustomModal>
@@ -168,7 +169,8 @@ export const ChangePasswordModal = ({
         <CustomModal open={true} close={toggleModal} title="Change password" size="md">
             <ChangePasswordForm errorMessage={errorMessage} submitTitle="Change password" handleSubmit={handleSubmit}>
                 <button type="button" onClick={toggleModal} className="btn btn-light">
-                    <span className="fas fa-times" />&nbsp; Cancel
+                    <span className="fas fa-times" />
+                    &nbsp; Cancel
                 </button>
             </ChangePasswordForm>
         </CustomModal>

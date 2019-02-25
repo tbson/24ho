@@ -8,6 +8,7 @@ from .serializers import (
     GroupBaseSerializer,
 )
 from utils.common_classes.custom_permission import CustomPermission
+from utils.common_classes.custom_pagination import NoPagination
 
 
 class GroupViewSet(GenericViewSet):
@@ -15,13 +16,14 @@ class GroupViewSet(GenericViewSet):
     name = 'group'
     serializer_class = GroupBaseSerializer
     permission_classes = (CustomPermission, )
+    pagination_class = NoPagination
     search_fields = ('name',)
 
     def list(self, request):
         queryset = Group.objects.all()
         queryset = self.filter_queryset(queryset)
         serializer = GroupBaseSerializer(queryset, many=True)
-        return Response(serializer.data)
+        return self.get_paginated_response(serializer.data)
 
     def retrieve(self, request, pk=None):
         obj = Group.objects.get(pk=pk)

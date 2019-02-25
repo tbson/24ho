@@ -92,7 +92,7 @@ export default class AdministratorTable extends React.Component<Props, States> {
 
     getGroupList = async (): Promise<?Array<FormValuesWithCheck>> => {
         const result = await Tools.apiCall(apiUrls.groupCrud);
-        if (result.success) {
+        if (result.ok) {
             result.data.items = result.data.items.map(item => ({value: item.id, label: item.name}));
             this.setState({
                 groupList: result.data.items
