@@ -2,12 +2,12 @@
 import * as React from 'react';
 // $FlowFixMe: do not complain about importing node_modules
 import {withRouter} from 'react-router-dom';
-import CustomModal from 'src/utils/components/CustomModal';
+import CustomModal from 'src/utils/components/modal/CustomModal';
 import {apiUrls} from './_data';
 import Tools from 'src/utils/helpers/Tools';
-import NavWrapper from 'src/utils/components/NavWrapper';
+import NavWrapper from 'src/utils/components/nav_wrapper';
 import UpdateProfileForm from './forms/UpdateProfileForm';
-import ChangePasswordForm from './forms/ChangePasswordForm';
+import ResetPwdForm from './forms/ResetPwdForm';
 
 type Props = {};
 type States = {
@@ -167,12 +167,12 @@ export const ChangePasswordModal = ({
     if (!show) return null;
     return (
         <CustomModal open={true} close={toggleModal} title="Change password" size="md">
-            <ChangePasswordForm errorMessage={errorMessage} submitTitle="Change password" handleSubmit={handleSubmit}>
+            <ResetPwdForm errorMessage={errorMessage} submitTitle="Change password" handleSubmit={handleSubmit}>
                 <button type="button" onClick={toggleModal} className="btn btn-light">
                     <span className="fas fa-times" />
                     &nbsp; Cancel
                 </button>
-            </ChangePasswordForm>
+            </ResetPwdForm>
         </CustomModal>
     );
 };

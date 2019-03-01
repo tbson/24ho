@@ -2,7 +2,7 @@ import Enzyme from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import React from 'react';
 import {shallow, mount, render} from 'enzyme';
-import DefaultModal from '../DefaultModal';
+import DefaultModal from '../modal/DefaultModal';
 
 Enzyme.configure({adapter: new Adapter()});
 

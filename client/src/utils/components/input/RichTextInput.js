@@ -2,7 +2,7 @@
 import * as React from 'react';
 // $FlowFixMe: do not complain about importing node_modules
 import Loadable from 'react-loadable';
-import Tools from '../helpers/Tools';
+import Tools from '../../helpers/Tools';
 
 const Rummernote = Loadable({
     // $FlowFixMe: do not complain about importing node_modules
@@ -47,9 +47,10 @@ class RichTextInput extends React.Component<Props, States> {
                 parent_uuid: this.props.parentUUID,
                 richtext_image: true
             };
-            const result = await Tools.apiCall(apiUrls.crud, 'POST', params);
+            const result = await Tools.apiCall(apiUrls.crud, params, 'POST');
             if (result.success) {
-                insertImage(result.data.attachment, image => {
+                const url = result.data.attachment.replace(/^.*\/\/[^\/]+/, '');
+                insertImage(url, image => {
                     if (image.width() <= 400) {
                         image.css('width', image.width());
                     } else {

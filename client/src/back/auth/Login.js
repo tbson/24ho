@@ -2,103 +2,104 @@
 import * as React from 'react';
 // $FlowFixMe: do not complain about importing node_modules
 import {withRouter} from 'react-router-dom';
-import {apiUrls} from './_data';
-import Tools from 'src/utils/helpers/Tools';
 import LoginForm from './forms/LoginForm';
-import ResetPasswordModal from './forms/ResetPasswordModal';
+import Tools from 'src/utils/helpers/Tools';
+import DefaultModal from 'src/utils/components/modal/DefaultModal';
+import ResetPwdForm from './forms/ResetPwdForm';
+import type {FormState} from 'src/utils/helpers/Tools';
+
+export class Service {
+    static async loginReq(event: Object) {
+        const params = Tools.formDataToObj(new FormData(event.target));
+        const url = '/api/v1/admin/auth/';
+        return await Tools.apiCall(url, params, 'POST');
+    }
+}
 
 type Props = {
     history: Object
 };
-
 type States = {
-    modal: boolean,
-    loginFail: boolean
+    formState: FormState,
+    modal: boolean
 };
-
 export class Login extends React.Component<Props, States> {
     navigateTo: Function;
     state = {
-        modal: false,
-        loginFail: false
+        formState: {
+            data: {},
+            errors: {}
+        },
+        modal: false
     };
 
     constructor(props: Props) {
         super(props);
-        this.navigateTo = Tools.navigateTo.bind(undefined, this.props.history);
+        this.navigateTo = Tools.navigateTo(props.history);
     }
 
-    componentDidMount = () => {
-        const authData = Tools.getStorageObj('authData');
-        if (authData.email) {
-            this.navigateTo();
-        }
-    };
+    componentDidMount() {
+        Tools.getToken() && this.navigateTo();
+    }
 
-    toggleModal = () => {
-        this.setState({
-            modal: !this.state.modal
-        });
-    };
+    async handleSubmit(e: Object) {
+        e.preventDefault();
+        const r = await Service.loginReq(e);
 
-    handleSubmitLogin = async (event: Object) => {
-        event.preventDefault();
-        const data = Tools.formDataToObj(new FormData(event.target));
-        const result = await Tools.apiCall(apiUrls.tokenAuth, data, 'POST');
-        if (result.ok) {
-            Tools.setStorage('authData', result.data.user);
-            this.navigateTo();
+        if (r.ok) {
+            Tools.setStorage('auth', r.data) || this.navigateTo();
         } else {
-            this.setState({
-                loginFail: true
-            });
+            console.log(Tools.setFormErrors(r.data));
+            this.setState(Tools.setFormErrors(r.data));
         }
-    };
+    }
 
-    handleSubmitResetPassword = async (event: Object) => {
-        event.preventDefault();
-        const data = Tools.formDataToObj(new FormData(event.target));
-        const result = await Tools.apiCall(apiUrls.resetPassword, data, 'POST');
-        this.toggleModal();
-    };
+    toggleModal(open: ?boolean = null) {
+        this.setState(Tools.toggleState(open));
+    }
 
     render() {
-        const {loginFail} = this.state;
+        const {modal, formState} = this.state;
         return (
-            <div className="container">
-                <div className="row">
-                    <div className="col-md-8 offset-md-2">
-                        <div className="jumbotron">
-                            <LoginForm formId="loginForm" submitTitle="Login" handleSubmit={this.handleSubmitLogin}>
-                                <span className="pointer link" onClick={this.toggleModal}>
-                                    Reset password
-                                </span>
-                                &nbsp;&nbsp;
-                            </LoginForm>
-                            <ErrorMessage loginFail={loginFail} />
+            <>
+                <div className="container">
+                    <div className="row">
+                        <div className="col-md-8 offset-md-2">
+                            <div className="jumbotron">
+                                <h2 className="center">LOGIN</h2>
+                                <LoginForm
+                                    formId="loginForm"
+                                    submitTitle="Login"
+                                    state={formState}
+                                    handleSubmit={this.handleSubmit.bind(this)}>
+                                    <span className="pointer link" onClick={this.toggleModal.bind(this)}>
+                                        Reset password
+                                    </span>
+                                </LoginForm>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <ResetPasswordModal
-                    open={this.state.modal}
-                    handleClose={() => this.setState({modal: false})}
-                    handleSubmit={this.handleSubmitResetPassword}
-                />
-            </div>
+                <ResetPwdModal open={modal} close={() => this.toggleModal.bind(this)(false)} />
+            </>
         );
     }
 }
+export default withRouter(Login);
 
-type ErrorMessageProps = {
-    loginFail: boolean
+type ResetPwdModalType = {
+    open: boolean,
+    close: Function
 };
-export const ErrorMessage = ({loginFail}: ErrorMessageProps): React.Node => {
-    if (!loginFail) return null;
+export const ResetPwdModal = ({open, close}: ResetPwdModalType) => {
     return (
-        <div className="alert alert-danger" role="alert" style={{marginTop: 16}}>
-            Wrong username or password!
-        </div>
+        <DefaultModal open={open} title="Reset password" close={close}>
+            <ResetPwdForm handleSubmit={() => {}}>
+                <button type="button" className="btn btn-warning" onClick={close}>
+                    <span className="fas fa-times" />
+                    Cancel
+                </button>
+            </ResetPwdForm>
+        </DefaultModal>
     );
 };
-
-export default withRouter(Login);

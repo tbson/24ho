@@ -83,7 +83,7 @@ class CustomModal extends React.Component<Props, State> {
             return (
                 <Modal
                     style={customStyles}
-                    isOpen={this.props.open}
+                    isOpen={true}
                     contentLabel="Modal"
                     onRequestClose={this.props.close}
                     ariaHideApp={false}>
@@ -98,7 +98,7 @@ class CustomModal extends React.Component<Props, State> {
         return (
             <Modal
                 style={customStyles}
-                isOpen={this.props.open}
+                isOpen={true}
                 contentLabel="Modal"
                 onRequestClose={this.props.close}
                 ariaHideApp={false}>

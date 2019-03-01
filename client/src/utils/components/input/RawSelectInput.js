@@ -28,7 +28,7 @@ const emptySelected = {
     label: ''
 };
 
-export default class SelectInput extends React.Component<Props, States> {
+export default class RawSelectInput extends React.Component<Props, States> {
     state = {
         selected: null,
         value: ''

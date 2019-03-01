@@ -5,6 +5,8 @@ import Fingerprint2 from 'fingerprintjs2';
 // $FlowFixMe: do not complain about importing node_modules
 import kebabCase from 'lodash/kebabCase';
 // $FlowFixMe: do not complain about importing node_modules
+import isPlainObject from 'lodash/isPlainObject';
+// $FlowFixMe: do not complain about importing node_modules
 import {toast} from 'react-toastify';
 // $FlowFixMe: do not complain about importing node_modules
 import 'react-toastify/dist/ReactToastify.css';
@@ -31,6 +33,11 @@ type ApiUrl = {
 };
 
 type RawApiUrls = Array<ApiUrl>;
+
+export type FormState = {
+    data: Object,
+    errors: Object
+};
 
 export type GetListResponseData = {
     links: {
@@ -89,9 +96,9 @@ export default class Tools {
         return data;
     }
 
-    static navigateTo(history: Object, url: string = '/', params: Array<mixed> = []) {
-        return history.push([url, ...params].join('/'));
-    }
+    static navigateTo(history: Object) {
+        return (url: string = '/', params: Array<mixed> = []) => history.push([url, ...params].join('/'));
+    } 
 
     static parseJson(input: any): string {
         try {
@@ -277,7 +284,7 @@ export default class Tools {
 
     static logout(history: Object) {
         this.removeStorage('authData');
-        this.navigateTo(history, 'login');
+        this.navigateTo(history)('login');
     }
 
     static popMessage(description: string | Object, type: string = 'success'): void {
@@ -619,5 +626,32 @@ export default class Tools {
             },
             items: items || []
         };
+    }
+
+    static meanfulErrorItem(input: any): boolean {
+        return input && (Array.isArray(input) || ['string', 'number'].includes(typeof input));
+    }
+
+    static standarizeErrorItem(input: any): Array<any> {
+        if (Array.isArray(input)) return input;
+        return [input];
+    }
+
+    static parseErrorResponse(errors: Object, result: Object = {}): Object {
+        if (Tools.isEmpty(errors)) return result;
+        for (let key in errors) {
+            const value = errors[key];
+            if (Tools.meanfulErrorItem(value)) result[key] = Tools.standarizeErrorItem(value);
+            if (isPlainObject(value)) result = Tools.parseErrorResponse(value, result);
+        }
+        return result;
+    }
+
+    static toggleState(open: ?boolean = null, key: string = 'modal') {
+        return (state: Object) => ({[key]: open === null ? !state[key] : !!open});
+    }
+
+    static setFormErrors(errors: Object, key: string = 'formState') {
+        return (state: Object) => ({[key]: {errors: {...state[key].errors, ...errors}}});
     }
 }

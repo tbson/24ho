@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 // $FlowFixMe: do not complain about importing node_modules
-import styles from './Spinner.styl';
+import styles from './styles.styl';
 import Tools from 'src/utils/helpers/Tools';
 
 type Props = {};

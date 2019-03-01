@@ -5,7 +5,7 @@ import {withRouter, Route, Link} from 'react-router-dom';
 // $FlowFixMe: do not complain about importing node_modules
 import {NavLink} from 'react-router-dom';
 import Tools from 'src/utils/helpers/Tools';
-import './NavWrapper.css';
+import './styles.css';
 import {APP} from 'src/constants';
 
 type Props = {
@@ -78,13 +78,23 @@ class App extends React.Component<Props, State> {
                         </NavLink>
                     </li>
                 );
-            case 'customer':
+            case 'freelancer':
                 if (APP !== 'admin') return null;
                 return (
                     <li>
-                        <NavLink exact to="/customer">
+                        <NavLink exact to="/freelancer">
+                            <i className="fas fa-user-ninja" />&nbsp;&nbsp;
+                            <span>Freelancer</span>
+                        </NavLink>
+                    </li>
+                );
+            case 'employer':
+                if (APP !== 'admin') return null;
+                return (
+                    <li>
+                        <NavLink exact to="/employer">
                             <i className="fas fa-user-tie" />&nbsp;&nbsp;
-                            <span>Customer</span>
+                            <span>Employer</span>
                         </NavLink>
                     </li>
                 );
@@ -92,9 +102,9 @@ class App extends React.Component<Props, State> {
                 if (APP !== 'admin') return null;
                 return (
                     <li>
-                        <NavLink exact to="/variable">
+                        <NavLink exact to="/config">
                             <i className="fas fa-cog" />&nbsp;&nbsp;
-                            <span>Variable</span>
+                            <span>Config</span>
                         </NavLink>
                     </li>
                 );
@@ -176,7 +186,8 @@ class App extends React.Component<Props, State> {
                     <ul className="sidebar-nav">
                         {renderMenu('profile')}
                         {renderMenu('administrator')}
-                        {renderMenu('customer')}
+                        {renderMenu('freelancer')}
+                        {renderMenu('employer')}
                         {renderMenu('config')}
                         {renderMenu('group')}
                         {renderMenu('permission')}

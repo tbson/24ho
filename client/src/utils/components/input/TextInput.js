@@ -1,17 +1,18 @@
 // @flow
 import * as React from 'react';
 import Tools from 'src/utils/helpers/Tools';
+import ErrorMessages from './ErrorMessages';
 
 type Props = {
     id: string,
     type: string,
     label: string,
-    errorMessage: string,
+    errorMessages: Array<string>,
     value?: string,
     placeholder?: string,
-    required?: boolean,
+    required: boolean,
     disabled?: boolean,
-    autoFocus?: boolean,
+    autoFocus: boolean,
     onChange?: Function
 };
 
@@ -21,13 +22,13 @@ export default class Input extends React.Component<Props> {
         required: false,
         disabled: false,
         autoFocus: false,
-        errorMessage: ''
+        errorMessages: []
     };
 
     render() {
-        const {id, label, value, placeholder, onChange, errorMessage, required} = this.props;
+        const {id, label, value, placeholder, onChange, errorMessages, required} = this.props;
         const name = id.split('-').pop();
-        const className = `form-control ${errorMessage ? 'is-invalid' : ''}`.trim();
+        const className = `form-control ${errorMessages.length ? 'is-invalid' : ''}`.trim();
         const inputProps = {
             ...this.props,
             name,
@@ -35,11 +36,11 @@ export default class Input extends React.Component<Props> {
             defaultValue: value,
             placeholder: placeholder || `${label}...`
         };
-        if (typeof(onChange) === 'function') {
+        if (typeof onChange === 'function') {
             inputProps.onChange = onChange;
         }
 
-        delete inputProps.errorMessage;
+        delete inputProps.errorMessages;
         delete inputProps.value;
 
         return (
@@ -48,7 +49,7 @@ export default class Input extends React.Component<Props> {
                     {label}
                 </label>
                 <input {...inputProps} />
-                <div className="invalid-feedback">{errorMessage}</div>
+                <ErrorMessages errors={errorMessages} />
             </div>
         );
     }

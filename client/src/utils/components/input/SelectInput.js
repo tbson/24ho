@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import Tools from 'src/utils/helpers/Tools';
-import SelectInput from '../SelectInput';
+import RawSelectInput from './RawSelectInput';
 import type {DropdownItemType} from 'src/utils/types/CommonTypes';
 
 type Props = {
@@ -80,7 +80,7 @@ export default class Input extends React.Component<Props, States> {
                 <label htmlFor={id} className={required ? 'red-dot' : ''}>
                     {label}
                 </label>
-                <SelectInput {...selectProps} onChange={value => this.setState({value})} />
+                <RawSelectInput {...selectProps} onChange={value => this.setState({value})} />
                 <div className="invalid-feedback">{errorMessage}</div>
             </div>
         );

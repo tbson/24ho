@@ -17,11 +17,12 @@ import(/* webpackPreload: true */ 'bootstrap/dist/js/bootstrap');
 
 import 'src/utils/styles/main-back.css';
 import Spinner from 'src/utils/components/Spinner';
-import NotMatch from 'src/utils/components/NotMatch';
+import NotMatch from 'src/utils/components/route/NotMatch';
 import Tools from 'src/utils/helpers/Tools';
-import PrivateRoute from 'src/utils/components/PrivateRoute';
+import PrivateRoute from 'src/utils/components/route/PrivateRoute';
 import Login from './auth/Login';
 import Profile from './auth/Profile';
+/*
 import Administrator from './administrator/Administrator';
 import Customer from './customer/Customer';
 import ResetPassword from './auth/ResetPassword';
@@ -33,6 +34,8 @@ import Category from './category/Category';
 import Banner from './banner/Banner';
 import Article from './article/Article';
 import ArticleEditWrapper from './article/ArticleEditWrapper';
+*/
+
 import Trans from 'src/utils/helpers/Trans';
 import translations from 'src/utils/translations.json';
 
@@ -66,6 +69,7 @@ class App extends React.Component<Props> {
                 <Switch>
                     <Route exact path="/" component={Profile} />
                     <Route path="/login" component={Login} />
+                    {/*
                     <Route path="/reset-password/:token" component={ResetPassword} />
                     <Route path="/administrator" component={Administrator} />
                     <Route path="/customer" component={Customer} />
@@ -81,6 +85,7 @@ class App extends React.Component<Props> {
                         path="/article/:parentType/:parentId/:id?"
                         render={props => <ArticleEditWrapper {...this.setUpProps(props)} />}
                     />
+                    */}
                     <Route component={NotMatch} />
                 </Switch>
             </div>

@@ -29,7 +29,7 @@ urlpatterns = [
     path('', baseEndPoint),
     path('<int:pk>', pkEndpoint),
 
-    path('token-auth/', LoginView.as_view(), name='login'),
+    path('auth/', LoginView.as_view(), name='login'),
     path('token-refresh/', refresh_jwt_token, name='refresh'),
     path('token-verify/', verify_jwt_token, name='verify'),
 
