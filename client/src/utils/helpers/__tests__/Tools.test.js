@@ -154,11 +154,11 @@ test('removeStorage', () => {
 });
 
 test('getToken', () => {
-    Tools.setStorage('authData', {token: 'token'});
+    Tools.setStorage('auth', {user: {token: 'token'}});
     let output = Tools.getToken();
     expect(output).toEqual('token');
 
-    Tools.removeStorage('authData');
+    Tools.removeStorage('auth');
     output = Tools.getToken();
     expect(output).toEqual('');
 });
@@ -212,7 +212,7 @@ test('payloadFromObject', () => {
     eput = input;
     expect(output).toEqual({
         data: eput,
-        contentType: null
+        contentType: 'application/x-www-form-urlencoded'
     });
 });
 
@@ -438,7 +438,7 @@ describe('commonErrorResponse', () => {
         };
         const output = Tools.commonErrorResponse(input);
         const eput = {
-            success: false,
+            ok: false,
             data: {
                 detail: 'Undefined error'
             }
@@ -452,7 +452,7 @@ describe('commonErrorResponse', () => {
         };
         const output = Tools.commonErrorResponse(input);
         const eput = {
-            success: false,
+            ok: false,
             data: {
                 detail: 'hello'
             }
@@ -464,7 +464,7 @@ describe('commonErrorResponse', () => {
 describe('parseDataError', () => {
     test('Fail', () => {
         const input = {
-            success: false,
+            ok: false,
             data: {
                 content: 'hello'
             }
@@ -479,7 +479,7 @@ describe('parseDataError', () => {
 
     test('Success', () => {
         const input = {
-            success: true,
+            ok: true,
             data: {
                 content: 'hello'
             }
@@ -497,7 +497,7 @@ describe('getItem', () => {
     test('Fail', async () => {
         const response = {
             status: 400,
-            success: false,
+            ok: false,
             data: {
                 detail: 'error'
             }
@@ -511,7 +511,7 @@ describe('getItem', () => {
     test('Success', async () => {
         const response = {
             status: 200,
-            success: true,
+            ok: true,
             data: {
                 detail: 'success'
             }
@@ -527,7 +527,7 @@ describe('getList', () => {
     test('Fail', async () => {
         const response = {
             status: 400,
-            success: false,
+            ok: false,
             data: {
                 detail: 'error'
             }
@@ -546,7 +546,7 @@ describe('getList', () => {
     test('Success', async () => {
         const response = {
             status: 200,
-            success: true,
+            ok: true,
             data: {
                 items: [],
                 links: {},
@@ -566,7 +566,7 @@ describe('handleRemove', () => {
         const ids = '1,2,3';
         const response = {
             status: 200,
-            success: true,
+            ok: true,
             data: {
                 detail: 'hello'
             }
@@ -583,7 +583,7 @@ describe('handleRemove', () => {
         const ids = '1,2,3';
         const response = {
             status: 400,
-            success: false,
+            ok: false,
             data: {
                 detail: 'error'
             }
@@ -600,7 +600,7 @@ describe('handleRemove', () => {
         const ids = '1,2,3';
         const response = {
             status: 200,
-            success: true,
+            ok: true,
             data: {
                 detail: 'hello'
             }
@@ -971,4 +971,160 @@ test('getListItemToResponseData', () => {
         items: input
     };
     expect(output).toEqual(eput);
+});
+
+describe('parseErrorResponse', () => {
+    test('empty errors', () => {
+        const input = {};
+        const eput = {};
+        const output = Tools.parseErrorResponse(input);
+        expect(output).toEqual(eput);
+    });
+
+    test('only common error', () => {
+        const input = {
+            common: ['common error 1', 'common error 2']
+        };
+        const eput = {
+            common: ['common error 1', 'common error 2']
+        };
+        const output = Tools.parseErrorResponse(input);
+        expect(output).toEqual(eput);
+    });
+
+    test('only detail', () => {
+        const input = {
+            credential: {
+                email: ['has already been taken', 'bad email']
+            },
+            agree: ['missing agree']
+        };
+        const eput = {
+            email: ['has already been taken', 'bad email'],
+            agree: ['missing agree']
+        };
+        const output = Tools.parseErrorResponse(input);
+        expect(output).toEqual(eput);
+    });
+
+    test('mix', () => {
+        const input = {
+            common: ['common error 1', 'common error 2'],
+            credential: {
+                email: ['has already been taken', 'bad email']
+            },
+            agree: 'missing agree',
+            blank_value: '',
+            null_value: null
+        };
+        const eput = {
+            common: ['common error 1', 'common error 2'],
+            email: ['has already been taken', 'bad email'],
+            agree: ['missing agree']
+        };
+        const output = Tools.parseErrorResponse(input);
+        expect(output).toEqual(eput);
+    });
+});
+
+describe('toggleState', () => {
+    describe('null open', () => {
+        test('no key', () => {
+            const eput = {modal: true};
+            const open = null;
+            const key = undefined;
+            const state = {modal: false};
+            const output = Tools.toggleState(open, key)(state);
+            expect(output).toEqual(eput);
+        });
+
+        test('with key', () => {
+            const eput = {hello: false};
+            const open = null;
+            const key = 'hello';
+            const state = {hello: true};
+            const output = Tools.toggleState(open, key)(state);
+            expect(output).toEqual(eput);
+        });
+    });
+
+    describe('not null open', () => {
+        test('no key', () => {
+            const eput = {modal: true};
+            const open = true;
+            const key = undefined;
+            const state = {modal: true};
+            const output = Tools.toggleState(open, key)(state);
+            expect(output).toEqual(eput);
+        });
+
+        test('with key', () => {
+            const eput = {hello: false};
+            const open = false;
+            const key = 'hello';
+            const state = {hello: true};
+            const output = Tools.toggleState(open, key)(state);
+            expect(output).toEqual(eput);
+        });
+    });
+});
+
+describe('errorFormat', () => {
+    test('string', () => {
+        const eput = ['error'];
+        const input = 'error';
+        const output = Tools.errorFormat(input);
+        expect(output).toEqual(eput);
+    });
+
+    test('array', () => {
+        const eput = ['error'];
+        const input = ['error'];
+        const output = Tools.errorFormat(input);
+        expect(output).toEqual(eput);
+    });
+
+    test('other', () => {
+        const eput = [];
+        const input = {error: 'error'};
+        const output = Tools.errorFormat(input);
+        expect(output).toEqual(eput);
+    });
+});
+
+describe('setFormErrors', () => {
+    test('text error', () => {
+        const eput = {
+            uid: ['no number'],
+            email: ['invalid email'],
+            username: ['too short']
+        };
+        const errors = {
+            uid: 'no number',
+            email: 'invalid email',
+            username: 'too short',
+            password: {},
+            other: ''
+        };
+        const output = Tools.setFormErrors(errors);
+        expect(output).toEqual(eput);
+    });
+
+    test('array error', () => {
+        const eput = {
+            uid: ['no number'],
+            email: ['invalid email'],
+            username: ['too short'],
+            other1: ['hello']
+        };
+        const errors = {
+            uid: ['no number'],
+            email: ['invalid email'],
+            username: ['too short'],
+            other: [''],
+            other1: ['', 'hello']
+        };
+        const output = Tools.setFormErrors(errors);
+        expect(output).toEqual(eput);
+    });
 });

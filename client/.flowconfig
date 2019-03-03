@@ -11,5 +11,6 @@
 
 [options]
 module.name_mapper='^src' ->'<PROJECT_ROOT>/src'
+esproposal.optional_chaining=enable
 
 [version]

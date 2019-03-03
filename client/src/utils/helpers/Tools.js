@@ -39,6 +39,11 @@ export type FormState = {
     errors: Object
 };
 
+type Payload = {
+    data: string | FormData,
+    contentType: string
+};
+
 export type GetListResponseData = {
     links: {
         next: ?string,
@@ -98,7 +103,7 @@ export default class Tools {
 
     static navigateTo(history: Object) {
         return (url: string = '/', params: Array<mixed> = []) => history.push([url, ...params].join('/'));
-    } 
+    }
 
     static parseJson(input: any): string {
         try {
@@ -129,12 +134,7 @@ export default class Tools {
 
     static setStorage(key: string, value: any): void {
         try {
-            let newValue = value;
-            if (key === 'authData') {
-                newValue = {...this.getStorageObj(key), ...value};
-            }
-            newValue = JSON.stringify(newValue);
-            localStorage.setItem(LOCAL_STORAGE_PREFIX + '_' + key, newValue);
+            localStorage.setItem(LOCAL_STORAGE_PREFIX + '_' + key, JSON.stringify(value));
         } catch (error) {
             console.log(error);
         }
@@ -176,7 +176,7 @@ export default class Tools {
     }
 
     static getToken(): string {
-        const token = this.getStorageObj('authData').token;
+        const token = this.getStorageObj('auth').user?.token;
         return token ? token : '';
     }
 
@@ -208,27 +208,34 @@ export default class Tools {
         return Fingerprint2.x64hash128(values.join(''), 31);
     }
 
-    static payloadFromObject(data: Object = {}): Object {
+    static fileInObject(data: Object) {
+        return !!Object.values(data).filter(item => item instanceof Blob).length;
+    }
+
+    static getJsonPayload(data: Object): Payload {
+        return {
+            data: JSON.stringify(data),
+            contentType: 'application/json'
+        };
+    }
+
+    static getFormDataPayload(data: Object): Payload {
+        let formData = new FormData();
+        for (let key in data) {
+            const value = data[key];
+            formData.set(key, value);
+        }
+        return {
+            data: formData,
+            contentType: 'application/x-www-form-urlencoded'
+        };
+    }
+
+    static payloadFromObject(data: Object = {}): Payload {
         try {
-            if (Object.values(data).filter(item => item instanceof Blob).length) {
-                let formData = new FormData();
-                for (let key in data) {
-                    const value = data[key];
-                    formData.set(key, value);
-                }
-                return {
-                    data: formData,
-                    contentType: null
-                };
-            } else {
-                return {
-                    data: JSON.stringify(data),
-                    contentType: 'application/json'
-                };
-            }
+            return Tools.fileInObject(data) ? Tools.getFormDataPayload(data) : Tools.getJsonPayload(data);
         } catch (error) {
-            console.error(error);
-            return {};
+            return Tools.getJsonPayload({});
         }
     }
 
@@ -283,7 +290,7 @@ export default class Tools {
     }
 
     static logout(history: Object) {
-        this.removeStorage('authData');
+        this.removeStorage('auth');
         this.navigateTo(history)('login');
     }
 
@@ -613,9 +620,11 @@ export default class Tools {
         return id ? 'Update' : 'Add new';
     }
 
-    static getFieldId(formName: string, fieldName: string): string {
-        if (!formName || !fieldName) return '';
-        return `${formName}-${fieldName}`;
+    static getFieldId(formName: string) {
+        return (fieldName: string): string => {
+            if (!formName || !fieldName) return '';
+            return `${formName}-${fieldName}`;
+        };
     }
 
     static getListItemToResponseData(items?: Array<Object>): GetListResponseData {
@@ -651,7 +660,22 @@ export default class Tools {
         return (state: Object) => ({[key]: open === null ? !state[key] : !!open});
     }
 
-    static setFormErrors(errors: Object, key: string = 'formState') {
-        return (state: Object) => ({[key]: {errors: {...state[key].errors, ...errors}}});
+    static errorFormat(input: any): Array<any> {
+        if (!input) return [];
+        if (typeof input === 'string') return [input];
+        if (Array.isArray(input)) return input.filter(item => item);
+        return [];
+    }
+
+    static setFormErrors(errors: Object): Object {
+        return Object.entries(errors)
+            .map(([key, value]) => {
+                return [key, Tools.errorFormat(value)];
+            })
+            .filter(([_, value]) => value.length)
+            .reduce((result, [key, value]) => {
+                result[key] = value;
+                return result;
+            }, {});
     }
 }

@@ -4,10 +4,10 @@ import CustomModal from 'src/utils/components/modal/CustomModal';
 
 type Props = {
     open: boolean,
+    close: Function,
     title: string,
     size?: string,
     heading?: boolean,
-    close: Function,
     children: React.Node
 };
 

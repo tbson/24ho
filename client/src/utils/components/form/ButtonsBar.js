@@ -12,6 +12,7 @@ export default ({children, submitTitle}: Props) => {
             <div className="col right">
                 <button type="submit" className="btn btn-primary">
                     <span className="fas fa-check" />
+                    &nbsp;
                     {submitTitle}
                 </button>
             </div>
