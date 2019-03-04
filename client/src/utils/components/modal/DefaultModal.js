@@ -2,15 +2,6 @@
 import * as React from 'react';
 import CustomModal from 'src/utils/components/modal/CustomModal';
 
-type Props = {
-    open: boolean,
-    close: Function,
-    title: string,
-    size?: string,
-    heading?: boolean,
-    children: React.Node
-};
-
 export class Service {
     static handleEsc(open: boolean, callback: Function) {
         return (event: Object) => {
@@ -24,14 +15,22 @@ export class Service {
     }
 }
 
+type Props = {
+    open: boolean,
+    close: Function,
+    title: string,
+    size?: string,
+    heading?: boolean,
+    children: React.Node
+};
 export default ({open = false, size = 'md', heading = true, title = '', close, children}: Props) => {
     Service.listentEsc(open, close);
-    return open ? (
-        <CustomModal open={true} close={close} title={title} size={size} heading={heading}>
+    return (
+        <CustomModal open={open} close={close} title={title} size={size} heading={heading}>
             <div className="modal-inner">
                 {/* $FlowFixMe: No Type for cloneElement */}
                 {React.cloneElement(children, {close})}
             </div>
         </CustomModal>
-    ) : null;
+    );
 };
