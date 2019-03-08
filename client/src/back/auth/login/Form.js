@@ -9,10 +9,18 @@ import ButtonsBar from 'src/utils/components/form/ButtonsBar';
 import ErrorMessages from 'src/utils/components/form/ErrorMessages';
 
 export class Service {
-    static async loginReq(event: Object) {
-        const params = Tools.formDataToObj(new FormData(event.target));
+    static async request(e: Object) {
+        const params = Tools.formDataToObj(new FormData(e.target));
         const url = '/api/v1/admin/auth/';
         return await Tools.apiCall(url, params, 'POST');
+    }
+
+    static handleSubmit(onSuccess: Function, onError: Function) {
+        return async (e: Object) => {
+            e.preventDefault();
+            const r = await Service.request(e);
+            r.ok ? onSuccess(r.data) : onError(Tools.setFormErrors(r.data));
+        };
     }
 }
 
@@ -23,14 +31,7 @@ type Props = {
 };
 export default ({onChange, children, data = {}}: Props) => {
     const [errors, setErrors] = useState({});
-
-    const handleSubmit = async (e: Object) => {
-        e.preventDefault();
-        const r = await Service.loginReq(e);
-        r.ok ? onChange(r.data) : setErrors(Tools.setFormErrors(r.data));
-    };
-
-    return <Form onSubmit={handleSubmit} state={{data, errors}} children={children} />;
+    return <Form onSubmit={Service.handleSubmit(onChange, setErrors)} state={{data, errors}} children={children} />;
 };
 
 type FormProps = {

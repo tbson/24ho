@@ -1,6 +1,6 @@
 // @flow
 // $FlowFixMe: do not complain about hooks
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import * as React from 'react';
 import Tools from 'src/utils/helpers/Tools';
 import type {FormState} from 'src/utils/helpers/Tools';
@@ -10,10 +10,25 @@ import ButtonsBar from 'src/utils/components/form/ButtonsBar';
 import ErrorMessages from 'src/utils/components/form/ErrorMessages';
 
 export class Service {
-    static async loginReq(event: Object) {
-        const params = Tools.formDataToObj(new FormData(event.target));
+    static async request(params: Object) {
         const url = '/api/v1/admin/reset-password/';
         return await Tools.apiCall(url, params, 'POST');
+    }
+
+    static handleSubmit(onSuccess: Function, onError: Function) {
+        return async (e: Object) => {
+            e.preventDefault();
+            const params = Tools.formDataToObj(new FormData(e.target));
+            if (params.password !== params.passwordAgain) {
+                const error = {
+                    detail: 'Password mismatch!'
+                };
+                onError(Tools.setFormErrors(error));
+            } else {
+                const r = await Service.request(params);
+                r.ok ? onSuccess(r.data) : onError(Tools.setFormErrors(r.data));
+            }
+        };
     }
 }
 
@@ -27,14 +42,14 @@ type Props = {
 export default ({open, close, onChange, children, data = {}}: Props) => {
     const [errors, setErrors] = useState({});
 
-    const handleSubmit = async (e: Object) => {
-        e.preventDefault();
-        const r = await Service.loginReq(e);
-        r.ok ? onChange(r.data) : setErrors(Tools.setFormErrors(r.data));
-    };
+    useEffect(() => {
+        setErrors({});
+    }, [open]);
+
+    if (!open) return null;
     return (
         <DefaultModal open={open} close={close} title="Reset password">
-            <Form onSubmit={handleSubmit} state={{data, errors}} children={children} />
+            <Form onSubmit={Service.handleSubmit(onChange, setErrors)} state={{data, errors}} children={children} />
         </DefaultModal>
     );
 };
@@ -54,10 +69,10 @@ export const Form = ({onSubmit, children, state, submitTitle = 'Reset password'}
     const errorMessages = (name: string): Array<string> => state.errors[name] || [];
     return (
         <form name={name} onSubmit={onSubmit}>
-            <TextInput id={id('email')} type="email" label="Email" required={true} autoFocus={true} />
+            <TextInput id={id('username')} label="Username" required={true} autoFocus={true} />
 
             <TextInput id={id('password')} type="password" label="Password" required={true} />
-            <TextInput id={id('password-again')} type="password" label="Password again" required={true} />
+            <TextInput id={id('passwordAgain')} type="password" label="Password again" required={true} />
 
             <ErrorMessages errors={errors.detail} />
 
