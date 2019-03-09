@@ -290,8 +290,10 @@ export default class Tools {
     }
 
     static logout(history: Object) {
-        this.removeStorage('auth');
-        this.navigateTo(history)('login');
+        return () => {
+            this.removeStorage('auth');
+            this.navigateTo(history)('/login');
+        }
     }
 
     static popMessage(description: string | Object, type: string = 'success'): void {
@@ -321,7 +323,7 @@ export default class Tools {
                 Authorization: token ? `JWT ${token}` : undefined
             },
             mode: 'cors',
-            credentials: 'same-origin'
+            credentials: 'omit'
         };
 
         return config;
