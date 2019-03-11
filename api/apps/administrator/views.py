@@ -83,7 +83,7 @@ class LoginView(ObtainJSONWebToken):
 
 
 class ProfileView(APIView):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, )
 
     def get_object(self):
         return self.request.user
@@ -132,7 +132,7 @@ class ResetPasswordView(APIView):
         item.reset_password_created = None
         user.save()
         item.save()
-        return res()
+        return res({})
 
     # Reset password
     def post(self, request, format=None):
@@ -173,4 +173,4 @@ class ChangePasswordView(APIView):
         user.password = make_password(params["password"])
         user.save()
 
-        return res()
+        return res({})

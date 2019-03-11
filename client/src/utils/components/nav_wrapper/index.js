@@ -28,7 +28,7 @@ class App extends React.Component<Props, State> {
 
     constructor(props) {
         super(props);
-        this.logout = Tools.logout.bind(Tools, this.props.history);
+        this.logout = Tools.logout(this.props.history);
     }
 
     componentDidMount() {

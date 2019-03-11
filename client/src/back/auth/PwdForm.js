@@ -10,12 +10,12 @@ import ButtonsBar from 'src/utils/components/form/ButtonsBar';
 import ErrorMessages from 'src/utils/components/form/ErrorMessages';
 
 export class Service {
-    static async request(params: Object) {
-        const url = '/api/v1/admin/reset-password/';
+    static async request(mode: string, params: Object) {
+        const url = `/api/v1/admin/${mode}-password/`;
         return await Tools.apiCall(url, params, 'POST');
     }
 
-    static handleSubmit(onSuccess: Function, onError: Function) {
+    static handleSubmit(mode: string, onSuccess: Function, onError: Function) {
         return async (e: Object) => {
             e.preventDefault();
             const params = Tools.formDataToObj(new FormData(e.target));
@@ -25,7 +25,11 @@ export class Service {
                 };
                 onError(Tools.setFormErrors(error));
             } else {
-                const r = await Service.request(params);
+                delete params.passwordAgain;
+                if (mode === 'reset') {
+                    delete params.oldPassword;
+                }
+                const r = await Service.request(mode, params);
                 r.ok ? onSuccess(r.data) : onError(Tools.setFormErrors(r.data));
             }
         };
@@ -33,13 +37,14 @@ export class Service {
 }
 
 type Props = {
+    mode?: string,
     open: boolean,
     close: Function,
     onChange: Function,
     children?: React.Node,
     data?: Object
 };
-export default ({open, close, onChange, children, data = {}}: Props) => {
+export default ({mode = 'reset', open, close, onChange, children, data = {}}: Props) => {
     const [errors, setErrors] = useState({});
 
     useEffect(() => {
@@ -49,18 +54,24 @@ export default ({open, close, onChange, children, data = {}}: Props) => {
     if (!open) return null;
     return (
         <DefaultModal open={open} close={close} title="Reset password">
-            <Form onSubmit={Service.handleSubmit(onChange, setErrors)} state={{data, errors}} children={children} />
+            <Form
+                mode={mode}
+                onSubmit={Service.handleSubmit(mode, onChange, setErrors)}
+                state={{data, errors}}
+                children={children}
+            />
         </DefaultModal>
     );
 };
 
 type FormProps = {
+    mode: string,
     onSubmit: Function,
     state: FormState,
     children?: React.Node,
     submitTitle?: string
 };
-export const Form = ({onSubmit, children, state, submitTitle = 'Reset password'}: FormProps) => {
+export const Form = ({mode, onSubmit, children, state, submitTitle = 'Reset password'}: FormProps) => {
     const name = 'reset-password';
     const id = Tools.getFieldId(name);
     const {username, password} = state.data;
@@ -73,7 +84,9 @@ export const Form = ({onSubmit, children, state, submitTitle = 'Reset password'}
 
             <TextInput id={id('password')} type="password" label="Password" required={true} />
             <TextInput id={id('passwordAgain')} type="password" label="Password again" required={true} />
-
+            {mode === 'change' && (
+                <TextInput id={id('oldPassword')} type="password" label="Old password" required={true} />
+            )}
             <ErrorMessages errors={errors.detail} />
 
             <ButtonsBar children={children} submitTitle={submitTitle} />

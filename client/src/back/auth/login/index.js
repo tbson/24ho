@@ -5,7 +5,7 @@ import {useState, useEffect} from 'react';
 // $FlowFixMe: do not complain about importing node_modules
 import {withRouter} from 'react-router-dom';
 import Form from './Form';
-import ResetPwdForm from './ResetPwdForm';
+import ResetPwdForm from '../PwdForm';
 import Tools from 'src/utils/helpers/Tools';
 
 type Props = {
@@ -20,8 +20,14 @@ export const Login = ({history}: Props) => {
         Tools.getToken() && navigateTo();
     });
 
-    const onChange = data => {
+    const onLogin = data => {
         Tools.setStorage('auth', data) || navigateTo();
+    };
+
+    const onResetPwd = () => {
+        setModal(false);
+        const message = 'Reset password success. Please checking your email to confirm.';
+        Tools.popMessage(message);
     };
 
     return (
@@ -31,7 +37,7 @@ export const Login = ({history}: Props) => {
                     <div className="col-md-8 offset-md-2">
                         <div className="jumbotron">
                             <h2 className="center">LOGIN</h2>
-                            <Form onChange={onChange}>
+                            <Form onChange={onLogin}>
                                 <span className="pointer link" onClick={() => setModal(true)}>
                                     Reset password
                                 </span>
@@ -40,7 +46,7 @@ export const Login = ({history}: Props) => {
                     </div>
                 </div>
             </div>
-            <ResetPwdForm open={modal} close={() => setModal(false)} onChange={() => {}}>
+            <ResetPwdForm open={modal} close={() => setModal(false)} onChange={onResetPwd}>
                 <button type="button" className="btn btn-warning" action="close" onClick={() => setModal(false)}>
                     <span className="fas fa-times" />
                     &nbsp;Cancel

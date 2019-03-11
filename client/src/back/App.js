@@ -21,11 +21,11 @@ import NotMatch from 'src/utils/components/route/NotMatch';
 import Tools from 'src/utils/helpers/Tools';
 import PrivateRoute from 'src/utils/components/route/PrivateRoute';
 import Login from './auth/login/';
-import Profile from './auth/Profile';
+import Profile from './auth/profile/';
+import ResetPwd from './auth/reset_pwd/';
 /*
 import Administrator from './administrator/Administrator';
 import Customer from './customer/Customer';
-import ResetPassword from './auth/ResetPassword';
 import Variable from './variable/Variable';
 import Group from './group/Group';
 import Permission from './permission/Permission';
@@ -69,8 +69,8 @@ class App extends React.Component<Props> {
                 <Switch>
                     <Route exact path="/" component={Profile} />
                     <Route path="/login" component={Login} />
+                    <Route path="/reset-password/:token" component={ResetPwd} />
                     {/*
-                    <Route path="/reset-password/:token" component={ResetPassword} />
                     <Route path="/administrator" component={Administrator} />
                     <Route path="/customer" component={Customer} />
                     <Route path="/variable" component={Variable} />
