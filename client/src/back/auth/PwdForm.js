@@ -11,25 +11,39 @@ import ButtonsBar from 'src/utils/components/form/ButtonsBar';
 import ErrorMessages from 'src/utils/components/form/ErrorMessages';
 
 export class Service {
-    static async request(mode: string, params: Object) {
-        return await Tools.apiCall(apiUrls[`${mode}Password`], params, 'POST');
+    static request(mode: string) {
+        return async (params: Object) => await Tools.apiCall(apiUrls[`${mode}Password`], params, 'POST');
+    }
+
+    static validate(params: Object): Object {
+        const {password, passwordAgain} = params;
+        return password === passwordAgain
+            ? {}
+            : {
+                  detail: 'Password mismatch!'
+              };
+    }
+
+    static prepareParams(mode: string): Object {
+        return (params: Object) => {
+            mode === 'reset' && delete params.oldPassword;
+            delete params.passwordAgain;
+            return params;
+        };
     }
 
     static handleSubmit(mode: string, onSuccess: Function, onError: Function) {
+        const request = Service.request(mode);
+        const prepareParams = Service.prepareParams(mode);
+
         return async (e: Object) => {
             e.preventDefault();
             const params = Tools.formDataToObj(new FormData(e.target));
-            if (params.password !== params.passwordAgain) {
-                const error = {
-                    detail: 'Password mismatch!'
-                };
-                onError(Tools.setFormErrors(error));
+            const errors = Service.validate(params);
+            if (Tools.isEmpty(errors)) {
+                onError(Tools.setFormErrors(errors));
             } else {
-                delete params.passwordAgain;
-                if (mode === 'reset') {
-                    delete params.oldPassword;
-                }
-                const r = await Service.request(mode, params);
+                const r = await request(prepareParams({...params}));
                 r.ok ? onSuccess(r.data) : onError(Tools.setFormErrors(r.data));
             }
         };
