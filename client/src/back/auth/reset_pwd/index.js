@@ -4,12 +4,12 @@ import * as React from 'react';
 import {useState, useEffect} from 'react';
 // $FlowFixMe: do not complain about importing node_modules
 import {withRouter} from 'react-router-dom';
+import {apiUrls} from '../_data';
 import Tools from 'src/utils/helpers/Tools';
 
 export class Service {
     static async request(params: Object) {
-        const url = '/api/v1/admin/reset-password/';
-        return await Tools.apiCall(url, params);
+        return await Tools.apiCall(apiUrls.resetPassword, params);
     }
 
     static handleRequest(onSuccess: Function, onError: Function) {

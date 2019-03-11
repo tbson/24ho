@@ -8,7 +8,7 @@ const rawApiUrls = [
         controller: APP,
         endpoints: {
             profile: 'profile',
-            tokenAuth: 'token-auth',
+            auth: 'auth',
             resetPassword: 'reset-password',
             changePassword: 'change-password',
         },

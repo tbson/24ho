@@ -2,6 +2,7 @@
 // $FlowFixMe: do not complain about hooks
 import {useState, useEffect} from 'react';
 import * as React from 'react';
+import {apiUrls} from '../_data';
 import Tools from 'src/utils/helpers/Tools';
 import type {FormState} from 'src/utils/helpers/Tools';
 import TextInput from 'src/utils/components/input/TextInput';
@@ -11,13 +12,11 @@ import ErrorMessages from 'src/utils/components/form/ErrorMessages';
 
 export class Service {
     static async getProfileRequest() {
-        const url = '/api/v1/admin/profile/';
-        return await Tools.apiCall(url);
+        return await Tools.apiCall(apiUrls.profile);
     }
 
     static async setProfileRequest(params: Object) {
-        const url = '/api/v1/admin/profile/';
-        return await Tools.apiCall(url, params, 'POST');
+        return await Tools.apiCall(apiUrls.profile, params, 'POST');
     }
 
     static getProfile(callback: Function) {

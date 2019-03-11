@@ -2,6 +2,7 @@
 // $FlowFixMe: do not complain about hooks
 import {useState} from 'react';
 import * as React from 'react';
+import {apiUrls} from '../_data';
 import Tools from 'src/utils/helpers/Tools';
 import type {FormState} from 'src/utils/helpers/Tools';
 import TextInput from 'src/utils/components/input/TextInput';
@@ -11,8 +12,7 @@ import ErrorMessages from 'src/utils/components/form/ErrorMessages';
 export class Service {
     static async request(e: Object) {
         const params = Tools.formDataToObj(new FormData(e.target));
-        const url = '/api/v1/admin/auth/';
-        return await Tools.apiCall(url, params, 'POST');
+        return await Tools.apiCall(apiUrls.auth, params, 'POST');
     }
 
     static handleSubmit(onSuccess: Function, onError: Function) {

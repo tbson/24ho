@@ -182,7 +182,7 @@ class App extends React.Component<Props, State> {
         return (
             <div id="wrapper" className={this.state.toggled ? 'toggled' : ''}>
                 <div id="sidebar-wrapper">
-                    <div className="sidebar-brand">Viec.OnLine</div>
+                    <div className="sidebar-brand">24HOrder</div>
                     <ul className="sidebar-nav">
                         {renderMenu('profile')}
                         {renderMenu('administrator')}

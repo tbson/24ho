@@ -3,6 +3,7 @@
 import {useState, useEffect} from 'react';
 import * as React from 'react';
 import Tools from 'src/utils/helpers/Tools';
+import {apiUrls} from './_data';
 import type {FormState} from 'src/utils/helpers/Tools';
 import TextInput from 'src/utils/components/input/TextInput';
 import DefaultModal from 'src/utils/components/modal/DefaultModal';
@@ -11,8 +12,7 @@ import ErrorMessages from 'src/utils/components/form/ErrorMessages';
 
 export class Service {
     static async request(mode: string, params: Object) {
-        const url = `/api/v1/admin/${mode}-password/`;
-        return await Tools.apiCall(url, params, 'POST');
+        return await Tools.apiCall(apiUrls[`${mode}Password`], params, 'POST');
     }
 
     static handleSubmit(mode: string, onSuccess: Function, onError: Function) {
