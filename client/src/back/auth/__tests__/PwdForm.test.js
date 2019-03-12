@@ -1,13 +1,6 @@
-import Enzyme from 'enzyme';
-import Adapter from 'enzyme-adapter-react-16';
-import React from 'react';
-import {shallow} from 'enzyme';
-import {seeding} from '../_data';
 import Tools from 'src/utils/helpers/Tools';
-import PwdForm from '../PwdForm';
 import {Service} from '../PwdForm';
 
-Enzyme.configure({adapter: new Adapter()});
 
 beforeEach(() => {
     jest.restoreAllMocks();
