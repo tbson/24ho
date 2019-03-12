@@ -28,8 +28,8 @@ PyJWT==1.7.1
 pyparsing==2.2.0
 python-magic==0.4.15
 pytz==2017.3
-requests==2.18.1
+requests==2.21.0
 simplejson==3.11.1
 six==1.10.0
 uritemplate==3.0.0
-urllib3==1.21.1
+urllib3==1.24.1
