@@ -7,7 +7,6 @@ from .models import Variable
 from apps.administrator.models import Administrator
 from .serializers import VariableBaseSerializer
 from utils.helpers.test_helpers import TestHelpers
-from django.conf import settings
 # Create your tests here.
 
 
@@ -19,6 +18,7 @@ class VariableTestCase(TestCase):
         self.token = TestHelpers.testSetup(self)
         self.client = APIClient()
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + self.token)
+
         item0 = {
             "uid": "key0",
             "value": "value0",
