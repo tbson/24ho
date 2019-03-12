@@ -6,51 +6,52 @@ import ErrorMessages from './ErrorMessages';
 type Props = {
     id: string,
     type: string,
-    label: string,
-    errorMessages: Array<string>,
-    value?: string,
-    placeholder?: string,
     required: boolean,
     disabled?: boolean,
     autoFocus: boolean,
+    errMsg: Array<string>,
+    label: string,
+    value?: string,
+    placeholder?: string,
     onChange?: Function
 };
 
-export default class Input extends React.Component<Props> {
-    static defaultProps = {
-        type: 'text',
-        required: false,
-        disabled: false,
-        autoFocus: false,
-        errorMessages: []
+export default ({
+    id,
+    type = 'text',
+    required = false,
+    disabled = false,
+    autoFocus = false,
+    errMsg = [],
+    label,
+    value,
+    placeholder,
+    onChange
+}: Props) => {
+    const name = id.split('-').pop();
+    const className = `form-control ${errMsg.length ? 'is-invalid' : ''}`.trim();
+    const inputProps = {
+        id,
+        type,
+        required,
+        disabled,
+        autoFocus,
+        label,
+        placeholder,
+        name,
+        className,
+        defaultValue: value,
+        placeholder: placeholder || `${label}...`,
+        onChange: onChange === 'function' ? onChange : () => {}
     };
 
-    render() {
-        const {id, label, value, placeholder, onChange, errorMessages, required} = this.props;
-        const name = id.split('-').pop();
-        const className = `form-control ${errorMessages.length ? 'is-invalid' : ''}`.trim();
-        const inputProps = {
-            ...this.props,
-            name,
-            className,
-            defaultValue: value,
-            placeholder: placeholder || `${label}...`
-        };
-        if (typeof onChange === 'function') {
-            inputProps.onChange = onChange;
-        }
-
-        delete inputProps.errorMessages;
-        delete inputProps.value;
-
-        return (
-            <div className={`form-group ${name}-field`.trim()}>
-                <label htmlFor={id} className={required ? 'red-dot' : ''}>
-                    {label}
-                </label>
-                <input {...inputProps} />
-                <ErrorMessages errors={errorMessages} />
-            </div>
-        );
-    }
-}
+    return (
+        <div className={`form-group ${name}-field`.trim()}>
+            <label htmlFor={id} className={required ? 'red-dot' : ''}>
+                {label}
+            </label>
+            <input {...inputProps} />
+            <ErrorMessages errors={errMsg} />
+        </div>
+    );
+};
