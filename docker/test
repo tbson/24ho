@@ -1,5 +1,2 @@
-# coverage run --source='.' manage.py test && coverage html
-./exec coverage run --source='.' manage.py test apps.$1
-./exec coverage html
-
-./yarn test
+./exec_api coverage run --source='.' manage.py test apps.$1
+# ./exec coverage html

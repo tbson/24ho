@@ -12,7 +12,7 @@ from utils.common_classes.custom_permission import CustomPermission
 
 
 class VariableViewSet(GenericViewSet):
-    name = 'variable'
+    _name = 'variable'
     serializer_class = VariableBaseSerializer
     permission_classes = (CustomPermission, )
     search_fields = ('uid', 'value')
