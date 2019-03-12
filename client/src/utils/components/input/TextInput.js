@@ -5,15 +5,15 @@ import ErrorMessages from './ErrorMessages';
 
 type Props = {
     id: string,
-    type: string,
-    required: boolean,
+    type?: string,
+    required?: boolean,
     disabled?: boolean,
-    autoFocus: boolean,
-    errMsg: Array<string>,
-    label: string,
+    autoFocus?: boolean,
+    errMsg?: Array<string>,
     value?: string,
     placeholder?: string,
-    onChange?: Function
+    onChange?: Function,
+    label: string,
 };
 
 export default ({
