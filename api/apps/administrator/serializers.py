@@ -40,7 +40,7 @@ class AdministratorRetrieveSerializer(AdministratorBaseSerializer):
     groups = SerializerMethodField()
 
     def get_groups(self, obj):
-        result = [];
+        result = []
         for group in obj.user.groups.all():
             result.append(str(group.id))
         return ','.join(result)
@@ -60,11 +60,24 @@ class AdministratorCreateSerializer(AdministratorBaseSerializer):
     )
 
     def create(self, validated_data):
-        groups = []
-        for group in self.initial_data['groups'].split(','):
-            if group.isdigit():
-                groups.append(int(group))
         data = validated_data['user']
+
+        # Check duplicate username
+        try:
+            if data.get('username', None):
+                User.objects.get(username=data.get('username'))
+                raise serializers.ValidationError({'username': ['Duplicate username']})
+        except User.DoesNotExist:
+            pass
+
+        # Check duplicate email
+        try:
+            if data.get('email', None):
+                User.objects.get(email=data.get('email'))
+                raise serializers.ValidationError({'email': ['Duplicate email']})
+        except User.DoesNotExist:
+            pass
+
         user = User.objects.create_superuser(
             data.get('username', ''),
             data.get('email', ''),
@@ -73,10 +86,15 @@ class AdministratorCreateSerializer(AdministratorBaseSerializer):
             last_name=data.get('last_name', '')
         )
 
-        if len(list(groups)):
-            groupList = Group.objects.filter(id__in=groups)
-            for group in groupList:
-                group.user_set.add(user)
+        if 'groups' in self.initial_data:
+            groups = []
+            for group in self.initial_data['groups'].split(','):
+                if group.isdigit():
+                    groups.append(int(group))
+            if len(list(groups)):
+                groupList = Group.objects.filter(id__in=groups)
+                for group in groupList:
+                    group.user_set.add(user)
 
         return Administrator.objects.create(user=user)
 
@@ -136,4 +154,3 @@ class AdministratorUpdateSerializer(AdministratorBaseSerializer):
 
         instance.user = user
         return instance
-

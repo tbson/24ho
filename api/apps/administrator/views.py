@@ -25,7 +25,7 @@ from utils.helpers.res_tools import res, err_res
 
 class AdministratorViewSet(GenericViewSet):
 
-    name = 'administrator'
+    _name = 'administrator'
     permission_classes = (CustomPermission, )
     serializer_class = AdministratorBaseSerializer
     search_fields = ['user__username', 'user__email', 'user__first_name', 'user__last_name']
