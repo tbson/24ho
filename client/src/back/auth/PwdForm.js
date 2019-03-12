@@ -11,10 +11,7 @@ import ButtonsBar from 'src/utils/components/form/ButtonsBar';
 import ErrorMessages from 'src/utils/components/form/ErrorMessages';
 
 export class Service {
-    static request(mode: string) {
-        return async (params: Object) => await Tools.apiCall(apiUrls[`${mode}Password`], params, 'POST');
-    }
-
+    
     static validate(params: Object): Object {
         const {password, passwordAgain} = params;
         return password === passwordAgain
@@ -32,6 +29,10 @@ export class Service {
         };
     }
 
+    static request(mode: string) {
+        return async (params: Object) => await Tools.apiCall(apiUrls[`${mode}Password`], params, 'POST');
+    }
+
     static handleSubmit(mode: string, onSuccess: Function, onError: Function) {
         const request = Service.request(mode);
         const prepareParams = Service.prepareParams(mode);
@@ -40,7 +41,7 @@ export class Service {
             e.preventDefault();
             const params = Tools.formDataToObj(new FormData(e.target));
             const errors = Service.validate(params);
-            if (Tools.isEmpty(errors)) {
+            if (!Tools.isEmpty(errors)) {
                 onError(Tools.setFormErrors(errors));
             } else {
                 const r = await request(prepareParams({...params}));
@@ -65,7 +66,6 @@ export default ({mode = 'reset', open, close, onChange, children, data = {}}: Pr
         setErrors({});
     }, [open]);
 
-    if (!open) return null;
     return (
         <DefaultModal open={open} close={close} title="Reset password">
             <Form
@@ -86,7 +86,7 @@ type FormProps = {
     submitTitle?: string
 };
 export const Form = ({mode, onSubmit, children, state, submitTitle = 'Reset password'}: FormProps) => {
-    const name = 'reset-password';
+    const name = 'reset-pwd';
     const id = Tools.getFieldId(name);
     const {username, password} = state.data;
     const {errors} = state;
