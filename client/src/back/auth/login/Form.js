@@ -10,15 +10,15 @@ import ButtonsBar from 'src/utils/components/form/ButtonsBar';
 import ErrorMessages from 'src/utils/components/form/ErrorMessages';
 
 export class Service {
-    static async request(e: Object) {
-        const params = Tools.formDataToObj(new FormData(e.target));
+    static async request(params: Object) {
         return await Tools.apiCall(apiUrls.auth, params, 'POST');
     }
 
     static handleSubmit(onSuccess: Function, onError: Function) {
         return async (e: Object) => {
             e.preventDefault();
-            const r = await Service.request(e);
+            const params = Tools.formDataToObj(new FormData(e.target));
+            const r = await Service.request(params);
             r.ok ? onSuccess(r.data) : onError(Tools.setFormErrors(r.data));
         };
     }
@@ -46,12 +46,12 @@ export const Form = ({onSubmit, children, state, submitTitle = 'Submit'}: FormPr
     const {username, password} = state.data;
     const {errors} = state;
 
-    const errorMessages = (name: string): Array<string> => state.errors[name] || [];
+    const errMsg = (name: string): Array<string> => state.errors[name] || [];
     return (
         <form name={name} onSubmit={onSubmit}>
             <TextInput
                 id={id('username')}
-                errorMessages={errorMessages('username')}
+                errMsg={errMsg('username')}
                 label="Username"
                 value={username}
                 required={true}
@@ -60,7 +60,7 @@ export const Form = ({onSubmit, children, state, submitTitle = 'Submit'}: FormPr
 
             <TextInput
                 id={id('password')}
-                errorMessages={errorMessages('password')}
+                errMsg={errMsg('password')}
                 type="password"
                 label="Password"
                 value={password}
