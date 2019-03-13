@@ -4,12 +4,12 @@ import * as React from 'react';
 import Modal from 'react-modal';
 
 type Props = {
+    backgroundColor?: string,
     size: string,
     open: boolean,
     close: Function,
     title: string,
     heading: boolean,
-    backgroundColor: string,
     children: React.Node
 };
 

@@ -1,38 +1,28 @@
 import Enzyme from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import React from 'react';
-import {shallow, mount, render} from 'enzyme';
+import {mount} from 'enzyme';
 import DefaultModal from '../modal/DefaultModal';
 
 Enzyme.configure({adapter: new Adapter()});
 
 describe('DefaultModal', () => {
-    const formName = 'config';
-
-    beforeEach(() => {
-        jest.restoreAllMocks();
-    });
-
+    let props = {
+        open: false,
+        close: jest.fn(),
+        title: 'test',
+        children: <div />
+    };
 
     it('Hide', () => {
-        const props = {
-            open: false,
-            title: 'test',
-            handleClose: jest.fn(),
-            children: <div/>,
-        };
-        const wrapper = shallow(<DefaultModal {...props} />);
+        const wrapper = mount(<DefaultModal {...props} />);
         expect(wrapper.find('.modal-inner').exists()).toEqual(false);
     });
 
     it('Open', () => {
-        const props = {
-            open: true,
-            title: 'test',
-            handleClose: jest.fn(),
-            children: <div/>,
-        };
-        const wrapper = shallow(<DefaultModal {...props} />).first().shallow();
+        props.open = true;
+
+        const wrapper = mount(<DefaultModal {...props} />);
         expect(wrapper.find('.modal-inner').exists()).toEqual(true);
         expect(wrapper.find('h4').text()).toEqual('test');
     });

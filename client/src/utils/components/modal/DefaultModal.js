@@ -29,7 +29,7 @@ export default ({open = false, size = 'md', heading = true, title = '', close, c
         <CustomModal open={open} close={close} title={title} size={size} heading={heading}>
             <div className="modal-inner">
                 {/* $FlowFixMe: No Type for cloneElement */}
-                {React.cloneElement(children, {close})}
+                {React.cloneElement(children)}
             </div>
         </CustomModal>
     );
