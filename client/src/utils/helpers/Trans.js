@@ -45,7 +45,7 @@ export default class Trans {
 
     // $FlowFixMe: do not complain about missing arguments annotation
     static _(key: string, ...values): string {
-        let trans = this.getUsingLang() == defaultLang ? key : langDict[key];
+        let trans = Trans.getUsingLang() == defaultLang ? key : langDict[key];
         if (!trans) return key;
         for (let value of values) {
             trans = trans.replace(delimiter, value);

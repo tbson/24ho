@@ -19,25 +19,25 @@ test('translation', () => {
                 fr: 'halo'
             },
             {
-                vi: 'làm việc {{}} abc{{}}',
-                en: 'working {{}} abc{{}}',
-                fr: 'what? {{}} abc{{}}'
+                vi: 'làm việc {} abc{}',
+                en: 'working {} abc{}',
+                fr: 'what? {} abc{}'
             }
         ]
     };
     Trans.initTranslations(translations);
-    let __ = Trans.trans;
+    let __ = Trans._;
     // Default lang
     expect(__('đi ngủ')).toEqual('đi ngủ');
     expect(__('xin chào')).toEqual('xin chào');
-    expect(__('làm việc {{}} abc{{}}', 1)).toEqual('làm việc 1 abc');
+    expect(__('làm việc {} abc{}', 1)).toEqual('làm việc 1 abc');
 
     // En
     Trans.setLang('en');
-    __ = Trans.trans;
+    __ = Trans._;
     expect(__('đi ngủ')).toEqual('sleep');
     expect(__('xin chào')).toEqual('hello');
-    expect(__('làm việc {{}} abc{{}}', 1)).toEqual('working 1 abc');
+    expect(__('làm việc {} abc{}', 1)).toEqual('working 1 abc');
 
     // Not found
     expect(__('hello')).toEqual('hello');
