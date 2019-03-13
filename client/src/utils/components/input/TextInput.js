@@ -13,7 +13,7 @@ type Props = {
     value?: string,
     placeholder?: string,
     onChange?: Function,
-    label: string,
+    label: string
 };
 
 export default ({
@@ -28,7 +28,7 @@ export default ({
     placeholder,
     onChange
 }: Props) => {
-    const name = id.split('-').pop();
+    const name = id;
     const className = `form-control ${errMsg.length ? 'is-invalid' : ''}`.trim();
     const inputProps = {
         id,
