@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import Tools from 'src/utils/helpers/Tools';
-import ErrorMessages from './ErrorMessages';
+import ErrorMessages from '../form/ErrorMessages';
 
 type Props = {
     id: string,
