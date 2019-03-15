@@ -28,7 +28,7 @@ export default ({
     placeholder,
     onChange
 }: Props) => {
-    const name = id;
+    const name = id.split('-').pop();
     const className = `form-control ${errMsg.length ? 'is-invalid' : ''}`.trim();
     const inputProps = {
         id,
