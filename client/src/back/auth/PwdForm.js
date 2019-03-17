@@ -1,7 +1,6 @@
 // @flow
-// $FlowFixMe: do not complain about hooks
-import {useState, useEffect} from 'react';
 import * as React from 'react';
+import {useState, useEffect} from 'react';
 import Tools from 'src/utils/helpers/Tools';
 import {apiUrls} from './_data';
 import type {FormState} from 'src/utils/helpers/Tools';

@@ -1,32 +1,38 @@
 // @flow
 import * as React from 'react';
+import Tools from 'src/utils/helpers/Tools';
+
+export class Service {
+    static onSearch(callback: Function) {
+        return (e: Object) => {
+            e.preventDefault();
+            const {keyword} = Tools.formDataToObj(new FormData(e.target));
+            if (!keyword || keyword.length > 2) callback(keyword);
+        };
+    }
+}
 
 type SearchInputPropTypes = {
-    show: boolean,
+    show?: boolean,
     onSearch: Function
 };
 
-export class SearchInput extends React.Component<SearchInputPropTypes> {
-    static defaultProps = {
-        show: true
-    };
-
-    render() {
-        if (!this.props.show) return null;
-        return (
-            <form onSubmit={this.props.onSearch}>
-                <div className="input-group mb-3">
-                    <input type="text" name="search" className="form-control" placeholder="Search..." />
-                    <div className="input-group-append">
-                        <button className="btn btn-outline-secondary">
-                            <span className="fas fa-check" />
-                        </button>
-                    </div>
+export const SearchInput = ({show = true, onSearch}: SearchInputPropTypes) => {
+    if (!show) return null;
+    const onSubmit = Service.onSearch(onSearch);
+    return (
+        <form onSubmit={onSubmit}>
+            <div className="input-group mb-3">
+                <input type="text" name="keyword" className="form-control" placeholder="Search..." />
+                <div className="input-group-append">
+                    <button className="btn btn-outline-secondary" style={{borderColor: '#C3CAD1'}}>
+                        <span className="fas fa-search" />
+                    </button>
                 </div>
-            </form>
-        );
-    }
-}
+            </div>
+        </form>
+    );
+};
 
 type PaginationPropTypes = {
     next: ?string,

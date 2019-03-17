@@ -310,6 +310,14 @@ export default class Tools {
         }
     }
 
+    static popMessageOrRedirect(resp: Object) {
+        if ([401].includes(resp.status)) {
+            Tools.removeStorage('auth');
+            window.location = BASE_URL + 'login';
+        }
+        Tools.popMessage(resp.data, 'error');
+    }
+
     static toggleGlobalLoading(spinning: boolean = true): void {
         this.emitter.emit('TOGGLE_SPINNER', spinning);
     }
@@ -389,7 +397,8 @@ export default class Tools {
             const config = usePayload ? preparePayload.config : Tools.defaultRequestConfig(method);
 
             if (!usePayload) {
-                url += '?' + this.urlDataEncode(data);
+                const urlData = this.urlDataEncode(data);
+                url += urlData ? '?' + urlData : '';
             }
 
             const response = await fetch(url, config);

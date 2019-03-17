@@ -29,17 +29,22 @@ export function seeding(numberOfItems: number, single: boolean = false): any {
 }
 
 export type FormValues = {
-    id?: number,
     uid: string,
     value: string
 };
+
+export type DbRow = FormValues & {
+    id: number
+};
+
+export type TRow = DbRow & {
+    checked: boolean
+}
+
+export type ListItem = Array<TRow>;
 
 export const defaultFormValues: FormValues = {
     id: 0,
     uid: '',
     value: ''
-};
-
-export type FormValuesWithCheck = FormValues & {
-    checked: boolean
 };

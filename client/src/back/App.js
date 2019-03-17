@@ -23,10 +23,10 @@ import PrivateRoute from 'src/utils/components/route/PrivateRoute';
 import Login from './auth/login/';
 import Profile from './auth/profile/';
 import ResetPwd from './auth/reset_pwd/';
+import Variable from './variable/';
 /*
 import Administrator from './administrator/Administrator';
 import Customer from './customer/Customer';
-import Variable from './variable/Variable';
 import Group from './group/Group';
 import Permission from './permission/Permission';
 import Tag from './tag/Tag';
@@ -70,10 +70,10 @@ class App extends React.Component<Props> {
                     <Route exact path="/" component={Profile} />
                     <Route path="/login" component={Login} />
                     <Route path="/reset-password/:token" component={ResetPwd} />
+                    <Route path="/variable" component={Variable} />
                     {/*
                     <Route path="/administrator" component={Administrator} />
                     <Route path="/customer" component={Customer} />
-                    <Route path="/variable" component={Variable} />
                     <Route path="/group" component={Group} />
                     <Route path="/permission" component={Permission} />
                     <Route path="/tag" component={Tag} />
