@@ -2,9 +2,7 @@ import json
 import logging
 from rest_framework.test import APIClient
 from django.test import TestCase
-from django.urls import reverse
 from .models import Variable
-from apps.administrator.models import Administrator
 from .serializers import VariableBaseSerializer
 from utils.helpers.test_helpers import TestHelpers
 # Create your tests here.

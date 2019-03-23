@@ -24,24 +24,4 @@ urlpatterns = (
         'variable/',
         include('apps.variable.urls', namespace='variable'),
     ),
-    path(
-        'category/',
-        include('apps.category.urls', namespace='category'),
-    ),
-    path(
-        'banner/',
-        include('apps.banner.urls', namespace='banner'),
-    ),
-    path(
-        'article/',
-        include('apps.article.urls', namespace='article'),
-    ),
-    path(
-        'attach/',
-        include('apps.attach.urls', namespace='attach'),
-    ),
-    path(
-        'tag/',
-        include('apps.tag.urls', namespace='tag'),
-    ),
 )

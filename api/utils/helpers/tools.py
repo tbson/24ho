@@ -9,7 +9,8 @@ from django.core.mail import EmailMultiAlternatives
 from django.conf import settings
 
 
-loop = asyncio.get_event_loop()
+loop = asyncio.new_event_loop()
+asyncio.set_event_loop(loop)
 
 
 class Tools():

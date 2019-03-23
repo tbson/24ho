@@ -48,12 +48,7 @@ PROJECT_APPS = [
     'apps.customer',
     'apps.permission',
     'apps.group',
-    'apps.category',
-    'apps.banner',
-    'apps.article',
-    'apps.attach',
-    'apps.tag',
-    'apps.server_rendering',
+    'apps.sr',
 ]
 
 INSTALLED_APPS = REQUIRED_APPS + PROJECT_APPS
