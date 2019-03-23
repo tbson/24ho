@@ -1,8 +1,8 @@
 // @flow
 import * as React from 'react';
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useRef} from 'react';
 import Tools from 'src/utils/helpers/Tools';
-import {apiUrls} from './_data';
+import {apiUrls, defaultInputs} from './_data';
 import type {FormState} from 'src/utils/helpers/Tools';
 import TextInput from 'src/utils/components/input/TextInput';
 import DefaultModal from 'src/utils/components/modal/DefaultModal';
@@ -20,26 +20,27 @@ export class Service {
         return await Tools.apiCall(apiUrls.crud + id);
     }
 
-    static handleSubmit(id: number, onSuccess: Function, onError: Function) {
-        return (e: Object) => {
+    static handleSubmit(id: number, close: Function, onSuccess: Function, onError: Function, setData: Function) {
+        return (needToClose: boolean) => (e: Object) => {
             e.preventDefault();
             const params = Tools.formDataToObj(new FormData(e.target));
             return Service.changeRequest(id ? {...params, id} : params)
-                .then(resp =>
-                    resp.ok
-                        ? onSuccess({...resp.data, checked: false}, id ? 'update' : 'add')
-                        : Promise.reject(resp.data)
-                )
+                .then(resp => {
+                    if (!resp.ok) return Promise.reject(resp.data);
+                    setData(defaultInputs);
+                    needToClose && close();
+                    onSuccess({...resp.data, checked: false}, id ? 'update' : 'add');
+                })
                 .catch(err => onError(Tools.setFormErrors(err)));
         };
     }
 
     static handleRetrieve(id: number, callback: Function) {
         return !id
-            ? callback({})
+            ? callback(defaultInputs)
             : Service.retrieveRequest(id)
-                  .then(resp => (resp.ok ? callback(resp.data) : callback({})))
-                  .catch(() => callback({}));
+                  .then(resp => (resp.ok ? callback(resp.data) : callback(defaultInputs)))
+                  .catch(() => callback(defaultInputs));
     }
 }
 
@@ -50,26 +51,30 @@ type Props = {
     onChange: Function,
     children?: React.Node
 };
-export default ({id, open, close, onChange, children}: Props) => {
+export default ({id, open: _open, close, onChange, children}: Props) => {
     const [errors, setErrors] = useState({});
-    const [data, setData] = useState({});
-    const [openModal, setOpenModal] = useState(false);
+    const [data, setData] = useState(defaultInputs);
+    const [open, setOpen] = useState(false);
 
-    const handleSubmit = Service.handleSubmit(id, onChange, setErrors);
+    const handleSubmit = Service.handleSubmit(id, close, onChange, setErrors, setData);
+
+    const afterRetrieve = (open: boolean) => (data: Object) => {
+        setData(data);
+        setOpen(open);
+    };
+
+    const emptyForm = (): boolean => {
+        setErrors({});
+        setData(defaultInputs);
+        return true;
+    };
 
     useEffect(() => {
-        setErrors({});
-        setData({});
-        open
-            ? Service.handleRetrieve(id, data => {
-                  setData(data);
-                  setOpenModal(open);
-              })
-            : setOpenModal(open);
-    }, [open]);
+        emptyForm() && _open ? Service.handleRetrieve(id, afterRetrieve(_open)) : setOpen(_open);
+    }, [_open]);
 
     return (
-        <DefaultModal open={openModal} close={close} title="Variable manager">
+        <DefaultModal open={open} close={close} title="Variable manager">
             <Form onSubmit={handleSubmit} state={{data, errors}} children={children} />
         </DefaultModal>
     );
@@ -81,21 +86,48 @@ type FormProps = {
     children?: React.Node,
     submitTitle?: string
 };
-export const Form = ({onSubmit, children, state, submitTitle = 'Save'}: FormProps) => {
+export const Form = ({onSubmit: _onSubmit, children, state, submitTitle = 'Save'}: FormProps) => {
+    const [needToClose, setNeedToClose] = useState(true);
+    const formElm = useRef(null);
+    const firstInputSelector = "[name='uid']";
+
+    const resetAndFocus = form => {
+        if (!form) return;
+        const firstInput = form.querySelector(firstInputSelector);
+        form.reset();
+        firstInput && firstInput.focus();
+    };
+
+    useEffect(() => {
+        resetAndFocus(formElm.current);
+    });
+
     const name = 'variable';
-    const id = Tools.getFieldId(name);
-    const {uid, value} = state.data;
+    const fieldId = Tools.getFieldId(name);
+    const {id, uid, value} = state.data;
     const {errors} = state;
 
     const errMsg = (name: string): Array<string> => state.errors[name] || [];
+
+    const onSubmit = _onSubmit(needToClose);
+
+    const onClick = e => setNeedToClose(!e.screenY && !e.screenY && !id ? false : true);
+
     return (
-        <form name={name} onSubmit={onSubmit}>
-            <TextInput id={id('uid')} label="Key" value={uid} errMsg={errMsg('uid')} required={true} autoFocus={true} />
-            <TextInput id={id('value')} label="value" value={value} errMsg={errMsg('value')} required={true} />
+        <form name={name} ref={formElm} onSubmit={onSubmit}>
+            <TextInput
+                id={fieldId('uid')}
+                label="Key"
+                value={uid}
+                errMsg={errMsg('uid')}
+                required={true}
+                autoFocus={true}
+            />
+            <TextInput id={fieldId('value')} label="value" value={value} errMsg={errMsg('value')} required={true} />
 
             <ErrorMessages errors={errors.detail} />
 
-            <ButtonsBar children={children} submitTitle={submitTitle} />
+            <ButtonsBar children={children} submitTitle={submitTitle} onClick={onClick} />
         </form>
     );
 };

@@ -4,6 +4,7 @@ import React from 'react';
 import {shallow, mount, render} from 'enzyme';
 import Tools from 'src/utils/helpers/Tools';
 import {Service} from '../MainForm/';
+import {defaultInputs} from '../_data';
 
 Enzyme.configure({adapter: new Adapter()});
 
@@ -64,40 +65,83 @@ describe('Service.retrieveRequest', () => {
 
 describe('Service.handleSubmit', () => {
     describe('Zero ID', () => {
-        it('Success', async () => {
-            const params = {key: 'value'};
-            const checkedParams = {key: 'value', checked: false};
-            const id = 0;
-            const onSuccess = jest.fn();
-            const onError = jest.fn();
-            const e = {preventDefault: () => {}};
+        describe('Success', () => {
+            it('Keep dialog', async () => {
+                const params = {key: 'value'};
+                const checkedParams = {key: 'value', checked: false};
+                const id = 0;
+                const close = jest.fn();
+                const onSuccess = jest.fn();
+                const onError = jest.fn();
+                const setData = jest.fn();
+                const needToClose = false;
+                const e = {preventDefault: () => {}};
 
-            jest.spyOn(Tools, 'formDataToObj').mockImplementation(() => params);
-            const changeRequest = jest.spyOn(Service, 'changeRequest').mockImplementation(async () => okResp);
+                jest.spyOn(Tools, 'formDataToObj').mockImplementation(() => params);
+                const changeRequest = jest.spyOn(Service, 'changeRequest').mockImplementation(async () => okResp);
 
-            await Service.handleSubmit(id, onSuccess, onError)(e);
+                await Service.handleSubmit(id, close, onSuccess, onError, setData)(needToClose)(e);
 
-            expect(changeRequest).toHaveBeenCalled();
-            expect(changeRequest.mock.calls[0][0]).toEqual(params);
+                expect(changeRequest).toHaveBeenCalled();
+                expect(changeRequest.mock.calls[0][0]).toEqual(params);
 
-            expect(onSuccess).toHaveBeenCalled();
-            expect(onSuccess.mock.calls[0][0]).toEqual(checkedParams);
-            expect(onSuccess.mock.calls[0][1]).toEqual('add');
+                expect(onSuccess).toHaveBeenCalled();
+                expect(onSuccess.mock.calls[0][0]).toEqual(checkedParams);
+                expect(onSuccess.mock.calls[0][1]).toEqual('add');
 
-            expect(onError).not.toHaveBeenCalled();
+                expect(setData).toHaveBeenCalled();
+                expect(setData.mock.calls[0][0]).toEqual(defaultInputs);
+
+                expect(close).not.toHaveBeenCalled();
+                expect(onError).not.toHaveBeenCalled();
+            });
+
+            it('Close dialog', async () => {
+                const params = {key: 'value'};
+                const checkedParams = {key: 'value', checked: false};
+                const id = 0;
+                const close = jest.fn();
+                const onSuccess = jest.fn();
+                const onError = jest.fn();
+                const setData = jest.fn();
+                const needToClose = true;
+                const e = {preventDefault: () => {}};
+
+                jest.spyOn(Tools, 'formDataToObj').mockImplementation(() => params);
+                const changeRequest = jest.spyOn(Service, 'changeRequest').mockImplementation(async () => okResp);
+
+                await Service.handleSubmit(id, close, onSuccess, onError, setData)(needToClose)(e);
+
+                expect(changeRequest).toHaveBeenCalled();
+                expect(changeRequest.mock.calls[0][0]).toEqual(params);
+
+                expect(onSuccess).toHaveBeenCalled();
+                expect(onSuccess.mock.calls[0][0]).toEqual(checkedParams);
+                expect(onSuccess.mock.calls[0][1]).toEqual('add');
+
+                expect(setData).toHaveBeenCalled();
+                expect(setData.mock.calls[0][0]).toEqual(defaultInputs);
+
+                expect(close).toHaveBeenCalled();
+
+                expect(onError).not.toHaveBeenCalled();
+            });
         });
 
         it('Error', async () => {
             const params = {key: 'value'};
             const id = 0;
+            const close = jest.fn();
             const onSuccess = jest.fn();
             const onError = jest.fn();
+            const setData = jest.fn();
+            const needToClose = true;
             const e = {preventDefault: () => {}};
 
             jest.spyOn(Tools, 'formDataToObj').mockImplementation(() => params);
             const changeRequest = jest.spyOn(Service, 'changeRequest').mockImplementation(async () => failResp);
 
-            await Service.handleSubmit(id, onSuccess, onError)(e);
+            await Service.handleSubmit(id, close, onSuccess, onError, setData)(needToClose)(e);
 
             expect(onSuccess).not.toHaveBeenCalled();
 
@@ -108,8 +152,11 @@ describe('Service.handleSubmit', () => {
         it('Exception', async () => {
             const params = {key: 'value'};
             const id = 0;
+            const close = jest.fn();
             const onSuccess = jest.fn();
             const onError = jest.fn();
+            const setData = jest.fn();
+            const needToClose = true;
             const e = {preventDefault: () => {}};
 
             jest.spyOn(Tools, 'formDataToObj').mockImplementation(() => params);
@@ -117,7 +164,7 @@ describe('Service.handleSubmit', () => {
                 .spyOn(Service, 'changeRequest')
                 .mockImplementation(async () => Promise.reject(failResp.data));
 
-            await Service.handleSubmit(id, onSuccess, onError)(e);
+            await Service.handleSubmit(id, close, onSuccess, onError, setData)(needToClose)(e);
 
             expect(onSuccess).not.toHaveBeenCalled();
 
@@ -127,41 +174,86 @@ describe('Service.handleSubmit', () => {
     });
 
     describe('Non Zero ID', () => {
-        it('Success', async () => {
-            const params = {key: 'value'};
-            const paramsWithId = {id: 1, key: 'value'};
-            const checkedParams = {key: 'value', checked: false};
-            const id = 1;
-            const onSuccess = jest.fn();
-            const onError = jest.fn();
-            const e = {preventDefault: () => {}};
+        describe('Success', () => {
+            it('Keep dialog', async () => {
+                const params = {key: 'value'};
+                const paramsWithId = {id: 1, key: 'value'};
+                const checkedParams = {key: 'value', checked: false};
+                const id = 1;
+                const close = jest.fn();
+                const onSuccess = jest.fn();
+                const onError = jest.fn();
+                const setData = jest.fn();
+                const needToClose = false;
+                const e = {preventDefault: () => {}};
 
-            jest.spyOn(Tools, 'formDataToObj').mockImplementation(() => params);
-            const changeRequest = jest.spyOn(Service, 'changeRequest').mockImplementation(async () => okResp);
+                jest.spyOn(Tools, 'formDataToObj').mockImplementation(() => params);
+                const changeRequest = jest.spyOn(Service, 'changeRequest').mockImplementation(async () => okResp);
 
-            await Service.handleSubmit(id, onSuccess, onError)(e);
+                await Service.handleSubmit(id, close, onSuccess, onError, setData)(needToClose)(e);
 
-            expect(changeRequest).toHaveBeenCalled();
-            expect(changeRequest.mock.calls[0][0]).toEqual(paramsWithId);
+                expect(changeRequest).toHaveBeenCalled();
+                expect(changeRequest.mock.calls[0][0]).toEqual(paramsWithId);
 
-            expect(onSuccess).toHaveBeenCalled();
-            expect(onSuccess.mock.calls[0][0]).toEqual(checkedParams);
-            expect(onSuccess.mock.calls[0][1]).toEqual('update');
+                expect(onSuccess).toHaveBeenCalled();
+                expect(onSuccess.mock.calls[0][0]).toEqual(checkedParams);
+                expect(onSuccess.mock.calls[0][1]).toEqual('update');
 
-            expect(onError).not.toHaveBeenCalled();
+                expect(setData).toHaveBeenCalled();
+                expect(setData.mock.calls[0][0]).toEqual(defaultInputs);
+
+                expect(close).not.toHaveBeenCalled();
+
+                expect(onError).not.toHaveBeenCalled();
+            });
+
+            it('Close dialog', async () => {
+                const params = {key: 'value'};
+                const paramsWithId = {id: 1, key: 'value'};
+                const checkedParams = {key: 'value', checked: false};
+                const id = 1;
+                const close = jest.fn();
+                const onSuccess = jest.fn();
+                const onError = jest.fn();
+                const setData = jest.fn();
+                const needToClose = true;
+                const e = {preventDefault: () => {}};
+
+                jest.spyOn(Tools, 'formDataToObj').mockImplementation(() => params);
+                const changeRequest = jest.spyOn(Service, 'changeRequest').mockImplementation(async () => okResp);
+
+                await Service.handleSubmit(id, close, onSuccess, onError, setData)(needToClose)(e);
+
+                expect(changeRequest).toHaveBeenCalled();
+                expect(changeRequest.mock.calls[0][0]).toEqual(paramsWithId);
+
+                expect(onSuccess).toHaveBeenCalled();
+                expect(onSuccess.mock.calls[0][0]).toEqual(checkedParams);
+                expect(onSuccess.mock.calls[0][1]).toEqual('update');
+
+                expect(setData).toHaveBeenCalled();
+                expect(setData.mock.calls[0][0]).toEqual(defaultInputs);
+
+                expect(close).toHaveBeenCalled();
+
+                expect(onError).not.toHaveBeenCalled();
+            });
         });
 
         it('Error', async () => {
             const params = {key: 'value'};
             const id = 1;
+            const close = jest.fn();
             const onSuccess = jest.fn();
             const onError = jest.fn();
+            const setData = jest.fn();
+            const needToClose = true;
             const e = {preventDefault: () => {}};
 
             jest.spyOn(Tools, 'formDataToObj').mockImplementation(() => params);
             const changeRequest = jest.spyOn(Service, 'changeRequest').mockImplementation(async () => failResp);
 
-            await Service.handleSubmit(id, onSuccess, onError)(e);
+            await Service.handleSubmit(id, close, onSuccess, onError, setData)(needToClose)(e);
 
             expect(onSuccess).not.toHaveBeenCalled();
 
@@ -172,16 +264,19 @@ describe('Service.handleSubmit', () => {
         it('Exception', async () => {
             const params = {key: 'value'};
             const id = 1;
+            const close = jest.fn();
             const onSuccess = jest.fn();
             const onError = jest.fn();
-            const e = {preventDefault: () => {}};
+            const setData = jest.fn();
+            const needToClose = true;
+            const e = {preventDefault: () => {}}; 
 
             jest.spyOn(Tools, 'formDataToObj').mockImplementation(() => params);
             const changeRequest = jest
                 .spyOn(Service, 'changeRequest')
                 .mockImplementation(async () => Promise.reject(failResp.data));
 
-            await Service.handleSubmit(id, onSuccess, onError)(e);
+            await Service.handleSubmit(id, close, onSuccess, onError, setData)(needToClose)(e);
 
             expect(onSuccess).not.toHaveBeenCalled();
 
@@ -203,7 +298,7 @@ describe('Service.handleRetrieve', () => {
         expect(retrieveRequest).not.toHaveBeenCalled();
 
         expect(callback).toHaveBeenCalled();
-        expect(callback.mock.calls[0][0]).toEqual({});
+        expect(callback.mock.calls[0][0]).toEqual(defaultInputs);
     });
 
     it('Success', async () => {
@@ -227,7 +322,7 @@ describe('Service.handleRetrieve', () => {
         await Service.handleRetrieve(id, callback);
 
         expect(callback).toHaveBeenCalled();
-        expect(callback.mock.calls[0][0]).toEqual({});
+        expect(callback.mock.calls[0][0]).toEqual(defaultInputs);
     });
 
     it('Exception', async () => {
@@ -241,6 +336,6 @@ describe('Service.handleRetrieve', () => {
         await Service.handleRetrieve(id, callback);
 
         expect(callback).toHaveBeenCalled();
-        expect(callback.mock.calls[0][0]).toEqual({});
+        expect(callback.mock.calls[0][0]).toEqual(defaultInputs);
     });
 });

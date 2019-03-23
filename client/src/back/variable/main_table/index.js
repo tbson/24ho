@@ -48,7 +48,6 @@ export default ({}: Props) => {
     };
 
     const onChange = (data: TRow, type: string) => {
-        setIsFormOpen(false);
         setList(listAction(data)[type]());
     };
 

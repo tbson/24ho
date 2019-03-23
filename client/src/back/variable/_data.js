@@ -39,11 +39,11 @@ export type DbRow = FormValues & {
 
 export type TRow = DbRow & {
     checked: boolean
-}
+};
 
 export type ListItem = Array<TRow>;
 
-export const defaultFormValues: FormValues = {
+export const defaultInputs: FormValues = {
     id: 0,
     uid: '',
     value: ''
