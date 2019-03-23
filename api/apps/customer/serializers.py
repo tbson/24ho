@@ -49,8 +49,25 @@ class CustomerCreateSerializer(CustomerBaseSerializer):
     )
 
     def create(self, validated_data):
-        group = Group.objects.get(name='customer')
+        group, created = Group.objects.get_or_create(name='customer')
         data = validated_data['user']
+
+        # Check duplicate username
+        try:
+            if data.get('username', None):
+                User.objects.get(username=data.get('username'))
+                raise serializers.ValidationError({'username': ['Duplicate username']})
+        except User.DoesNotExist:
+            pass
+
+        # Check duplicate email
+        try:
+            if data.get('email', None):
+                User.objects.get(email=data.get('email'))
+                raise serializers.ValidationError({'email': ['Duplicate email']})
+        except User.DoesNotExist:
+            pass
+
         user = User.objects.create_user(
             data.get('username', ''),
             data.get('email', ''),

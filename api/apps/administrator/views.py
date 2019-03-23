@@ -107,17 +107,14 @@ class ResetPasswordView(APIView):
     permission_classes = (AllowAny, )
 
     def get_object(self, queryStr, type="username"):
-        try:
-            if type == "username":
-                return Administrator.objects.get(user__username=queryStr)
-            elif type == "reset_password_token":
-                return Administrator.objects.get(reset_password_token=queryStr)
-            elif type == "change_password_token":
-                return Administrator.objects.get(change_password_token=queryStr)
-            else:
-                raise Http404
-        except Administrator.DoesNotExist:
-            raise Http404
+        if type == "username":
+            return Administrator.objects.get(user__username=queryStr)
+        elif type == "reset_password_token":
+            return Administrator.objects.get(reset_password_token=queryStr)
+        elif type == "change_password_token":
+            return Administrator.objects.get(change_password_token=queryStr)
+        else:
+            raise Administrator.DoesNotExist
 
     # Reset password confirm
     def get(self, request, format=None):
@@ -137,7 +134,11 @@ class ResetPasswordView(APIView):
     # Reset password
     def post(self, request, format=None):
         params = self.request.data
-        item = self.get_object(params["username"])
+        try:
+            item = self.get_object(params["username"])
+        except Administrator.DoesNotExist:
+            return res({"url": ""})
+
         user = item.user
 
         token = Tools.getUuid()
