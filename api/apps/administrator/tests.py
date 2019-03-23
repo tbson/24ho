@@ -2,7 +2,6 @@ import json
 import logging
 from rest_framework.test import APIClient
 from django.test import TestCase
-from django.urls import reverse
 from .models import Administrator
 from .serializers import AdministratorCreateSerializer
 from utils.helpers.test_helpers import TestHelpers
@@ -219,12 +218,14 @@ class AdministratorTestCase(TestCase):
 
         #  Check new password
         response = self.client.post(
-            reverse('api_v1:administrator:login'),
+            "/api/v1/admin/auth/",
             {
                 'username': env.TEST_ADMIN['username'],
                 'password': "newpassword"
-            }
+            },
+            format='json'
         )
+
         self.assertEqual(response.status_code, 200)
 
     def test_resetPassword(self):
@@ -233,13 +234,13 @@ class AdministratorTestCase(TestCase):
             "username": env.TEST_ADMIN['username'],
             "password": "newpassword"
         }
+
         response = self.client.post(
-            reverse(
-                "api_v1:administrator:resetPassword",
-            ),
-            json.dumps(data),
-            content_type="application/json"
+            "/api/v1/admin/reset-password/",
+            data,
+            format='json'
         )
+
         result = json.loads(response.content)
 
         self.assertEqual(response.status_code, 200)
@@ -247,19 +248,23 @@ class AdministratorTestCase(TestCase):
         #  Confirm reset password
         result = json.loads(response.content)
         token = result["url"].split("/").pop()
+
         response = self.client.get(
-            reverse(
-                "api_v1:administrator:resetPassword",
-            ) + "?token=" + token,
+            "/api/v1/admin/reset-password/",
+            {'token': token},
+            format='json'
         )
+
         self.assertEqual(response.status_code, 200)
 
         #  Check new password
         response = self.client.post(
-            reverse('api_v1:administrator:login'),
+            "/api/v1/admin/auth/",
             {
                 'username': env.TEST_ADMIN['username'],
                 'password': "newpassword"
-            }
+            },
+            format='json'
         )
+
         self.assertEqual(response.status_code, 200)
