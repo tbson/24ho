@@ -2,6 +2,7 @@ from django.urls import reverse
 from django.contrib.auth.models import Permission
 from django.contrib.auth.models import User
 from django.conf import settings
+from core import env
 
 
 class TestHelpers():
@@ -33,3 +34,15 @@ class TestHelpers():
         )
         token = response.json()['user']['token']
         return token
+
+    @staticmethod
+    def getCustomerToken(self):
+        response = self.client.post(
+            "/api/v1/customer/auth/",
+            {
+                'username': env.TEST_USER['username'],
+                'password': env.TEST_USER['password']
+            },
+            format='json'
+        )
+        return response.json()['user']['token']

@@ -10,31 +10,6 @@ from core import env
 # Create your tests here.
 
 
-item0 = {
-    "username": "tbson0",
-    "email": "tbson0@gmail.com",
-    "password": "123456",
-    "first_name": "Son",
-    "last_name": "Tran"
-}
-
-item1 = {
-    "username": "tbson1",
-    "email": "tbson1@gmail.com",
-    "password": "123456",
-    "first_name": "Son",
-    "last_name": "Tran"
-}
-
-item2 = {
-    "username": "tbson2",
-    "email": "tbson2@gmail.com",
-    "password": "123456",
-    "first_name": "Son",
-    "last_name": "Tran"
-}
-
-
 class CustomerTestCase(TestCase):
 
     def setUp(self):
@@ -43,6 +18,24 @@ class CustomerTestCase(TestCase):
         self.token = TestHelpers.testSetup(self)
         self.client = APIClient()
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + self.token)
+
+        item0 = env.TEST_USER
+
+        item1 = {
+            "username": "tbson1",
+            "email": "tbson1@gmail.com",
+            "password": "123456",
+            "first_name": "Son",
+            "last_name": "Tran"
+        }
+
+        item2 = {
+            "username": "tbson2",
+            "email": "tbson2@gmail.com",
+            "password": "123456",
+            "first_name": "Son",
+            "last_name": "Tran"
+        }
 
         self.item0 = CustomerCreateSerializer(data=item0)
         self.item0.is_valid(raise_exception=True)
@@ -176,16 +169,7 @@ class CustomerTestCase(TestCase):
         self.assertEqual(Customer.objects.count(), 0)
 
     def test_profile(self):
-        response = self.client.post(
-            "/api/v1/customer/auth/",
-            {
-                'username': item0['username'],
-                'password': item0['password']
-            },
-            format='json'
-        )
-        token = response.json()['user']['token']
-        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + TestHelpers.getCustomerToken(self))
 
         response = self.client.get(
             "/api/v1/customer/profile/",
@@ -194,16 +178,7 @@ class CustomerTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_updateProfile(self):
-        response = self.client.post(
-            "/api/v1/customer/auth/",
-            {
-                'username': item0['username'],
-                'password': item0['password']
-            },
-            format='json'
-        )
-        token = response.json()['user']['token']
-        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + TestHelpers.getCustomerToken(self))
 
         data = {
             "username": "tbson4",
@@ -228,19 +203,10 @@ class CustomerTestCase(TestCase):
         # self.assertEqual(result["last_name"], data["last_name"])
 
     def test_changePassword(self):
-        response = self.client.post(
-            "/api/v1/customer/auth/",
-            {
-                'username': item0['username'],
-                'password': item0['password']
-            },
-            format='json'
-        )
-        token = response.json()['user']['token']
-        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + TestHelpers.getCustomerToken(self))
 
         data = {
-            "oldPassword": item0['password'],
+            "oldPassword": env.TEST_USER['password'],
             "password": "newpassword"
         }
 
@@ -256,7 +222,7 @@ class CustomerTestCase(TestCase):
         response = self.client.post(
             "/api/v1/customer/auth/",
             {
-                'username': item0['username'],
+                'username': env.TEST_USER['username'],
                 'password': "newpassword"
             },
             format='json'
@@ -267,7 +233,7 @@ class CustomerTestCase(TestCase):
 
         #  Reset password
         data = {
-            "username": item0['username'],
+            "username": env.TEST_USER['username'],
             "password": "newpassword"
         }
 
@@ -295,7 +261,7 @@ class CustomerTestCase(TestCase):
         response = self.client.post(
             "/api/v1/customer/auth/",
             {
-                'username': item0['username'],
+                'username': env.TEST_USER['username'],
                 'password': "newpassword"
             },
             format='json'
