@@ -46,8 +46,6 @@ PROJECT_APPS = [
     'apps.variable',
     'apps.administrator',
     'apps.customer',
-    'apps.permission',
-    'apps.group',
     'apps.sr',
 ]
 

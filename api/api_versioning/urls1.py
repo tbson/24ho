@@ -13,14 +13,6 @@ urlpatterns = (
         include('apps.customer.urls', namespace='customer'),
     ),
     path(
-        'permission/',
-        include('apps.permission.urls', namespace='permission'),
-    ),
-    path(
-        'group/',
-        include('apps.group.urls', namespace='group'),
-    ),
-    path(
         'variable/',
         include('apps.variable.urls', namespace='variable'),
     ),
