@@ -68,13 +68,13 @@ class App extends React.Component<Props, State> {
                         </NavLink>
                     </li>
                 );
-            case 'administrator':
+            case 'admin':
                 if (APP !== 'admin') return null;
                 return (
                     <li>
-                        <NavLink exact to="/administrator">
+                        <NavLink exact to="/admin">
                             <i className="fas fa-user-secret" />&nbsp;&nbsp;
-                            <span>Administrator</span>
+                            <span>Admin</span>
                         </NavLink>
                     </li>
                 );
@@ -185,9 +185,9 @@ class App extends React.Component<Props, State> {
                     <div className="sidebar-brand">24HOrder</div>
                     <ul className="sidebar-nav">
                         {renderMenu('profile')}
+                        {renderMenu('admin')}
                         {renderMenu('variable')}
                         {/*
-                        {renderMenu('administrator')}
                         {renderMenu('freelancer')}
                         {renderMenu('employer')}
                         {renderMenu('group')}

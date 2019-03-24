@@ -16,6 +16,7 @@ module.exports = function(api) {
         '@babel/plugin-syntax-dynamic-import',
         ['@babel/plugin-proposal-class-properties', {loose: false}],
         '@babel/plugin-transform-regenerator',
+        'babel-plugin-dynamic-import-node',
         [
             '@babel/transform-runtime',
             {

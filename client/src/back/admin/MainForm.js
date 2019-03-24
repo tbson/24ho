@@ -5,6 +5,7 @@ import Tools from 'src/utils/helpers/Tools';
 import {apiUrls, defaultInputs} from './_data';
 import type {FormState} from 'src/utils/helpers/Tools';
 import TextInput from 'src/utils/components/input/TextInput';
+import SelectInput from 'src/utils/components/input/SelectInput';
 import DefaultModal from 'src/utils/components/modal/DefaultModal';
 import ButtonsBar from 'src/utils/components/form/ButtonsBar';
 import ErrorMessages from 'src/utils/components/form/ErrorMessages';
@@ -45,13 +46,14 @@ export class Service {
 }
 
 type Props = {
+    groups: Array<Object>,
     id: number,
     open: boolean,
     close: Function,
     onChange: Function,
     children?: React.Node
 };
-export default ({id, open: _open, close, onChange, children}: Props) => {
+export default ({groups, id, open: _open, close, onChange, children}: Props) => {
     const [errors, setErrors] = useState({});
     const [data, setData] = useState(defaultInputs);
     const [open, setOpen] = useState(false);
@@ -74,19 +76,20 @@ export default ({id, open: _open, close, onChange, children}: Props) => {
     }, [_open]);
 
     return (
-        <DefaultModal open={open} close={close} title="Variable manager">
-            <Form onSubmit={handleSubmit} state={{data, errors}} children={children} />
+        <DefaultModal open={open} close={close} title="Admin manager">
+            <Form groupList={groups} onSubmit={handleSubmit} state={{data, errors}} children={children} />
         </DefaultModal>
     );
 };
 
 type FormProps = {
+    groupList: Array<Object>,
     onSubmit: Function,
     state: FormState,
     children?: React.Node,
     submitTitle?: string
 };
-export const Form = ({onSubmit: _onSubmit, children, state, submitTitle = 'Save'}: FormProps) => {
+export const Form = ({groupList, onSubmit: _onSubmit, children, state, submitTitle = 'Save'}: FormProps) => {
     const [needToClose, setNeedToClose] = useState(true);
     const formElm = useRef(null);
     const firstInputSelector = "[name='uid']";
@@ -98,9 +101,9 @@ export const Form = ({onSubmit: _onSubmit, children, state, submitTitle = 'Save'
         firstInput && firstInput.focus();
     }; 
 
-    const name = 'variable';
+    const name = 'admin';
     const fieldId = Tools.getFieldId(name);
-    const {id, uid, value} = state.data;
+    const {id, email, username, first_name, last_name, password, groups} = state.data;
     const {errors} = state;
 
     const errMsg = (name: string): Array<string> => state.errors[name] || [];
@@ -115,15 +118,53 @@ export const Form = ({onSubmit: _onSubmit, children, state, submitTitle = 'Save'
 
     return (
         <form name={name} ref={formElm} onSubmit={onSubmit}>
-            <TextInput
-                id={fieldId('uid')}
-                label="Key"
-                value={uid}
-                errMsg={errMsg('uid')}
-                required={true}
-                autoFocus={true}
-            />
-            <TextInput id={fieldId('value')} label="value" value={value} errMsg={errMsg('value')} required={true} />
+            <div className="row">
+                <div className="col">
+                    <TextInput
+                        id={fieldId('email')}
+                        type="email"
+                        label="Email"
+                        value={email}
+                        errMsg={errMsg('email')}
+                        required={true}
+                        autoFocus={true}
+                    />
+                </div>
+                <div className="col">
+                    <TextInput
+                        id={fieldId('username')}
+                        label="Username"
+                        value={username}
+                        required={true}
+                        errMsg={errMsg('username')}
+                    />
+                </div>
+            </div>
+
+            <div className="row">
+                <div className="col">
+                    <TextInput
+                        id={fieldId('first_name')}
+                        label="First name"
+                        value={first_name}
+                        errMsg={errMsg('first_name')}
+                        required={true}
+                    />
+                </div>
+                <div className="col">
+                    <TextInput
+                        id={fieldId('last_name')}
+                        label="Last name"
+                        value={last_name}
+                        errMsg={errMsg('last_name')}
+                        required={true}
+                    />
+                </div>
+            </div>
+
+            <TextInput id={fieldId('password')} label="Password" value={password} errMsg={errMsg('password')} />
+
+            <SelectInput isMulti={true} id={fieldId('groups')} label="Groups" options={groupList} value={groups} />
 
             <ErrorMessages errors={errors.detail} />
 

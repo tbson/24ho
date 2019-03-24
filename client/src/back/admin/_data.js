@@ -1,4 +1,5 @@
 /* @flow */
+
 import Tools from 'src/utils/helpers/Tools';
 import {FIELD_TYPE, APP} from 'src/constants';
 
@@ -24,13 +25,8 @@ export function seeding(numberOfItems: number, single: boolean = false): any {
     for (let i = 1; i <= numberOfItems; i++) {
         result.push({
             id: i,
-            email: `email${i}@gmail.com`,
-            username: `username${i}`,
-            first_name: `first_name ${i}`,
-            last_name: `last_name ${i}`,
-            fullname: `fullname ${i}`,
-            password: `password${i}`,
-            groups: i,
+            uid: `key${i}`,
+            value: `value ${i}`,
             checked: false
         });
     }
@@ -39,26 +35,23 @@ export function seeding(numberOfItems: number, single: boolean = false): any {
 }
 
 export type FormValues = {
-    id?: number,
     email: string,
     username: string,
-    first_name: string,
-    last_name: string,
-    fullname?: string,
-    password?: string,
-    groups: ?number
+    fullname?: string
 };
 
-export const defaultFormValues: FormValues = {
+export type DbRow = FormValues & {
+    id: number
+};
+
+export type TRow = DbRow & {
+    checked: boolean
+};
+
+export type ListItem = Array<TRow>;
+
+export const defaultInputs: FormValues = {
     id: 0,
     email: '',
-    username: '',
-    first_name: '',
-    last_name: '',
-    password: '',
-    groups: null
-};
-
-export type FormValuesWithCheck = FormValues & {
-    checked: boolean
+    username: ''
 };
