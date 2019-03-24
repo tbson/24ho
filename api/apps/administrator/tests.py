@@ -43,17 +43,14 @@ class AdministratorTestCase(TestCase):
         self.item0 = AdministratorCreateSerializer(data=item0)
         self.item0.is_valid(raise_exception=True)
         self.item0.save()
-        self.item0 = Administrator.objects.get(user__username=self.item0.data["username"])
 
         self.item1 = AdministratorCreateSerializer(data=item1)
         self.item1.is_valid(raise_exception=True)
         self.item1.save()
-        self.item1 = Administrator.objects.get(user__username=self.item1.data["username"])
 
         self.item2 = AdministratorCreateSerializer(data=item2)
         self.item2.is_valid(raise_exception=True)
         self.item2.save()
-        self.item2 = Administrator.objects.get(user__username=self.item2.data["username"])
 
     def test_list(self):
         response = self.client.get(
@@ -72,7 +69,7 @@ class AdministratorTestCase(TestCase):
 
         # Item exist
         response = self.client.get(
-            "/api/v1/admin/".format(self.item1.pk)
+            "/api/v1/admin/".format(self.item1.data['id'])
         )
         self.assertEqual(response.status_code, 200)
 
@@ -135,7 +132,7 @@ class AdministratorTestCase(TestCase):
 
         # Update duplicate
         response = self.client.put(
-            "/api/v1/admin/{}".format(self.item1.pk),
+            "/api/v1/admin/{}".format(self.item1.data['id']),
             dataFail,
             format='json'
         )
@@ -143,7 +140,7 @@ class AdministratorTestCase(TestCase):
 
         # Update success
         response = self.client.put(
-            "/api/v1/admin/{}".format(self.item1.pk),
+            "/api/v1/admin/{}".format(self.item1.data['id']),
             dataSuccess,
             format='json'
         )
@@ -159,14 +156,14 @@ class AdministratorTestCase(TestCase):
 
         # Remove single success
         response = self.client.delete(
-            "/api/v1/admin/{}".format(self.item1.pk)
+            "/api/v1/admin/{}".format(self.item1.data['id'])
         )
         self.assertEqual(response.status_code, 204)
         self.assertEqual(Administrator.objects.count(), 3)
 
         # Remove list success
         response = self.client.delete(
-            "/api/v1/admin/?ids={}".format(','.join([str(self.item0.pk), str(self.item2.pk)]))
+            "/api/v1/admin/?ids={}".format(','.join([str(self.item0.data['id']), str(self.item2.data['id'])]))
         )
         self.assertEqual(response.status_code, 204)
         self.assertEqual(Administrator.objects.count(), 1)

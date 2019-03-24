@@ -44,6 +44,7 @@ REQUIRED_APPS = [
 PROJECT_APPS = [
     'utils',
     'apps.variable',
+    'apps.group',
     'apps.administrator',
     'apps.customer',
     'apps.sr',

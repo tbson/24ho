@@ -33,17 +33,14 @@ class VariableTestCase(TestCase):
         self.item0 = VariableBaseSerializer(data=item0)
         self.item0.is_valid(raise_exception=True)
         self.item0.save()
-        self.item0 = Variable.objects.get(**self.item0.data)
 
         self.item1 = VariableBaseSerializer(data=item1)
         self.item1.is_valid(raise_exception=True)
         self.item1.save()
-        self.item1 = Variable.objects.get(**self.item1.data)
 
         self.item2 = VariableBaseSerializer(data=item2)
         self.item2.is_valid(raise_exception=True)
         self.item2.save()
-        self.item2 = Variable.objects.get(**self.item2.data)
 
     def test_list(self):
         response = self.client.get(
@@ -62,7 +59,7 @@ class VariableTestCase(TestCase):
 
         # Item exist
         response = self.client.get(
-            "/api/v1/variable/".format(self.item1.pk)
+            "/api/v1/variable/".format(self.item1.data['id'])
         )
         self.assertEqual(response.status_code, 200)
 
@@ -114,7 +111,7 @@ class VariableTestCase(TestCase):
 
         # Update duplicate
         response = self.client.put(
-            "/api/v1/variable/{}".format(self.item1.pk),
+            "/api/v1/variable/{}".format(self.item1.data['id']),
             dataFail,
             format='json'
         )
@@ -122,7 +119,7 @@ class VariableTestCase(TestCase):
 
         # Update success
         response = self.client.put(
-            "/api/v1/variable/{}".format(self.item1.pk),
+            "/api/v1/variable/{}".format(self.item1.data['id']),
             dataSuccess,
             format='json'
         )
@@ -138,14 +135,14 @@ class VariableTestCase(TestCase):
 
         # Remove single success
         response = self.client.delete(
-            "/api/v1/variable/{}".format(self.item1.pk)
+            "/api/v1/variable/{}".format(self.item1.data['id'])
         )
         self.assertEqual(response.status_code, 204)
         self.assertEqual(Variable.objects.count(), 2)
 
         # Remove list success
         response = self.client.delete(
-            "/api/v1/variable/?ids={}".format(','.join([str(self.item0.pk), str(self.item2.pk)]))
+            "/api/v1/variable/?ids={}".format(','.join([str(self.item0.data['id']), str(self.item2.data['id'])]))
         )
         self.assertEqual(response.status_code, 204)
         self.assertEqual(Variable.objects.count(), 0)
