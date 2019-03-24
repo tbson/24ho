@@ -2,13 +2,13 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import action
 from rest_framework.viewsets import (GenericViewSet, )
-from rest_framework.response import Response
 from rest_framework import status
 from .models import Variable
 from .serializers import (
     VariableBaseSerializer,
 )
 from utils.common_classes.custom_permission import CustomPermission
+from utils.helpers.res_tools import res
 
 
 class VariableViewSet(GenericViewSet):
@@ -27,14 +27,14 @@ class VariableViewSet(GenericViewSet):
     def retrieve(self, request, pk=None):
         obj = get_object_or_404(Variable, pk=pk)
         serializer = VariableBaseSerializer(obj)
-        return Response(serializer.data)
+        return res(serializer.data)
 
     @action(methods=['post'], detail=True)
     def add(self, request):
         serializer = VariableBaseSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-        return Response(serializer.data)
+        return res(serializer.data)
 
     @action(methods=['put'], detail=True)
     def change(self, request, pk=None):
@@ -42,13 +42,13 @@ class VariableViewSet(GenericViewSet):
         serializer = VariableBaseSerializer(obj, data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-        return Response(serializer.data)
+        return res(serializer.data)
 
     @action(methods=['delete'], detail=True)
     def delete(self, request, pk=None):
         obj = get_object_or_404(Variable, pk=pk)
         obj.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return res(status=status.HTTP_204_NO_CONTENT)
 
     @action(methods=['delete'], detail=False)
     def delete_list(self, request):
@@ -58,4 +58,4 @@ class VariableViewSet(GenericViewSet):
         if result.count() == 0:
             raise Http404
         result.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return res(status=status.HTTP_204_NO_CONTENT)
