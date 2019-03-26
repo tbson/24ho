@@ -44,8 +44,6 @@ class GroupTestCase(TestCase):
             '/api/v1/group/'
         )
         self.assertEqual(response.status_code, 200)
-        response = response.json()
-        self.assertEqual(len(response), 3)
 
     def test_detail(self):
         # View not exist
