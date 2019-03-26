@@ -357,11 +357,11 @@ export default class Tools {
                 data = await response.json();
             }
             if (response.status === 502) {
-                data = {error: 'Internal server error'};
+                data = {detail: 'Internal server error'};
             }
         } catch (error) {
             console.log(error);
-            data = {error: 'Internal server error'};
+            data = {detail: 'Internal server error'};
         }
         return data;
     }
