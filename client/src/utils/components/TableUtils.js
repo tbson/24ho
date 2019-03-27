@@ -39,100 +39,93 @@ type PaginationPropTypes = {
     prev: ?string,
     onNavigate: Function
 };
-export class Pagination extends React.Component<PaginationPropTypes> {
-    renderPrev(prev: ?string) {
+export const Pagination = ({next, prev, onNavigate}: PaginationPropTypes) => {
+    const renderPrev = (prev: ?string) => {
         if (!prev) return null;
         return (
-            <button className="btn btn-primary btn-sm" onClick={() => this.props.onNavigate(prev)}>
+            <button className="btn btn-primary btn-sm" onClick={() => onNavigate(prev)}>
                 <span className="fas fa-chevron-left pointer" />
                 &nbsp; Prev
             </button>
         );
-    }
+    };
 
-    renderNext(next: ?string) {
+    const renderNext = (next: ?string) => {
         if (!next) return null;
         return [
             <span key="1">&nbsp;&nbsp;&nbsp;</span>,
-            <button className="btn btn-primary btn-sm" key="2" onClick={() => this.props.onNavigate(next)}>
+            <button className="btn btn-primary btn-sm" key="2" onClick={() => onNavigate(next)}>
                 Next &nbsp;
                 <span className="fas fa-chevron-right pointer" />
             </button>
         ];
-    }
+    };
 
-    render() {
-        return (
-            <div>
-                {this.renderPrev(this.props.prev)}
-                {this.renderNext(this.props.next)}
-            </div>
-        );
-    }
-}
+    return (
+        <div>
+            {renderPrev(prev)}
+            {renderNext(next)}
+        </div>
+    );
+};
 
 type LangButtonsProps = {
     id: number,
     langs: Array<string>,
     getTranslationToEdit: Function
 };
-export class LangButtons extends React.Component<LangButtonsProps> {
-    render() {
-        const {id, langs, getTranslationToEdit} = this.props;
-        if (!langs.length) return null;
-        return (
-            <span>
-                {langs.map(lang => (
-                    <span key={lang}>
-                        &nbsp;&nbsp;&nbsp;
-                        <a className="pointer" onClick={() => getTranslationToEdit(id, lang)}>
-                            {lang.toUpperCase()}
-                        </a>
-                    </span>
-                ))}
-            </span>
-        );
-    }
-}
+export const LangButtons = ({id, langs, getTranslationToEdit}: LangButtonsProps) => {
+    if (!langs.length) return null;
+    return (
+        <span>
+            {langs.map(lang => (
+                <span key={lang}>
+                    &nbsp;&nbsp;&nbsp;
+                    <a className="pointer" onClick={() => getTranslationToEdit(id, lang)}>
+                        {lang.toUpperCase()}
+                    </a>
+                </span>
+            ))}
+        </span>
+    );
+};
 
 type FrontPaginationPropTypes = {
     next: ?string,
     prev: ?string,
     onNavigate: Function
 };
-export class FrontPagination extends React.Component<FrontPaginationPropTypes> {
-    renderPrev(prev: ?string) {
+export const FrontPagination = ({next, prev, onNavigate}: FrontPaginationPropTypes) => {
+    const renderPrev = (prev: ?string) => {
         if (!prev) return null;
         return (
-            <a className="pointer" onClick={() => this.props.onNavigate(prev)}>
+            <a className="pointer" onClick={() => onNavigate(prev)}>
                 <span className="fas fa-chevron-up pointer" />
             </a>
         );
-    }
+    };
 
-    renderNext(next: ?string) {
+    const renderNext = (next: ?string) => {
         if (!next) return null;
         return (
-            <a className="pointer" onClick={() => this.props.onNavigate(next)}>
+            <a className="pointer" onClick={() => onNavigate(next)}>
                 <span className="fas fa-chevron-down" />
             </a>
         );
-    }
+    };
 
-    render() {
-        if (!this.props.prev && !this.props.next) return null;
-        return (
-            <div className="container-fluid">
-                <div className="row" style={styles.footer}>
-                    <div className="col-xl-12">
-                        {this.renderPrev(this.props.prev)}
-                        {this.renderNext(this.props.next)}
-                    </div>
+    if (!prev && !next) return null;
+    return (
+        <div className="container-fluid">
+            <div className="row" style={styles.footer}>
+                <div className="col-xl-12">
+                    {renderPrev(prev)}
+                    {renderNext(next)}
                 </div>
             </div>
-        );
-    }
-}
+        </div>
+    );
+};
 
 type CancelButtonType = {
     onClick: Function,
