@@ -25,7 +25,7 @@ export class Service {
     static handleSubmit(id: number, close: Function, onSuccess: Function, onError: Function, setData: Function) {
         return (needToClose: boolean) => (e: Object) => {
             e.preventDefault();
-            const params = Tools.formDataToObj(new FormData(e.target), ['lock']);
+            const params = Tools.formDataToObj(new FormData(e.target), ['is_lock', 'is_sale', 'is_cust_care']);
             return Service.changeRequest(id ? {...params, id} : params)
                 .then(resp => {
                     if (!resp.ok) return Promise.reject(resp.data);
@@ -100,11 +100,11 @@ export const Form = ({groupList, onSubmit: _onSubmit, children, state, submitTit
         const firstInput = form.querySelector(firstInputSelector);
         form.reset();
         firstInput && firstInput.focus();
-    }; 
+    };
 
     const name = 'admin';
     const fieldId = Tools.getFieldId(name);
-    const {id, email, username, first_name, last_name, password, groups, lock} = state.data;
+    const {id, email, username, first_name, last_name, password, groups, is_lock, is_sale, is_cust_care} = state.data;
     const {errors} = state;
 
     const errMsg = (name: string): Array<string> => state.errors[name] || [];
@@ -142,7 +142,7 @@ export const Form = ({groupList, onSubmit: _onSubmit, children, state, submitTit
                 </div>
             </div>
 
-            <div className="row"> 
+            <div className="row">
                 <div className="col">
                     <TextInput
                         id={fieldId('last_name')}
@@ -166,9 +166,17 @@ export const Form = ({groupList, onSubmit: _onSubmit, children, state, submitTit
 
             <TextInput id={fieldId('password')} label="Password" value={password} errMsg={errMsg('password')} />
 
-            <SelectInput isMulti={true} id={fieldId('groups')} label="Nhóm" options={groupList} value={groups} />
-            
-            <CheckInput id={fieldId('lock')} label="Khoá" value={lock} errMsg={errMsg('lock')} />
+            <SelectInput isMulti={true} id={fieldId('groups')} label="Nhóm quyền" options={groupList} value={groups} />
+
+            <CheckInput id={fieldId('is_sale')} label="Nhân viên mua hàng" value={is_sale} errMsg={errMsg('is_lock')} />
+            <CheckInput
+                id={fieldId('is_cust_care')}
+                label="Chăm sóc khách hàng"
+                value={is_cust_care}
+                errMsg={errMsg('is_cust_care')}
+            />
+
+            <CheckInput id={fieldId('is_lock')} label="Khoá" value={is_lock} errMsg={errMsg('is_lock')} />
 
             <ErrorMessages errors={errors.detail} />
 

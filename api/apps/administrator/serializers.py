@@ -160,7 +160,9 @@ class AdministratorUpdateSerializer(AdministratorBaseSerializer):
                     group.user_set.add(user)
 
         instance.user = user
-        instance.lock = validated_data['lock'] if 'lock' in validated_data else False
+        instance.is_lock = validated_data['is_lock'] if 'is_lock' in validated_data else False
+        instance.is_sale = validated_data['is_sale'] if 'is_sale' in validated_data else False
+        instance.is_cust_care = validated_data['is_cust_care'] if 'is_cust_care' in validated_data else False
         instance.save()
 
         return instance

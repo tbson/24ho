@@ -105,6 +105,8 @@ export default ({}: Props) => {
                         <th scope="col">Email</th>
                         <th scope="col">Tên đăng nhập</th>
                         <th scope="col">Họ và tên</th>
+                        <th scope="col">NV mua hàng</th>
+                        <th scope="col">CSKH</th>
                         <th scope="col">Nhóm</th>
                         <th scope="col">Trạng thái</th>
                         <th scope="col" style={{padding: 8}} className="row80">

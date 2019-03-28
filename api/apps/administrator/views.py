@@ -78,7 +78,7 @@ class LoginView(ObtainJSONWebToken):
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
         if response.status_code == 200 and response.data['user']['table'] == 'administrators':
-            if response.data['user']['lock'] is True:
+            if response.data['user']['is_lock'] is True:
                 return err_res('Account locked')
             return response
         return err_res('Wrong username or password.')

@@ -40,8 +40,10 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
             <td className="email">{data.email}</td>
             <td className="username">{data.username}</td>
             <td className="fullname">{data.fullname}</td> 
+            <td className="fullname"><BoolOutput value={data.is_sale}/></td> 
+            <td className="fullname"><BoolOutput value={data.is_cust_care}/></td> 
             <td className="groups">{data.groups && data.groups.map(({name}) => name).join(', ')}</td> 
-            <td className="fullname"><BoolOutput value={!data.lock}/></td> 
+            <td className="fullname"><BoolOutput value={!data.is_lock}/></td> 
             <td className="center">
                 <a className="editBtn" onClick={() => showForm(data.id)}>
                     <span className="fas fa-edit text-info pointer" />

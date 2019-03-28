@@ -18,7 +18,9 @@ class Administrator(models.Model):
     signup_token = models.CharField(max_length=250, blank=True)
     signup_token_created = models.DateTimeField(null=True, blank=True)
 
-    lock = models.BooleanField(default=False)
+    is_sale = models.BooleanField(default=False)
+    is_cust_care = models.BooleanField(default=False)
+    is_lock = models.BooleanField(default=False)
 
     def delete(self, *args, **kwargs):
         self.user.delete()
