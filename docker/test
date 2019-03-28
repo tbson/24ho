@@ -1,7 +1,2 @@
-if [[ $1 ]]; then
-    ./exec_api coverage run --source='.' manage.py test apps.$1
-else
-    ./exec_api coverage run --source='.' manage.py test apps
-fi
-
-# ./exec coverage html
+./test_api
+./yarn jest
