@@ -179,6 +179,8 @@ class App extends React.Component<Props, State> {
 
     render() {
         const {renderMenu} = this;
+        const {user} = Tools.getStorageObj('auth');
+        const fullname = `${user.last_name} ${user.first_name}`;
         return (
             <div id="wrapper" className={this.state.toggled ? 'toggled' : ''}>
                 <div id="sidebar-wrapper">
@@ -205,7 +207,7 @@ class App extends React.Component<Props, State> {
                         <span id="nav-toggler" onClick={this.toggleAll}>
                             &#9776;
                         </span>
-                        <span>Tran Bac Son</span>
+                        <span>{fullname}</span>
                         &nbsp;&nbsp;
                         <i className="fas fa-sign-out-alt pointer" onClick={() => this.logout()} />
                     </div>
