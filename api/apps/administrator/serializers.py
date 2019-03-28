@@ -6,6 +6,7 @@ from rest_framework.validators import UniqueValidator
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
 from .models import Administrator
+from apps.group.serializers import GroupBaseSerializer
 
 
 class AdministratorBaseSerializer(ModelSerializer):
@@ -18,6 +19,7 @@ class AdministratorBaseSerializer(ModelSerializer):
     username = serializers.CharField(
         source='user.username',
     )
+
     email = serializers.EmailField(
         source='user.email',
     )
@@ -25,14 +27,19 @@ class AdministratorBaseSerializer(ModelSerializer):
     first_name = serializers.CharField(
         source='user.first_name'
     )
+
     last_name = serializers.CharField(
         source='user.last_name'
     )
 
     fullname = SerializerMethodField()
+    groups = SerializerMethodField()
 
     def get_fullname(self, obj):
-        return obj.user.first_name + ' ' + obj.user.last_name
+        return "{} {}".format(obj.user.last_name, obj.user.first_name)
+
+    def get_groups(self, obj):
+        return GroupBaseSerializer(obj.user.groups.all(), many=True).data
 
 
 class AdministratorRetrieveSerializer(AdministratorBaseSerializer):
@@ -153,4 +160,7 @@ class AdministratorUpdateSerializer(AdministratorBaseSerializer):
                     group.user_set.add(user)
 
         instance.user = user
+        instance.lock = validated_data['lock'] if 'lock' in validated_data else False
+        instance.save()
+
         return instance

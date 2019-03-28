@@ -2,6 +2,7 @@
 import * as React from 'react';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
+import {BoolOutput} from 'src/utils/components/TableUtils';
 import {apiUrls} from '../_data';
 import type {TRow} from '../_data';
 
@@ -30,7 +31,7 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
         const r = confirm(ListTools.getDeleteMessage(1));
         r && Service.handleRemove(id).then(onRemove);
     };
-
+    
     return (
         <tr>
             <th className="row25">
@@ -39,6 +40,8 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
             <td className="email">{data.email}</td>
             <td className="username">{data.username}</td>
             <td className="fullname">{data.fullname}</td> 
+            <td className="groups">{data.groups && data.groups.map(({name}) => name).join(', ')}</td> 
+            <td className="fullname"><BoolOutput value={!data.lock}/></td> 
             <td className="center">
                 <a className="editBtn" onClick={() => showForm(data.id)}>
                     <span className="fas fa-edit text-info pointer" />

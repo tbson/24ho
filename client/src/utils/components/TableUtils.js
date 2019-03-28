@@ -152,6 +152,12 @@ export const SubmitButton = ({label = 'Submit'}: SubmitButtonType) => {
     );
 };
 
+type BoolOutputType = {
+    value: boolean
+};
+export const BoolOutput = ({value}: BoolOutputType) =>
+    value ? <span>&#x2714;</span> : <span>&#x274C;</span>;
+
 const styles = {
     footer: {
         backgroundColor: 'rgb(38, 38, 38)',

@@ -5,6 +5,7 @@ import Tools from 'src/utils/helpers/Tools';
 import {apiUrls, defaultInputs} from './_data';
 import type {FormState} from 'src/utils/helpers/Tools';
 import TextInput from 'src/utils/components/input/TextInput';
+import CheckInput from 'src/utils/components/input/CheckInput';
 import SelectInput from 'src/utils/components/input/SelectInput';
 import DefaultModal from 'src/utils/components/modal/DefaultModal';
 import ButtonsBar from 'src/utils/components/form/ButtonsBar';
@@ -24,7 +25,7 @@ export class Service {
     static handleSubmit(id: number, close: Function, onSuccess: Function, onError: Function, setData: Function) {
         return (needToClose: boolean) => (e: Object) => {
             e.preventDefault();
-            const params = Tools.formDataToObj(new FormData(e.target));
+            const params = Tools.formDataToObj(new FormData(e.target), ['lock']);
             return Service.changeRequest(id ? {...params, id} : params)
                 .then(resp => {
                     if (!resp.ok) return Promise.reject(resp.data);
@@ -92,7 +93,7 @@ type FormProps = {
 export const Form = ({groupList, onSubmit: _onSubmit, children, state, submitTitle = 'Save'}: FormProps) => {
     const [needToClose, setNeedToClose] = useState(true);
     const formElm = useRef(null);
-    const firstInputSelector = "[name='uid']";
+    const firstInputSelector = "[name='email']";
 
     const resetAndFocus = form => {
         if (!form) return;
@@ -103,7 +104,7 @@ export const Form = ({groupList, onSubmit: _onSubmit, children, state, submitTit
 
     const name = 'admin';
     const fieldId = Tools.getFieldId(name);
-    const {id, email, username, first_name, last_name, password, groups} = state.data;
+    const {id, email, username, first_name, last_name, password, groups, lock} = state.data;
     const {errors} = state;
 
     const errMsg = (name: string): Array<string> => state.errors[name] || [];
@@ -133,7 +134,7 @@ export const Form = ({groupList, onSubmit: _onSubmit, children, state, submitTit
                 <div className="col">
                     <TextInput
                         id={fieldId('username')}
-                        label="Username"
+                        label="Tên đăng nhập"
                         value={username}
                         required={true}
                         errMsg={errMsg('username')}
@@ -141,22 +142,23 @@ export const Form = ({groupList, onSubmit: _onSubmit, children, state, submitTit
                 </div>
             </div>
 
-            <div className="row">
-                <div className="col">
-                    <TextInput
-                        id={fieldId('first_name')}
-                        label="First name"
-                        value={first_name}
-                        errMsg={errMsg('first_name')}
-                        required={true}
-                    />
-                </div>
+            <div className="row"> 
                 <div className="col">
                     <TextInput
                         id={fieldId('last_name')}
-                        label="Last name"
+                        label="Họ và tên lót"
                         value={last_name}
                         errMsg={errMsg('last_name')}
+                        required={true}
+                    />
+                </div>
+
+                <div className="col">
+                    <TextInput
+                        id={fieldId('first_name')}
+                        label="Tên"
+                        value={first_name}
+                        errMsg={errMsg('first_name')}
                         required={true}
                     />
                 </div>
@@ -164,7 +166,9 @@ export const Form = ({groupList, onSubmit: _onSubmit, children, state, submitTit
 
             <TextInput id={fieldId('password')} label="Password" value={password} errMsg={errMsg('password')} />
 
-            <SelectInput isMulti={true} id={fieldId('groups')} label="Groups" options={groupList} value={groups} />
+            <SelectInput isMulti={true} id={fieldId('groups')} label="Nhóm" options={groupList} value={groups} />
+            
+            <CheckInput id={fieldId('lock')} label="Khoá" value={lock} errMsg={errMsg('lock')} />
 
             <ErrorMessages errors={errors.detail} />
 

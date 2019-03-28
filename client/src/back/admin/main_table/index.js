@@ -54,6 +54,7 @@ export default ({}: Props) => {
 
     const getList = async (url?: string, params?: Object) => {
         const data = await Service.handleGetList(url, params);
+        if (!data) return;
         setList(ListTools.prepare(data.items));
         setLinks(data.links);
     };
@@ -102,8 +103,10 @@ export default ({}: Props) => {
                             <span className="fas fa-check text-info pointer check-all-button" onClick={onCheckAll} />
                         </th>
                         <th scope="col">Email</th>
-                        <th scope="col">Username</th>
-                        <th scope="col">Fullname</th>
+                        <th scope="col">Tên đăng nhập</th>
+                        <th scope="col">Họ và tên</th>
+                        <th scope="col">Nhóm</th>
+                        <th scope="col">Trạng thái</th>
                         <th scope="col" style={{padding: 8}} className="row80">
                             <button className="btn btn-primary btn-sm btn-block add-button" onClick={() => showForm(0)}>
                                 <span className="fas fa-plus" />

@@ -45,7 +45,9 @@ export type DbRow = FormValues & {
 };
 
 export type TRow = DbRow & {
-    checked: boolean
+    checked: boolean,
+    groups?: Array<Object>,
+    lock?: boolean
 };
 
 export type ListItem = Array<TRow>;
