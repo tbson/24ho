@@ -166,7 +166,7 @@ export const Form = ({groupList, onSubmit: _onSubmit, children, state, submitTit
 
             <TextInput id={fieldId('password')} label="Password" value={password} errMsg={errMsg('password')} />
 
-            <SelectInput isMulti={true} id={fieldId('groups')} label="Nhóm quyền" options={groupList} value={groups} />
+            <SelectInput isMulti={true} id={fieldId('groups')} label="Quyền" options={groupList} value={groups} />
 
             <CheckInput id={fieldId('is_sale')} label="Nhân viên mua hàng" value={is_sale} errMsg={errMsg('is_lock')} />
             <CheckInput
