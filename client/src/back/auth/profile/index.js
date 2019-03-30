@@ -22,6 +22,7 @@ export const Profile = () => {
     const [changePwdModal, setChangePwdModal] = useState(false);
 
     useEffect(() => {
+        document.title = 'Profile manager';
         Service.profileRequest().then(resp => {
             resp.ok && setProfile(resp.data);
         });
