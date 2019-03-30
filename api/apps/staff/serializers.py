@@ -108,8 +108,13 @@ class StaffCreateSr(StaffBaseSr):
                 groupList = Group.objects.filter(id__in=groups)
                 for group in groupList:
                     group.user_set.add(user)
-
-        return Staff.objects.create(user=user)
+        data = {
+            'user': user,
+            'is_lock': validated_data.get('is_lock', False),
+            'is_sale': validated_data.get('is_sale', False),
+            'is_cust_care': validated_data.get('is_cust_care', False)
+        }
+        return Staff.objects.create(**data)
 
 
 class StaffUpdateSr(StaffBaseSr):
@@ -166,9 +171,9 @@ class StaffUpdateSr(StaffBaseSr):
                     group.user_set.add(user)
 
         instance.user = user
-        instance.is_lock = validated_data['is_lock'] if 'is_lock' in validated_data else False
-        instance.is_sale = validated_data['is_sale'] if 'is_sale' in validated_data else False
-        instance.is_cust_care = validated_data['is_cust_care'] if 'is_cust_care' in validated_data else False
+        instance.is_lock = validated_data.get('is_lock', False)
+        instance.is_sale = validated_data.get('is_sale', False)
+        instance.is_cust_care = validated_data.get('is_cust_care', False)
         instance.save()
 
         return instance
