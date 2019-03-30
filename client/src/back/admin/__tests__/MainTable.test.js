@@ -151,3 +151,30 @@ describe('Service.handleBulkRemove', () => {
         expect(Tools.popMessageOrRedirect.mock.calls[0][0]).toEqual(failResp);
     });
 });
+
+describe('Service.groupToOptions', () => {
+    it('Normal case', () => {
+        const input = [
+            {
+                id: 1,
+                name: 'item 1'
+            },
+            {
+                id: 2,
+                name: 'item 2'
+            }
+        ];
+        const eput = [
+            {
+                value: 1,
+                label: 'item 1'
+            },
+            {
+                value: 2,
+                label: 'item 2'
+            }
+        ];
+        const output = Service.groupToOptions(input);
+        expect(eput).toEqual(output);
+    });
+});

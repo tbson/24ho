@@ -23,14 +23,16 @@ class StaffTestCase(TestCase):
             "email": "tbson0@gmail.com",
             "password": "123456",
             "first_name": "Son",
-            "last_name": "Tran"
+            "last_name": "Tran",
+            "is_sale": True
         }
         item1 = {
             "username": "tbson1",
             "email": "tbson1@gmail.com",
             "password": "123456",
             "first_name": "Son",
-            "last_name": "Tran"
+            "last_name": "Tran",
+            "is_cust_care": True
         }
         item2 = {
             "username": "tbson2",
@@ -265,3 +267,14 @@ class StaffTestCase(TestCase):
         )
 
         self.assertEqual(response.status_code, 200)
+
+    def test_manager_getListSale(self):
+        self.assertEqual(Staff.objects.getListSale().count(), 1)
+
+    def test_manager_getListCustCare(self):
+        self.assertEqual(Staff.objects.getListCustCare().count(), 1)
+
+    def test_manager_getName(self):
+        item0 = Staff.objects.filter(user__username="tbson0").first()
+        self.assertEqual(Staff.objects.getName(item0.pk), "Tran Son")
+        self.assertEqual(Staff.objects.getName(0), "")

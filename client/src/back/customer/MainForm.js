@@ -25,7 +25,7 @@ export class Service {
     static handleSubmit(id: number, close: Function, onSuccess: Function, onError: Function, setData: Function) {
         return (needToClose: boolean) => (e: Object) => {
             e.preventDefault();
-            const params = Tools.formDataToObj(new FormData(e.target), ['is_lock', 'is_sale', 'is_cust_care']);
+            const params = Tools.formDataToObj(new FormData(e.target), ['is_lock']);
             return Service.changeRequest(id ? {...params, id} : params)
                 .then(resp => {
                     if (!resp.ok) return Promise.reject(resp.data);
@@ -48,12 +48,14 @@ export class Service {
 
 type Props = {
     id: number,
+    listSale: Array<Object>,
+    listCustCare: Array<Object>,
     open: boolean,
     close: Function,
     onChange: Function,
     children?: React.Node
 };
-export default ({id, open: _open, close, onChange, children}: Props) => {
+export default ({id, listSale, listCustCare, open: _open, close, onChange, children}: Props) => {
     const [errors, setErrors] = useState({});
     const [data, setData] = useState(defaultInputs);
     const [open, setOpen] = useState(false);
@@ -77,18 +79,33 @@ export default ({id, open: _open, close, onChange, children}: Props) => {
 
     return (
         <DefaultModal open={open} close={close} title="Customer manager">
-            <Form onSubmit={handleSubmit} state={{data, errors}} children={children} />
+            <Form
+                listSale={listSale}
+                listCustCare={listCustCare}
+                onSubmit={handleSubmit}
+                state={{data, errors}}
+                children={children}
+            />
         </DefaultModal>
     );
 };
 
 type FormProps = {
+    listSale: Array<Object>,
+    listCustCare: Array<Object>,
     onSubmit: Function,
     state: FormState,
     children?: React.Node,
     submitTitle?: string
 };
-export const Form = ({onSubmit: _onSubmit, children, state, submitTitle = 'Save'}: FormProps) => {
+export const Form = ({
+    listSale,
+    listCustCare,
+    onSubmit: _onSubmit,
+    children,
+    state,
+    submitTitle = 'Save'
+}: FormProps) => {
     const [needToClose, setNeedToClose] = useState(true);
     const formElm = useRef(null);
     const firstInputSelector = "[name='email']";
@@ -102,7 +119,7 @@ export const Form = ({onSubmit: _onSubmit, children, state, submitTitle = 'Save'
 
     const name = 'customer';
     const fieldId = Tools.getFieldId(name);
-    const {id, email, username, first_name, last_name, phone, password, is_lock, is_sale, is_cust_care} = state.data;
+    const {id, email, username, first_name, last_name, phone, password, is_lock, sale_id, cust_care_id} = state.data;
     const {errors} = state;
 
     const errMsg = (name: string): Array<string> => state.errors[name] || [];
@@ -173,7 +190,34 @@ export const Form = ({onSubmit: _onSubmit, children, state, submitTitle = 'Save'
                     />
                 </div>
                 <div className="col">
-                    <TextInput id={fieldId('password')} type="password" label="Password" value={password} errMsg={errMsg('password')} />
+                    <TextInput
+                        id={fieldId('password')}
+                        type="password"
+                        label="Password"
+                        value={password}
+                        errMsg={errMsg('password')}
+                    />
+                </div>
+            </div>
+
+            <div className="row">
+                <div className="col">
+                    <SelectInput
+                        isMulti={false}
+                        id={fieldId('sale_id')}
+                        label="NV mua hàng"
+                        options={listSale}
+                        value={sale_id}
+                    />
+                </div>
+                <div className="col">
+                    <SelectInput
+                        isMulti={false}
+                        id={fieldId('cust_care_id')}
+                        label="NV chăm sóc"
+                        options={listCustCare}
+                        value={cust_care_id}
+                    />
                 </div>
             </div>
 

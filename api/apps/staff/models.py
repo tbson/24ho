@@ -10,6 +10,13 @@ class StaffManager(models.Manager):
     def getListCustCare(self):
         return self.filter(is_cust_care=True)
 
+    def getName(self, pk):
+        try:
+            item = self.get(pk=pk)
+            return "{} {}".format(item.user.last_name, item.user.first_name)
+        except Staff.DoesNotExist:
+            return ''
+
 # Create your models here.
 
 

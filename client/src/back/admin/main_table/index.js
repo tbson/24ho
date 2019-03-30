@@ -31,6 +31,10 @@ export class Service {
             .then(resp => (resp.ok ? {ids} : Promise.reject(resp)))
             .catch(Tools.popMessageOrRedirect);
     }
+
+    static groupToOptions(groups: Array<Object>): Array<Object> {
+        return groups.map(item => ({value: item.id, label: item.name}));
+    }
 }
 
 export default ({}: Props) => {
@@ -47,7 +51,7 @@ export default ({}: Props) => {
         if (!data) return;
         setList(ListTools.prepare(data.items));
         setLinks(data.links);
-        setGroups(data.extra.list_group.map(item => ({value: item.id, label: item.name})));
+        setGroups(Service.groupToOptions(data.extra.list_group));
     };
 
     const onChange = (data: TRow, type: string) => {

@@ -48,8 +48,11 @@ export type TRow = DbRow & {
     checked: boolean,
     groups?: Array<Object>,
     is_lock: boolean,
-    is_sale: boolean,
-    is_cust_care: boolean
+    sale_id: number,
+    sale_name?: string,
+    cust_care_id: number,
+    cust_care_name?: string,
+    phone: string
 };
 
 export type ListItem = Array<TRow>;

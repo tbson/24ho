@@ -31,10 +31,34 @@ export class Service {
             .then(resp => (resp.ok ? {ids} : Promise.reject(resp)))
             .catch(Tools.popMessageOrRedirect);
     }
+
+    static staffToOptions(staff: Array<Object>): Array<Object> {
+        return staff.map(item => ({value: item.id, label: item.fullname}));
+    }
+
+    static addName(list: Array<Object>, nameSource: Array<Object>, key: string): Array<Object> {
+        const map = nameSource.reduce((obj, item) => {
+            obj[item.value] = item.label;
+            return obj;
+        }, {});
+        return list.map(item => {
+            item[`${key}_name`] = map[item[`${key}_id`]];
+            return item;
+        });
+    }
+
+    static prepare(list, listSale, listCustCare) {
+        return list
+        |> ListTools.prepare
+        |> Service.addName(?, listSale, 'sale')
+        |> Service.addName(?, listCustCare, 'cust_care');
+    }
 }
 
 export default ({}: Props) => {
     const [list, setList] = useState([]);
+    const [listSale, setListSale] = useState([]);
+    const [listCustCare, setListCustCare] = useState([]);
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [modalId, setModalId] = useState(0);
     const [links, setLinks] = useState({next: '', previous: ''});
@@ -44,8 +68,12 @@ export default ({}: Props) => {
     const getList = async (url?: string, params?: Object) => {
         const data = await Service.handleGetList(url, params);
         if (!data) return;
-        setList(ListTools.prepare(data.items));
+        const _listSale = Service.staffToOptions(data.extra.list_sale);
+        const _listCustCare = Service.staffToOptions(data.extra.list_cust_care);
+        setList(Service.prepare(data.items, _listSale, _listCustCare));
         setLinks(data.links);
+        setListSale(_listSale);
+        setListCustCare(_listCustCare);
     };
 
     const onChange = (data: TRow, type: string) => {
@@ -86,11 +114,10 @@ export default ({}: Props) => {
                             <span className="fas fa-check text-info pointer check-all-button" onClick={onCheckAll} />
                         </th>
                         <th scope="col">Email</th>
-                        <th scope="col">Tên đăng nhập</th>
+                        <th scope="col">Phone</th>
                         <th scope="col">Họ và tên</th>
                         <th scope="col">NV mua hàng</th>
-                        <th scope="col">CSKH</th>
-                        <th scope="col">Quyền</th>
+                        <th scope="col">NV chăm sóc</th>
                         <th scope="col">Trạng thái</th>
                         <th scope="col" style={{padding: 8}} className="row80">
                             <button className="btn btn-primary btn-sm btn-block add-button" onClick={() => showForm(0)}>
@@ -139,6 +166,8 @@ export default ({}: Props) => {
 
             <MainForm
                 id={modalId}
+                listSale={listSale}
+                listCustCare={listCustCare}
                 open={isFormOpen}
                 close={() => setIsFormOpen(false)}
                 onChange={onChange}>

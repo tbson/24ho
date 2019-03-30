@@ -7,6 +7,7 @@ module.exports = function(api) {
 
     const plugins = [
         'react-hot-loader/babel',
+        '@babel/plugin-proposal-partial-application',
         ['@babel/plugin-proposal-optional-chaining', {loose: false}],
         ['@babel/plugin-proposal-pipeline-operator', {proposal: 'minimal'}],
         ['@babel/plugin-proposal-nullish-coalescing-operator', {loose: false}],

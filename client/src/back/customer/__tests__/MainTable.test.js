@@ -42,14 +42,6 @@ describe('Service.listRequest', () => {
     });
 });
 
-it('Service.listGroupRequest', () => {
-    const apiCall = jest.spyOn(Tools, 'apiCall').mockImplementation(async () => {});
-    Service.listGroupRequest();
-    expect(apiCall).toHaveBeenCalled();
-    expect(apiCall.mock.calls[0][0]).toEqual('http://localhost/api/v1/group/');
-    expect(apiCall.mock.calls[0][1]).toBe(undefined);
-});
-
 describe('Service.bulkRemoveRequest', () => {
     it('Normal case', () => {
         const apiCall = jest.spyOn(Tools, 'apiCall').mockImplementation(async () => {});
@@ -111,53 +103,6 @@ describe('Service.handleGetList', () => {
     });
 });
 
-describe('Service.handleGetListGroup', () => {
-    const okResp = {
-        ok: true,
-        data: {
-            key: 'value'
-        }
-    };
-    const failResp = {
-        ok: false,
-        data: {
-            key: 'value'
-        }
-    };
-    it('On success', async () => {
-        const listGroupRequest = jest.spyOn(Service, 'listGroupRequest').mockImplementation(async () => okResp);
-        jest.spyOn(Tools, 'popMessageOrRedirect');
-
-        const result = await Service.handleGetListGroup();
-
-        expect(Tools.popMessageOrRedirect).not.toHaveBeenCalled();
-        expect(listGroupRequest).toHaveBeenCalled();
-        expect(result).toEqual(okResp.data);
-    });
-
-    it('On error', async () => {
-        const listGroupRequest = jest.spyOn(Service, 'listGroupRequest').mockImplementation(async () => failResp);
-        jest.spyOn(Tools, 'popMessageOrRedirect');
-
-        const result = await Service.handleGetListGroup();
-
-        expect(Tools.popMessageOrRedirect).toHaveBeenCalled();
-        expect(Tools.popMessageOrRedirect.mock.calls[0][0]).toEqual(failResp);
-    });
-
-    it('On exception', async () => {
-        const listGroupRequest = jest
-            .spyOn(Service, 'listGroupRequest')
-            .mockImplementation(async () => Promise.reject(failResp));
-        jest.spyOn(Tools, 'popMessageOrRedirect');
-
-        const result = await Service.handleGetListGroup();
-
-        expect(Tools.popMessageOrRedirect).toHaveBeenCalled();
-        expect(Tools.popMessageOrRedirect.mock.calls[0][0]).toEqual(failResp);
-    });
-});
-
 describe('Service.handleBulkRemove', () => {
     const okResp = {
         ok: true,
@@ -204,5 +149,73 @@ describe('Service.handleBulkRemove', () => {
 
         expect(Tools.popMessageOrRedirect).toHaveBeenCalled();
         expect(Tools.popMessageOrRedirect.mock.calls[0][0]).toEqual(failResp);
+    });
+});
+
+describe('Service.staffToOptions', () => {
+    it('Normal case', () => {
+        const input = [
+            {
+                id: 1,
+                fullname: 'item 1'
+            },
+            {
+                id: 2,
+                fullname: 'item 2'
+            }
+        ];
+        const eput = [
+            {
+                value: 1,
+                label: 'item 1'
+            },
+            {
+                value: 2,
+                label: 'item 2'
+            }
+        ];
+        const output = Service.staffToOptions(input);
+        expect(eput).toEqual(output);
+    });
+});
+
+describe('Service.addName', () => {
+    it('Normal case', () => {
+        const list = [
+            {
+                sale_id: 1
+            },
+            {
+                sale_id: 2
+            },
+            {
+                sale_id: 3
+            }
+        ];
+        const nameSource = [
+            {
+                value: 1,
+                label: 'item 1'
+            },
+            {
+                value: 2,
+                label: 'item 2'
+            }
+        ];
+        const eput = [
+            {
+                sale_id: 1,
+                sale_name: 'item 1'
+            },
+            {
+                sale_id: 2,
+                sale_name: 'item 2'
+            },
+            {
+                sale_id: 3
+            }
+        ];
+        const output = Service.addName(list, nameSource, 'sale');
+        expect(eput).toEqual(output);
     });
 });

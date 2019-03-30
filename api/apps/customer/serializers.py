@@ -6,6 +6,7 @@ from rest_framework.validators import UniqueValidator
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
 from .models import Customer
+from apps.staff.models import Staff
 
 
 class CustomerBaseSr(ModelSerializer):
@@ -33,6 +34,18 @@ class CustomerBaseSr(ModelSerializer):
 
     def get_fullname(self, obj):
         return obj.user.first_name + ' ' + obj.user.last_name
+
+
+class CustomerRetrieveSr(CustomerBaseSr):
+
+    sale_name = SerializerMethodField()
+    cust_care_name = SerializerMethodField()
+
+    def get_sale_name(self, obj):
+        return Staff.objects.getName(obj.sale_id)
+
+    def get_cust_care_name(self, obj):
+        return Staff.objects.getName(obj.cust_care_id)
 
 
 class CustomerCreateSr(CustomerBaseSr):
@@ -76,7 +89,16 @@ class CustomerCreateSr(CustomerBaseSr):
             last_name=data.get('last_name', '')
         )
         group.user_set.add(user)
-        return Customer.objects.create(user=user)
+
+        data = {
+            'user': user,
+            'is_lock': validated_data.get('is_lock', False),
+            'phone': validated_data.get('phone', ''),
+            'sale_id': validated_data.get('sale_id', None),
+            'cust_care_id': validated_data.get('cust_care_id', None)
+        }
+
+        return Customer.objects.create(**data)
 
 
 class CustomerUpdateSr(CustomerBaseSr):
@@ -119,7 +141,8 @@ class CustomerUpdateSr(CustomerBaseSr):
         user.save()
 
         instance.user = user
-        instance.is_lock = validated_data['is_lock'] if 'is_lock' in validated_data else False
-        instance.sale_id = validated_data['sale_id'] if 'sale_id' in validated_data else None
-        instance.cust_care_id = validated_data['cust_care_id'] if 'cust_care_id' in validated_data else None
+        instance.is_lock = validated_data.get('is_lock', False)
+        instance.phone = validated_data.get('phone', '')
+        instance.sale_id = validated_data.get('sale_id', None)
+        instance.cust_care_id = validated_data.get('cust_care_id', None)
         return instance

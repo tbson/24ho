@@ -40,8 +40,8 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
             <td className="email">{data.email}</td>
             <td className="username">{data.username}</td>
             <td className="fullname">{data.fullname}</td> 
-            <td className="fullname"><BoolOutput value={data.is_sale}/></td> 
-            <td className="fullname"><BoolOutput value={data.is_cust_care}/></td> 
+            <td className="is_sale"><BoolOutput value={data.is_sale}/></td> 
+            <td className="is_cust_care"><BoolOutput value={data.is_cust_care}/></td> 
             <td className="groups">{data.groups && data.groups.map(({name}) => name).join(', ')}</td> 
             <td className="fullname"><BoolOutput value={!data.is_lock}/></td> 
             <td className="center">

@@ -12,6 +12,7 @@ from .models import Customer
 from apps.staff.models import Staff
 from .serializers import (
     CustomerBaseSr,
+    CustomerRetrieveSr,
     CustomerCreateSr,
     CustomerUpdateSr,
 )
