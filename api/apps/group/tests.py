@@ -3,7 +3,7 @@ import logging
 from rest_framework.test import APIClient
 from django.test import TestCase
 from django.contrib.auth.models import Group
-from .serializers import GroupBaseSerializer
+from .serializers import GroupBaseSr
 from utils.helpers.test_helpers import TestHelpers
 # Create your tests here.
 
@@ -27,15 +27,15 @@ class GroupTestCase(TestCase):
             "name": "group2",
         }
 
-        self.item0 = GroupBaseSerializer(data=item0)
+        self.item0 = GroupBaseSr(data=item0)
         self.item0.is_valid(raise_exception=True)
         self.item0.save()
 
-        self.item1 = GroupBaseSerializer(data=item1)
+        self.item1 = GroupBaseSr(data=item1)
         self.item1.is_valid(raise_exception=True)
         self.item1.save()
 
-        self.item2 = GroupBaseSerializer(data=item2)
+        self.item2 = GroupBaseSr(data=item2)
         self.item2.is_valid(raise_exception=True)
         self.item2.save()
 

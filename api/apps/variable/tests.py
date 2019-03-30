@@ -3,7 +3,7 @@ import logging
 from rest_framework.test import APIClient
 from django.test import TestCase
 from .models import Variable
-from .serializers import VariableBaseSerializer
+from .serializers import VariableBaseSr
 from utils.helpers.test_helpers import TestHelpers
 # Create your tests here.
 
@@ -30,15 +30,15 @@ class VariableTestCase(TestCase):
             "value": "value2",
         }
 
-        self.item0 = VariableBaseSerializer(data=item0)
+        self.item0 = VariableBaseSr(data=item0)
         self.item0.is_valid(raise_exception=True)
         self.item0.save()
 
-        self.item1 = VariableBaseSerializer(data=item1)
+        self.item1 = VariableBaseSr(data=item1)
         self.item1.is_valid(raise_exception=True)
         self.item1.save()
 
-        self.item2 = VariableBaseSerializer(data=item2)
+        self.item2 = VariableBaseSr(data=item2)
         self.item2.is_valid(raise_exception=True)
         self.item2.save()
 

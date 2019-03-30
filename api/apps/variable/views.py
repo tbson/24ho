@@ -5,7 +5,7 @@ from rest_framework.viewsets import (GenericViewSet, )
 from rest_framework import status
 from .models import Variable
 from .serializers import (
-    VariableBaseSerializer,
+    VariableBaseSr,
 )
 from utils.common_classes.custom_permission import CustomPermission
 from utils.helpers.res_tools import res
@@ -13,7 +13,7 @@ from utils.helpers.res_tools import res
 
 class VariableViewSet(GenericViewSet):
     _name = 'variable'
-    serializer_class = VariableBaseSerializer
+    serializer_class = VariableBaseSr
     permission_classes = (CustomPermission, )
     search_fields = ('uid', 'value')
 
@@ -21,17 +21,17 @@ class VariableViewSet(GenericViewSet):
         queryset = Variable.objects.all()
         queryset = self.filter_queryset(queryset)
         queryset = self.paginate_queryset(queryset)
-        serializer = VariableBaseSerializer(queryset, many=True)
+        serializer = VariableBaseSr(queryset, many=True)
         return self.get_paginated_response(serializer.data)
 
     def retrieve(self, request, pk=None):
         obj = get_object_or_404(Variable, pk=pk)
-        serializer = VariableBaseSerializer(obj)
+        serializer = VariableBaseSr(obj)
         return res(serializer.data)
 
     @action(methods=['post'], detail=True)
     def add(self, request):
-        serializer = VariableBaseSerializer(data=request.data)
+        serializer = VariableBaseSr(data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
         return res(serializer.data)
@@ -39,7 +39,7 @@ class VariableViewSet(GenericViewSet):
     @action(methods=['put'], detail=True)
     def change(self, request, pk=None):
         obj = get_object_or_404(Variable, pk=pk)
-        serializer = VariableBaseSerializer(obj, data=request.data)
+        serializer = VariableBaseSr(obj, data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
         return res(serializer.data)

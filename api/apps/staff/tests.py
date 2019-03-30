@@ -3,7 +3,7 @@ import logging
 from rest_framework.test import APIClient
 from django.test import TestCase
 from .models import Staff
-from .serializers import StaffCreateSerializer
+from .serializers import StaffCreateSr
 from utils.helpers.test_helpers import TestHelpers
 from core import env
 # Create your tests here.
@@ -40,15 +40,15 @@ class StaffTestCase(TestCase):
             "last_name": "Tran"
         }
 
-        self.item0 = StaffCreateSerializer(data=item0)
+        self.item0 = StaffCreateSr(data=item0)
         self.item0.is_valid(raise_exception=True)
         self.item0.save()
 
-        self.item1 = StaffCreateSerializer(data=item1)
+        self.item1 = StaffCreateSr(data=item1)
         self.item1.is_valid(raise_exception=True)
         self.item1.save()
 
-        self.item2 = StaffCreateSerializer(data=item2)
+        self.item2 = StaffCreateSr(data=item2)
         self.item2.is_valid(raise_exception=True)
         self.item2.save()
 

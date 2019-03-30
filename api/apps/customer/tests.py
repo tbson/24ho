@@ -4,7 +4,7 @@ from rest_framework.test import APIClient
 from django.test import TestCase
 from django.urls import reverse
 from .models import Customer
-from .serializers import CustomerCreateSerializer
+from .serializers import CustomerCreateSr
 from utils.helpers.test_helpers import TestHelpers
 from core import env
 # Create your tests here.
@@ -39,15 +39,15 @@ class CustomerTestCase(TestCase):
             "phone": "000"
         }
 
-        self.item0 = CustomerCreateSerializer(data=item0)
+        self.item0 = CustomerCreateSr(data=item0)
         self.item0.is_valid(raise_exception=True)
         self.item0.save()
 
-        self.item1 = CustomerCreateSerializer(data=item1)
+        self.item1 = CustomerCreateSr(data=item1)
         self.item1.is_valid(raise_exception=True)
         self.item1.save()
 
-        self.item2 = CustomerCreateSerializer(data=item2)
+        self.item2 = CustomerCreateSr(data=item2)
         self.item2.is_valid(raise_exception=True)
         self.item2.save()
 

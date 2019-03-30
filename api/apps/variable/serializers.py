@@ -3,7 +3,7 @@ from rest_framework.validators import UniqueValidator
 from .models import Variable
 
 
-class VariableBaseSerializer(ModelSerializer):
+class VariableBaseSr(ModelSerializer):
 
     class Meta:
         model = Variable

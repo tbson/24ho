@@ -6,10 +6,10 @@ from rest_framework.validators import UniqueValidator
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
 from .models import Staff
-from apps.group.serializers import GroupBaseSerializer
+from apps.group.serializers import GroupBaseSr
 
 
-class StaffBaseSerializer(ModelSerializer):
+class StaffBaseSr(ModelSerializer):
 
     class Meta:
         read_only_fields = ('id', 'fullname')
@@ -39,16 +39,16 @@ class StaffBaseSerializer(ModelSerializer):
         return "{} {}".format(obj.user.last_name, obj.user.first_name)
 
     def get_groups(self, obj):
-        return GroupBaseSerializer(obj.user.groups.all(), many=True).data
+        return GroupBaseSr(obj.user.groups.all(), many=True).data
 
 
-class StaffCompactSerializer(StaffBaseSerializer):
+class StaffCompactSr(StaffBaseSr):
 
-    class Meta(StaffBaseSerializer.Meta):
+    class Meta(StaffBaseSr.Meta):
         fields = ('id', 'fullname')
 
 
-class StaffRetrieveSerializer(StaffBaseSerializer):
+class StaffRetrieveSr(StaffBaseSr):
 
     groups = SerializerMethodField()
 
@@ -59,9 +59,9 @@ class StaffRetrieveSerializer(StaffBaseSerializer):
         return ','.join(result)
 
 
-class StaffCreateSerializer(StaffBaseSerializer):
+class StaffCreateSr(StaffBaseSr):
 
-    class Meta(StaffBaseSerializer.Meta):
+    class Meta(StaffBaseSr.Meta):
         extra_kwargs = {
             'user': {'required': False},
         }
@@ -112,9 +112,9 @@ class StaffCreateSerializer(StaffBaseSerializer):
         return Staff.objects.create(user=user)
 
 
-class StaffUpdateSerializer(StaffBaseSerializer):
+class StaffUpdateSr(StaffBaseSr):
 
-    class Meta(StaffBaseSerializer.Meta):
+    class Meta(StaffBaseSr.Meta):
         extra_kwargs = {
             'user': {'required': False},
         }

@@ -3,7 +3,7 @@ from rest_framework.serializers import SerializerMethodField
 from django.contrib.auth.models import Group
 
 
-class GroupBaseSerializer(ModelSerializer):
+class GroupBaseSr(ModelSerializer):
 
     class Meta:
         model = Group

@@ -11,12 +11,12 @@ from rest_framework import status
 from .models import Customer
 from apps.staff.models import Staff
 from .serializers import (
-    CustomerBaseSerializer,
-    CustomerCreateSerializer,
-    CustomerUpdateSerializer,
+    CustomerBaseSr,
+    CustomerCreateSr,
+    CustomerUpdateSr,
 )
 from apps.staff.serializers import (
-    StaffCompactSerializer
+    StaffCompactSr
 )
 from utils.common_classes.custom_permission import CustomPermission
 from django.contrib.auth.hashers import make_password, check_password
@@ -30,32 +30,32 @@ class CustomerViewSet(GenericViewSet):
 
     _name = 'customer'
     permission_classes = (CustomPermission, )
-    serializer_class = CustomerBaseSerializer
+    serializer_class = CustomerBaseSr
     search_fields = ['user__username', 'user__email', 'user__first_name', 'user__last_name']
 
     def list(self, request):
         queryset = Customer.objects.all()
         queryset = self.filter_queryset(queryset)
         queryset = self.paginate_queryset(queryset)
-        serializer = CustomerBaseSerializer(queryset, many=True)
+        serializer = CustomerBaseSr(queryset, many=True)
 
         result = {
             'items': serializer.data,
             'extra': {
-                'list_sale': StaffCompactSerializer(Staff.objects.getListSale(), many=True).data,
-                'list_cust_care': StaffCompactSerializer(Staff.objects.getListCustCare(), many=True).data
+                'list_sale': StaffCompactSr(Staff.objects.getListSale(), many=True).data,
+                'list_cust_care': StaffCompactSr(Staff.objects.getListCustCare(), many=True).data
             }
         }
         return self.get_paginated_response(result)
 
     def retrieve(self, request, pk=None):
         obj = get_object_or_404(Customer, pk=pk)
-        serializer = CustomerBaseSerializer(obj)
+        serializer = CustomerBaseSr(obj)
         return res(serializer.data)
 
     @action(methods=['post'], detail=True)
     def add(self, request):
-        serializer = CustomerCreateSerializer(data=request.data)
+        serializer = CustomerCreateSr(data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
         return res(serializer.data)
@@ -63,7 +63,7 @@ class CustomerViewSet(GenericViewSet):
     @action(methods=['put'], detail=True)
     def change(self, request, pk=None):
         obj = get_object_or_404(Customer, pk=pk)
-        serializer = CustomerUpdateSerializer(obj, data=request.data)
+        serializer = CustomerUpdateSr(obj, data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
         return res(serializer.data)
@@ -104,7 +104,7 @@ class ProfileView(APIView):
     def get(self, request, format=None):
         try:
             user = self.get_object()
-            serializer = CustomerBaseSerializer(self.get_object().customer)
+            serializer = CustomerBaseSr(self.get_object().customer)
             return res(serializer.data)
         except:
             return res({}, status=401)
@@ -112,7 +112,7 @@ class ProfileView(APIView):
     def post(self, request, format=None):
         params = self.request.data
         customer = self.get_object().customer
-        serializer = CustomerUpdateSerializer(customer, data=params, partial=True)
+        serializer = CustomerUpdateSr(customer, data=params, partial=True)
         if serializer.is_valid() is True:
             serializer.save()
             return res(serializer.data)

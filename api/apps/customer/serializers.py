@@ -8,7 +8,7 @@ from django.contrib.auth.models import Group
 from .models import Customer
 
 
-class CustomerBaseSerializer(ModelSerializer):
+class CustomerBaseSr(ModelSerializer):
 
     class Meta:
         read_only_fields = ('id', 'fullname')
@@ -35,9 +35,9 @@ class CustomerBaseSerializer(ModelSerializer):
         return obj.user.first_name + ' ' + obj.user.last_name
 
 
-class CustomerCreateSerializer(CustomerBaseSerializer):
+class CustomerCreateSr(CustomerBaseSr):
 
-    class Meta(CustomerBaseSerializer.Meta):
+    class Meta(CustomerBaseSr.Meta):
         extra_kwargs = {
             'user': {'required': False},
         }
@@ -79,9 +79,9 @@ class CustomerCreateSerializer(CustomerBaseSerializer):
         return Customer.objects.create(user=user)
 
 
-class CustomerUpdateSerializer(CustomerBaseSerializer):
+class CustomerUpdateSr(CustomerBaseSr):
 
-    class Meta(CustomerBaseSerializer.Meta):
+    class Meta(CustomerBaseSr.Meta):
         extra_kwargs = {
             'user': {'required': False},
         }

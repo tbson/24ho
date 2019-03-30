@@ -1,8 +1,8 @@
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_jwt.serializers import VerifyJSONWebTokenSerializer
-from apps.staff.serializers import StaffBaseSerializer
-from apps.customer.serializers import CustomerBaseSerializer
+from apps.staff.serializers import StaffBaseSr
+from apps.customer.serializers import CustomerBaseSr
 
 
 def jwt_response_payload_handler(token, user=None, request=None):
@@ -11,13 +11,13 @@ def jwt_response_payload_handler(token, user=None, request=None):
         parent = user.staff
         parent.fingerprint = request.META.get('HTTP_FINGERPRINT', '')
         parent.save()
-        data = StaffBaseSerializer(parent).data
+        data = StaffBaseSr(parent).data
         data['is_admin'] = True
         data['table'] = 'staffs'
     elif hasattr(user, 'customer'):
         parent = user.customer
         parent.fingerprint = request.META.get('HTTP_FINGERPRINT', '')
-        data = CustomerBaseSerializer(parent).data
+        data = CustomerBaseSr(parent).data
         parent.save()
         data['table'] = 'customers'
     data['token'] = token
