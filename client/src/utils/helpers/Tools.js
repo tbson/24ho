@@ -90,7 +90,7 @@ export default class Tools {
         }
         for (let checkbox of checkboxes) {
             if (!data[checkbox]) {
-                data[checkbox] = false;
+                data[checkbox] = data[checkbox] === '' ? true : false;
             } else {
                 data[checkbox] = true;
             }
