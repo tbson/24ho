@@ -61,7 +61,9 @@ export default ({}: Props) => {
 
     const getListGroup = async () => {
         const data = await Service.handleGetListGroup();
-        setGroups(data.items.map(item => ({value: item.id, label: item.name})));
+        setGroups(
+            data.items.filter(item => item.name !== 'customer').map(item => ({value: item.id, label: item.name}))
+        );
     };
 
     const onChange = (data: TRow, type: string) => {
