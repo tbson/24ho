@@ -6,7 +6,7 @@ import Table from './main_table/';
 
 export default () => {
     useEffect(() => {
-        document.title = 'Admin manager';
+        document.title = 'Staff manager';
     }, []);
 
     return (

@@ -9,7 +9,7 @@ urlpatterns = (
         include('apps.group.urls', namespace='group'),
     ),
     path(
-        'admin/',
+        'staff/',
         include('apps.staff.urls', namespace='staff'),
     ),
     path(

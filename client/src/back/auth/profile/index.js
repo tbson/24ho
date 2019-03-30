@@ -11,7 +11,7 @@ import ChangePwdForm from '../PwdForm';
 
 export class Service {
     static async profileRequest() {
-        const url = '/api/v1/admin/profile/';
+        const url = '/api/v1/staff/profile/';
         return await Tools.apiCall(url);
     }
 }

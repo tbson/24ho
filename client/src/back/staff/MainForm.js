@@ -77,7 +77,7 @@ export default ({groups, id, open: _open, close, onChange, children}: Props) => 
     }, [_open]);
 
     return (
-        <DefaultModal open={open} close={close} title="Admin manager">
+        <DefaultModal open={open} close={close} title="Staff manager">
             <Form groupList={groups} onSubmit={handleSubmit} state={{data, errors}} children={children} />
         </DefaultModal>
     );
@@ -102,7 +102,7 @@ export const Form = ({groupList, onSubmit: _onSubmit, children, state, submitTit
         firstInput && firstInput.focus();
     };
 
-    const name = 'admin';
+    const name = 'staff';
     const fieldId = Tools.getFieldId(name);
     const {id, email, username, first_name, last_name, password, groups, is_lock, is_sale, is_cust_care} = state.data;
     const {errors} = state;

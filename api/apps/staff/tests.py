@@ -56,7 +56,7 @@ class StaffTestCase(TestCase):
 
     def test_list(self):
         response = self.client.get(
-            '/api/v1/admin/'
+            '/api/v1/staff/'
         )
         self.assertEqual(response.status_code, 200)
         response = response.json()
@@ -65,13 +65,13 @@ class StaffTestCase(TestCase):
     def test_detail(self):
         # Item not exist
         response = self.client.get(
-            "/api/v1/admin/{}".format(0)
+            "/api/v1/staff/{}".format(0)
         )
         self.assertEqual(response.status_code, 404)
 
         # Item exist
         response = self.client.get(
-            "/api/v1/admin/".format(self.item1.data['id'])
+            "/api/v1/staff/".format(self.item1.data['id'])
         )
         self.assertEqual(response.status_code, 200)
 
@@ -93,7 +93,7 @@ class StaffTestCase(TestCase):
 
         # Add duplicate
         response = self.client.post(
-            '/api/v1/admin/',
+            '/api/v1/staff/',
             dataFail,
             format='json'
         )
@@ -101,7 +101,7 @@ class StaffTestCase(TestCase):
 
         # Add success
         response = self.client.post(
-            '/api/v1/admin/',
+            '/api/v1/staff/',
             dataSuccess,
             format='json'
         )
@@ -126,7 +126,7 @@ class StaffTestCase(TestCase):
 
         # Update not exist
         response = self.client.put(
-            "/api/v1/admin/{}".format(0),
+            "/api/v1/staff/{}".format(0),
             dataFail,
             format='json'
         )
@@ -134,7 +134,7 @@ class StaffTestCase(TestCase):
 
         # Update duplicate
         response = self.client.put(
-            "/api/v1/admin/{}".format(self.item1.data['id']),
+            "/api/v1/staff/{}".format(self.item1.data['id']),
             dataFail,
             format='json'
         )
@@ -142,7 +142,7 @@ class StaffTestCase(TestCase):
 
         # Update success
         response = self.client.put(
-            "/api/v1/admin/{}".format(self.item1.data['id']),
+            "/api/v1/staff/{}".format(self.item1.data['id']),
             dataSuccess,
             format='json'
         )
@@ -151,28 +151,28 @@ class StaffTestCase(TestCase):
     def test_delete(self):
         # Remove not exist
         response = self.client.delete(
-            "/api/v1/admin/{}".format(0)
+            "/api/v1/staff/{}".format(0)
         )
         self.assertEqual(response.status_code, 404)
         self.assertEqual(Staff.objects.count(), 4)
 
         # Remove single success
         response = self.client.delete(
-            "/api/v1/admin/{}".format(self.item1.data['id'])
+            "/api/v1/staff/{}".format(self.item1.data['id'])
         )
         self.assertEqual(response.status_code, 204)
         self.assertEqual(Staff.objects.count(), 3)
 
         # Remove list success
         response = self.client.delete(
-            "/api/v1/admin/?ids={}".format(','.join([str(self.item0.data['id']), str(self.item2.data['id'])]))
+            "/api/v1/staff/?ids={}".format(','.join([str(self.item0.data['id']), str(self.item2.data['id'])]))
         )
         self.assertEqual(response.status_code, 204)
         self.assertEqual(Staff.objects.count(), 1)
 
     def test_profile(self):
         response = self.client.get(
-            "/api/v1/admin/profile/",
+            "/api/v1/staff/profile/",
             format='json'
         )
         self.assertEqual(response.status_code, 200)
@@ -186,7 +186,7 @@ class StaffTestCase(TestCase):
         }
 
         response = self.client.post(
-            "/api/v1/admin/profile/",
+            "/api/v1/staff/profile/",
             data,
             format='json'
         )
@@ -208,7 +208,7 @@ class StaffTestCase(TestCase):
         }
 
         response = self.client.post(
-            "/api/v1/admin/change-password/",
+            "/api/v1/staff/change-password/",
             data,
             format='json'
         )
@@ -217,7 +217,7 @@ class StaffTestCase(TestCase):
 
         #  Check new password
         response = self.client.post(
-            "/api/v1/admin/auth/",
+            "/api/v1/staff/auth/",
             {
                 'username': env.TEST_ADMIN['username'],
                 'password': "newpassword"
@@ -235,7 +235,7 @@ class StaffTestCase(TestCase):
         }
 
         response = self.client.post(
-            "/api/v1/admin/reset-password/",
+            "/api/v1/staff/reset-password/",
             data,
             format='json'
         )
@@ -249,7 +249,7 @@ class StaffTestCase(TestCase):
         token = result["url"].split("/").pop()
 
         response = self.client.get(
-            "/api/v1/admin/reset-password/",
+            "/api/v1/staff/reset-password/",
             {'token': token},
             format='json'
         )
@@ -258,7 +258,7 @@ class StaffTestCase(TestCase):
 
         #  Check new password
         response = self.client.post(
-            "/api/v1/admin/auth/",
+            "/api/v1/staff/auth/",
             {
                 'username': env.TEST_ADMIN['username'],
                 'password': "newpassword"

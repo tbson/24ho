@@ -16,7 +16,7 @@ describe('Service.listRequest', () => {
         const apiCall = jest.spyOn(Tools, 'apiCall').mockImplementation(async () => {});
         Service.listRequest();
         expect(apiCall).toHaveBeenCalled();
-        expect(apiCall.mock.calls[0][0]).toEqual('http://localhost/api/v1/admin/');
+        expect(apiCall.mock.calls[0][0]).toEqual('http://localhost/api/v1/staff/');
         expect(apiCall.mock.calls[0][1]).toBe(undefined);
     });
 
@@ -26,7 +26,7 @@ describe('Service.listRequest', () => {
 
         Service.listRequest('', params);
         expect(apiCall).toHaveBeenCalled();
-        expect(apiCall.mock.calls[0][0]).toEqual('http://localhost/api/v1/admin/');
+        expect(apiCall.mock.calls[0][0]).toEqual('http://localhost/api/v1/staff/');
         expect(apiCall.mock.calls[0][1]).toEqual(params);
     });
 
@@ -48,7 +48,7 @@ describe('Service.bulkRemoveRequest', () => {
         const ids = [1, 2];
         Service.bulkRemoveRequest(ids);
         expect(apiCall).toHaveBeenCalled();
-        expect(apiCall.mock.calls[0][0]).toEqual('http://localhost/api/v1/admin/');
+        expect(apiCall.mock.calls[0][0]).toEqual('http://localhost/api/v1/staff/');
         expect(apiCall.mock.calls[0][1]).toEqual({ids: '1,2'});
         expect(apiCall.mock.calls[0][2]).toEqual('DELETE');
     });
