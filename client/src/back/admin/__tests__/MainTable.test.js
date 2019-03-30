@@ -42,14 +42,6 @@ describe('Service.listRequest', () => {
     });
 });
 
-it('Service.listGroupRequest', () => {
-    const apiCall = jest.spyOn(Tools, 'apiCall').mockImplementation(async () => {});
-    Service.listGroupRequest();
-    expect(apiCall).toHaveBeenCalled();
-    expect(apiCall.mock.calls[0][0]).toEqual('http://localhost/api/v1/group/');
-    expect(apiCall.mock.calls[0][1]).toBe(undefined);
-});
-
 describe('Service.bulkRemoveRequest', () => {
     it('Normal case', () => {
         const apiCall = jest.spyOn(Tools, 'apiCall').mockImplementation(async () => {});
@@ -105,53 +97,6 @@ describe('Service.handleGetList', () => {
         jest.spyOn(Tools, 'popMessageOrRedirect');
 
         const result = await Service.handleGetList();
-
-        expect(Tools.popMessageOrRedirect).toHaveBeenCalled();
-        expect(Tools.popMessageOrRedirect.mock.calls[0][0]).toEqual(failResp);
-    });
-});
-
-describe('Service.handleGetListGroup', () => {
-    const okResp = {
-        ok: true,
-        data: {
-            key: 'value'
-        }
-    };
-    const failResp = {
-        ok: false,
-        data: {
-            key: 'value'
-        }
-    };
-    it('On success', async () => {
-        const listGroupRequest = jest.spyOn(Service, 'listGroupRequest').mockImplementation(async () => okResp);
-        jest.spyOn(Tools, 'popMessageOrRedirect');
-
-        const result = await Service.handleGetListGroup();
-
-        expect(Tools.popMessageOrRedirect).not.toHaveBeenCalled();
-        expect(listGroupRequest).toHaveBeenCalled();
-        expect(result).toEqual(okResp.data);
-    });
-
-    it('On error', async () => {
-        const listGroupRequest = jest.spyOn(Service, 'listGroupRequest').mockImplementation(async () => failResp);
-        jest.spyOn(Tools, 'popMessageOrRedirect');
-
-        const result = await Service.handleGetListGroup();
-
-        expect(Tools.popMessageOrRedirect).toHaveBeenCalled();
-        expect(Tools.popMessageOrRedirect.mock.calls[0][0]).toEqual(failResp);
-    });
-
-    it('On exception', async () => {
-        const listGroupRequest = jest
-            .spyOn(Service, 'listGroupRequest')
-            .mockImplementation(async () => Promise.reject(failResp));
-        jest.spyOn(Tools, 'popMessageOrRedirect');
-
-        const result = await Service.handleGetListGroup();
 
         expect(Tools.popMessageOrRedirect).toHaveBeenCalled();
         expect(Tools.popMessageOrRedirect.mock.calls[0][0]).toEqual(failResp);

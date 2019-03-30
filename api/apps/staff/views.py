@@ -8,12 +8,16 @@ from rest_framework.permissions import AllowAny
 from rest_framework.viewsets import (GenericViewSet, )
 from rest_framework.decorators import action
 from rest_framework import status
+from django.contrib.auth.models import Group
 from .models import Staff
 from .serializers import (
     StaffBaseSr,
     StaffRetrieveSr,
     StaffCreateSr,
     StaffUpdateSr,
+)
+from apps.group.serializers import (
+    GroupBaseSr
 )
 from utils.common_classes.custom_permission import CustomPermission
 from django.contrib.auth.hashers import make_password, check_password
@@ -35,7 +39,15 @@ class StaffViewSet(GenericViewSet):
         queryset = self.filter_queryset(queryset)
         queryset = self.paginate_queryset(queryset)
         serializer = StaffBaseSr(queryset, many=True)
-        return self.get_paginated_response(serializer.data)
+
+        result = {
+            'items': serializer.data,
+            'extra': {
+                'list_group': GroupBaseSr(Group.objects.exclude(name='customer'), many=True).data
+            }
+        }
+
+        return self.get_paginated_response(result)
 
     def retrieve(self, request, pk=None):
         obj = get_object_or_404(Staff, pk=pk)

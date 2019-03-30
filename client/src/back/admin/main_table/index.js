@@ -16,22 +16,12 @@ export class Service {
         return Tools.apiCall(url ? url : apiUrls.crud, params);
     }
 
-    static listGroupRequest(): Promise<Object> {
-        return Tools.apiCall(apiUrls.groupCrud);
-    }
-
     static bulkRemoveRequest(ids: Array<number>): Promise<Object> {
         return Tools.apiCall(apiUrls.crud, {ids: ids.join(',')}, 'DELETE');
     }
 
     static handleGetList(url?: string, params?: Object = {}): Promise<Object> {
         return Service.listRequest(url, params)
-            .then(resp => (resp.ok ? resp.data || {} : Promise.reject(resp)))
-            .catch(Tools.popMessageOrRedirect);
-    }
-
-    static handleGetListGroup(): Promise<Object> {
-        return Service.listGroupRequest()
             .then(resp => (resp.ok ? resp.data || {} : Promise.reject(resp)))
             .catch(Tools.popMessageOrRedirect);
     }
@@ -57,13 +47,7 @@ export default ({}: Props) => {
         if (!data) return;
         setList(ListTools.prepare(data.items));
         setLinks(data.links);
-    };
-
-    const getListGroup = async () => {
-        const data = await Service.handleGetListGroup();
-        setGroups(
-            data.items.filter(item => item.name !== 'customer').map(item => ({value: item.id, label: item.name}))
-        );
+        setGroups(data.extra.list_group.map(item => ({value: item.id, label: item.name})));
     };
 
     const onChange = (data: TRow, type: string) => {
@@ -93,7 +77,6 @@ export default ({}: Props) => {
 
     useEffect(() => {
         getList();
-        getListGroup();
     }, []);
 
     return (
