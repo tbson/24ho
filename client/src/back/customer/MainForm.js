@@ -173,7 +173,7 @@ export const Form = ({onSubmit: _onSubmit, children, state, submitTitle = 'Save'
                     />
                 </div>
                 <div className="col">
-                    <TextInput id={fieldId('password')} label="Password" value={password} errMsg={errMsg('password')} />
+                    <TextInput id={fieldId('password')} type="password" label="Password" value={password} errMsg={errMsg('password')} />
                 </div>
             </div>
 
