@@ -8,12 +8,12 @@ from rest_framework.permissions import AllowAny
 from rest_framework.viewsets import (GenericViewSet, )
 from rest_framework.decorators import action
 from rest_framework import status
-from .models import Administrator
+from .models import Staff
 from .serializers import (
-    AdministratorBaseSerializer,
-    AdministratorRetrieveSerializer,
-    AdministratorCreateSerializer,
-    AdministratorUpdateSerializer,
+    StaffBaseSerializer,
+    StaffRetrieveSerializer,
+    StaffCreateSerializer,
+    StaffUpdateSerializer,
 )
 from utils.common_classes.custom_permission import CustomPermission
 from django.contrib.auth.hashers import make_password, check_password
@@ -23,43 +23,43 @@ from utils.helpers.tools import Tools
 from utils.helpers.res_tools import res, err_res
 
 
-class AdministratorViewSet(GenericViewSet):
+class StaffViewSet(GenericViewSet):
 
-    _name = 'administrator'
+    _name = 'staff'
     permission_classes = (CustomPermission, )
-    serializer_class = AdministratorBaseSerializer
+    serializer_class = StaffBaseSerializer
     search_fields = ['user__username', 'user__email', 'user__first_name', 'user__last_name']
 
     def list(self, request):
-        queryset = Administrator.objects.all()
+        queryset = Staff.objects.all()
         queryset = self.filter_queryset(queryset)
         queryset = self.paginate_queryset(queryset)
-        serializer = AdministratorBaseSerializer(queryset, many=True)
+        serializer = StaffBaseSerializer(queryset, many=True)
         return self.get_paginated_response(serializer.data)
 
     def retrieve(self, request, pk=None):
-        obj = get_object_or_404(Administrator, pk=pk)
-        serializer = AdministratorRetrieveSerializer(obj)
+        obj = get_object_or_404(Staff, pk=pk)
+        serializer = StaffRetrieveSerializer(obj)
         return res(serializer.data)
 
     @action(methods=['post'], detail=True)
     def add(self, request):
-        serializer = AdministratorCreateSerializer(data=request.data)
+        serializer = StaffCreateSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
         return res(serializer.data)
 
     @action(methods=['put'], detail=True)
     def change(self, request, pk=None):
-        obj = get_object_or_404(Administrator, pk=pk)
-        serializer = AdministratorUpdateSerializer(obj, data=request.data)
+        obj = get_object_or_404(Staff, pk=pk)
+        serializer = StaffUpdateSerializer(obj, data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
         return res(serializer.data)
 
     @action(methods=['delete'], detail=True)
     def delete(self, request, pk=None):
-        obj = get_object_or_404(Administrator, pk=pk)
+        obj = get_object_or_404(Staff, pk=pk)
         obj.delete()
         return res(status=status.HTTP_204_NO_CONTENT)
 
@@ -67,7 +67,7 @@ class AdministratorViewSet(GenericViewSet):
     def delete_list(self, request):
         pk = self.request.query_params.get('ids', '')
         pk = [int(pk)] if pk.isdigit() else map(lambda x: int(x), pk.split(','))
-        result = Administrator.objects.filter(pk__in=pk)
+        result = Staff.objects.filter(pk__in=pk)
         if result.count() == 0:
             raise Http404
         result.delete()
@@ -77,7 +77,7 @@ class AdministratorViewSet(GenericViewSet):
 class LoginView(ObtainJSONWebToken):
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
-        if response.status_code == 200 and response.data['user']['table'] == 'administrators':
+        if response.status_code == 200 and response.data['user']['table'] == 'staffs':
             if response.data['user']['is_lock'] is True:
                 return err_res('Account locked')
             return response
@@ -91,13 +91,13 @@ class ProfileView(APIView):
         return self.request.user
 
     def get(self, request, format=None):
-        serializer = AdministratorBaseSerializer(self.get_object().administrator)
+        serializer = StaffBaseSerializer(self.get_object().staff)
         return res(serializer.data)
 
     def post(self, request, format=None):
         params = self.request.data
-        administrator = self.get_object().administrator
-        serializer = AdministratorUpdateSerializer(administrator, data=params, partial=True)
+        staff = self.get_object().staff
+        serializer = StaffUpdateSerializer(staff, data=params, partial=True)
         if serializer.is_valid() is True:
             serializer.save()
             return res(serializer.data)
@@ -110,13 +110,13 @@ class ResetPasswordView(APIView):
 
     def get_object(self, queryStr, type="username"):
         if type == "username":
-            return Administrator.objects.get(user__username=queryStr)
+            return Staff.objects.get(user__username=queryStr)
         elif type == "reset_password_token":
-            return Administrator.objects.get(reset_password_token=queryStr)
+            return Staff.objects.get(reset_password_token=queryStr)
         elif type == "change_password_token":
-            return Administrator.objects.get(change_password_token=queryStr)
+            return Staff.objects.get(change_password_token=queryStr)
         else:
-            raise Administrator.DoesNotExist
+            raise Staff.DoesNotExist
 
     # Reset password confirm
     def get(self, request, format=None):
@@ -138,7 +138,7 @@ class ResetPasswordView(APIView):
         params = self.request.data
         try:
             item = self.get_object(params["username"])
-        except Administrator.DoesNotExist:
+        except Staff.DoesNotExist:
             return res({"url": ""})
 
         user = item.user

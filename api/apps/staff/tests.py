@@ -2,14 +2,14 @@ import json
 import logging
 from rest_framework.test import APIClient
 from django.test import TestCase
-from .models import Administrator
-from .serializers import AdministratorCreateSerializer
+from .models import Staff
+from .serializers import StaffCreateSerializer
 from utils.helpers.test_helpers import TestHelpers
 from core import env
 # Create your tests here.
 
 
-class AdministratorTestCase(TestCase):
+class StaffTestCase(TestCase):
 
     def setUp(self):
         logging.disable(logging.CRITICAL)
@@ -40,15 +40,15 @@ class AdministratorTestCase(TestCase):
             "last_name": "Tran"
         }
 
-        self.item0 = AdministratorCreateSerializer(data=item0)
+        self.item0 = StaffCreateSerializer(data=item0)
         self.item0.is_valid(raise_exception=True)
         self.item0.save()
 
-        self.item1 = AdministratorCreateSerializer(data=item1)
+        self.item1 = StaffCreateSerializer(data=item1)
         self.item1.is_valid(raise_exception=True)
         self.item1.save()
 
-        self.item2 = AdministratorCreateSerializer(data=item2)
+        self.item2 = StaffCreateSerializer(data=item2)
         self.item2.is_valid(raise_exception=True)
         self.item2.save()
 
@@ -104,7 +104,7 @@ class AdministratorTestCase(TestCase):
             format='json'
         )
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(Administrator.objects.count(), 5)
+        self.assertEqual(Staff.objects.count(), 5)
 
     def test_edit(self):
         dataSuccess = {
@@ -152,21 +152,21 @@ class AdministratorTestCase(TestCase):
             "/api/v1/admin/{}".format(0)
         )
         self.assertEqual(response.status_code, 404)
-        self.assertEqual(Administrator.objects.count(), 4)
+        self.assertEqual(Staff.objects.count(), 4)
 
         # Remove single success
         response = self.client.delete(
             "/api/v1/admin/{}".format(self.item1.data['id'])
         )
         self.assertEqual(response.status_code, 204)
-        self.assertEqual(Administrator.objects.count(), 3)
+        self.assertEqual(Staff.objects.count(), 3)
 
         # Remove list success
         response = self.client.delete(
             "/api/v1/admin/?ids={}".format(','.join([str(self.item0.data['id']), str(self.item2.data['id'])]))
         )
         self.assertEqual(response.status_code, 204)
-        self.assertEqual(Administrator.objects.count(), 1)
+        self.assertEqual(Staff.objects.count(), 1)
 
     def test_profile(self):
         response = self.client.get(

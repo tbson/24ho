@@ -9,14 +9,14 @@ from rest_framework.viewsets import (GenericViewSet, )
 from rest_framework.decorators import action
 from rest_framework import status
 from .models import Customer
-from apps.administrator.models import Administrator
+from apps.staff.models import Staff
 from .serializers import (
     CustomerBaseSerializer,
     CustomerCreateSerializer,
     CustomerUpdateSerializer,
 )
-from apps.administrator.serializers import (
-    AdministratorCompactSerializer
+from apps.staff.serializers import (
+    StaffCompactSerializer
 )
 from utils.common_classes.custom_permission import CustomPermission
 from django.contrib.auth.hashers import make_password, check_password
@@ -42,8 +42,8 @@ class CustomerViewSet(GenericViewSet):
         result = {
             'items': serializer.data,
             'extra': {
-                'list_sale': AdministratorCompactSerializer(Administrator.objects.getListSale(), many=True).data,
-                'list_cust_care': AdministratorCompactSerializer(Administrator.objects.getListCustCare(), many=True).data
+                'list_sale': StaffCompactSerializer(Staff.objects.getListSale(), many=True).data,
+                'list_cust_care': StaffCompactSerializer(Staff.objects.getListCustCare(), many=True).data
             }
         }
         return self.get_paginated_response(result)

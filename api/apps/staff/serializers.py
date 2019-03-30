@@ -5,15 +5,15 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
-from .models import Administrator
+from .models import Staff
 from apps.group.serializers import GroupBaseSerializer
 
 
-class AdministratorBaseSerializer(ModelSerializer):
+class StaffBaseSerializer(ModelSerializer):
 
     class Meta:
         read_only_fields = ('id', 'fullname')
-        model = Administrator
+        model = Staff
         exclude = ()
 
     username = serializers.CharField(
@@ -42,13 +42,13 @@ class AdministratorBaseSerializer(ModelSerializer):
         return GroupBaseSerializer(obj.user.groups.all(), many=True).data
 
 
-class AdministratorCompactSerializer(AdministratorBaseSerializer):
+class StaffCompactSerializer(StaffBaseSerializer):
 
-    class Meta(AdministratorBaseSerializer.Meta):
+    class Meta(StaffBaseSerializer.Meta):
         fields = ('id', 'fullname')
 
 
-class AdministratorRetrieveSerializer(AdministratorBaseSerializer):
+class StaffRetrieveSerializer(StaffBaseSerializer):
 
     groups = SerializerMethodField()
 
@@ -59,9 +59,9 @@ class AdministratorRetrieveSerializer(AdministratorBaseSerializer):
         return ','.join(result)
 
 
-class AdministratorCreateSerializer(AdministratorBaseSerializer):
+class StaffCreateSerializer(StaffBaseSerializer):
 
-    class Meta(AdministratorBaseSerializer.Meta):
+    class Meta(StaffBaseSerializer.Meta):
         extra_kwargs = {
             'user': {'required': False},
         }
@@ -109,12 +109,12 @@ class AdministratorCreateSerializer(AdministratorBaseSerializer):
                 for group in groupList:
                     group.user_set.add(user)
 
-        return Administrator.objects.create(user=user)
+        return Staff.objects.create(user=user)
 
 
-class AdministratorUpdateSerializer(AdministratorBaseSerializer):
+class StaffUpdateSerializer(StaffBaseSerializer):
 
-    class Meta(AdministratorBaseSerializer.Meta):
+    class Meta(StaffBaseSerializer.Meta):
         extra_kwargs = {
             'user': {'required': False},
         }

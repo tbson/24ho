@@ -9,7 +9,7 @@ class TestHelpers():
 
     @staticmethod
     def testSetup(self):
-        from apps.administrator.models import Administrator
+        from apps.staff.models import Staff
         # Add original user
         user = User.objects.create_superuser(
             username=settings.TEST_ADMIN['username'],
@@ -22,11 +22,11 @@ class TestHelpers():
         user.user_permissions.set(permissions)
 
         fingerprint = settings.TEST_FINGERPRINT
-        Administrator.objects.create(user=user, fingerprint=fingerprint)
+        Staff.objects.create(user=user, fingerprint=fingerprint)
 
         # Test user login and get token
         response = self.client.post(
-            reverse('api_v1:administrator:login'),
+            reverse('api_v1:staff:login'),
             {
                 'username': settings.TEST_ADMIN['username'],
                 'password': settings.TEST_ADMIN['password']

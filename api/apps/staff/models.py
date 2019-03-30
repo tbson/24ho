@@ -2,7 +2,7 @@ from django.db import models
 from django.conf import settings
 
 
-class AdministratorManager(models.Manager):
+class StaffManager(models.Manager):
 
     def getListSale(self):
         return self.filter(is_sale=True)
@@ -13,7 +13,7 @@ class AdministratorManager(models.Manager):
 # Create your models here.
 
 
-class Administrator(models.Model):
+class Staff(models.Model):
 
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
@@ -32,7 +32,7 @@ class Administrator(models.Model):
     is_cust_care = models.BooleanField(default=False)
     is_lock = models.BooleanField(default=False)
 
-    objects = AdministratorManager()
+    objects = StaffManager()
 
     def delete(self, *args, **kwargs):
         self.user.delete()
@@ -42,5 +42,5 @@ class Administrator(models.Model):
         return self.user.email
 
     class Meta:
-        db_table = "administrators"
+        db_table = "staffs"
         ordering = ['-id']

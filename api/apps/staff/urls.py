@@ -5,20 +5,20 @@ from rest_framework_jwt.views import (
     verify_jwt_token,
 )
 from .views import (
-    AdministratorViewSet,
+    StaffViewSet,
     LoginView,
     ProfileView,
     ResetPasswordView,
     ChangePasswordView,
 )
 
-baseEndPoint = AdministratorViewSet.as_view({
+baseEndPoint = StaffViewSet.as_view({
     'get': 'list',
     'post': 'add',
     'delete': 'delete_list'
 })
 
-pkEndpoint = AdministratorViewSet.as_view({
+pkEndpoint = StaffViewSet.as_view({
     'get': 'retrieve',
     'put': 'change',
     'delete': 'delete'

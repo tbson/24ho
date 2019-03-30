@@ -10,7 +10,7 @@ urlpatterns = (
     ),
     path(
         'admin/',
-        include('apps.administrator.urls', namespace='administrator'),
+        include('apps.staff.urls', namespace='staff'),
     ),
     path(
         'customer/',

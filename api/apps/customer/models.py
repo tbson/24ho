@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-from apps.administrator.models import Administrator
+from apps.staff.models import Staff
 
 
 # Create your models here.
@@ -22,8 +22,8 @@ class Customer(models.Model):
     phone = models.CharField(max_length=32)
     company = models.CharField(max_length=256, blank=True)
 
-    sale_id = models.ForeignKey(Administrator, models.SET_NULL, related_name='sale', blank=True, null=True)
-    cust_care_id = models.ForeignKey(Administrator, models.SET_NULL, related_name='cust_care', blank=True, null=True)
+    sale_id = models.ForeignKey(Staff, models.SET_NULL, related_name='sale', blank=True, null=True)
+    cust_care_id = models.ForeignKey(Staff, models.SET_NULL, related_name='cust_care', blank=True, null=True)
 
     is_lock = models.BooleanField(default=False)
 
