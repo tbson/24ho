@@ -78,13 +78,13 @@ class App extends React.Component<Props, State> {
                         </NavLink>
                     </li>
                 );
-            case 'freelancer':
+            case 'customer':
                 if (APP !== 'admin') return null;
                 return (
                     <li>
-                        <NavLink exact to="/freelancer">
+                        <NavLink exact to="/customer">
                             <i className="fas fa-user-ninja" />&nbsp;&nbsp;
-                            <span>Freelancer</span>
+                            <span>Customer</span>
                         </NavLink>
                     </li>
                 );
@@ -188,6 +188,7 @@ class App extends React.Component<Props, State> {
                     <ul className="sidebar-nav">
                         {renderMenu('profile')}
                         {renderMenu('admin')}
+                        {renderMenu('customer')}
                         {renderMenu('variable')}
                         {/*
                         {renderMenu('freelancer')}

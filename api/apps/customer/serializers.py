@@ -119,4 +119,7 @@ class CustomerUpdateSerializer(CustomerBaseSerializer):
         user.save()
 
         instance.user = user
+        instance.is_lock = validated_data['is_lock'] if 'is_lock' in validated_data else False
+        instance.sale_id = validated_data['sale_id'] if 'sale_id' in validated_data else None
+        instance.cust_care_id = validated_data['cust_care_id'] if 'cust_care_id' in validated_data else None
         return instance

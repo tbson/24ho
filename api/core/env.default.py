@@ -38,6 +38,14 @@ TEST_ADMIN = {
     'first_name': 'First',
     'last_name': 'Admin'
 }
+TEST_USER = {
+    "username": "tbson0",
+    "email": "tbson0@gmail.com",
+    "password": "123456",
+    "first_name": "Son",
+    "last_name": "Tran",
+    "phone": "000"
+}
 TEST_FINGERPRINT = 'test-fingerprint'
 
 SLACK_WEBHOOK_URL = ''

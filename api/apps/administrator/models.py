@@ -2,7 +2,17 @@ from django.db import models
 from django.conf import settings
 
 
+class AdministratorManager(models.Manager):
+
+    def getListSale(self):
+        return self.filter(is_sale=True)
+
+    def getListCustCare(self):
+        return self.filter(is_cust_care=True)
+
 # Create your models here.
+
+
 class Administrator(models.Model):
 
     user = models.OneToOneField(
@@ -21,6 +31,8 @@ class Administrator(models.Model):
     is_sale = models.BooleanField(default=False)
     is_cust_care = models.BooleanField(default=False)
     is_lock = models.BooleanField(default=False)
+
+    objects = AdministratorManager()
 
     def delete(self, *args, **kwargs):
         self.user.delete()

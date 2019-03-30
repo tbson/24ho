@@ -9,10 +9,14 @@ from rest_framework.viewsets import (GenericViewSet, )
 from rest_framework.decorators import action
 from rest_framework import status
 from .models import Customer
+from apps.administrator.models import Administrator
 from .serializers import (
     CustomerBaseSerializer,
     CustomerCreateSerializer,
     CustomerUpdateSerializer,
+)
+from apps.administrator.serializers import (
+    AdministratorCompactSerializer
 )
 from utils.common_classes.custom_permission import CustomPermission
 from django.contrib.auth.hashers import make_password, check_password
@@ -34,7 +38,15 @@ class CustomerViewSet(GenericViewSet):
         queryset = self.filter_queryset(queryset)
         queryset = self.paginate_queryset(queryset)
         serializer = CustomerBaseSerializer(queryset, many=True)
-        return self.get_paginated_response(serializer.data)
+
+        result = {
+            'items': serializer.data,
+            'extra': {
+                'list_sale': AdministratorCompactSerializer(Administrator.objects.getListSale(), many=True).data,
+                'list_cust_care': AdministratorCompactSerializer(Administrator.objects.getListCustCare(), many=True).data
+            }
+        }
+        return self.get_paginated_response(result)
 
     def retrieve(self, request, pk=None):
         obj = get_object_or_404(Customer, pk=pk)
@@ -77,6 +89,8 @@ class LoginView(ObtainJSONWebToken):
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
         if response.status_code == 200 and response.data['user']['table'] == 'customers':
+            if response.data['user']['is_lock'] is True:
+                return err_res('Account locked')
             return response
         return res(status=status.HTTP_400_BAD_REQUEST)
 

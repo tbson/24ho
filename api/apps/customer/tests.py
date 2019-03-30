@@ -26,7 +26,8 @@ class CustomerTestCase(TestCase):
             "email": "tbson1@gmail.com",
             "password": "123456",
             "first_name": "Son",
-            "last_name": "Tran"
+            "last_name": "Tran",
+            "phone": "000"
         }
 
         item2 = {
@@ -34,7 +35,8 @@ class CustomerTestCase(TestCase):
             "email": "tbson2@gmail.com",
             "password": "123456",
             "first_name": "Son",
-            "last_name": "Tran"
+            "last_name": "Tran",
+            "phone": "000"
         }
 
         self.item0 = CustomerCreateSerializer(data=item0)
@@ -76,14 +78,16 @@ class CustomerTestCase(TestCase):
             "email": "tbson3@gmail.com",
             "password": "123456",
             "first_name": "Son",
-            "last_name": "Tran"
+            "last_name": "Tran",
+            "phone": "000"
         }
         dataFail = {
             "username": "tbson2",
             "email": "tbson2@gmail.com",
             "password": "123456",
             "first_name": "Son",
-            "last_name": "Tran"
+            "last_name": "Tran",
+            "phone": "000"
         }
 
         # Add duplicate
@@ -109,14 +113,16 @@ class CustomerTestCase(TestCase):
             "email": "tbson3@gmail.com",
             "password": "123456",
             "first_name": "Son",
-            "last_name": "Tran"
+            "last_name": "Tran",
+            "phone": "000"
         }
         dataFail = {
             "username": "tbson2",
             "email": "tbson2@gmail.com",
             "password": "123456",
             "first_name": "Son",
-            "last_name": "Tran"
+            "last_name": "Tran",
+            "phone": "000"
         }
 
         # Update not exist
@@ -181,7 +187,8 @@ class CustomerTestCase(TestCase):
             "username": "tbson4",
             "email": "tbson4@gmail.com",
             "first_name": "abc",
-            "last_name": "def"
+            "last_name": "def",
+            "phone": "000"
         }
 
         response = self.client.post(

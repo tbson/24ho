@@ -25,6 +25,7 @@ import Profile from './auth/profile/';
 import ResetPwd from './auth/reset_pwd/';
 import Variable from './variable/';
 import Admin from './admin/';
+import Customer from './customer/';
 /*
 import Customer from './customer/Customer';
 import Group from './group/Group';
@@ -72,6 +73,7 @@ class App extends React.Component<Props> {
                     <Route path="/reset-password/:token" component={ResetPwd} />
                     <Route path="/variable" component={Variable} />
                     <Route path="/admin" component={Admin} />
+                    <Route path="/customer" component={Customer} />
                     {/*
                     <Route path="/customer" component={Customer} />
                     <Route path="/group" component={Group} />

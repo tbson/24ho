@@ -42,6 +42,12 @@ class AdministratorBaseSerializer(ModelSerializer):
         return GroupBaseSerializer(obj.user.groups.all(), many=True).data
 
 
+class AdministratorCompactSerializer(AdministratorBaseSerializer):
+
+    class Meta(AdministratorBaseSerializer.Meta):
+        fields = ('id', 'fullname')
+
+
 class AdministratorRetrieveSerializer(AdministratorBaseSerializer):
 
     groups = SerializerMethodField()
