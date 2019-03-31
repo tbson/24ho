@@ -198,3 +198,13 @@ class Tools():
     @staticmethod
     def langFromRequest(request):
         return request.META.get('HTTP_LANG', None)
+
+    @staticmethod
+    def imgDest(directory, onlyJpg=True):
+        def inner(instance, filename):
+            ext = 'jpg'
+            if onlyJpg is True:
+                ext = filename.split('.')[-1]
+            filename = "{}.{}".format(uuid.uuid4(), ext)
+            return os.path.join(directory, filename)
+        return inner

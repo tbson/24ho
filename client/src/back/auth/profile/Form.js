@@ -2,10 +2,12 @@
 // $FlowFixMe: do not complain about hooks
 import {useState, useEffect} from 'react';
 import * as React from 'react';
+import {APP} from 'src/constants';
 import {apiUrls} from '../_data';
 import Tools from 'src/utils/helpers/Tools';
 import type {FormState} from 'src/utils/helpers/Tools';
 import TextInput from 'src/utils/components/input/TextInput';
+import FileInput from 'src/utils/components/input/FileInput';
 import DefaultModal from 'src/utils/components/modal/DefaultModal';
 import ButtonsBar from 'src/utils/components/form/ButtonsBar';
 import ErrorMessages from 'src/utils/components/form/ErrorMessages';
@@ -76,16 +78,34 @@ export const Form = ({onSubmit, children, state, submitTitle = 'Update'}: FormPr
     const errorMessages = (name: string): Array<string> => state.errors[name] || [];
     return (
         <form name={name} onSubmit={onSubmit}>
-            <TextInput id={id('username')} label="Username" value={data.username} required={true} autoFocus={true} />
-
-            <TextInput id={id('email')} type="email" label="Email" value={data.email} required={true} />
-
             <div className="row">
-                <div className="col-md-6">
-                    <TextInput id={id('first_name')} label="First name" value={data.first_name} />
-                </div>
-                <div className="col-md-6">
-                    <TextInput id={id('last_name')} label="Last name" value={data.last_name} />
+                {APP !== 'admin' && <div className="col-md-2">
+                    <FileInput
+                        id={id('avatar')}
+                        value={data.avatar}
+                        label=""
+                        value={data.avatar}
+                    /> 
+                </div>}
+                <div className={`col-md-${APP !== 'admin' ? 10 : 12}`}>
+                    <TextInput
+                        id={id('username')}
+                        label="Username"
+                        value={data.username}
+                        required={true}
+                        autoFocus={true}
+                    />
+
+                    <TextInput id={id('email')} type="email" label="Email" value={data.email} required={true} />
+
+                    <div className="row">
+                        <div className="col-md-6">
+                            <TextInput id={id('first_name')} label="First name" value={data.first_name} />
+                        </div>
+                        <div className="col-md-6">
+                            <TextInput id={id('last_name')} label="Last name" value={data.last_name} />
+                        </div>
+                    </div>
                 </div>
             </div>
 

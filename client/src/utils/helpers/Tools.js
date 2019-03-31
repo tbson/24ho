@@ -41,7 +41,7 @@ export type FormState = {
 
 type Payload = {
     data: string | FormData,
-    contentType: string
+    "Content-Type": string
 };
 
 export type GetListResponseData = {
@@ -215,7 +215,7 @@ export default class Tools {
     static getJsonPayload(data: Object): Payload {
         return {
             data: JSON.stringify(data),
-            contentType: 'application/json'
+            "Content-Type": 'application/json'
         };
     }
 
@@ -227,7 +227,7 @@ export default class Tools {
         }
         return {
             data: formData,
-            contentType: 'application/x-www-form-urlencoded'
+            "Content-Type": ''
         };
     }
 
@@ -340,8 +340,13 @@ export default class Tools {
     static preparePayload(data: Object, method: string): Object {
         const config = Tools.defaultRequestConfig(method);
         const payload = Tools.payloadFromObject(data);
+        
         config.body = payload.data;
-        config.headers.contentType = payload.contentType;
+        if (payload["Content-Type"]) {
+            config.headers["Content-Type"] = payload["Content-Type"];
+        } else {
+            delete config.headers["Content-Type"];
+        }
 
         return {payload, config};
     }
@@ -360,7 +365,6 @@ export default class Tools {
                 data = {detail: 'Internal server error'};
             }
         } catch (error) {
-            console.log(error);
             data = {detail: 'Internal server error'};
         }
         return data;
@@ -393,14 +397,12 @@ export default class Tools {
         try {
             const usePayload = Tools.isUsePayload(method);
             const preparePayload = Tools.preparePayload(data, method);
-
             const config = usePayload ? preparePayload.config : Tools.defaultRequestConfig(method);
 
             if (!usePayload) {
                 const urlData = this.urlDataEncode(data);
                 url += urlData ? '?' + urlData : '';
             }
-
             const response = await fetch(url, config);
             const status = response.status;
             const json = await Tools.getJsonResponse(response);

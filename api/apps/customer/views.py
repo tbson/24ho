@@ -111,7 +111,7 @@ class ProfileView(APIView):
             return res({}, status=401)
 
     def post(self, request, format=None):
-        params = self.request.data
+        params = request.data
         customer = self.get_object().customer
         serializer = CustomerUpdateSr(customer, data=params, partial=True)
         if serializer.is_valid() is True:

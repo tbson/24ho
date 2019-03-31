@@ -30,6 +30,8 @@ class CustomerBaseSr(ModelSerializer):
         source='user.last_name'
     )
 
+    avatar = serializers.ImageField()
+
     fullname = SerializerMethodField()
 
     def get_fullname(self, obj):
@@ -134,10 +136,10 @@ class CustomerUpdateSr(CustomerBaseSr):
             user.set_password(data.get('password'))
         """
 
-        user.username = user.username if not data.get('username', None) else data['username']
-        user.email = user.email if not data.get('email', None) else data['email']
-        user.first_name = user.first_name if not data.get('first_name', None) else data['first_name']
-        user.last_name = user.last_name if not data.get('last_name', None) else data['last_name']
+        user.username = data.get('username', user.username)
+        user.email = data.get('email', user.email)
+        user.first_name = data.get('first_name', user.first_name)
+        user.last_name = data.get('last_name', user.last_name)
         user.save()
 
         instance.user = user
@@ -145,4 +147,5 @@ class CustomerUpdateSr(CustomerBaseSr):
         instance.phone = validated_data.get('phone', '')
         instance.sale_id = validated_data.get('sale_id', None)
         instance.cust_care_id = validated_data.get('cust_care_id', None)
+        instance.avatar = validated_data.get('avatar', '')
         return instance
