@@ -3,9 +3,10 @@
 import Tools from 'src/utils/helpers/Tools';
 import {APP} from 'src/constants';
 
+
 const rawApiUrls = [
     {
-        controller: APP,
+        controller: Tools.mapApp(APP),
         endpoints: {
             profile: 'profile',
             auth: 'auth',

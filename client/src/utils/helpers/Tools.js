@@ -293,7 +293,7 @@ export default class Tools {
         return () => {
             this.removeStorage('auth');
             this.navigateTo(history)('/login');
-        }
+        };
     }
 
     static popMessage(description: string | Object, type: string = 'success'): void {
@@ -688,5 +688,9 @@ export default class Tools {
                 result[key] = value;
                 return result;
             }, {});
+    }
+
+    static mapApp(app: string): string {
+        return app === 'admin' ? 'staff' : 'customer';
     }
 }

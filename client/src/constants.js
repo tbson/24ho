@@ -3,7 +3,7 @@ import {createBrowserHistory} from 'history';
 export const APP_TITLE = '24HO';
 export const APP_NAMESPACE = '24ho';
 const APP_RAW = window.location.href.split('://')[1].split('/')[1];
-export const APP = ['admin', 'customer'].includes(APP_RAW) ? APP_RAW : '';
+export const APP = ['admin', 'user'].includes(APP_RAW) ? APP_RAW : '';
 export const URL_PREFIX = APP ? '/' + APP + '/' : '/';
 export const URL_PREFIX_STRIP = APP === 'blank' ? APP : APP ? '/' + APP : '/';
 export const LOCAL_STORAGE_PREFIX = APP_NAMESPACE + '_' + APP;

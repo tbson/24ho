@@ -10,7 +10,7 @@ describe('Service.getProfileRequest', () => {
         const apiCall = jest.spyOn(Tools, 'apiCall').mockImplementation(async () => {});
         Service.getProfileRequest();
         expect(apiCall).toHaveBeenCalled();
-        expect(apiCall.mock.calls[0][0]).toEqual('http://localhost/api/v1//profile/');
+        expect(apiCall.mock.calls[0][0]).toEqual('http://localhost/api/v1/customer/profile/');
     });
 });
 
@@ -22,7 +22,7 @@ describe('Service.setProfileRequest', () => {
         };
         Service.setProfileRequest(params);
         expect(apiCall).toHaveBeenCalled();
-        expect(apiCall.mock.calls[0][0]).toEqual('http://localhost/api/v1//profile/');
+        expect(apiCall.mock.calls[0][0]).toEqual('http://localhost/api/v1/customer/profile/');
         expect(apiCall.mock.calls[0][1]).toEqual(params);
         expect(apiCall.mock.calls[0][2]).toEqual('POST');
     });

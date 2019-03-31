@@ -179,7 +179,7 @@ class App extends React.Component<Props, State> {
 
     render() {
         const {renderMenu} = this;
-        const {user} = Tools.getStorageObj('auth');
+        const {user = {}} = Tools.getStorageObj('auth');
         const fullname = `${user.last_name} ${user.first_name}`;
         return (
             <div id="wrapper" className={this.state.toggled ? 'toggled' : ''}>

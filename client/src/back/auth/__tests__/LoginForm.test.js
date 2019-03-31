@@ -15,7 +15,7 @@ describe('Service.request', () => {
         };
         Service.request(params);
         expect(apiCall).toHaveBeenCalled();
-        expect(apiCall.mock.calls[0][0]).toEqual('http://localhost/api/v1//auth/');
+        expect(apiCall.mock.calls[0][0]).toEqual('http://localhost/api/v1/customer/auth/');
         expect(apiCall.mock.calls[0][1]).toEqual(params);
         expect(apiCall.mock.calls[0][2]).toEqual('POST');
     });

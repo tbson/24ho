@@ -4,6 +4,7 @@ import * as React from 'react';
 import {useState, useEffect} from 'react';
 // $FlowFixMe: do not complain about importing node_modules
 import {withRouter} from 'react-router-dom';
+import {APP} from 'src/constants';
 import Tools from 'src/utils/helpers/Tools';
 import NavWrapper from 'src/utils/components/nav_wrapper';
 import ProfileForm from './Form';
@@ -11,8 +12,14 @@ import ChangePwdForm from '../PwdForm';
 
 export class Service {
     static async profileRequest() {
-        const url = '/api/v1/staff/profile/';
+        const url = `/api/v1/${Tools.mapApp(APP)}/profile/`;
         return await Tools.apiCall(url);
+    }
+
+    static handleProfileRequest(): Promise<Object> {
+        return Service.profileRequest()
+            .then(resp => (resp.ok ? resp.data || {} : Promise.reject(resp)))
+            .catch(Tools.popMessageOrRedirect);
     }
 }
 
@@ -23,8 +30,8 @@ export const Profile = () => {
 
     useEffect(() => {
         document.title = 'Profile manager';
-        Service.profileRequest().then(resp => {
-            resp.ok && setProfile(resp.data);
+        Service.handleProfileRequest().then(data => {
+            data && setProfile(data);
         });
     }, []);
 

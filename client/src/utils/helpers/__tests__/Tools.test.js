@@ -1128,3 +1128,18 @@ describe('setFormErrors', () => {
         expect(output).toEqual(eput);
     });
 });
+
+describe('mapApp', () => {
+    test('admin', () => {
+        const input = 'admin';
+        const eput = 'staff';
+        const output = Tools.mapApp(input);
+        expect(output).toEqual(eput);
+    });
+    test('user', () => {
+        const input = 'user';
+        const eput = 'customer';
+        const output = Tools.mapApp(input);
+        expect(output).toEqual(eput);
+    });
+});
