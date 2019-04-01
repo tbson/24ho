@@ -44,6 +44,13 @@ export class Service {
                   .then(resp => (resp.ok ? callback(resp.data) : callback(defaultInputs)))
                   .catch(() => callback(defaultInputs));
     }
+
+    static prepareData(data: Object): Object {
+        const user_data = {...data.user_data};
+        delete data.user_data;
+        delete user_data.id;
+        return {...data, ...user_data};
+    }
 }
 
 type Props = {
@@ -63,7 +70,7 @@ export default ({id, listSale, listCustCare, open: _open, close, onChange, child
     const handleSubmit = Service.handleSubmit(id, close, onChange, setErrors, setData);
 
     const afterRetrieve = (open: boolean) => (data: Object) => {
-        setData(data);
+        setData(Service.prepareData(data));
         setOpen(open);
     };
 
@@ -119,7 +126,7 @@ export const Form = ({
 
     const name = 'customer';
     const fieldId = Tools.getFieldId(name);
-    const {id, email, username, first_name, last_name, phone, password, is_lock, sale_id, cust_care_id} = state.data;
+    const {id, user, email, username, first_name, last_name, phone, password, is_lock, sale_id, cust_care_id} = state.data;
     const {errors} = state;
 
     const errMsg = (name: string): Array<string> => state.errors[name] || [];

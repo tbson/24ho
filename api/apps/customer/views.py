@@ -10,11 +10,10 @@ from rest_framework.decorators import action
 from rest_framework import status
 from .models import Customer
 from apps.staff.models import Staff
+from utils.serializers.user import UserSr
 from .serializers import (
     CustomerBaseSr,
     CustomerRetrieveSr,
-    CustomerCreateSr,
-    CustomerUpdateSr,
 )
 from apps.staff.serializers import (
     StaffCompactSr
@@ -56,15 +55,32 @@ class CustomerViewSet(GenericViewSet):
 
     @action(methods=['post'], detail=True)
     def add(self, request):
-        serializer = CustomerCreateSr(data=request.data)
+        data = Tools.parseUserRelatedData(request.data)
+        userSr = UserSr(data=data['user'])
+        if userSr.is_valid(raise_exception=True):
+            userSr.save()
+
+        remain = data['remain']
+        remain.update({'user': userSr.data['id']})
+        serializer = CustomerBaseSr(data=remain)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
+
+        serializer.data.update({'user': userSr.data})
         return res(serializer.data)
 
     @action(methods=['put'], detail=True)
     def change(self, request, pk=None):
         obj = get_object_or_404(Customer, pk=pk)
-        serializer = CustomerUpdateSr(obj, data=request.data)
+
+        data = Tools.parseUserRelatedData(request.data)
+        userSr = UserSr(obj.user, data=data['user'])
+        if userSr.is_valid(raise_exception=True):
+            userSr.save()
+
+        remain = data['remain']
+        remain.update({'user': obj.user_id})
+        serializer = CustomerBaseSr(obj, data=remain)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
         return res(serializer.data)
@@ -113,7 +129,7 @@ class ProfileView(APIView):
     def post(self, request, format=None):
         params = request.data
         customer = self.get_object().customer
-        serializer = CustomerUpdateSr(customer, data=params, partial=True)
+        serializer = CustomerBaseSr(customer, data=params, partial=True)
         if serializer.is_valid() is True:
             serializer.save()
             return res(serializer.data)

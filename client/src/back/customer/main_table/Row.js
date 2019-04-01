@@ -37,9 +37,9 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
             <th className="row25">
                 <input id={id} className="check" type="checkbox" checked={data.checked} onChange={() => onCheck(id)} />
             </th>
-            <td className="email">{data.email}</td>
+            <td className="email">{data.user_data.email}</td>
             <td className="username">{data.phone}</td>
-            <td className="fullname">{data.fullname}</td> 
+            <td className="fullname">{data.user_data.fullname}</td> 
             <td className="sale_name">{data.sale_name}</td> 
             <td className="cust_care_name">{data.cust_care_name}</td> 
             <td className="fullname"><BoolOutput value={!data.is_lock}/></td> 

@@ -45,8 +45,8 @@ export type DbRow = FormValues & {
 };
 
 export type TRow = DbRow & {
+    user_data: Object,
     checked: boolean,
-    groups?: Array<Object>,
     is_lock: boolean,
     sale_id: number,
     sale_name?: string,

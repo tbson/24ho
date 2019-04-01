@@ -4,8 +4,9 @@ from rest_framework.test import APIClient
 from django.test import TestCase
 from django.urls import reverse
 from .models import Customer
-from .serializers import CustomerCreateSr
+from .serializers import CustomerBaseSr
 from utils.helpers.test_helpers import TestHelpers
+from utils.serializers.user import UserSr
 from core import env
 # Create your tests here.
 
@@ -19,35 +20,54 @@ class CustomerTestCase(TestCase):
         self.client = APIClient()
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + self.token)
 
-        item0 = env.TEST_USER
+        user0 = env.TEST_USER
+        item0 = {
+            "phone": "000"
+        }
 
-        item1 = {
+        user1 = {
             "username": "tbson1",
             "email": "tbson1@gmail.com",
             "password": "123456",
             "first_name": "Son",
             "last_name": "Tran",
+        }
+        item1 = {
             "phone": "000"
         }
 
-        item2 = {
+        user2 = {
             "username": "tbson2",
             "email": "tbson2@gmail.com",
             "password": "123456",
             "first_name": "Son",
             "last_name": "Tran",
+        }
+        item2 = {
             "phone": "000"
         }
 
-        self.item0 = CustomerCreateSr(data=item0)
+        user = UserSr(data=user0)
+        user.is_valid(raise_exception=True)
+        user.save()
+        item0.update({"user": user.data["id"]})
+        self.item0 = CustomerBaseSr(data=item0)
         self.item0.is_valid(raise_exception=True)
         self.item0.save()
 
-        self.item1 = CustomerCreateSr(data=item1)
+        user = UserSr(data=user1)
+        user.is_valid(raise_exception=True)
+        user.save()
+        item1.update({"user": user.data["id"]})
+        self.item1 = CustomerBaseSr(data=item1)
         self.item1.is_valid(raise_exception=True)
         self.item1.save()
 
-        self.item2 = CustomerCreateSr(data=item2)
+        user = UserSr(data=user2)
+        user.is_valid(raise_exception=True)
+        user.save()
+        item2.update({"user": user.data["id"]})
+        self.item2 = CustomerBaseSr(data=item2)
         self.item2.is_valid(raise_exception=True)
         self.item2.save()
 

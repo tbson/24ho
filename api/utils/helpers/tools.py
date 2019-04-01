@@ -200,11 +200,15 @@ class Tools():
         return request.META.get('HTTP_LANG', None)
 
     @staticmethod
-    def imgDest(directory, onlyJpg=True):
-        def inner(instance, filename):
-            ext = 'jpg'
-            if onlyJpg is True:
-                ext = filename.split('.')[-1]
-            filename = "{}.{}".format(uuid.uuid4(), ext)
-            return os.path.join(directory, filename)
-        return inner
+    def parseUserRelatedData(data):
+        user = {
+            'email': data.pop('email', None),
+            'username': data.pop('username', None),
+            'first_name': data.pop('first_name', None),
+            'last_name': data.pop('last_name', None),
+            'password': data.pop('password', None)
+        }
+        return {
+            'user': user,
+            'remain': data
+        }

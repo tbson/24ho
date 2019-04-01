@@ -3,7 +3,6 @@ import Tools from 'src/utils/helpers/Tools';
 import {Service} from '../MainForm/';
 import {defaultInputs} from '../_data';
 
-
 beforeEach(() => {
     jest.restoreAllMocks();
 });
@@ -265,7 +264,7 @@ describe('Service.handleSubmit', () => {
             const onError = jest.fn();
             const setData = jest.fn();
             const needToClose = true;
-            const e = {preventDefault: () => {}}; 
+            const e = {preventDefault: () => {}};
 
             jest.spyOn(Tools, 'formDataToObj').mockImplementation(() => params);
             const changeRequest = jest
@@ -333,5 +332,28 @@ describe('Service.handleRetrieve', () => {
 
         expect(callback).toHaveBeenCalled();
         expect(callback.mock.calls[0][0]).toEqual(defaultInputs);
+    });
+});
+
+describe('Service.prepareData', () => {
+    it('Normal case', async () => {
+        const input = {
+            key1: 'value 1',
+            user_data: {
+                id: 1,
+                key2: 'value 2',
+                key3: 'value 3'
+            }
+        };
+
+        const eput = {
+            key1: 'value 1',
+            key2: 'value 2',
+            key3: 'value 3'
+        };
+
+        const output = Service.prepareData(input);
+
+        expect(eput).toEqual(output);
     });
 });

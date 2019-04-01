@@ -36,7 +36,7 @@ export class Service {
         return staff.map(item => ({value: item.id, label: item.fullname}));
     }
 
-    static addName(list: Array<Object>, nameSource: Array<Object>, key: string): Array<Object> {
+    static addNameToList(list: Array<Object>, nameSource: Array<Object>, key: string): Array<Object> {
         const map = nameSource.reduce((obj, item) => {
             obj[item.value] = item.label;
             return obj;
@@ -47,11 +47,27 @@ export class Service {
         });
     }
 
-    static prepare(list, listSale, listCustCare) {
-        return list
-        |> ListTools.prepare
-        |> Service.addName(?, listSale, 'sale')
-        |> Service.addName(?, listCustCare, 'cust_care');
+    static addNameToItem(item: DbRow, nameSource: Array<Object>, key: string): Object {
+        const map = nameSource.reduce((obj, item) => {
+            obj[item.value] = item.label;
+            return obj;
+        }, {});
+        item[`${key}_name`] = map[item[`${key}_id`]];
+        return item;
+    }
+
+    static prepareList(list: Array<DbRow>, listSale: Array<Object>, listCustCare: Array<Object>): Array<TRow> {
+        list = ListTools.prepare(list);
+        list = Service.addNameToList(list, listSale, 'sale');
+        list = Service.addNameToList(list, listCustCare, 'cust_care');
+        return list;
+    }
+
+    static prepareItem(item: DbRow, listSale: Array<Object>, listCustCare: Array<Object>): TRow {
+        item = {...item, checked: false};
+        item = Service.addNameToItem(item, listSale, 'sale');
+        item = Service.addNameToItem(item, listCustCare, 'cust_care');
+        return item;
     }
 }
 
@@ -70,13 +86,14 @@ export default ({}: Props) => {
         if (!data) return;
         const _listSale = Service.staffToOptions(data.extra.list_sale);
         const _listCustCare = Service.staffToOptions(data.extra.list_cust_care);
-        setList(Service.prepare(data.items, _listSale, _listCustCare));
+        setList(Service.prepareList(data.items, _listSale, _listCustCare));
         setLinks(data.links);
         setListSale(_listSale);
         setListCustCare(_listCustCare);
     };
 
     const onChange = (data: TRow, type: string) => {
+        data = Service.prepareItem(data, listSale, listCustCare);
         setList(listAction(data)[type]());
     };
 

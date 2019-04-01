@@ -179,8 +179,8 @@ describe('Service.staffToOptions', () => {
     });
 });
 
-describe('Service.addName', () => {
-    it('Normal case', () => {
+describe('Service.addNameToList', () => {
+    it('sale case', () => {
         const list = [
             {
                 sale_id: 1
@@ -215,7 +215,194 @@ describe('Service.addName', () => {
                 sale_id: 3
             }
         ];
-        const output = Service.addName(list, nameSource, 'sale');
+        const output = Service.addNameToList(list, nameSource, 'sale');
+        expect(eput).toEqual(output);
+    });
+
+    it('cust_care case', () => {
+        const list = [
+            {
+                cust_care_id: 1
+            },
+            {
+                cust_care_id: 2
+            },
+            {
+                cust_care_id: 3
+            }
+        ];
+        const nameSource = [
+            {
+                value: 1,
+                label: 'item 1'
+            },
+            {
+                value: 2,
+                label: 'item 2'
+            }
+        ];
+        const eput = [
+            {
+                cust_care_id: 1,
+                cust_care_name: 'item 1'
+            },
+            {
+                cust_care_id: 2,
+                cust_care_name: 'item 2'
+            },
+            {
+                cust_care_id: 3
+            }
+        ];
+        const output = Service.addNameToList(list, nameSource, 'cust_care');
+        expect(eput).toEqual(output);
+    });
+});
+
+describe('Service.addNameToItem', () => {
+    it('sale case', () => {
+        const item = {
+            sale_id: 1
+        };
+        const nameSource = [
+            {
+                value: 1,
+                label: 'item 1'
+            },
+            {
+                value: 2,
+                label: 'item 2'
+            }
+        ];
+        const eput = {
+            sale_id: 1,
+            sale_name: 'item 1'
+        };
+        const output = Service.addNameToItem(item, nameSource, 'sale');
+        expect(eput).toEqual(output);
+    });
+
+    it('cust_care case', () => {
+        const item = {
+            cust_care_id: 1
+        };
+        const nameSource = [
+            {
+                value: 1,
+                label: 'item 1'
+            },
+            {
+                value: 2,
+                label: 'item 2'
+            }
+        ];
+        const eput = {
+            cust_care_id: 1,
+            cust_care_name: 'item 1'
+        };
+        const output = Service.addNameToItem(item, nameSource, 'cust_care');
+        expect(eput).toEqual(output);
+    });
+});
+
+describe('Service.prepareList', () => {
+    it('Normal case', () => {
+        const list = [
+            {
+                sale_id: 1,
+                cust_care_id: 1
+            },
+            {
+                sale_id: 2,
+                cust_care_id: 2
+            },
+            {
+                sale_id: 3,
+                cust_care_id: 3
+            }
+        ];
+        const listSale = [
+            {
+                value: 1,
+                label: 'item 1'
+            },
+            {
+                value: 2,
+                label: 'item 2'
+            }
+        ];
+        const listCustCare = [
+            {
+                value: 1,
+                label: 'item 1'
+            },
+            {
+                value: 2,
+                label: 'item 2'
+            }
+        ];
+        const eput = [
+            {
+                checked: false,
+                sale_id: 1,
+                cust_care_id: 1,
+                sale_name: 'item 1',
+                cust_care_name: 'item 1'
+            },
+            {
+                checked: false,
+                sale_id: 2,
+                cust_care_id: 2,
+                sale_name: 'item 2',
+                cust_care_name: 'item 2'
+            },
+            {
+                checked: false,
+                sale_id: 3,
+                cust_care_id: 3,
+                sale_name: undefined,
+                cust_care_name: undefined
+            }
+        ];
+        const output = Service.prepareList(list, listSale, listCustCare);
+        expect(eput).toEqual(output);
+    });
+});
+
+describe('Service.prepareItem', () => {
+    it('Normal case', () => {
+        const item = {
+            sale_id: 1,
+            cust_care_id: 1
+        };
+        const listSale = [
+            {
+                value: 1,
+                label: 'item 1'
+            },
+            {
+                value: 2,
+                label: 'item 2'
+            }
+        ];
+        const listCustCare = [
+            {
+                value: 1,
+                label: 'item 1'
+            },
+            {
+                value: 2,
+                label: 'item 2'
+            }
+        ];
+        const eput = {
+            checked: false,
+            sale_id: 1,
+            cust_care_id: 1,
+            sale_name: 'item 1',
+            cust_care_name: 'item 1'
+        };
+        const output = Service.prepareItem(item, listSale, listCustCare);
         expect(eput).toEqual(output);
     });
 });
