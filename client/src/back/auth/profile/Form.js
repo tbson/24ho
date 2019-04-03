@@ -51,7 +51,7 @@ export default ({open, close, onChange, children}: Props) => {
         setData({});
         open
             ? Service.getProfile(profile => {
-                  setData(profile);
+                  setData(Tools.prepareUserData(profile));
                   setOpenModal(open);
               })
             : setOpenModal(open);

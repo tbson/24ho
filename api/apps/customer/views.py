@@ -109,7 +109,7 @@ class LoginView(ObtainJSONWebToken):
             if response.data['user']['is_lock'] is True:
                 return err_res('Account locked')
             return response
-        return res(status=status.HTTP_400_BAD_REQUEST)
+        return err_res({'detail': 'Wrong username or password.'})
 
 
 class ProfileView(APIView):

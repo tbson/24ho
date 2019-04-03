@@ -176,7 +176,7 @@ export default class Tools {
     }
 
     static getToken(): string {
-        const token = this.getStorageObj('auth').user?.token;
+        const token = this.getStorageObj('auth').token;
         return token ? token : '';
     }
 
@@ -694,5 +694,12 @@ export default class Tools {
 
     static mapApp(app: string): string {
         return app === 'admin' ? 'staff' : 'customer';
+    }
+
+    static prepareUserData(data: Object): Object {
+        const user_data = {...data.user_data};
+        delete data.user_data;
+        delete user_data.id;
+        return {...data, ...user_data};
     }
 }

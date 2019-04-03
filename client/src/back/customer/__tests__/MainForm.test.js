@@ -334,26 +334,3 @@ describe('Service.handleRetrieve', () => {
         expect(callback.mock.calls[0][0]).toEqual(defaultInputs);
     });
 });
-
-describe('Service.prepareData', () => {
-    it('Normal case', async () => {
-        const input = {
-            key1: 'value 1',
-            user_data: {
-                id: 1,
-                key2: 'value 2',
-                key3: 'value 3'
-            }
-        };
-
-        const eput = {
-            key1: 'value 1',
-            key2: 'value 2',
-            key3: 'value 3'
-        };
-
-        const output = Service.prepareData(input);
-
-        expect(eput).toEqual(output);
-    });
-});

@@ -154,7 +154,7 @@ test('removeStorage', () => {
 });
 
 test('getToken', () => {
-    Tools.setStorage('auth', {user: {token: 'token'}});
+    Tools.setStorage('auth', {token: 'token'});
     let output = Tools.getToken();
     expect(output).toEqual('token');
 
@@ -199,7 +199,7 @@ test('payloadFromObject', () => {
     let eput = JSON.stringify(input);
     expect(output).toEqual({
         data: eput,
-        contentType: 'application/json'
+        'Content-Type': 'application/json'
     });
 
     input = {
@@ -212,7 +212,7 @@ test('payloadFromObject', () => {
     eput = input;
     expect(output).toEqual({
         data: eput,
-        contentType: 'application/x-www-form-urlencoded'
+        'Content-Type': ''
     });
 });
 
@@ -1141,5 +1141,28 @@ describe('mapApp', () => {
         const eput = 'customer';
         const output = Tools.mapApp(input);
         expect(output).toEqual(eput);
+    });
+});
+
+describe('prepareUserData', () => {
+    it('Normal case', async () => {
+        const input = {
+            key1: 'value 1',
+            user_data: {
+                id: 1,
+                key2: 'value 2',
+                key3: 'value 3'
+            }
+        };
+
+        const eput = {
+            key1: 'value 1',
+            key2: 'value 2',
+            key3: 'value 3'
+        };
+
+        const output = Tools.prepareUserData(input);
+
+        expect(eput).toEqual(output);
     });
 });

@@ -43,14 +43,7 @@ export class Service {
             : Service.retrieveRequest(id)
                   .then(resp => (resp.ok ? callback(resp.data) : callback(defaultInputs)))
                   .catch(() => callback(defaultInputs));
-    }
-
-    static prepareData(data: Object): Object {
-        const user_data = {...data.user_data};
-        delete data.user_data;
-        delete user_data.id;
-        return {...data, ...user_data};
-    }
+    } 
 }
 
 type Props = {
@@ -70,7 +63,7 @@ export default ({id, listSale, listCustCare, open: _open, close, onChange, child
     const handleSubmit = Service.handleSubmit(id, close, onChange, setErrors, setData);
 
     const afterRetrieve = (open: boolean) => (data: Object) => {
-        setData(Service.prepareData(data));
+        setData(Tools.prepareUserData(data));
         setOpen(open);
     };
 

@@ -21,7 +21,9 @@ export const Login = ({history}: Props) => {
     });
 
     const onLogin = data => {
-        Tools.setStorage('auth', data) || navigateTo();
+        const authData = Tools.prepareUserData(data.user);
+        console.log(authData);
+        Tools.setStorage('auth', authData) || navigateTo();
     };
 
     const onResetPwd = () => {

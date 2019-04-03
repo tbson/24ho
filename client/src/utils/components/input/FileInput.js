@@ -50,7 +50,7 @@ export default ({id, label, value, placeholder, errMsg = [], disabled = false, o
     return (
         <div className={`form-group ${name}-field`}>
             <label htmlFor={name}>{label}</label>
-            <Preview fileContent={fileContent} />
+            <Preview fileContent={fileContent || _fileContent} />
             <div className="custom-file">
                 <input type="file" className={className} name={name} id={name} onChange={_onChange} />
                 <label className="custom-file-label" htmlFor={name}>

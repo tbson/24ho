@@ -31,7 +31,7 @@ export const Profile = () => {
     useEffect(() => {
         document.title = 'Profile manager';
         Service.handleProfileRequest().then(data => {
-            data && setProfile(data);
+            data && setProfile(Tools.prepareUserData(data));
         });
     }, []);
 

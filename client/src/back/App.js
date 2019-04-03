@@ -18,7 +18,6 @@ import(/* webpackPreload: true */ 'bootstrap/dist/js/bootstrap');
 import 'src/utils/styles/main-back.css';
 import Spinner from 'src/utils/components/Spinner';
 import NotMatch from 'src/utils/components/route/NotMatch';
-import Tools from 'src/utils/helpers/Tools';
 import PrivateRoute from 'src/utils/components/route/PrivateRoute';
 import Login from './auth/login/';
 import Profile from './auth/profile/';
