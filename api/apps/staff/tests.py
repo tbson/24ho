@@ -3,7 +3,8 @@ import logging
 from rest_framework.test import APIClient
 from django.test import TestCase
 from .models import Staff
-from .serializers import StaffCreateSr
+from .serializers import StaffBaseSr
+from utils.serializers.user import UserSr
 from utils.helpers.test_helpers import TestHelpers
 from core import env
 # Create your tests here.
@@ -18,39 +19,63 @@ class StaffTestCase(TestCase):
         self.client = APIClient()
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + self.token)
 
-        item0 = {
+        user0 = {
             "username": "tbson0",
             "email": "tbson0@gmail.com",
             "password": "123456",
             "first_name": "Son",
             "last_name": "Tran",
+        }
+        item0 = {
+            "is_lock": False,
             "is_sale": True
         }
-        item1 = {
+
+        user1 = {
             "username": "tbson1",
             "email": "tbson1@gmail.com",
             "password": "123456",
             "first_name": "Son",
             "last_name": "Tran",
+        }
+        item1 = {
+            "is_lock": False,
             "is_cust_care": True
         }
-        item2 = {
+
+        user2 = {
             "username": "tbson2",
             "email": "tbson2@gmail.com",
             "password": "123456",
             "first_name": "Son",
             "last_name": "Tran"
         }
+        item2 = {
+            "is_sale": False,
+            "is_cust_care": False
+        }
 
-        self.item0 = StaffCreateSr(data=item0)
+        user = UserSr(data=user0)
+        user.is_valid(raise_exception=True)
+        user.save()
+        item0.update({"user": user.data["id"]})
+        self.item0 = StaffBaseSr(data=item0)
         self.item0.is_valid(raise_exception=True)
         self.item0.save()
 
-        self.item1 = StaffCreateSr(data=item1)
+        user = UserSr(data=user1)
+        user.is_valid(raise_exception=True)
+        user.save()
+        item1.update({"user": user.data["id"]})
+        self.item1 = StaffBaseSr(data=item1)
         self.item1.is_valid(raise_exception=True)
         self.item1.save()
 
-        self.item2 = StaffCreateSr(data=item2)
+        user = UserSr(data=user2)
+        user.is_valid(raise_exception=True)
+        user.save()
+        item2.update({"user": user.data["id"]})
+        self.item2 = StaffBaseSr(data=item2)
         self.item2.is_valid(raise_exception=True)
         self.item2.save()
 

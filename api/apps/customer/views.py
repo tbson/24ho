@@ -11,13 +11,8 @@ from rest_framework import status
 from .models import Customer
 from apps.staff.models import Staff
 from utils.serializers.user import UserSr
-from .serializers import (
-    CustomerBaseSr,
-    CustomerRetrieveSr,
-)
-from apps.staff.serializers import (
-    StaffCompactSr
-)
+from .serializers import CustomerBaseSr
+from apps.staff.serializers import StaffCompactSr
 from utils.common_classes.custom_permission import CustomPermission
 from django.contrib.auth.hashers import make_password, check_password
 from django.utils import timezone

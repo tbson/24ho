@@ -10,15 +10,9 @@ from rest_framework.decorators import action
 from rest_framework import status
 from django.contrib.auth.models import Group
 from .models import Staff
-from .serializers import (
-    StaffBaseSr,
-    StaffRetrieveSr,
-    StaffCreateSr,
-    StaffUpdateSr,
-)
-from apps.group.serializers import (
-    GroupBaseSr
-)
+from utils.serializers.user import UserSr
+from .serializers import StaffBaseSr
+from apps.group.serializers import GroupBaseSr
 from utils.common_classes.custom_permission import CustomPermission
 from django.contrib.auth.hashers import make_password, check_password
 from django.utils import timezone
@@ -51,20 +45,37 @@ class StaffViewSet(GenericViewSet):
 
     def retrieve(self, request, pk=None):
         obj = get_object_or_404(Staff, pk=pk)
-        serializer = StaffRetrieveSr(obj)
+        serializer = StaffBaseSr(obj)
         return res(serializer.data)
 
     @action(methods=['post'], detail=True)
     def add(self, request):
-        serializer = StaffCreateSr(data=request.data)
+        data = Tools.parseUserRelatedData(request.data)
+        userSr = UserSr(data=data['user'])
+        if userSr.is_valid(raise_exception=True):
+            userSr.save()
+
+        remain = data['remain']
+        remain.update({'user': userSr.data['id']})
+        serializer = StaffBaseSr(data=remain)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
+
+        serializer.data.update({'user': userSr.data})
         return res(serializer.data)
 
     @action(methods=['put'], detail=True)
     def change(self, request, pk=None):
         obj = get_object_or_404(Staff, pk=pk)
-        serializer = StaffUpdateSr(obj, data=request.data)
+
+        data = Tools.parseUserRelatedData(request.data)
+        userSr = UserSr(obj.user, data=data['user'])
+        if userSr.is_valid(raise_exception=True):
+            userSr.save()
+
+        remain = data['remain']
+        remain.update({'user': obj.user_id})
+        serializer = StaffBaseSr(obj, data=remain)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
         return res(serializer.data)
@@ -109,7 +120,7 @@ class ProfileView(APIView):
     def post(self, request, format=None):
         params = self.request.data
         staff = self.get_object().staff
-        serializer = StaffUpdateSr(staff, data=params, partial=True)
+        serializer = StaffBaseSr(staff, data=params, partial=True)
         if serializer.is_valid() is True:
             serializer.save()
             return res(serializer.data)

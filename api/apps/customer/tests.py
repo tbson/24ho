@@ -31,6 +31,7 @@ class CustomerTestCase(TestCase):
             "password": "123456",
             "first_name": "Son",
             "last_name": "Tran",
+            "is_lock": False
         }
         item1 = {
             "phone": "000"
@@ -42,6 +43,7 @@ class CustomerTestCase(TestCase):
             "password": "123456",
             "first_name": "Son",
             "last_name": "Tran",
+            "is_lock": False
         }
         item2 = {
             "phone": "000"
