@@ -79,14 +79,11 @@ export const Form = ({onSubmit, children, state, submitTitle = 'Update'}: FormPr
     return (
         <form name={name} onSubmit={onSubmit}>
             <div className="row">
-                {APP !== 'admin' && <div className="col-md-2">
-                    <FileInput
-                        id={id('avatar')}
-                        value={data.avatar}
-                        label=""
-                        value={data.avatar}
-                    /> 
-                </div>}
+                {APP !== 'admin' && (
+                    <div className="col-md-2">
+                        <FileInput id={id('avatar')} value={data.avatar} label="" value={data.avatar} />
+                    </div>
+                )}
                 <div className={`col-md-${APP !== 'admin' ? 10 : 12}`}>
                     <TextInput
                         id={id('username')}
@@ -107,8 +104,8 @@ export const Form = ({onSubmit, children, state, submitTitle = 'Update'}: FormPr
                         </div>
                     </div>
 
-                    <TextInput id={id('phone')} label="Phone" value={data.phone} required={true} />
-                    <TextInput id={id('company')} label="Company" value={data.company}/>
+                    {APP !== 'admin' && <TextInput id={id('phone')} label="Phone" value={data.phone} required={true} />}
+                    {APP !== 'admin' && <TextInput id={id('company')} label="Company" value={data.company} />}
                 </div>
             </div>
 
