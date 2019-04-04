@@ -62,7 +62,7 @@ export default ({groups, id, open: _open, close, onChange, children}: Props) => 
     const handleSubmit = Service.handleSubmit(id, close, onChange, setErrors, setData);
 
     const afterRetrieve = (open: boolean) => (data: Object) => {
-        setData(data);
+        setData(Tools.prepareUserData(data));
         setOpen(open);
     };
 

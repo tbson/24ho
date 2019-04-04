@@ -31,15 +31,15 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
         const r = confirm(ListTools.getDeleteMessage(1));
         r && Service.handleRemove(id).then(onRemove);
     };
-    
+
     return (
         <tr>
             <th className="row25">
                 <input id={id} className="check" type="checkbox" checked={data.checked} onChange={() => onCheck(id)} />
             </th>
-            <td className="email">{data.email}</td>
-            <td className="username">{data.username}</td>
-            <td className="fullname">{data.fullname}</td> 
+            <td className="email">{data.user_data.email}</td>
+            <td className="username">{data.user_data.username}</td>
+            <td className="fullname">{data.user_data.fullname}</td> 
             <td className="is_sale"><BoolOutput value={data.is_sale}/></td> 
             <td className="is_cust_care"><BoolOutput value={data.is_cust_care}/></td> 
             <td className="groups">{data.groups && data.groups.map(({name}) => name).join(', ')}</td> 
