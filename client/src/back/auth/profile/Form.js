@@ -106,6 +106,9 @@ export const Form = ({onSubmit, children, state, submitTitle = 'Update'}: FormPr
                             <TextInput id={id('last_name')} label="Last name" value={data.last_name} />
                         </div>
                     </div>
+
+                    <TextInput id={id('phone')} label="Phone" value={data.phone} required={true} />
+                    <TextInput id={id('company')} label="Company" value={data.company}/>
                 </div>
             </div>
 

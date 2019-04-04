@@ -206,7 +206,7 @@ class Tools():
             'username': data.pop('username', None),
             'first_name': data.pop('first_name', None),
             'last_name': data.pop('last_name', None),
-            'password': data.pop('password', None)
+            'password': data.pop('password', '')
         }
         return {
             'user': user,

@@ -22,7 +22,6 @@ export const Login = ({history}: Props) => {
 
     const onLogin = data => {
         const authData = Tools.prepareUserData(data.user);
-        console.log(authData);
         Tools.setStorage('auth', authData) || navigateTo();
     };
 

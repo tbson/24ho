@@ -43,9 +43,9 @@ class UserSr(ModelSerializer):
     def update(self, instance, validated_data):
         instance.__dict__.update(validated_data)
         password = validated_data.get('password', None)
-        if password is not None:
+        if password is not None and password != '':
             instance.set_password(password)
-            instance.save()
+        instance.save()
         return instance
 
 

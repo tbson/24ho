@@ -118,10 +118,19 @@ class ProfileView(APIView):
         return res(serializer.data)
 
     def post(self, request, format=None):
-        params = self.request.data
-        staff = self.get_object().staff
-        serializer = StaffBaseSr(staff, data=params, partial=True)
-        if serializer.is_valid() is True:
+        user = self.get_object()
+        obj = user.staff
+
+        data = Tools.parseUserRelatedData(request.data)
+
+        userSr = UserSr(user, data=data['user'])
+        if userSr.is_valid(raise_exception=True):
+            userSr.save()
+
+        remain = data['remain']
+        remain.update({'user': user.pk})
+        serializer = StaffBaseSr(obj, data=remain)
+        if serializer.is_valid(raise_exception=True):
             serializer.save()
             return res(serializer.data)
         else:

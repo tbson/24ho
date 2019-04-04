@@ -37,7 +37,7 @@ export const Profile = () => {
 
     const onChangeProfile = (data: Object) => {
         setProfileModal(false);
-        setProfile(data);
+        setProfile(Tools.prepareUserData(data));
     };
 
     const onChangePwd = () => {
