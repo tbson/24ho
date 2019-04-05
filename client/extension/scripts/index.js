@@ -247,9 +247,10 @@ $(function() {
     if (tbePrice.length > 0) {
         tbePrice = '<div class="bg-info">' + tbePrice + '</div>';
     }
+
     var tbeInfo = [
         '<div id="tbe-info" class="' + identityClass + '">',
-        '<img src="' + host + '/images/icon_24horder_200.png" alt="24horder" />',
+        '<img src="' + chrome.runtime.getURL('/images/icon_24horder_200.png') + '" alt="24horder" />',
         '<ul>',
         '<li>Giá bán: <b class="tbe-rate tbe-color-price">' + productPrice + '</b> đ</li>',
         '<li>Tỷ giá: <span class="tbe-color-price">' + config.rate.format() + '</span> đ/tệ</li>',
@@ -330,8 +331,8 @@ $(function() {
         '<a title="24horder" target="_blank" href="' +
         host +
         '"><img id="tbe-logo" src="' +
-        host +
-        '/images/logo_24horder.png"/></a><span class="text-danger text-white"><strong>Cảnh báo: </strong>Bạn không dùng google translate khi thêm sản phẩm!</span>';
+        chrome.runtime.getURL('/images/logo_24horder.png') +
+        '"/></a><span class="text-danger text-white"><strong>Cảnh báo: </strong>Bạn không dùng google translate khi thêm sản phẩm!</span>';
     var btnArrow = '<div id="btn-arrow" class="arrow-hide"></div>';
     menubar.append(khuyencao2, btnSubmit, btnShowCart /*, btnFavorite,boxFavorite,ifFavorite,*/);
     tbexWrapper.append(btnArrow, lblWarning, menubar);
