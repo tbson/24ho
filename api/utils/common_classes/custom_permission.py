@@ -8,7 +8,7 @@ class CustomPermission(permissions.BasePermission):
         action = action if action not in ['list', 'retrieve'] else 'view'
         action = action if action not in ['delete', 'delete_list'] else 'delete'
 
-        permission = action + '_' + view._name
+        permission = action + '_' + view._name.replace('_', '')
 
         isAllow = False
         if request.user.user_permissions.filter(codename=permission).count():
