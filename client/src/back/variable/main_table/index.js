@@ -43,6 +43,7 @@ export default ({}: Props) => {
 
     const getList = async (url?: string, params?: Object) => {
         const data = await Service.handleGetList(url, params);
+        if (!data) return;
         setList(ListTools.prepare(data.items));
         setLinks(data.links);
     };
