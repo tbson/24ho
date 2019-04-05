@@ -41,7 +41,7 @@ export type FormState = {
 
 type Payload = {
     data: string | FormData,
-    "Content-Type": string
+    'Content-Type': string
 };
 
 export type GetListResponseData = {
@@ -215,7 +215,7 @@ export default class Tools {
     static getJsonPayload(data: Object): Payload {
         return {
             data: JSON.stringify(data),
-            "Content-Type": 'application/json'
+            'Content-Type': 'application/json'
         };
     }
 
@@ -227,7 +227,7 @@ export default class Tools {
         }
         return {
             data: formData,
-            "Content-Type": ''
+            'Content-Type': ''
         };
     }
 
@@ -340,12 +340,12 @@ export default class Tools {
     static preparePayload(data: Object, method: string): Object {
         const config = Tools.defaultRequestConfig(method);
         const payload = Tools.payloadFromObject(data);
-        
+
         config.body = payload.data;
-        if (payload["Content-Type"]) {
-            config.headers["Content-Type"] = payload["Content-Type"];
+        if (payload['Content-Type']) {
+            config.headers['Content-Type'] = payload['Content-Type'];
         } else {
-            delete config.headers["Content-Type"];
+            delete config.headers['Content-Type'];
         }
 
         return {payload, config};
@@ -438,6 +438,11 @@ export default class Tools {
         return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
             (c ^ (cryptoObj.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))).toString(16)
         );
+    }
+
+    static numberFormat(number: number = 0) {
+        var l10nDE = new Intl.NumberFormat('de-DE');
+        return l10nDE.format(number);
     }
 
     static dateFormat(date: any, format: string = 'dd/mm/yyyy'): string {

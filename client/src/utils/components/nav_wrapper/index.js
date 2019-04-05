@@ -108,6 +108,16 @@ class App extends React.Component<Props, State> {
                         </NavLink>
                     </li>
                 );
+            case 'area_code':
+                if (APP !== 'admin') return null;
+                return (
+                    <li>
+                        <NavLink exact to="/area-code">
+                            <i className="fas fa-map-marker-alt" />&nbsp;&nbsp;
+                            <span>Area code</span>
+                        </NavLink>
+                    </li>
+                );
             case 'group':
                 if (APP !== 'admin') return null;
                 return (
@@ -190,6 +200,7 @@ class App extends React.Component<Props, State> {
                         {renderMenu('admin')}
                         {renderMenu('customer')}
                         {renderMenu('variable')}
+                        {renderMenu('area_code')}
                         {/*
                         {renderMenu('freelancer')}
                         {renderMenu('employer')}
