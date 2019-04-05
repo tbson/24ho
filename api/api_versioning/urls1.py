@@ -24,4 +24,8 @@ urlpatterns = (
         'area-code/',
         include('apps.area_code.urls', namespace='area_code'),
     ),
+    path(
+        'area/',
+        include('apps.area.urls', namespace='area'),
+    ),
 )
