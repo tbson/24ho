@@ -100,7 +100,7 @@ export const Form = ({mode, onSubmit, children, state, submitTitle = 'Reset pass
             {mode === 'change' && (
                 <TextInput id={id('oldPassword')} type="password" label="Old password" required={true} />
             )}
-            <ErrorMessages errors={errors.detail} />
+            <ErrorMessages errors={errors.detail} alert={true} />
 
             <ButtonsBar children={children} submitTitle={submitTitle} />
         </form>

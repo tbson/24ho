@@ -164,7 +164,13 @@ export const Form = ({groupList, onSubmit: _onSubmit, children, state, submitTit
                 </div>
             </div>
 
-            <TextInput id={fieldId('password')} type="password" label="Password" value={password} errMsg={errMsg('password')} />
+            <TextInput
+                id={fieldId('password')}
+                type="password"
+                label="Password"
+                value={password}
+                errMsg={errMsg('password')}
+            />
 
             <SelectInput isMulti={true} id={fieldId('groups')} label="Quyền" options={groupList} value={groups} />
 
@@ -178,7 +184,7 @@ export const Form = ({groupList, onSubmit: _onSubmit, children, state, submitTit
 
             <CheckInput id={fieldId('is_lock')} label="Khoá" value={is_lock} errMsg={errMsg('is_lock')} />
 
-            <ErrorMessages errors={errors.detail} />
+            <ErrorMessages errors={errors.detail} alert={true} />
 
             <ButtonsBar children={children} submitTitle={submitTitle} onClick={onClick} />
         </form>

@@ -67,7 +67,7 @@ export const Form = ({onSubmit, children, state, submitTitle = 'Submit'}: FormPr
                 required={true}
             />
 
-            <ErrorMessages errors={errors.detail} />
+            <ErrorMessages errors={errors.detail} alert={true}/>
 
             <ButtonsBar children={children} submitTitle={submitTitle} />
         </form>

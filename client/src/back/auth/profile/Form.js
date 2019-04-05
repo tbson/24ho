@@ -109,7 +109,7 @@ export const Form = ({onSubmit, children, state, submitTitle = 'Update'}: FormPr
                 </div>
             </div>
 
-            <ErrorMessages errors={errors.detail} />
+            <ErrorMessages errors={errors.detail} alert={true} />
 
             <ButtonsBar children={children} submitTitle={submitTitle} />
         </form>

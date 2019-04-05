@@ -223,7 +223,7 @@ export const Form = ({
 
             <CheckInput id={fieldId('is_lock')} label="Khoá" value={is_lock} errMsg={errMsg('is_lock')} />
 
-            <ErrorMessages errors={errors.detail} />
+            <ErrorMessages errors={errors.detail} alert={true} />
 
             <ButtonsBar children={children} submitTitle={submitTitle} onClick={onClick} />
         </form>

@@ -125,7 +125,7 @@ export const Form = ({onSubmit: _onSubmit, children, state, submitTitle = 'Save'
             />
             <TextInput id={fieldId('value')} label="value" value={value} errMsg={errMsg('value')} required={true} />
 
-            <ErrorMessages errors={errors.detail} />
+            <ErrorMessages errors={errors.detail} alert={true} />
 
             <ButtonsBar children={children} submitTitle={submitTitle} onClick={onClick} />
         </form>
