@@ -20,4 +20,8 @@ urlpatterns = (
         'variable/',
         include('apps.variable.urls', namespace='variable'),
     ),
+    path(
+        'area-code/',
+        include('apps.area_code.urls', namespace='area_code'),
+    ),
 )
