@@ -32,7 +32,7 @@ const common = {
             {
                 test: /\.styl$/,
                 loader:
-                    'style-loader!css-loader?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]'
+                    'style-loader!css-loader?modules&importLoaders=true&localIdentName=[name]__[local]___[hash:base64:5]'
             },
             {
                 test: /\.png($|\?)|\.jpg($|\?)|\.gif($|\?)/,
