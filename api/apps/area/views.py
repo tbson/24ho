@@ -15,7 +15,7 @@ class AreaViewSet(GenericViewSet):
     _name = 'area'
     serializer_class = AreaBaseSr
     permission_classes = (CustomPermission, )
-    search_fields = ('uid', 'value')
+    search_fields = ('uid', 'title')
 
     def list(self, request):
         queryset = Area.objects.all()

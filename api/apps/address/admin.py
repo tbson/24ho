@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import AreaCode
+from .models import Address
 
 # Register your models here.
-admin.site.register(AreaCode)
+admin.site.register(Address)

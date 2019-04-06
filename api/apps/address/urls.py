@@ -1,17 +1,17 @@
 import os
 from django.urls import path
 from .views import (
-    AreaCodeViewSet,
+    AddressViewSet,
 )
 
 
-baseEndPoint = AreaCodeViewSet.as_view({
+baseEndPoint = AddressViewSet.as_view({
     'get': 'list',
     'post': 'add',
     'delete': 'delete_list'
 })
 
-pkEndpoint = AreaCodeViewSet.as_view({
+pkEndpoint = AddressViewSet.as_view({
     'get': 'retrieve',
     'put': 'change',
     'delete': 'delete'

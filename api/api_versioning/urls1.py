@@ -21,11 +21,11 @@ urlpatterns = (
         include('apps.variable.urls', namespace='variable'),
     ),
     path(
-        'area-code/',
-        include('apps.area_code.urls', namespace='area_code'),
-    ),
-    path(
         'area/',
         include('apps.area.urls', namespace='area'),
+    ),
+    path(
+        'address/',
+        include('apps.address.urls', namespace='address'),
     ),
 )

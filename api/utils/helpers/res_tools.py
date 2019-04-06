@@ -6,7 +6,7 @@ from apps.customer.serializers import CustomerBaseSr
 
 
 def jwt_response_payload_handler(token, user=None, request=None):
-    data = []
+    data = {}
     if hasattr(user, 'staff'):
         parent = user.staff
         parent.fingerprint = request.META.get('HTTP_FINGERPRINT', '')

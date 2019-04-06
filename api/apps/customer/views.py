@@ -100,7 +100,7 @@ class CustomerViewSet(GenericViewSet):
 class LoginView(ObtainJSONWebToken):
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
-        if response.status_code == 200 and response.data['user']['table'] == 'customers':
+        if response.status_code == 200 and response.data['user'].get('table', '') == 'customers':
             if response.data['user']['is_lock'] is True:
                 return err_res('Account locked')
             return response

@@ -1,16 +1,40 @@
 from django.db import models
-from apps.area_code.models import AreaCode
 
+
+class AreaManager(models.Manager):
+    def _seeding(self, index: int, single: bool = False, save: bool = True) -> models.QuerySet:
+        if index == 0:
+            raise Exception('Indext must be start with 1.')
+
+        def getData(i: int) -> dict:
+            data = {
+                'uid': "uid{}".format(i),
+                'title': "title{}".format(i),
+                'unit_price': 1000 + i
+            }
+            if save is False:
+                return data
+
+            instance, _ = self.get_or_create(uid=data['uid'])
+            return instance
+
+        def getListData(index):
+            return [getData(i) for i in range(1, index + 1)]
+
+        return getData(index) if single is True else getListData(index)
 
 # Create your models here.
+
+
 class Area(models.Model):
-    area_code_id = models.ForeignKey(AreaCode, on_delete=models.CASCADE, related_name='area_code')
-    address = models.CharField(max_length=250)
-    phone = models.CharField(max_length=250, blank=True)
-    fullname = models.CharField(max_length=250, blank=True)
+    uid = models.CharField(max_length=60, unique=True)
+    title = models.CharField(max_length=250)
+    unit_price = models.IntegerField(default=0)
+
+    objects = AreaManager()
 
     def __str__(self):
-        return '{} - {}'.format(self.area_code, self.address)
+        return '{} - {}'.format(self.uid, self.title)
 
     class Meta:
         db_table = "areas"

@@ -9,3 +9,10 @@ class AreaBaseSr(ModelSerializer):
         model = Area
         exclude = ()
         read_only_fields = ('id',)
+
+    uid = CharField(validators=[
+        UniqueValidator(
+            queryset=Area.objects.all(),
+            message="Duplicate area code",
+        )]
+    )

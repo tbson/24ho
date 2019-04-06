@@ -4,6 +4,9 @@ from rest_framework.validators import UniqueValidator
 from rest_framework.serializers import SerializerMethodField
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth.models import Permission
+from django.db.models import Q
 
 
 class UserSr(ModelSerializer):

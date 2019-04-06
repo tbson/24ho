@@ -26,6 +26,7 @@ import Variable from './variable/';
 import Staff from './staff/';
 import Customer from './customer/';
 import AreaCode from './area_code/';
+import Area from './area/';
 /*
 import Customer from './customer/Customer';
 import Group from './group/Group';
@@ -75,6 +76,7 @@ class App extends React.Component<Props> {
                     <Route path="/admin" component={Staff} />
                     <Route path="/customer" component={Customer} />
                     <Route path="/area-code" component={AreaCode} />
+                    <Route path="/area" component={Area} />
                     {/*
                     <Route path="/customer" component={Customer} />
                     <Route path="/group" component={Group} />

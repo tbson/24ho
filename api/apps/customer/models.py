@@ -5,12 +5,43 @@ from django.db import models
 from django.conf import settings
 from apps.staff.models import Staff
 from utils.helpers.tools import Tools
+from utils.helpers.test_helpers import TestHelpers
 
 # Create your models here.
 
 
 def imgDest(instance, filename):
     return os.path.join('member', "{}.{}".format(uuid.uuid4(), 'jpg'))
+
+
+class CustomerManager(models.Manager):
+    def _seeding(self, index: int, single: bool = False, save: bool = True) -> models.QuerySet:
+        from .serializers import CustomerBaseSr
+        if index == 0:
+            raise Exception('Indext must be start with 1.')
+
+        def getData(i: int) -> dict:
+            user = TestHelpers.userSeeding(i, True)
+            data = {
+                "user": user.pk,
+                "phone": "00{}".format(i),
+            }
+
+            if save is False:
+                return data
+
+            try:
+                instance = self.get(user_id=user.pk)
+            except Customer.DoesNotExist:
+                instance = CustomerBaseSr(data=data)
+                instance.is_valid(raise_exception=True)
+                instance = instance.save()
+            return instance
+
+        def getListData(index):
+            return [getData(i) for i in range(1, index + 1)]
+
+        return getData(index) if single is True else getListData(index)
 
 
 class Customer(models.Model):
@@ -31,11 +62,13 @@ class Customer(models.Model):
     phone = models.CharField(max_length=32)
     company = models.CharField(max_length=256, blank=True)
 
-    sale_id = models.ForeignKey(Staff, models.SET_NULL, related_name='sale', blank=True, null=True)
-    cust_care_id = models.ForeignKey(Staff, models.SET_NULL, related_name='cust_care', blank=True, null=True)
+    sale = models.ForeignKey(Staff, models.SET_NULL, related_name='sale', blank=True, null=True)
+    cust_care = models.ForeignKey(Staff, models.SET_NULL, related_name='cust_care', blank=True, null=True)
 
     is_lock = models.BooleanField(default=False)
     avatar = models.ImageField(upload_to=imgDest, blank=True)
+
+    objects = CustomerManager()
 
     def save(self, *args, **kwargs):
 

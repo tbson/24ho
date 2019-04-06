@@ -47,8 +47,8 @@ PROJECT_APPS = [
     'apps.group',
     'apps.staff',
     'apps.customer',
-    'apps.area_code',
     'apps.area',
+    'apps.address',
     'apps.sr',
 ]
 
