@@ -28,7 +28,7 @@ class AddressViewSet(GenericViewSet):
         result = {
             'items': serializer.data,
             'extra': {
-                'list_area': AreaBaseSr(data=Area.objects.all(), many=True).data
+                'list_area': AreaBaseSr(Area.objects.all(), many=True).data
             }
         }
         return self.get_paginated_response(result)

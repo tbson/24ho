@@ -21,4 +21,8 @@ class AddressBaseSr(ModelSerializer):
         return Address.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
-        pass
+        instance.__dict__.update(validated_data)
+        customer = validated_data['customer']
+        area = validated_data['area']
+        validated_data['uid'] = Address.objects.generatetUid(customer.pk, area.pk)
+        return instance

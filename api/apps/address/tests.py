@@ -58,7 +58,7 @@ class AddressManagerTestCase(TestCase):
         self.assertEqual(resp['uid'], '1uid11')
 
 
-'''
+class AddressTestCase(TestCase):
     def setUp(self):
         logging.disable(logging.CRITICAL)
 
@@ -66,68 +66,7 @@ class AddressManagerTestCase(TestCase):
         self.client = APIClient()
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + self.token)
 
-        customer0 = {
-            "phone": "000"
-        }
-        user0 = env.TEST_USER
-        user = UserSr(data=user0)
-        user.is_valid(raise_exception=True)
-        user.save()
-
-        customer0.update({"user": user.data["id"]})
-        customer0 = CustomerBaseSr(data=customer0)
-        customer0.is_valid(raise_exception=True)
-        customer0.save()
-
-        addressCodeData = {
-            "uid": "HN",
-            "title": "HN"
-        }
-        addressCode = AreaBaseSr(data=addressCodeData)
-        addressCode.is_valid(raise_exception=True)
-        addressCode = addressCode.save()
-
-        item0 = {
-            "customer_id": customer0.pk,
-            "area_id": addressCode.pk,
-            "address": "address0",
-            "phone": "phone0",
-            "fullname": "fullname0",
-        }
-        item1 = {
-            "customer_id": customer0.pk,
-            "area_id": addressCode.pk,
-            "address": "address1",
-            "phone": "phone1",
-            "fullname": "fullname1",
-        }
-        item2 = {
-            "customer_id": customer0.pk,
-            "area_id": addressCode.pk,
-            "address": "address2",
-            "phone": "phone2",
-            "fullname": "fullname2",
-        }
-
-        self.item3 = {
-            "customer_id": customer0.pk,
-            "area_id": addressCode.pk,
-            "address": "address3",
-            "phone": "phone3",
-            "fullname": "fullname3",
-        }
-
-        self.item0 = AddressBaseSr(data=item0)
-        self.item0.is_valid(raise_exception=True)
-        self.item0.save()
-
-        self.item1 = AddressBaseSr(data=item1)
-        self.item1.is_valid(raise_exception=True)
-        self.item1.save()
-
-        self.item2 = AddressBaseSr(data=item2)
-        self.item2.is_valid(raise_exception=True)
-        self.item2.save()
+        self.items = Address.objects._seeding(3)
 
     def test_list(self):
         resp = self.client.get(
@@ -146,34 +85,35 @@ class AddressManagerTestCase(TestCase):
 
         # Item exist
         resp = self.client.get(
-            "/api/v1/address/".format(self.item1.data['id'])
+            "/api/v1/address/".format(self.items[0].pk)
         )
         self.assertEqual(resp.status_code, 200)
 
     def test_create(self):
         # Add success
+        item4 = Address.objects._seeding(4, True, False)
         resp = self.client.post(
             '/api/v1/address/',
-            self.item3,
+            item4,
             format='json'
         )
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(Address.objects.count(), 4)
 
     def test_edit(self):
-
+        item1 = Address.objects._seeding(1, True, False)
         # Update not exist
         resp = self.client.put(
             "/api/v1/address/{}".format(0),
-            self.item3,
+            item1,
             format='json'
         )
         self.assertEqual(resp.status_code, 404)
 
         # Update success
         resp = self.client.put(
-            "/api/v1/address/{}".format(self.item1.data['id']),
-            self.item3,
+            "/api/v1/address/{}".format(self.items[0].pk),
+            item1,
             format='json'
         )
         self.assertEqual(resp.status_code, 200)
@@ -188,15 +128,14 @@ class AddressManagerTestCase(TestCase):
 
         # Remove single success
         resp = self.client.delete(
-            "/api/v1/address/{}".format(self.item1.data['id'])
+            "/api/v1/address/{}".format(self.items[0].pk)
         )
         self.assertEqual(resp.status_code, 204)
         self.assertEqual(Address.objects.count(), 2)
 
         # Remove list success
         resp = self.client.delete(
-            "/api/v1/address/?ids={}".format(','.join([str(self.item0.data['id']), str(self.item2.data['id'])]))
+            "/api/v1/address/?ids={}".format(','.join([str(self.items[1].pk), str(self.items[2].pk)]))
         )
         self.assertEqual(resp.status_code, 204)
         self.assertEqual(Address.objects.count(), 0)
-'''

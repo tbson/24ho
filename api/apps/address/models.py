@@ -1,7 +1,6 @@
 from django.db import models
 from apps.area.models import Area
 from apps.customer.models import Customer
-from apps.area.models import Area
 
 
 class AddressService():
@@ -16,8 +15,7 @@ class AddressService():
 
 class AddressManager(models.Manager):
     def _seeding(self, index: int, single: bool = False, save: bool = True) -> models.QuerySet:
-        from apps.customer.models import Customer
-        from apps.area.models import Area
+        from apps.address.serializers import AddressBaseSr
 
         if index == 0:
             raise Exception('Indext must be start with 1.')
@@ -33,7 +31,14 @@ class AddressManager(models.Manager):
                 'phone': "phone{}".format(i),
                 'fullname': "fullname{}".format(i)
             }
-            return self.create(**data) if save is True else data
+
+            if save is False:
+                return data
+
+            instance = AddressBaseSr(data=data)
+            instance.is_valid(raise_exception=True)
+            instance = instance.save()
+            return instance
 
         def getListData(index):
             return [getData(i) for i in range(1, index + 1)]
