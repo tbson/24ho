@@ -1,8 +1,8 @@
 // @flow
 import * as React from 'react';
-import {useState, useEffect, useRef} from 'react';
+import {useState, useEffect, useContext, useRef} from 'react';
 import Tools from 'src/utils/helpers/Tools';
-import {apiUrls, defaultInputs} from './_data';
+import {apiUrls, defaultInputs, Context} from './_data';
 import type {FormState} from 'src/utils/helpers/Tools';
 import TextInput from 'src/utils/components/input/TextInput';
 import SelectInput from 'src/utils/components/input/SelectInput';
@@ -48,16 +48,16 @@ export class Service {
 
 type Props = {
     id: number,
-    listArea: Array<Object>,
     open: boolean,
     close: Function,
     onChange: Function,
     children?: React.Node
 };
-export default ({id, listArea, open: _open, close, onChange, children}: Props) => {
+export default ({id, open: _open, close, onChange, children}: Props) => {
     const [errors, setErrors] = useState({});
     const [data, setData] = useState(defaultInputs);
     const [open, setOpen] = useState(false);
+    const {listArea} = useContext(Context);
 
     const handleSubmit = Service.handleSubmit(id, close, onChange, setErrors, setData);
 
@@ -79,22 +79,22 @@ export default ({id, listArea, open: _open, close, onChange, children}: Props) =
 
     return (
         <DefaultModal open={open} close={close} title="Address manager">
-            <Form listArea={listArea} onSubmit={handleSubmit} state={{data, errors}} children={children} />
+            <Form onSubmit={handleSubmit} state={{data, errors}} children={children} />
         </DefaultModal>
     );
 };
 
 type FormProps = {
-    listArea: Array<Object>,
     onSubmit: Function,
     state: FormState,
     children?: React.Node,
     submitTitle?: string
 };
-export const Form = ({listArea, onSubmit: _onSubmit, children, state, submitTitle = 'Save'}: FormProps) => {
+export const Form = ({onSubmit: _onSubmit, children, state, submitTitle = 'Save'}: FormProps) => {
     const [needToClose, setNeedToClose] = useState(true);
     const formElm = useRef(null);
     const firstInputSelector = "[name='uid']";
+    const {listArea} = useContext(Context);
 
     const resetAndFocus = form => {
         if (!form) return;
@@ -105,7 +105,7 @@ export const Form = ({listArea, onSubmit: _onSubmit, children, state, submitTitl
 
     const name = 'address';
     const fieldId = Tools.getFieldId(name);
-    const {id, area, address, phone, fullname} = state.data;
+    const {id, area, title, phone, fullname} = state.data;
     const {errors} = state;
 
     const errMsg = (name: string): Array<string> => state.errors[name] || [];
@@ -132,7 +132,7 @@ export const Form = ({listArea, onSubmit: _onSubmit, children, state, submitTitl
             <TextInput
                 id={fieldId('title')}
                 label="Address"
-                value={address}
+                value={title}
                 errMsg={errMsg('title')}
                 required={true}
             />
