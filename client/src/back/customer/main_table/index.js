@@ -3,7 +3,7 @@ import * as React from 'react';
 import {useState, useEffect} from 'react';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
-import {apiUrls} from '../_data';
+import {apiUrls, Context} from '../_data';
 import type {TRow, DbRow, ListItem} from '../_data';
 import {Pagination, SearchInput} from 'src/utils/components/TableUtils';
 import MainForm from '../MainForm';
@@ -181,18 +181,18 @@ export default ({}: Props) => {
                 </tfoot>
             </table>
 
-            <MainForm
-                id={modalId}
-                listSale={listSale}
-                listCustCare={listCustCare}
-                open={isFormOpen}
-                close={() => setIsFormOpen(false)}
-                onChange={onChange}>
-                <button type="button" className="btn btn-warning" action="close" onClick={() => setIsFormOpen(false)}>
-                    <span className="fas fa-times" />
-                    &nbsp;Cancel
-                </button>
-            </MainForm>
+            <Context.Provider value={{listSale, listCustCare}}>
+                <MainForm id={modalId} open={isFormOpen} close={() => setIsFormOpen(false)} onChange={onChange}>
+                    <button
+                        type="button"
+                        className="btn btn-warning"
+                        action="close"
+                        onClick={() => setIsFormOpen(false)}>
+                        <span className="fas fa-times" />
+                        &nbsp;Cancel
+                    </button>
+                </MainForm>
+            </Context.Provider>
         </div>
     );
 };

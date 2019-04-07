@@ -1,8 +1,8 @@
 // @flow
 import * as React from 'react';
-import {useState, useEffect, useRef} from 'react';
+import {useState, useEffect, useContext, useRef} from 'react';
 import Tools from 'src/utils/helpers/Tools';
-import {apiUrls, defaultInputs} from './_data';
+import {apiUrls, defaultInputs, Context} from './_data';
 import type {FormState} from 'src/utils/helpers/Tools';
 import TextInput from 'src/utils/components/input/TextInput';
 import CheckInput from 'src/utils/components/input/CheckInput';
@@ -43,19 +43,17 @@ export class Service {
             : Service.retrieveRequest(id)
                   .then(resp => (resp.ok ? callback(resp.data) : callback(defaultInputs)))
                   .catch(() => callback(defaultInputs));
-    } 
+    }
 }
 
 type Props = {
     id: number,
-    listSale: Array<Object>,
-    listCustCare: Array<Object>,
     open: boolean,
     close: Function,
     onChange: Function,
     children?: React.Node
 };
-export default ({id, listSale, listCustCare, open: _open, close, onChange, children}: Props) => {
+export default ({id, open: _open, close, onChange, children}: Props) => {
     const [errors, setErrors] = useState({});
     const [data, setData] = useState(defaultInputs);
     const [open, setOpen] = useState(false);
@@ -79,36 +77,22 @@ export default ({id, listSale, listCustCare, open: _open, close, onChange, child
 
     return (
         <DefaultModal open={open} close={close} title="Customer manager">
-            <Form
-                listSale={listSale}
-                listCustCare={listCustCare}
-                onSubmit={handleSubmit}
-                state={{data, errors}}
-                children={children}
-            />
+            <Form onSubmit={handleSubmit} state={{data, errors}} children={children} />
         </DefaultModal>
     );
 };
 
 type FormProps = {
-    listSale: Array<Object>,
-    listCustCare: Array<Object>,
     onSubmit: Function,
     state: FormState,
     children?: React.Node,
     submitTitle?: string
 };
-export const Form = ({
-    listSale,
-    listCustCare,
-    onSubmit: _onSubmit,
-    children,
-    state,
-    submitTitle = 'Save'
-}: FormProps) => {
+export const Form = ({onSubmit: _onSubmit, children, state, submitTitle = 'Save'}: FormProps) => {
     const [needToClose, setNeedToClose] = useState(true);
     const formElm = useRef(null);
     const firstInputSelector = "[name='email']";
+    const {listSale, listCustCare} = useContext(Context);
 
     const resetAndFocus = form => {
         if (!form) return;

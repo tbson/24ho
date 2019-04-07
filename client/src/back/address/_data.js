@@ -3,7 +3,7 @@
 import * as React from 'react';
 import Tools from 'src/utils/helpers/Tools';
 import {FIELD_TYPE, APP} from 'src/constants';
-import { createContext } from 'react';
+import {createContext} from 'react';
 
 export const Context: React.Context<Object> = createContext({});
 
@@ -42,5 +42,5 @@ export const defaultInputs: FormValues = {
     area: 0,
     title: '',
     phone: '',
-    fullname: '',
+    fullname: ''
 };
