@@ -1,7 +1,5 @@
-from rest_framework.serializers import ModelSerializer, CharField
-from rest_framework.validators import UniqueValidator
-from .models import Address, AddressService
-from apps.area.models import Area
+from rest_framework.serializers import ModelSerializer
+from .models import Address
 
 
 class AddressBaseSr(ModelSerializer):

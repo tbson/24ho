@@ -1,5 +1,7 @@
-from django.core.management.base import BaseCommand, CommandError
+# from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from utils.helpers.tools import Tools
+
 
 class Command(BaseCommand):
     help = 'Test function'

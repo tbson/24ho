@@ -4,6 +4,7 @@ from apps.customer.models import Customer
 
 
 class AddressService():
+    @staticmethod
     def matchUid(customerId: int, areaCode: str, lastUid: str) -> str:
         order = 0
         if lastUid:

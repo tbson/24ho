@@ -3,7 +3,6 @@ import logging
 from rest_framework.test import APIClient
 from django.test import TestCase
 from .models import Staff
-from .serializers import StaffBaseSr
 from utils.serializers.user import UserSr
 from utils.helpers.test_helpers import TestHelpers
 from core import env

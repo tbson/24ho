@@ -1,9 +1,7 @@
-import json
 import logging
 from rest_framework.test import APIClient
 from django.test import TestCase
 from .models import Variable
-from .serializers import VariableBaseSr
 from utils.helpers.test_helpers import TestHelpers
 # Create your tests here.
 

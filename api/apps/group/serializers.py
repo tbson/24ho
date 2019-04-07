@@ -1,5 +1,4 @@
 from rest_framework.serializers import ModelSerializer
-from rest_framework.serializers import SerializerMethodField
 from django.contrib.auth.models import Group
 
 

@@ -1,13 +1,9 @@
-import json
 import logging
 from rest_framework.test import APIClient
 from django.test import TestCase
 from .models import Address, AddressService
-from .serializers import AddressBaseSr
-from apps.area.serializers import AreaBaseSr
 from utils.helpers.test_helpers import TestHelpers
 from apps.customer.models import Customer
-from apps.area.models import Area
 # Create your tests here.
 
 
@@ -36,7 +32,7 @@ class AddressManagerTestCase(TestCase):
 
     def test_create(self):
         # Add success
-        customer1 = Customer.objects._seeding(1, True)
+        Customer.objects._seeding(1, True)
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + TestHelpers.getCustomerToken(self))
 
         item1 = Address.objects._seeding(1, True, False)

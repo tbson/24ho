@@ -49,9 +49,10 @@ class SlackExceptionHandler(AdminEmailHandler):
 
         reporter = ExceptionReporter(request, is_email=True, *exc_info)
         message = "%s\n\n%s" % (self.format(no_exc_record), reporter.get_traceback_text())
-        html_message = reporter.get_traceback_html() if self.include_html else None
 
-        #self.send_mail(subject, message, fail_silently=True, html_message=html_message)
+        # html_message = reporter.get_traceback_html() if self.include_html else None
+
+        # self.send_mail(subject, message, fail_silently=True, html_message=html_message)
 
         # this is where original "emit" method code ends
 
@@ -141,4 +142,4 @@ class SlackExceptionHandler(AdminEmailHandler):
 
         def func():
             requests.post(webhook_url, data=data)
-        r = asyncExec(func)
+        asyncExec(func)

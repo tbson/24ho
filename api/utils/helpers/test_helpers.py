@@ -5,7 +5,6 @@ from django.contrib.auth.models import Permission
 from django.contrib.auth.models import User
 from django.conf import settings
 from utils.serializers.user import UserSr
-from core import env
 # from utils.serializers.user import UserSr
 
 

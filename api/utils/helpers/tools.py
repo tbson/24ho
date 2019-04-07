@@ -32,7 +32,7 @@ class Tools():
         input = input.lower().strip()
         if input == '' or input == 'false':
             return False
-        return true
+        return True
 
     @staticmethod
     def getUuid():
@@ -76,7 +76,7 @@ class Tools():
             if not scaleOnly:
                 image = image.crop((0, (originalHeight - height) / 2, width, height + (originalHeight - height) / 2))
                 image.save(path, 'JPEG')
-        except:
+        except Exception:
             pass
 
     @staticmethod
@@ -86,7 +86,7 @@ class Tools():
             image = Image.open(path)
             image.thumbnail(size, Image.ANTIALIAS)
             image.save(Tools.getThumbnail(path), 'JPEG')
-        except:
+        except Exception:
             pass
 
     @staticmethod
@@ -172,7 +172,7 @@ class Tools():
             email.send()
         except Exception as e:
             print(e)
-            error = Tools.returnException(e)
+            Tools.returnException(e)
 
     @staticmethod
     def sendEmailAsync(*args):
@@ -187,8 +187,8 @@ class Tools():
         try:
             token = {'token': token}
             data = VerifyJSONWebTokenSerializer().validate(token)
-            return valid_data['user']
-        except Exception as e:
+            return data['user']
+        except Exception:
             return None
 
     @staticmethod

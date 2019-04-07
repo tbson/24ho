@@ -1,8 +1,7 @@
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from django.contrib.auth.models import Permission
-from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.auth.models import Permission
+
 
 class Command(BaseCommand):
     help = 'Add missing permissions'
@@ -32,7 +31,7 @@ class Command(BaseCommand):
             },
         ]
         contentTypeDict = {}
-        contentTypeList = ContentType.objects.all();
+        contentTypeList = ContentType.objects.all()
         for contentType in contentTypeList:
             contentTypeDict[contentType.model] = contentType.id
 
@@ -41,10 +40,10 @@ class Command(BaseCommand):
             try:
                 permission = Permission.objects.get(codename=pemData['codename'])
                 # Update here
-                permission.__dict__.update(params)
+                permission.__dict__.update(permission)
                 permission.save()
             except Permission.DoesNotExist:
                 # Create here
                 permission = Permission(**pemData)
-                permission.save();
+                permission.save()
         self.stdout.write(self.style.SUCCESS('Success!'))

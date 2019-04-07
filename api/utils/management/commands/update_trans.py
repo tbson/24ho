@@ -1,5 +1,4 @@
-from django.core.management.base import BaseCommand, CommandError
-from django.conf import settings
+from django.core.management.base import BaseCommand
 from apps.banner.models import Banner
 from apps.article.models import Article
 from apps.category.models import Category

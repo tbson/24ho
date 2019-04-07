@@ -1,8 +1,6 @@
-import json
 import logging
 from rest_framework.test import APIClient
 from django.test import TestCase
-from django.contrib.auth.models import Group
 from .serializers import GroupBaseSr
 from utils.helpers.test_helpers import TestHelpers
 # Create your tests here.

@@ -4,9 +4,6 @@ from rest_framework.validators import UniqueValidator
 from rest_framework.serializers import SerializerMethodField
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.auth.models import Permission
-from django.db.models import Q
 
 
 class UserSr(ModelSerializer):
@@ -38,7 +35,8 @@ class UserSr(ModelSerializer):
     )
     fullname = SerializerMethodField()
 
-    def get_fullname(self, obj):
+    @staticmethod
+    def get_fullname(obj):
         return "{} {}".format(obj.last_name, obj.first_name)
 
     def create(self, validated_data):
@@ -49,9 +47,9 @@ class UserSr(ModelSerializer):
             for group in self.initial_data['groups'].split(','):
                 if group.isdigit():
                     groups.append(int(group))
-            if len(list(groups)):
-                groupList = Group.objects.filter(id__in=groups)
-                for group in groupList:
+            if list(groups):
+                group_list = Group.objects.filter(id__in=groups)
+                for group in group_list:
                     group.user_set.add(instance)
 
         return instance
@@ -73,9 +71,9 @@ class UserSr(ModelSerializer):
             for group in instance.groups.all():
                 group.user_set.remove(instance)
 
-            if len(list(groups)):
-                groupList = Group.objects.filter(id__in=groups)
-                for group in groupList:
+            if list(groups):
+                group_list = Group.objects.filter(id__in=groups)
+                for group in group_list:
                     group.user_set.add(instance)
 
         instance.save()

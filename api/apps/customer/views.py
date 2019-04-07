@@ -115,10 +115,9 @@ class ProfileView(APIView):
 
     def get(self, request, format=None):
         try:
-            user = self.get_object()
             serializer = CustomerBaseSr(self.get_object().customer)
             return res(serializer.data)
-        except:
+        except Exception:
             return res({}, status=401)
 
     def post(self, request, format=None):

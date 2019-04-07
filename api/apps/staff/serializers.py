@@ -1,10 +1,6 @@
 
 from rest_framework.serializers import ModelSerializer
 from rest_framework.serializers import SerializerMethodField
-from rest_framework import serializers
-from rest_framework.validators import UniqueValidator
-from django.contrib.auth.models import User
-from django.contrib.auth.models import Group
 from .models import Staff
 from apps.group.serializers import GroupBaseSr
 from utils.serializers.user import UserRetrieveSr
