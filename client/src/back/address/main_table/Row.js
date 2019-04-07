@@ -37,6 +37,7 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
                 <input id={id} className="check" type="checkbox" checked={data.checked} onChange={() => onCheck(id)} />
             </th>
             <td>{data.area_name}</td>
+            <td>{data.uid}</td>
             <td>{data.title}</td>
             <td>{data.phone}</td>
             <td>{data.fullname}</td>

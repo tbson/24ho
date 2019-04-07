@@ -126,6 +126,7 @@ export default ({}: Props) => {
                             <span className="fas fa-check text-info pointer check-all-button" onClick={onCheckAll} />
                         </th>
                         <th scope="col">Area</th>
+                        <th scope="col">Code</th>
                         <th scope="col">Address</th>
                         <th scope="col">Phone</th>
                         <th scope="col">Fullname</th>

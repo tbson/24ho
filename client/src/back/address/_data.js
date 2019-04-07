@@ -31,6 +31,7 @@ export function seeding(numberOfItems: number, single: boolean = false): any {
 export type FormValues = {
     area: number,
     area_name?: string,
+    uid?: string,
     title: string,
     phone: string,
     fullname: string
