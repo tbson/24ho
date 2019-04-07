@@ -1,8 +1,38 @@
 from django.db import models
 from django.conf import settings
+from utils.helpers.test_helpers import TestHelpers
 
 
 class StaffManager(models.Manager):
+
+    def _seeding(self, index: int, single: bool = False, save: bool = True) -> models.QuerySet:
+        from .serializers import StaffBaseSr
+        if index == 0:
+            raise Exception('Indext must be start with 1.')
+
+        def getData(i: int) -> dict:
+            user = TestHelpers.userSeeding(i, True)
+            data = {
+                "user": user.pk,
+                "is_sale": i % 2 == 1,
+                "is_cust_care": i % 2 == 0
+            }
+
+            if save is False:
+                return data
+
+            try:
+                instance = self.get(user_id=user.pk)
+            except Staff.DoesNotExist:
+                instance = StaffBaseSr(data=data)
+                instance.is_valid(raise_exception=True)
+                instance = instance.save()
+            return instance
+
+        def getListData(index):
+            return [getData(i) for i in range(1, index + 1)]
+
+        return getData(index) if single is True else getListData(index)
 
     def getListSale(self):
         return self.filter(is_sale=True)

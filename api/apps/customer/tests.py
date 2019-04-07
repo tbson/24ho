@@ -45,10 +45,9 @@ class CustomerTestCase(TestCase):
         self.assertEqual(resp.status_code, 200)
 
     def test_create(self):
+        item3 = TestHelpers.userSeeding(3, True, False)
         item4 = TestHelpers.userSeeding(4, True, False)
         item4['phone'] = '000'
-
-        item3 = TestHelpers.userSeeding(3, True, False)
 
         # Add duplicate
         resp = self.client.post(

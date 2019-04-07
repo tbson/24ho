@@ -39,7 +39,7 @@ class UserSr(ModelSerializer):
     fullname = SerializerMethodField()
 
     def get_fullname(self, obj):
-        return obj.first_name + ' ' + obj.last_name
+        return "{} {}".format(obj.last_name, obj.first_name)
 
     def create(self, validated_data):
         instance = User.objects.create_user(**validated_data)
