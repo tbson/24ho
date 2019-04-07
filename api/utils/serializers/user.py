@@ -24,7 +24,7 @@ class UserSr(ModelSerializer):
         ]
         read_only_fields = ('id',)
 
-    password = serializers.CharField(allow_blank=True)
+    password = serializers.CharField(allow_blank=True, allow_null=True)
 
     email = serializers.CharField(
         validators=[
@@ -57,10 +57,12 @@ class UserSr(ModelSerializer):
         return instance
 
     def update(self, instance, validated_data):
-        instance.__dict__.update(validated_data)
         password = validated_data.get('password', None)
         if password is not None and password != '':
             instance.set_password(password)
+        validated_data.pop('password', None)
+
+        instance.__dict__.update(validated_data)
 
         if 'groups' in self.initial_data:
             groups = []
