@@ -36,9 +36,10 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
             <th className="row25">
                 <input id={id} className="check" type="checkbox" checked={data.checked} onChange={() => onCheck(id)} />
             </th>
-            <td className="uid">{data.uid}</td>
-            <td className="title">{data.title}</td>
-            <td className="unit_price">{Tools.numberFormat(data.unit_price)}</td>
+            <td>{data.area_name}</td>
+            <td>{data.title}</td>
+            <td>{data.phone}</td>
+            <td>{data.fullname}</td>
             <td className="center">
                 <a className="editBtn" onClick={() => showForm(data.id)}>
                     <span className="fas fa-edit text-info pointer" />

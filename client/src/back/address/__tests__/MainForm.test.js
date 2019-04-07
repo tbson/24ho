@@ -33,7 +33,7 @@ describe('Service.changeRequest', () => {
         };
         await Service.changeRequest(params);
         expect(apiCall).toHaveBeenCalled();
-        expect(apiCall.mock.calls[0][0]).toEqual('http://localhost/api/v1/area-code/');
+        expect(apiCall.mock.calls[0][0]).toEqual('http://localhost/api/v1/address/');
         expect(apiCall.mock.calls[0][1]).toEqual(params);
         expect(apiCall.mock.calls[0][2]).toEqual('POST');
     });
@@ -47,7 +47,7 @@ describe('Service.changeRequest', () => {
         const {id} = params;
         await Service.changeRequest(params);
         expect(apiCall).toHaveBeenCalled();
-        expect(apiCall.mock.calls[0][0]).toEqual(`http://localhost/api/v1/area-code/${id}`);
+        expect(apiCall.mock.calls[0][0]).toEqual(`http://localhost/api/v1/address/${id}`);
         expect(apiCall.mock.calls[0][1]).toEqual(params);
         expect(apiCall.mock.calls[0][2]).toEqual('PUT');
     });
@@ -59,7 +59,7 @@ describe('Service.retrieveRequest', () => {
         const id = 1;
         await Service.retrieveRequest(id);
         expect(apiCall).toHaveBeenCalled();
-        expect(apiCall.mock.calls[0][0]).toEqual(`http://localhost/api/v1/area-code/${id}`);
+        expect(apiCall.mock.calls[0][0]).toEqual(`http://localhost/api/v1/address/${id}`);
     });
 });
 

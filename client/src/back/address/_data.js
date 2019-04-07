@@ -5,7 +5,7 @@ import {FIELD_TYPE, APP} from 'src/constants';
 
 const rawApiUrls = [
     {
-        controller: 'area-code',
+        controller: 'address',
         endpoints: {
             crud: ''
         }
@@ -20,7 +20,7 @@ export function seeding(numberOfItems: number, single: boolean = false): any {
         result.push({
             id: i,
             uid: `key${i}`,
-            title: `title ${i}`,
+            value: `value ${i}`,
             checked: false
         });
     }
@@ -29,9 +29,11 @@ export function seeding(numberOfItems: number, single: boolean = false): any {
 }
 
 export type FormValues = {
-    uid: string,
+    area: number,
+    area_name?: string,
     title: string,
-    unit_price: number
+    phone: string,
+    fullname: string
 };
 
 export type DbRow = FormValues & {
@@ -46,7 +48,8 @@ export type ListItem = Array<TRow>;
 
 export const defaultInputs: FormValues = {
     id: 0,
-    uid: '',
+    area: 0,
     title: '',
-    unit_price: 0
+    phone: '',
+    fullname: '',
 };

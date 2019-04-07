@@ -96,11 +96,11 @@ export const Form = ({onSubmit: _onSubmit, children, state, submitTitle = 'Save'
         const firstInput = form.querySelector(firstInputSelector);
         form.reset();
         firstInput && firstInput.focus();
-    }; 
+    };
 
     const name = 'area';
     const fieldId = Tools.getFieldId(name);
-    const {id, uid, value} = state.data;
+    const {id, uid, title, unit_price} = state.data;
     const {errors} = state;
 
     const errMsg = (name: string): Array<string> => state.errors[name] || [];
@@ -117,13 +117,21 @@ export const Form = ({onSubmit: _onSubmit, children, state, submitTitle = 'Save'
         <form name={name} ref={formElm} onSubmit={onSubmit}>
             <TextInput
                 id={fieldId('uid')}
-                label="Key"
+                label="Code"
                 value={uid}
                 errMsg={errMsg('uid')}
                 required={true}
                 autoFocus={true}
             />
-            <TextInput id={fieldId('value')} label="value" value={value} errMsg={errMsg('value')} required={true} />
+            <TextInput id={fieldId('title')} label="Title" value={title} errMsg={errMsg('title')} required={true} />
+            <TextInput
+                id={fieldId('unit_price')}
+                type="number"
+                label="Unit price"
+                value={unit_price}
+                errMsg={errMsg('unit_price')}
+                required={true}
+            />
 
             <ErrorMessages errors={errors.detail} alert={true} />
 

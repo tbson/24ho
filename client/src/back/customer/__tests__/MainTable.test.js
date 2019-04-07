@@ -183,13 +183,13 @@ describe('Service.addNameToList', () => {
     it('sale case', () => {
         const list = [
             {
-                sale_id: 1
+                sale: 1
             },
             {
-                sale_id: 2
+                sale: 2
             },
             {
-                sale_id: 3
+                sale: 3
             }
         ];
         const nameSource = [
@@ -204,15 +204,15 @@ describe('Service.addNameToList', () => {
         ];
         const eput = [
             {
-                sale_id: 1,
+                sale: 1,
                 sale_name: 'item 1'
             },
             {
-                sale_id: 2,
+                sale: 2,
                 sale_name: 'item 2'
             },
             {
-                sale_id: 3
+                sale: 3
             }
         ];
         const output = Service.addNameToList(list, nameSource, 'sale');
@@ -222,13 +222,13 @@ describe('Service.addNameToList', () => {
     it('cust_care case', () => {
         const list = [
             {
-                cust_care_id: 1
+                cust_care: 1
             },
             {
-                cust_care_id: 2
+                cust_care: 2
             },
             {
-                cust_care_id: 3
+                cust_care: 3
             }
         ];
         const nameSource = [
@@ -243,15 +243,15 @@ describe('Service.addNameToList', () => {
         ];
         const eput = [
             {
-                cust_care_id: 1,
+                cust_care: 1,
                 cust_care_name: 'item 1'
             },
             {
-                cust_care_id: 2,
+                cust_care: 2,
                 cust_care_name: 'item 2'
             },
             {
-                cust_care_id: 3
+                cust_care: 3
             }
         ];
         const output = Service.addNameToList(list, nameSource, 'cust_care');
@@ -262,7 +262,7 @@ describe('Service.addNameToList', () => {
 describe('Service.addNameToItem', () => {
     it('sale case', () => {
         const item = {
-            sale_id: 1
+            sale: 1
         };
         const nameSource = [
             {
@@ -275,7 +275,7 @@ describe('Service.addNameToItem', () => {
             }
         ];
         const eput = {
-            sale_id: 1,
+            sale: 1,
             sale_name: 'item 1'
         };
         const output = Service.addNameToItem(item, nameSource, 'sale');
@@ -284,7 +284,7 @@ describe('Service.addNameToItem', () => {
 
     it('cust_care case', () => {
         const item = {
-            cust_care_id: 1
+            cust_care: 1
         };
         const nameSource = [
             {
@@ -297,7 +297,7 @@ describe('Service.addNameToItem', () => {
             }
         ];
         const eput = {
-            cust_care_id: 1,
+            cust_care: 1,
             cust_care_name: 'item 1'
         };
         const output = Service.addNameToItem(item, nameSource, 'cust_care');
@@ -309,16 +309,16 @@ describe('Service.prepareList', () => {
     it('Normal case', () => {
         const list = [
             {
-                sale_id: 1,
-                cust_care_id: 1
+                sale: 1,
+                cust_care: 1
             },
             {
-                sale_id: 2,
-                cust_care_id: 2
+                sale: 2,
+                cust_care: 2
             },
             {
-                sale_id: 3,
-                cust_care_id: 3
+                sale: 3,
+                cust_care: 3
             }
         ];
         const listSale = [
@@ -344,22 +344,22 @@ describe('Service.prepareList', () => {
         const eput = [
             {
                 checked: false,
-                sale_id: 1,
-                cust_care_id: 1,
+                sale: 1,
+                cust_care: 1,
                 sale_name: 'item 1',
                 cust_care_name: 'item 1'
             },
             {
                 checked: false,
-                sale_id: 2,
-                cust_care_id: 2,
+                sale: 2,
+                cust_care: 2,
                 sale_name: 'item 2',
                 cust_care_name: 'item 2'
             },
             {
                 checked: false,
-                sale_id: 3,
-                cust_care_id: 3,
+                sale: 3,
+                cust_care: 3,
                 sale_name: undefined,
                 cust_care_name: undefined
             }
@@ -372,8 +372,8 @@ describe('Service.prepareList', () => {
 describe('Service.prepareItem', () => {
     it('Normal case', () => {
         const item = {
-            sale_id: 1,
-            cust_care_id: 1
+            sale: 1,
+            cust_care: 1
         };
         const listSale = [
             {
@@ -397,8 +397,8 @@ describe('Service.prepareItem', () => {
         ];
         const eput = {
             checked: false,
-            sale_id: 1,
-            cust_care_id: 1,
+            sale: 1,
+            cust_care: 1,
             sale_name: 'item 1',
             cust_care_name: 'item 1'
         };

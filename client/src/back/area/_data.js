@@ -20,7 +20,7 @@ export function seeding(numberOfItems: number, single: boolean = false): any {
         result.push({
             id: i,
             uid: `key${i}`,
-            value: `value ${i}`,
+            title: `title ${i}`,
             checked: false
         });
     }
@@ -30,7 +30,8 @@ export function seeding(numberOfItems: number, single: boolean = false): any {
 
 export type FormValues = {
     uid: string,
-    value: string
+    title: string,
+    unit_price: number
 };
 
 export type DbRow = FormValues & {
@@ -46,5 +47,6 @@ export type ListItem = Array<TRow>;
 export const defaultInputs: FormValues = {
     id: 0,
     uid: '',
-    value: ''
+    title: '',
+    unit_price: 0
 };

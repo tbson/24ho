@@ -119,7 +119,7 @@ export const Form = ({
 
     const name = 'customer';
     const fieldId = Tools.getFieldId(name);
-    const {id, user, email, username, first_name, last_name, phone, password, is_lock, sale_id, cust_care_id} = state.data;
+    const {id, user, email, username, first_name, last_name, phone, password, is_lock, sale, cust_care} = state.data;
     const {errors} = state;
 
     const errMsg = (name: string): Array<string> => state.errors[name] || [];
@@ -204,19 +204,19 @@ export const Form = ({
                 <div className="col">
                     <SelectInput
                         isMulti={false}
-                        id={fieldId('sale_id')}
+                        id={fieldId('sale')}
                         label="NV mua hàng"
                         options={listSale}
-                        value={sale_id}
+                        value={sale}
                     />
                 </div>
                 <div className="col">
                     <SelectInput
                         isMulti={false}
-                        id={fieldId('cust_care_id')}
+                        id={fieldId('cust_care')}
                         label="NV chăm sóc"
                         options={listCustCare}
-                        value={cust_care_id}
+                        value={cust_care}
                     />
                 </div>
             </div>

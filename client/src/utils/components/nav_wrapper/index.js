@@ -57,143 +57,37 @@ class App extends React.Component<Props, State> {
         });
     };
 
+    menuItem(url: string, title: string, icon: string) {
+        return (
+            <li>
+                <NavLink exact to={`/${url}`}>
+                    <i className={icon} />
+                    &nbsp;&nbsp;
+                    <span>{title}</span>
+                </NavLink>
+            </li>
+        );
+    }
+
     renderMenu = (menu: string) => {
         switch (menu) {
             case 'profile':
-                return (
-                    <li>
-                        <NavLink exact to="/">
-                            <i className="fas fa-user" />&nbsp;&nbsp;
-                            <span>Profile</span>
-                        </NavLink>
-                    </li>
-                );
+                return this.menuItem('', 'Profile', 'fas fa-user');
             case 'admin':
                 if (APP !== 'admin') return null;
-                return (
-                    <li>
-                        <NavLink exact to="/admin">
-                            <i className="fas fa-user-secret" />&nbsp;&nbsp;
-                            <span>Admin</span>
-                        </NavLink>
-                    </li>
-                );
+                return this.menuItem('staff', 'Admin', 'fas fa-user-secret');
             case 'customer':
                 if (APP !== 'admin') return null;
-                return (
-                    <li>
-                        <NavLink exact to="/customer">
-                            <i className="fas fa-user-ninja" />&nbsp;&nbsp;
-                            <span>Customer</span>
-                        </NavLink>
-                    </li>
-                );
-            case 'employer':
-                if (APP !== 'admin') return null;
-                return (
-                    <li>
-                        <NavLink exact to="/employer">
-                            <i className="fas fa-user-tie" />&nbsp;&nbsp;
-                            <span>Employer</span>
-                        </NavLink>
-                    </li>
-                );
+                return this.menuItem('customer', 'Customer', 'fas fa-user-ninja');
             case 'variable':
                 if (APP !== 'admin') return null;
-                return (
-                    <li>
-                        <NavLink exact to="/variable">
-                            <i className="fas fa-cog" />&nbsp;&nbsp;
-                            <span>Variable</span>
-                        </NavLink>
-                    </li>
-                );
-            case 'area_code':
-                if (APP !== 'admin') return null;
-                return (
-                    <li>
-                        <NavLink exact to="/area-code">
-                            <i className="fas fa-map-marker-alt" />&nbsp;&nbsp;
-                            <span>Area code</span>
-                        </NavLink>
-                    </li>
-                );
+                return this.menuItem('variable', 'Variable', 'fas fa-cog');
             case 'area':
+                if (APP !== 'admin') return null;
+                return this.menuItem('area', 'Area', 'fas fa-map-marker-alt');
+            case 'address':
                 if (APP !== 'user') return null;
-                return (
-                    <li>
-                        <NavLink exact to="/area">
-                            <i className="fas fa-map-marker-alt" />&nbsp;&nbsp;
-                            <span>Area</span>
-                        </NavLink>
-                    </li>
-                );
-            case 'group':
-                if (APP !== 'admin') return null;
-                return (
-                    <li>
-                        <NavLink exact to="/group">
-                            <i className="fas fa-users" />&nbsp;&nbsp;
-                            <span>Group</span>
-                        </NavLink>
-                    </li>
-                );
-            case 'permission':
-                if (APP !== 'admin') return null;
-                return (
-                    <li>
-                        <NavLink exact to="/permission">
-                            <i className="fas fa-unlock" />&nbsp;&nbsp;
-                            <span>Permission</span>
-                        </NavLink>
-                    </li>
-                );
-            case 'category':
-                if (APP !== 'admin') return null;
-                return (
-                    <li>
-                        <NavLink exact to="/category/">
-                            <i className="fas fa-folder" />&nbsp;&nbsp;
-                            <span>Category</span>
-                        </NavLink>
-                    </li>
-                );
-            case 'tag':
-                if (APP !== 'admin') return null;
-                return (
-                    <li>
-                        <NavLink exact to="/tag/">
-                            <i className="fas fa-tag" />&nbsp;&nbsp;
-                            <span>Tag</span>
-                        </NavLink>
-                    </li>
-                );
-            case 'banner':
-                if (APP !== 'admin') return null;
-                return (
-                    <li>
-                        <NavLink
-                            exact
-                            to="/category/banner"
-                            className={Tools.matchPrefix('/banner', this.props.location.pathname) ? ' active' : ''}>
-                            <i className="fas fa-images" />&nbsp;&nbsp;
-                            <span>Banner</span>
-                        </NavLink>
-                    </li>
-                );
-            case 'article':
-                if (APP !== 'admin') return null;
-                return (
-                    <li>
-                        <NavLink
-                            exact
-                            to="/category/article"
-                            className={Tools.matchPrefix('/article', this.props.location.pathname) ? ' active' : ''}>
-                            <i className="fas fa-newspaper" />&nbsp;&nbsp;
-                            <span>Article</span>
-                        </NavLink>
-                    </li>
-                );
+                return this.menuItem('address', 'Address', 'fas fa-map-marker-alt');
         }
     };
 
@@ -210,18 +104,8 @@ class App extends React.Component<Props, State> {
                         {renderMenu('admin')}
                         {renderMenu('customer')}
                         {renderMenu('variable')}
-                        {renderMenu('area_code')}
                         {renderMenu('area')}
-                        {/*
-                        {renderMenu('freelancer')}
-                        {renderMenu('employer')}
-                        {renderMenu('group')}
-                        {renderMenu('permission')}
-                        {renderMenu('category')}
-                        {renderMenu('tag')}
-                        {renderMenu('banner')}
-                        {renderMenu('article')}
-                        */}
+                        {renderMenu('address')}
                     </ul>
                 </div>
 
@@ -241,5 +125,4 @@ class App extends React.Component<Props, State> {
         );
     }
 }
-
 export default withRouter(App);

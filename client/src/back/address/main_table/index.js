@@ -31,10 +31,47 @@ export class Service {
             .then(resp => (resp.ok ? {ids} : Promise.reject(resp)))
             .catch(Tools.popMessageOrRedirect);
     }
+
+    static areaToOptions(areas: Array<Object>): Array<Object> {
+        return areas.map(item => ({value: item.id, label: `${item.uid} - ${item.title}`}));
+    }
+
+    static addNameToList(list: Array<Object>, nameSource: Array<Object>, key: string): Array<Object> {
+        const map = nameSource.reduce((obj, item) => {
+            obj[item.value] = item.label;
+            return obj;
+        }, {});
+        return list.map(item => {
+            item[`${key}_name`] = map[item[`${key}`]];
+            return item;
+        });
+    }
+
+    static addNameToItem(item: DbRow, nameSource: Array<Object>, key: string): Object {
+        const map = nameSource.reduce((obj, item) => {
+            obj[item.value] = item.label;
+            return obj;
+        }, {});
+        item[`${key}_name`] = map[item[`${key}`]];
+        return item;
+    }
+
+    static prepareList(list: Array<DbRow>, listArea: Array<Object>): Array<TRow> {
+        list = ListTools.prepare(list);
+        list = Service.addNameToList(list, listArea, 'area');
+        return list;
+    }
+
+    static prepareItem(item: DbRow, listArea: Array<Object>): TRow {
+        item = {...item, checked: false};
+        item = Service.addNameToItem(item, listArea, 'area');
+        return item;
+    }
 }
 
 export default ({}: Props) => {
     const [list, setList] = useState([]);
+    const [listArea, setListArea] = useState([]);
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [modalId, setModalId] = useState(0);
     const [links, setLinks] = useState({next: '', previous: ''});
@@ -44,11 +81,14 @@ export default ({}: Props) => {
     const getList = async (url?: string, params?: Object) => {
         const data = await Service.handleGetList(url, params);
         if (!data) return;
-        setList(ListTools.prepare(data.items));
+        const _listArea = Service.areaToOptions(data.extra.list_area);
+        setListArea(_listArea);
+        setList(Service.prepareList(data.items, _listArea));
         setLinks(data.links);
     };
 
     const onChange = (data: TRow, type: string) => {
+        data = Service.prepareItem(data, listArea);
         setList(listAction(data)[type]());
     };
 
@@ -85,9 +125,10 @@ export default ({}: Props) => {
                         <th className="row25">
                             <span className="fas fa-check text-info pointer check-all-button" onClick={onCheckAll} />
                         </th>
-                        <th scope="col">Code</th>
-                        <th scope="col">Title</th>
-                        <th scope="col">Unit price</th>
+                        <th scope="col">Area</th>
+                        <th scope="col">Address</th>
+                        <th scope="col">Phone</th>
+                        <th scope="col">Fullname</th>
                         <th scope="col" style={{padding: 8}} className="row80">
                             <button className="btn btn-primary btn-sm btn-block add-button" onClick={() => showForm(0)}>
                                 <span className="fas fa-plus" />
@@ -133,7 +174,7 @@ export default ({}: Props) => {
                 </tfoot>
             </table>
 
-            <MainForm id={modalId} open={isFormOpen} close={() => setIsFormOpen(false)} onChange={onChange}>
+            <MainForm id={modalId} listArea={listArea} open={isFormOpen} close={() => setIsFormOpen(false)} onChange={onChange}>
                 <button type="button" className="btn btn-warning" action="close" onClick={() => setIsFormOpen(false)}>
                     <span className="fas fa-times" />
                     &nbsp;Cancel

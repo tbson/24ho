@@ -32,8 +32,8 @@ export class Service {
             .catch(Tools.popMessageOrRedirect);
     }
 
-    static staffToOptions(staff: Array<Object>): Array<Object> {
-        return staff.map(item => ({value: item.id, label: item.fullname}));
+    static staffToOptions(staffs: Array<Object>): Array<Object> {
+        return staffs.map(item => ({value: item.id, label: item.fullname}));
     }
 
     static addNameToList(list: Array<Object>, nameSource: Array<Object>, key: string): Array<Object> {
@@ -42,7 +42,7 @@ export class Service {
             return obj;
         }, {});
         return list.map(item => {
-            item[`${key}_name`] = map[item[`${key}_id`]];
+            item[`${key}_name`] = map[item[`${key}`]];
             return item;
         });
     }
@@ -52,7 +52,7 @@ export class Service {
             obj[item.value] = item.label;
             return obj;
         }, {});
-        item[`${key}_name`] = map[item[`${key}_id`]];
+        item[`${key}_name`] = map[item[`${key}`]];
         return item;
     }
 

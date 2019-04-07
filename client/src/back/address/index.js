@@ -6,7 +6,7 @@ import Table from './main_table/';
 
 export default () => {
     useEffect(() => {
-        document.title = 'AreaCode manager';
+        document.title = 'Address manager';
     }, []);
 
     return (

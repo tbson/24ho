@@ -25,18 +25,8 @@ import ResetPwd from './auth/reset_pwd/';
 import Variable from './variable/';
 import Staff from './staff/';
 import Customer from './customer/';
-import AreaCode from './area_code/';
 import Area from './area/';
-/*
-import Customer from './customer/Customer';
-import Group from './group/Group';
-import Permission from './permission/Permission';
-import Tag from './tag/Tag';
-import Category from './category/Category';
-import Banner from './banner/Banner';
-import Article from './article/Article';
-import ArticleEditWrapper from './article/ArticleEditWrapper';
-*/
+import Address from './address/';
 
 import Trans from 'src/utils/helpers/Trans';
 import translations from 'src/utils/translations.json';
@@ -73,24 +63,10 @@ class App extends React.Component<Props> {
                     <Route path="/login" component={Login} />
                     <Route path="/reset-password/:token" component={ResetPwd} />
                     <Route path="/variable" component={Variable} />
-                    <Route path="/admin" component={Staff} />
+                    <Route path="/staff" component={Staff} />
                     <Route path="/customer" component={Customer} />
-                    <Route path="/area-code" component={AreaCode} />
                     <Route path="/area" component={Area} />
-                    {/*
-                    <Route path="/customer" component={Customer} />
-                    <Route path="/group" component={Group} />
-                    <Route path="/permission" component={Permission} />
-                    <Route path="/tag" component={Tag} />
-                    <Route path="/category/:type?" component={Category} />
-                    <Route path="/banners/:categoryId" component={Banner} />
-                    <Route path="/gallerys/:categoryId" component={Banner} />
-                    <Route path="/articles/:parentId" component={Article} />
-                    <Route
-                        path="/article/:parentType/:parentId/:id?"
-                        render={props => <ArticleEditWrapper {...this.setUpProps(props)} />}
-                    />
-                    */}
+                    <Route path="/address" component={Address} />
                     <Route component={NotMatch} />
                 </Switch>
             </div>

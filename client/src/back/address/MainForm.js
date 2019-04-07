@@ -5,6 +5,7 @@ import Tools from 'src/utils/helpers/Tools';
 import {apiUrls, defaultInputs} from './_data';
 import type {FormState} from 'src/utils/helpers/Tools';
 import TextInput from 'src/utils/components/input/TextInput';
+import SelectInput from 'src/utils/components/input/SelectInput';
 import DefaultModal from 'src/utils/components/modal/DefaultModal';
 import ButtonsBar from 'src/utils/components/form/ButtonsBar';
 import ErrorMessages from 'src/utils/components/form/ErrorMessages';
@@ -24,6 +25,7 @@ export class Service {
         return (needToClose: boolean) => (e: Object) => {
             e.preventDefault();
             const params = Tools.formDataToObj(new FormData(e.target));
+            params.customer = Tools.getStorageObj('auth').id;
             return Service.changeRequest(id ? {...params, id} : params)
                 .then(resp => {
                     if (!resp.ok) return Promise.reject(resp.data);
@@ -46,12 +48,13 @@ export class Service {
 
 type Props = {
     id: number,
+    listArea: Array<Object>,
     open: boolean,
     close: Function,
     onChange: Function,
     children?: React.Node
 };
-export default ({id, open: _open, close, onChange, children}: Props) => {
+export default ({id, listArea, open: _open, close, onChange, children}: Props) => {
     const [errors, setErrors] = useState({});
     const [data, setData] = useState(defaultInputs);
     const [open, setOpen] = useState(false);
@@ -59,6 +62,7 @@ export default ({id, open: _open, close, onChange, children}: Props) => {
     const handleSubmit = Service.handleSubmit(id, close, onChange, setErrors, setData);
 
     const afterRetrieve = (open: boolean) => (data: Object) => {
+        if (!data.id) data.area = listArea[0].value;
         setData(data);
         setOpen(open);
     };
@@ -74,19 +78,20 @@ export default ({id, open: _open, close, onChange, children}: Props) => {
     }, [_open]);
 
     return (
-        <DefaultModal open={open} close={close} title="AreaCode manager">
-            <Form onSubmit={handleSubmit} state={{data, errors}} children={children} />
+        <DefaultModal open={open} close={close} title="Address manager">
+            <Form listArea={listArea} onSubmit={handleSubmit} state={{data, errors}} children={children} />
         </DefaultModal>
     );
 };
 
 type FormProps = {
+    listArea: Array<Object>,
     onSubmit: Function,
     state: FormState,
     children?: React.Node,
     submitTitle?: string
 };
-export const Form = ({onSubmit: _onSubmit, children, state, submitTitle = 'Save'}: FormProps) => {
+export const Form = ({listArea, onSubmit: _onSubmit, children, state, submitTitle = 'Save'}: FormProps) => {
     const [needToClose, setNeedToClose] = useState(true);
     const formElm = useRef(null);
     const firstInputSelector = "[name='uid']";
@@ -96,11 +101,11 @@ export const Form = ({onSubmit: _onSubmit, children, state, submitTitle = 'Save'
         const firstInput = form.querySelector(firstInputSelector);
         form.reset();
         firstInput && firstInput.focus();
-    };
+    }; 
 
-    const name = 'area-code';
+    const name = 'address';
     const fieldId = Tools.getFieldId(name);
-    const {id, uid, title, unit_price} = state.data;
+    const {id, area, address, phone, fullname} = state.data;
     const {errors} = state;
 
     const errMsg = (name: string): Array<string> => state.errors[name] || [];
@@ -115,23 +120,24 @@ export const Form = ({onSubmit: _onSubmit, children, state, submitTitle = 'Save'
 
     return (
         <form name={name} ref={formElm} onSubmit={onSubmit}>
-            <TextInput
-                id={fieldId('uid')}
-                label="Code"
-                value={uid}
-                errMsg={errMsg('uid')}
-                required={true}
-                autoFocus={true}
-            />
-            <TextInput id={fieldId('title')} label="Title" value={title} errMsg={errMsg('title')} required={true} />
-            <TextInput
-                id={fieldId('unit_price')}
-                type="number"
-                label="Unit price"
-                value={unit_price}
-                errMsg={errMsg('unit_price')}
+            <SelectInput
+                isMulti={false}
+                id={fieldId('area')}
+                label="Area"
+                options={listArea}
+                value={area}
                 required={true}
             />
+
+            <TextInput
+                id={fieldId('title')}
+                label="Address"
+                value={address}
+                errMsg={errMsg('title')}
+                required={true}
+            />
+            <TextInput id={fieldId('phone')} label="Phone" value={phone} errMsg={errMsg('phone')} />
+            <TextInput id={fieldId('fullname')} label="Fullname" value={fullname} errMsg={errMsg('fullname')} />
 
             <ErrorMessages errors={errors.detail} alert={true} />
 

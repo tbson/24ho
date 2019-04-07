@@ -48,9 +48,9 @@ export type TRow = DbRow & {
     user_data: Object,
     checked: boolean,
     is_lock: boolean,
-    sale_id: number,
+    sale: number,
     sale_name?: string,
-    cust_care_id: number,
+    cust_care: number,
     cust_care_name?: string,
     phone: string
 };
