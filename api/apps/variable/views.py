@@ -1,5 +1,7 @@
 from django.http import Http404
 from django.shortcuts import get_object_or_404
+from rest_framework.views import APIView
+from rest_framework.permissions import AllowAny
 from rest_framework.decorators import action
 from rest_framework.viewsets import (GenericViewSet, )
 from rest_framework import status
@@ -59,3 +61,15 @@ class VariableViewSet(GenericViewSet):
             raise Http404
         result.delete()
         return res(status=status.HTTP_204_NO_CONTENT)
+
+
+class ExposeView(APIView):
+    permission_classes = (AllowAny, )
+
+    def get(self, request, uid, format=None):
+        value = ''
+        try:
+            value = Variable.objects.get(uid=uid).value
+        except Variable.DoesNotExist:
+            pass
+        return res({'value': value})

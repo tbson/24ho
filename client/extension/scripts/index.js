@@ -6,14 +6,13 @@ var STORAGE = '24horder_products';
 var REQUEST_DATA = 'REQUEST_DATA';
 var CLEAR_DATA = 'CLEAR_DATA';
 
-var host = 'https://nguonhang1688.com';
-// var host = 'https://24horder.com';
+var host = 'https://24ho.test';
 
 var identityClass = '24horder';
 var config = {
     rate: 3500,
-    urlGetRate: host + '/AdminAccount/Cart/ExchangeRate',
-    urlCurrentVersion: host + '/AdminAccount/Cart/VersionTool',
+    urlGetRate: host + '/api/v1/variable/expose/rate',
+    urlCurrentVersion: host + '/api/v1/variable/expose/version',
     currentVer: chrome.runtime.getManifest().version,
     urlCart: host + '/AdminAccount/Cart/ProductCart',
     allowedDomains: ['TMALL', 'TAOBAO', '1688']
@@ -51,19 +50,23 @@ window.addEventListener(
 );
 
 // Lấy tỉ giá ngoại tệ
-$.post(config.urlGetRate, function(newRate) {
-    newRate = parseInt(newRate);
-    if (newRate > 0) {
-        config.rate = newRate;
-    }
-});
+fetch(config.urlGetRate)
+    .then(resp => resp.json())
+    .then(({value: newRate}) => {
+        newRate = parseInt(newRate);
+        if (newRate > 0) {
+            config.rate = newRate;
+        }
+    });
 
 // Lấy ra phiên bản hiện tại của plugin
-$.post(config.urlCurrentVersion, function(currentVer) {
-    if (currentVer.length) {
-        config.currentVer = currentVer;
-    }
-});
+fetch(config.urlCurrentVersion)
+    .then(resp => resp.json())
+    .then(({value: currentVer}) => {
+        if (currentVer) {
+            config.currentVer = currentVer;
+        }
+    });
 
 setInterval(function() {
     var opSel = '[class^=addon]';

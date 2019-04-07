@@ -2,6 +2,7 @@ import os
 from django.urls import path
 from .views import (
     VariableViewSet,
+    ExposeView,
 )
 
 
@@ -21,4 +22,5 @@ app_name = os.getcwd().split(os.sep)[-1]
 urlpatterns = [
     path('', baseEndPoint),
     path('<int:pk>', pkEndpoint),
+    path('expose/<slug:uid>', ExposeView.as_view(), name='expose'),
 ]

@@ -19,7 +19,13 @@
         "128": "images/icon_24horder_128x128.png"
     },
 
-    "permissions": ["activeTab", "storage", "https://24horder.com/", "https://2.taobao.com/item.htm"],
+    "permissions": [
+        "activeTab",
+        "storage",
+        "https://24horder.com/",
+        "https://24ho.test/",
+        "https://2.taobao.com/item.htm"
+    ],
 
     "web_accessible_resources": ["images/*"],
 
@@ -27,6 +33,7 @@
         {
             "matches": [
                 "https://*.24horder.com/*",
+                "https://*.24ho.test/*",
                 "http://*.taobao.com/*",
                 "https://*.taobao.com/*",
                 "http://*.tmall.com/*",

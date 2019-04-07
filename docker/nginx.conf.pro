@@ -23,6 +23,7 @@ server {
     ssl_certificate_key /resource/ssl/live/my.domain/privkey.pem;
 
     location /api/v1/ {
+        include cors;
         proxy_pass http://__app_name___api:8001;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
