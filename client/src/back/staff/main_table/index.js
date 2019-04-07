@@ -3,7 +3,7 @@ import * as React from 'react';
 import {useState, useEffect} from 'react';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
-import {apiUrls} from '../_data';
+import {apiUrls, Context} from '../_data';
 import type {TRow, DbRow, ListItem} from '../_data';
 import {Pagination, SearchInput} from 'src/utils/components/TableUtils';
 import MainForm from '../MainForm';
@@ -32,14 +32,14 @@ export class Service {
             .catch(Tools.popMessageOrRedirect);
     }
 
-    static groupToOptions(groups: Array<Object>): Array<Object> {
-        return groups.map(item => ({value: item.id, label: item.name}));
+    static groupToOptions(listGroup: Array<Object>): Array<Object> {
+        return listGroup.map(item => ({value: item.id, label: item.name}));
     }
 }
 
 export default ({}: Props) => {
     const [list, setList] = useState([]);
-    const [groups, setGroups] = useState([]);
+    const [listGroup, setListGroup] = useState([]);
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [modalId, setModalId] = useState(0);
     const [links, setLinks] = useState({next: '', previous: ''});
@@ -51,7 +51,7 @@ export default ({}: Props) => {
         if (!data) return;
         setList(ListTools.prepare(data.items));
         setLinks(data.links);
-        setGroups(Service.groupToOptions(data.extra.list_group));
+        setListGroup(Service.groupToOptions(data.extra.list_group));
     };
 
     const onChange = (data: TRow, type: string) => {
@@ -143,17 +143,18 @@ export default ({}: Props) => {
                 </tfoot>
             </table>
 
-            <MainForm
-                groups={groups}
-                id={modalId}
-                open={isFormOpen}
-                close={() => setIsFormOpen(false)}
-                onChange={onChange}>
-                <button type="button" className="btn btn-warning" action="close" onClick={() => setIsFormOpen(false)}>
-                    <span className="fas fa-times" />
-                    &nbsp;Cancel
-                </button>
-            </MainForm>
+            <Context.Provider value={{listGroup}}>
+                <MainForm id={modalId} open={isFormOpen} close={() => setIsFormOpen(false)} onChange={onChange}>
+                    <button
+                        type="button"
+                        className="btn btn-warning"
+                        action="close"
+                        onClick={() => setIsFormOpen(false)}>
+                        <span className="fas fa-times" />
+                        &nbsp;Cancel
+                    </button>
+                </MainForm>
+            </Context.Provider>
         </div>
     );
 };

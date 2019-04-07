@@ -1,8 +1,8 @@
 // @flow
 import * as React from 'react';
-import {useState, useEffect, useRef} from 'react';
+import {useState, useEffect, useContext, useRef} from 'react';
 import Tools from 'src/utils/helpers/Tools';
-import {apiUrls, defaultInputs} from './_data';
+import {apiUrls, defaultInputs, Context} from './_data';
 import type {FormState} from 'src/utils/helpers/Tools';
 import TextInput from 'src/utils/components/input/TextInput';
 import CheckInput from 'src/utils/components/input/CheckInput';
@@ -47,14 +47,13 @@ export class Service {
 }
 
 type Props = {
-    groups: Array<Object>,
     id: number,
     open: boolean,
     close: Function,
     onChange: Function,
     children?: React.Node
 };
-export default ({groups, id, open: _open, close, onChange, children}: Props) => {
+export default ({id, open: _open, close, onChange, children}: Props) => {
     const [errors, setErrors] = useState({});
     const [data, setData] = useState(defaultInputs);
     const [open, setOpen] = useState(false);
@@ -78,22 +77,22 @@ export default ({groups, id, open: _open, close, onChange, children}: Props) => 
 
     return (
         <DefaultModal open={open} close={close} title="Staff manager">
-            <Form groupList={groups} onSubmit={handleSubmit} state={{data, errors}} children={children} />
+            <Form onSubmit={handleSubmit} state={{data, errors}} children={children} />
         </DefaultModal>
     );
 };
 
 type FormProps = {
-    groupList: Array<Object>,
     onSubmit: Function,
     state: FormState,
     children?: React.Node,
     submitTitle?: string
 };
-export const Form = ({groupList, onSubmit: _onSubmit, children, state, submitTitle = 'Save'}: FormProps) => {
+export const Form = ({onSubmit: _onSubmit, children, state, submitTitle = 'Save'}: FormProps) => {
     const [needToClose, setNeedToClose] = useState(true);
     const formElm = useRef(null);
     const firstInputSelector = "[name='email']";
+    const {listGroup} = useContext(Context);
 
     const resetAndFocus = form => {
         if (!form) return;
@@ -172,7 +171,7 @@ export const Form = ({groupList, onSubmit: _onSubmit, children, state, submitTit
                 errMsg={errMsg('password')}
             />
 
-            <SelectInput isMulti={true} id={fieldId('groups')} label="Quyền" options={groupList} value={groups} />
+            <SelectInput isMulti={true} id={fieldId('groups')} label="Quyền" options={listGroup} value={groups} />
 
             <CheckInput id={fieldId('is_sale')} label="Nhân viên mua hàng" value={is_sale} errMsg={errMsg('is_lock')} />
             <CheckInput
