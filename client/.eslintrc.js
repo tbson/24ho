@@ -1,11 +1,21 @@
 module.exports = {
-    extends: 'airbnb',
-    parser: 'babel-eslint',
     env: {
         browser: true,
-        node: true
+        es6: true
     },
-    plugins: ['react-hooks'],
+    extends: 'standard',
+    globals: {
+        Atomics: 'readonly',
+        SharedArrayBuffer: 'readonly'
+    },
+    parserOptions: {
+        ecmaFeatures: {
+            jsx: true
+        },
+        ecmaVersion: 2018,
+        sourceType: 'module'
+    },
+    plugins: ['react', 'react-hooks'],
     rules: {
         indent: ['error', 4],
         'comma-dangle': 0,
