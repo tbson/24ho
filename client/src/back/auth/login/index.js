@@ -4,6 +4,7 @@ import * as React from 'react';
 import {useState, useEffect} from 'react';
 // $FlowFixMe: do not complain about importing node_modules
 import {withRouter} from 'react-router-dom';
+import {APP} from 'src/constants';
 import Form from './Form';
 import ResetPwdForm from '../PwdForm';
 import Tools from 'src/utils/helpers/Tools';
@@ -37,7 +38,7 @@ export const Login = ({history}: Props) => {
                 <div className="row">
                     <div className="col-md-8 offset-md-2">
                         <div className="jumbotron">
-                            <h2 className="center">LOGIN</h2>
+                            <h2 className="center">{APP.toUpperCase()} LOGIN</h2>
                             <Form onChange={onLogin}>
                                 <span className="pointer link" onClick={() => setModal(true)}>
                                     Reset password
