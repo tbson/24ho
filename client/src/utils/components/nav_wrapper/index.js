@@ -88,6 +88,9 @@ class App extends React.Component<Props, State> {
             case 'address':
                 if (APP !== 'user') return null;
                 return this.menuItem('address', 'Address', 'fas fa-map-marker-alt');
+            case 'cart':
+                if (APP !== 'user') return null;
+                return this.menuItem('cart', 'Cart', 'fas fa-shopping-cart');
         }
     };
 
@@ -106,6 +109,7 @@ class App extends React.Component<Props, State> {
                         {renderMenu('variable')}
                         {renderMenu('area')}
                         {renderMenu('address')}
+                        {renderMenu('cart')}
                     </ul>
                 </div>
 
