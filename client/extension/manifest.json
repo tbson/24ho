@@ -1,6 +1,4 @@
 {
-    "update_url": "https://clients2.google.com/service/update2/crx",
-
     "manifest_version": 2,
 
     "name": "Công cụ đặt hàng 24horder.com",
@@ -19,20 +17,13 @@
         "128": "images/icon_24horder_128x128.png"
     },
 
-    "permissions": [
-        "activeTab",
-        "storage",
-        "https://24horder.com/",
-        "https://24ho.test/",
-        "https://2.taobao.com/item.htm"
-    ],
+    "permissions": ["activeTab", "storage"],
 
     "web_accessible_resources": ["images/*"],
 
     "content_scripts": [
         {
             "matches": [
-                "https://*.24horder.com/*",
                 "https://*.24ho.test/*",
                 "http://*.taobao.com/*",
                 "https://*.taobao.com/*",

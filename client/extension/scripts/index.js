@@ -2,19 +2,22 @@ retrieveWindowVariables();
 
 var products = [];
 var product1688 = [];
-var STORAGE = '24horder_products';
-var REQUEST_DATA = 'REQUEST_DATA';
-var CLEAR_DATA = 'CLEAR_DATA';
+const STORAGE = 'extension_products';
+const REQUEST_DATA = 'REQUEST_DATA';
+const CLEAR_DATA = 'CLEAR_DATA';
 
-var host = 'https://24ho.test';
+const manifest = chrome.runtime.getManifest();
+const host = 'https://' + manifest.content_scripts[0].matches[0].split('*')[1].split('/')[0].substring(1);
 
-var identityClass = '24horder';
-var config = {
+const identityClass = '_order_extension_';
+
+
+const config = {
     rate: 3500,
     urlGetRate: host + '/api/v1/variable/expose/rate',
     urlCurrentVersion: host + '/api/v1/variable/expose/version',
     currentVer: chrome.runtime.getManifest().version,
-    urlCart: host + '/AdminAccount/Cart/ProductCart',
+    urlCart: host + '/user/cart',
     allowedDomains: ['TMALL', 'TAOBAO', '1688']
 };
 
