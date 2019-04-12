@@ -61,6 +61,12 @@ type DataErrorPair = {
     error: Object
 };
 
+export type TupleResp = [boolean, Object];
+export type ObjResp = {
+    ok: boolean,
+    data: Object
+};
+
 export default class Tools {
     static emitter = new EventEmitter();
 
@@ -706,5 +712,13 @@ export default class Tools {
         delete data.user_data;
         delete user_data.id;
         return {...data, ...user_data};
+    }
+
+    static removeEmptyKey(obj: Object = {}): Object {
+        for (let key in obj) {
+            const value = obj[key];
+            if (typeof value !== 'number' && !value) delete obj[key];
+        }
+        return obj;
     }
 }

@@ -5,7 +5,7 @@ import Tools from 'src/utils/helpers/Tools';
 import {FIELD_TYPE, APP} from 'src/constants';
 import {createContext} from 'react';
 
-export const Context: React.Context<Object> = createContext({});
+export const Context: React.Context<{listArea: Array<Object>}> = createContext({});
 
 const rawApiUrls = [
     {

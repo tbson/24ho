@@ -1,51 +1,38 @@
 // @flow
 import * as React from 'react';
 import {useState, useEffect} from 'react';
+// $FlowFixMe: do not complain about formik
+import {Formik, Form} from 'formik';
 import Tools from 'src/utils/helpers/Tools';
 import {apiUrls} from './_data';
-import type {FormState} from 'src/utils/helpers/Tools';
-import TextInput from 'src/utils/components/input/TextInput';
+import type {ObjResp, TupleResp} from 'src/utils/helpers/Tools';
 import DefaultModal from 'src/utils/components/modal/DefaultModal';
 import ButtonsBar from 'src/utils/components/form/ButtonsBar';
-import ErrorMessages from 'src/utils/components/form/ErrorMessages';
+import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
+import TextInput from 'src/utils/components/formik_input/TextInput';
 
 export class Service {
-    
-    static validate(params: Object): Object {
-        const {password, passwordAgain} = params;
-        return password === passwordAgain
-            ? {}
-            : {
-                  detail: 'Password mismatch!'
-              };
+    static prepareParams(params: Object, mode: string): Object {
+        mode === 'reset' && delete params.oldPassword;
+        delete params.passwordAgain;
+        return params;
     }
 
-    static prepareParams(mode: string): Object {
-        return (params: Object) => {
-            mode === 'reset' && delete params.oldPassword;
-            delete params.passwordAgain;
-            return params;
-        };
+    static async request(params: Object, mode: string): Promise<ObjResp> {
+        return await Tools.apiCall(apiUrls[`${mode}Password`], params, 'POST');
     }
 
-    static request(mode: string) {
-        return async (params: Object) => await Tools.apiCall(apiUrls[`${mode}Password`], params, 'POST');
+    static async handleSubmit(params: Object, mode: string): Promise<TupleResp> {
+        const _params = Service.prepareParams({...params}, mode);
+        const r = await Service.request(_params, mode);
+
+        return [!!r.ok, r.data || {}];
     }
 
-    static handleSubmit(mode: string, onSuccess: Function, onError: Function) {
-        const request = Service.request(mode);
-        const prepareParams = Service.prepareParams(mode);
-
-        return async (e: Object) => {
-            e.preventDefault();
-            const params = Tools.formDataToObj(new FormData(e.target));
-            const errors = Service.validate(params);
-            if (!Tools.isEmpty(errors)) {
-                onError(Tools.setFormErrors(errors));
-            } else {
-                const r = await request(prepareParams({...params}));
-                r.ok ? onSuccess(r.data) : onError(Tools.setFormErrors(r.data));
-            }
+    static onSubmitOk(onChange: Function): Function {
+        return ([ok, data]: TupleResp): TupleResp => {
+            ok && onChange(data);
+            return [ok, data];
         };
     }
 }
@@ -59,18 +46,12 @@ type Props = {
     data?: Object
 };
 export default ({mode = 'reset', open, close, onChange, children, data = {}}: Props) => {
-    const [errors, setErrors] = useState({});
-
-    useEffect(() => {
-        setErrors({});
-    }, [open]);
-
+    const onSubmitOk = Service.onSubmitOk(onChange);
     return (
         <DefaultModal open={open} close={close} title="Reset password">
-            <Form
+            <F
                 mode={mode}
-                onSubmit={Service.handleSubmit(mode, onChange, setErrors)}
-                state={{data, errors}}
+                onSubmit={values => Service.handleSubmit(values, mode).then(onSubmitOk)}
                 children={children}
             />
         </DefaultModal>
@@ -80,29 +61,44 @@ export default ({mode = 'reset', open, close, onChange, children, data = {}}: Pr
 type FormProps = {
     mode: string,
     onSubmit: Function,
-    state: FormState,
     children?: React.Node,
     submitTitle?: string
 };
-export const Form = ({mode, onSubmit, children, state, submitTitle = 'Reset password'}: FormProps) => {
-    const name = 'reset-pwd';
-    const id = Tools.getFieldId(name);
-    const {username, password} = state.data;
-    const {errors} = state;
+export const F = ({mode, onSubmit, children, submitTitle = 'Reset password'}: FormProps) => {
+    const initialValues = {username: '', password: '', passwordAgain: '', oldPassword: ''};
+    const validate = ({username, password, passwordAgain, oldPassword}) => {
+        const errors = {
+            username: !username && 'Required',
+            password: !password && 'Required',
+            passwordAgain: !passwordAgain && 'Required',
+            oldPassword: mode === 'change' && !oldPassword && 'Required'
+        };
 
-    const errorMessages = (name: string): Array<string> => state.errors[name] || [];
+        if (password && password !== passwordAgain) {
+            errors.password = "Password doesn't match";
+        }
+        return Tools.removeEmptyKey(errors);
+    };
+
     return (
-        <form name={name} onSubmit={onSubmit}>
-            <TextInput id={id('username')} label="Username" required={true} autoFocus={true} />
-
-            <TextInput id={id('password')} type="password" label="Password" required={true} />
-            <TextInput id={id('passwordAgain')} type="password" label="Password again" required={true} />
-            {mode === 'change' && (
-                <TextInput id={id('oldPassword')} type="password" label="Old password" required={true} />
+        <Formik
+            initialValues={initialValues}
+            validate={validate}
+            onSubmit={(values, {setErrors}) =>
+                onSubmit(values).then(([ok, data]) => !ok && setErrors(Tools.setFormErrors(data)))
+            }>
+            {({errors}) => (
+                <Form>
+                    <TextInput name="username" label="Username" autoFocus={true} required={true} />
+                    <TextInput name="password" type="password" label="Password" required={true} />
+                    <TextInput name="passwordAgain" type="password" label="Password again" required={true} />
+                    {mode === 'change' && (
+                        <TextInput name="oldPassword" type="password" label="Old password" required={true} />
+                    )}
+                    <FormLevelErrMsg errors={errors.detail} />
+                    <ButtonsBar children={children} submitTitle={submitTitle} />
+                </Form>
             )}
-            <ErrorMessages errors={errors.detail} alert={true} />
-
-            <ButtonsBar children={children} submitTitle={submitTitle} />
-        </form>
+        </Formik>
     );
 };

@@ -1094,11 +1094,6 @@ describe('errorFormat', () => {
 
 describe('setFormErrors', () => {
     test('text error', () => {
-        const eput = {
-            uid: ['no number'],
-            email: ['invalid email'],
-            username: ['too short']
-        };
         const errors = {
             uid: 'no number',
             email: 'invalid email',
@@ -1106,17 +1101,17 @@ describe('setFormErrors', () => {
             password: {},
             other: ''
         };
+        const eput = {
+            uid: ['no number'],
+            email: ['invalid email'],
+            username: ['too short']
+        };
+        
         const output = Tools.setFormErrors(errors);
         expect(output).toEqual(eput);
     });
 
     test('array error', () => {
-        const eput = {
-            uid: ['no number'],
-            email: ['invalid email'],
-            username: ['too short'],
-            other1: ['hello']
-        };
         const errors = {
             uid: ['no number'],
             email: ['invalid email'],
@@ -1124,6 +1119,13 @@ describe('setFormErrors', () => {
             other: [''],
             other1: ['', 'hello']
         };
+        const eput = {
+            uid: ['no number'],
+            email: ['invalid email'],
+            username: ['too short'],
+            other1: ['hello']
+        };
+        
         const output = Tools.setFormErrors(errors);
         expect(output).toEqual(eput);
     });
