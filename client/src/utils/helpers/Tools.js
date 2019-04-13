@@ -63,6 +63,7 @@ type DataErrorPair = {
 
 export type TupleResp = [boolean, Object];
 export type ObjResp = {
+    status: number,
     ok: boolean,
     data: Object
 };
@@ -380,7 +381,7 @@ export default class Tools {
         return ![200, 201, 204].includes(status) ? false : true;
     }
 
-    static defaultErrorResponse(err: Object): Object {
+    static defaultErrorResponse(err: Object): ObjResp {
         return {
             status: 400,
             ok: false,
@@ -388,7 +389,7 @@ export default class Tools {
         };
     }
 
-    static response(data: Object, status: number): Object {
+    static response(data: Object, status: number): ObjResp {
         return {
             status,
             ok: Tools.isSuscessResponse(status),
@@ -396,7 +397,12 @@ export default class Tools {
         };
     }
 
-    static async apiCall(url: string, data: Object = {}, method: string = 'GET', usingLoading: boolean = true) {
+    static async apiCall(
+        url: string,
+        data: Object = {},
+        method: string = 'GET',
+        usingLoading: boolean = true
+    ): Promise<ObjResp> {
         usingLoading && this.toggleGlobalLoading();
 
         let result;

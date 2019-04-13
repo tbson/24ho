@@ -1106,7 +1106,7 @@ describe('setFormErrors', () => {
             email: ['invalid email'],
             username: ['too short']
         };
-        
+
         const output = Tools.setFormErrors(errors);
         expect(output).toEqual(eput);
     });
@@ -1125,7 +1125,7 @@ describe('setFormErrors', () => {
             username: ['too short'],
             other1: ['hello']
         };
-        
+
         const output = Tools.setFormErrors(errors);
         expect(output).toEqual(eput);
     });
@@ -1164,6 +1164,29 @@ describe('prepareUserData', () => {
         };
 
         const output = Tools.prepareUserData(input);
+
+        expect(eput).toEqual(output);
+    });
+});
+
+describe('removeEmptyKey', () => {
+    it('Normal case', () => {
+        const input = {
+            key1: 'value 1',
+            key2: '',
+            key3: null,
+            key4: undefined,
+            key5: 0,
+            key6: '0'
+        };
+
+        const eput = {
+            key1: 'value 1',
+            key5: 0,
+            key6: '0'
+        };
+
+        const output = Tools.removeEmptyKey(input);
 
         expect(eput).toEqual(output);
     });

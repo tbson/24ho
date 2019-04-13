@@ -1,7 +1,6 @@
 import Tools from 'src/utils/helpers/Tools';
 import {Service} from '../login/Form';
 
-
 beforeEach(() => {
     jest.restoreAllMocks();
 });
@@ -23,40 +22,55 @@ describe('Service.request', () => {
 
 describe('Service.handleSubmit', () => {
     test('Error', async () => {
-        jest.spyOn(Tools, 'formDataToObj').mockImplementation(() => ({
-            username: 'test',
-            password: 'test'
-        }));
-        jest.spyOn(Service, 'request').mockImplementation(_ => ({
+        const onChange = jest.fn();
+        const setErrors = jest.fn();
+        const resp = {
             ok: false,
             data: {}
-        }));
-        const onSuccess = jest.fn();
-        const onError = jest.fn();
-        const e = {
-            preventDefault: () => {}
         };
-        await Service.handleSubmit(onSuccess, onError)(e);
-        expect(onSuccess).not.toHaveBeenCalled();
-        expect(onError).toHaveBeenCalled();
+        jest.spyOn(Service, 'request').mockImplementation(async () => resp);
+        await Service.handleSubmit(onChange)(resp, {setErrors});
+        expect(onChange).not.toHaveBeenCalled();
+        expect(setErrors).toHaveBeenCalled();
     });
 
     test('Success', async () => {
-        jest.spyOn(Tools, 'formDataToObj').mockImplementation(() => ({
-            username: 'test',
-            password: 'test'
-        }));
-        jest.spyOn(Service, 'request').mockImplementation(_ => ({
+        const onChange = jest.fn();
+        const setErrors = jest.fn();
+        const resp = {
             ok: true,
             data: {}
-        }));
-        const onSuccess = jest.fn();
-        const onError = jest.fn();
-        const e = {
-            preventDefault: () => {}
         };
-        await Service.handleSubmit(onSuccess, onError)(e);
-        expect(onSuccess).toHaveBeenCalled();
-        expect(onError).not.toHaveBeenCalled();
+        jest.spyOn(Service, 'request').mockImplementation(async () => resp);
+        await Service.handleSubmit(onChange)(resp, {setErrors});
+        expect(onChange).toHaveBeenCalled();
+        expect(setErrors).not.toHaveBeenCalled();
+    });
+});
+
+describe('Service.validate', () => {
+    test('All empty', async () => {
+        const values = {
+            username: '',
+            password: ''
+        };
+        const eput = {
+            username: 'Required',
+            password: 'Required'
+        };
+        const output = Service.validate(values);
+        expect(output).toEqual(eput);
+    });
+
+    test('Username empty', async () => {
+        const values = {
+            username: '',
+            password: 'test'
+        };
+        const eput = {
+            username: 'Required'
+        };
+        const output = Service.validate(values);
+        expect(output).toEqual(eput);
     });
 });
