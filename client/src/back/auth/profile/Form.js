@@ -1,18 +1,21 @@
 // @flow
-// $FlowFixMe: do not complain about hooks
-import {useState, useEffect} from 'react';
 import * as React from 'react';
+import {useState, useEffect} from 'react';
+// $FlowFixMe: do not complain about hooks
+import {Formik, Form} from 'formik';
 import {APP} from 'src/constants';
 import {apiUrls} from '../_data';
 import Tools from 'src/utils/helpers/Tools';
 import type {FormState} from 'src/utils/helpers/Tools';
-import TextInput from 'src/utils/components/input/TextInput';
-import FileInput from 'src/utils/components/input/FileInput';
+import TextInput from 'src/utils/components/formik_input/TextInput';
+import FileInput from 'src/utils/components/formik_input/FileInput';
 import DefaultModal from 'src/utils/components/modal/DefaultModal';
 import ButtonsBar from 'src/utils/components/form/ButtonsBar';
-import ErrorMessages from 'src/utils/components/form/ErrorMessages';
+import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
 
 export class Service {
+    static initialValues = {avatar: '', username: '', email: '', first_name: '', last_name: '', phone: '', company: ''};
+
     static async getProfileRequest() {
         return await Tools.apiCall(apiUrls.profile);
     }
@@ -25,13 +28,29 @@ export class Service {
         Service.getProfileRequest().then(resp => resp.ok && callback(resp.data));
     }
 
-    static handleSubmit(onSuccess: Function, onError: Function) {
-        return async (e: Object) => {
-            e.preventDefault();
-            const params = Tools.formDataToObj(new FormData(e.target));
-            const r = await Service.setProfileRequest(params);
-            r.ok ? onSuccess(r.data) : onError(Tools.setFormErrors(r.data));
+    static handleSubmit(onChange: Function) {
+        const {setProfileRequest} = Service;
+        return (values: Object, {setErrors}: Object) =>
+            setProfileRequest(values).then(({ok, data}) => {
+                ok ? onChange(data) : setErrors(Tools.setFormErrors(data));
+            });
+    }
+
+    static validate({username, email, first_name, last_name, phone}: Object): Object {
+        const errors = {
+            username: !username && 'Required',
+            email: !email && 'Required',
+            first_name: !first_name && 'Required',
+            last_name: !last_name && 'Required',
+            phone: !phone && 'Required'
         };
+        return Tools.removeEmptyKey(errors);
+    }
+
+    static prepareUserData(data: Object): Object {
+        data = Tools.prepareUserData(data);
+        if (!data.avatar) data.avatar = '';
+        return data;
     }
 }
 
@@ -39,79 +58,61 @@ type Props = {
     open: boolean,
     close: Function,
     onChange: Function,
-    children?: React.Node
+    children?: React.Node,
+    submitTitle?: string
 };
-export default ({open, close, onChange, children}: Props) => {
-    const [errors, setErrors] = useState({});
-    const [data, setData] = useState({});
+export default ({open, close, onChange, children, submitTitle = 'Update'}: Props) => {
+    const {validate, handleSubmit, prepareUserData} = Service;
+
+    const [initialValues, setInitialValues] = useState(Service.initialValues);
     const [openModal, setOpenModal] = useState(false);
 
+    const retrieveThenOpen = () =>
+        Service.getProfile(profile => {
+            setInitialValues(prepareUserData(profile));
+            setOpenModal(true);
+        });
+
     useEffect(() => {
-        setErrors({});
-        setData({});
-        open
-            ? Service.getProfile(profile => {
-                  setData(Tools.prepareUserData(profile));
-                  setOpenModal(open);
-              })
-            : setOpenModal(open);
+        open ? retrieveThenOpen() : setOpenModal(false);
     }, [open]);
 
     return (
         <DefaultModal open={openModal} close={close} title="Update profile">
-            <Form onSubmit={Service.handleSubmit(onChange, setErrors)} state={{data, errors}} children={children} />
-        </DefaultModal>
-    );
-};
+            <Formik initialValues={{...initialValues}} validate={validate} onSubmit={handleSubmit(onChange)}>
+                {({errors}) => (
+                    <Form>
+                        <div className="row">
+                            {APP !== 'admin' && (
+                                <div className="col-md-2">
+                                    <FileInput name="avatar" label="" />
+                                </div>
+                            )}
+                            <div className={`col-md-${APP !== 'admin' ? 10 : 12}`}>
+                                <TextInput name="username" label="Username" required={true} autoFocus={true} />
 
-type FormProps = {
-    onSubmit: Function,
-    state: FormState,
-    children?: React.Node,
-    submitTitle?: string
-};
-export const Form = ({onSubmit, children, state, submitTitle = 'Update'}: FormProps) => {
-    const name = 'reset-password';
-    const id = Tools.getFieldId(name);
-    const {errors, data} = state;
+                                <TextInput name="email" type="email" label="Email" required={true} />
 
-    const errorMessages = (name: string): Array<string> => state.errors[name] || [];
-    return (
-        <form name={name} onSubmit={onSubmit}>
-            <div className="row">
-                {APP !== 'admin' && (
-                    <div className="col-md-2">
-                        <FileInput id={id('avatar')} value={data.avatar} label="" value={data.avatar} />
-                    </div>
+                                <div className="row">
+                                    <div className="col-md-6">
+                                        <TextInput name="first_name" label="First name" />
+                                    </div>
+                                    <div className="col-md-6">
+                                        <TextInput name="last_name" label="Last name" />
+                                    </div>
+                                </div>
+
+                                {APP !== 'admin' && <TextInput name="phone" label="Phone" required={true} />}
+                                {APP !== 'admin' && <TextInput name="company" label="Company" />}
+                            </div>
+                        </div>
+
+                        <FormLevelErrMsg errors={errors.detail} />
+
+                        <ButtonsBar children={children} submitTitle={submitTitle} />
+                    </Form>
                 )}
-                <div className={`col-md-${APP !== 'admin' ? 10 : 12}`}>
-                    <TextInput
-                        id={id('username')}
-                        label="Username"
-                        value={data.username}
-                        required={true}
-                        autoFocus={true}
-                    />
-
-                    <TextInput id={id('email')} type="email" label="Email" value={data.email} required={true} />
-
-                    <div className="row">
-                        <div className="col-md-6">
-                            <TextInput id={id('first_name')} label="First name" value={data.first_name} />
-                        </div>
-                        <div className="col-md-6">
-                            <TextInput id={id('last_name')} label="Last name" value={data.last_name} />
-                        </div>
-                    </div>
-
-                    {APP !== 'admin' && <TextInput id={id('phone')} label="Phone" value={data.phone} required={true} />}
-                    {APP !== 'admin' && <TextInput id={id('company')} label="Company" value={data.company} />}
-                </div>
-            </div>
-
-            <ErrorMessages errors={errors.detail} alert={true} />
-
-            <ButtonsBar children={children} submitTitle={submitTitle} />
-        </form>
+            </Formik>
+        </DefaultModal>
     );
 };

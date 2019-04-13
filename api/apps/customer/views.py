@@ -14,9 +14,11 @@ from utils.serializers.user import UserSr
 from .serializers import CustomerBaseSr
 from apps.staff.serializers import StaffCompactSr
 from utils.common_classes.custom_permission import CustomPermission
+from django.http.request import QueryDict
 from django.contrib.auth.hashers import make_password, check_password
 from django.utils import timezone
 from django.conf import settings
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from utils.helpers.tools import Tools
 from utils.helpers.res_tools import res, err_res
 
@@ -123,8 +125,11 @@ class ProfileView(APIView):
     def post(self, request, format=None):
         user = self.get_object()
         obj = user.customer
+        data = request.data
+        if (type(request.data) is QueryDict):
+            data = request.data.dict()
 
-        data = Tools.parseUserRelatedData(request.data)
+        data = Tools.parseUserRelatedData(data)
 
         userSr = UserSr(user, data=data['user'])
         if userSr.is_valid(raise_exception=True):
@@ -132,6 +137,8 @@ class ProfileView(APIView):
 
         remain = data['remain']
         remain.update({'user': user.pk})
+        if type(remain.get('avatar')) is not InMemoryUploadedFile:
+            remain.pop('avatar', None)
         serializer = CustomerBaseSr(obj, data=remain)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
