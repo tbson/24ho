@@ -15,7 +15,7 @@ djangorestframework-jwt==1.11.0
 gunicorn==19.9.0
 idna==2.8
 itypes==1.1.0
-Jinja2==2.10
+Jinja2==2.10.1
 Markdown==3.1
 MarkupSafe==1.1.1
 msgpack-python==0.5.6
