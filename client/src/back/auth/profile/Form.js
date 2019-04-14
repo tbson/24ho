@@ -16,12 +16,12 @@ import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
 export class Service {
     static initialValues = {avatar: '', username: '', email: '', first_name: '', last_name: '', phone: '', company: ''};
 
-    static async getProfileRequest() {
-        return await Tools.apiCall(apiUrls.profile);
+    static getProfileRequest() {
+        return Tools.apiCall(apiUrls.profile);
     }
 
-    static async setProfileRequest(params: Object) {
-        return await Tools.apiCall(apiUrls.profile, params, 'POST');
+    static setProfileRequest(params: Object) {
+        return Tools.apiCall(apiUrls.profile, params, 'POST');
     }
 
     static getProfile(callback: Function) {

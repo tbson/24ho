@@ -44,9 +44,8 @@ class UserSr(ModelSerializer):
 
         if 'groups' in self.initial_data:
             groups = []
-            for group in self.initial_data['groups'].split(','):
-                if group.isdigit():
-                    groups.append(int(group))
+            for group in self.initial_data.get('groups', []):
+                groups.append(int(group))
             if list(groups):
                 group_list = Group.objects.filter(id__in=groups)
                 for group in group_list:
@@ -64,9 +63,8 @@ class UserSr(ModelSerializer):
 
         if 'groups' in self.initial_data:
             groups = []
-            for group in self.initial_data['groups'].split(','):
-                if group.isdigit():
-                    groups.append(int(group))
+            for group in self.initial_data.get('groups', []):
+                groups.append(int(group))
 
             for group in instance.groups.all():
                 group.user_set.remove(instance)

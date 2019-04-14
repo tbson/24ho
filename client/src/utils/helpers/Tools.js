@@ -68,6 +68,8 @@ export type ObjResp = {
     data: Object
 };
 
+export type SelectOptions = Array<{value: string | number, label: string}>;
+
 export default class Tools {
     static emitter = new EventEmitter();
 

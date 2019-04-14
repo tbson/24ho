@@ -1,17 +1,31 @@
 // @flow
 import * as React from 'react';
 import {useState, useEffect, useContext, useRef} from 'react';
+// $FlowFixMe: do not complain about formik
+import {Formik, Form} from 'formik';
 import Tools from 'src/utils/helpers/Tools';
 import {apiUrls, defaultInputs, Context} from './_data';
 import type {FormState} from 'src/utils/helpers/Tools';
-import TextInput from 'src/utils/components/input/TextInput';
-import CheckInput from 'src/utils/components/input/CheckInput';
-import SelectInput from 'src/utils/components/input/SelectInput';
+import TextInput from 'src/utils/components/formik_input/TextInput';
+import CheckInput from 'src/utils/components/formik_input/CheckInput';
+import SelectInput from 'src/utils/components/formik_input/SelectInput';
 import DefaultModal from 'src/utils/components/modal/DefaultModal';
 import ButtonsBar from 'src/utils/components/form/ButtonsBar';
-import ErrorMessages from 'src/utils/components/form/ErrorMessages';
+import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
 
 export class Service {
+    static initialValues = {
+        email: '',
+        username: '',
+        first_name: '',
+        last_name: '',
+        password: '',
+        groups: [],
+        is_sale: false,
+        is_cust_care: false,
+        is_lock: false
+    };
+
     static async changeRequest(params: Object) {
         return !params.id
             ? await Tools.apiCall(apiUrls.crud, params, 'POST')
@@ -22,170 +36,98 @@ export class Service {
         return await Tools.apiCall(apiUrls.crud + id);
     }
 
-    static handleSubmit(id: number, close: Function, onSuccess: Function, onError: Function, setData: Function) {
-        return (needToClose: boolean) => (e: Object) => {
-            e.preventDefault();
-            const params = Tools.formDataToObj(new FormData(e.target), ['is_lock', 'is_sale', 'is_cust_care']);
-            return Service.changeRequest(id ? {...params, id} : params)
-                .then(resp => {
-                    if (!resp.ok) return Promise.reject(resp.data);
-                    setData(defaultInputs);
-                    needToClose && close();
-                    onSuccess({...resp.data, checked: false}, id ? 'update' : 'add');
-                })
-                .catch(err => onError(Tools.setFormErrors(err)));
+    static handleSubmit(onChange: Function, id: number) {
+        return (values: Object, {setErrors}: Object) => {
+            return Service.changeRequest(id ? {...values, id} : values).then(({ok, data}) => {
+                ok ? onChange({...data, checked: false}, id ? 'update' : 'add') : setErrors(Tools.setFormErrors(data));
+            });
         };
     }
 
-    static handleRetrieve(id: number, callback: Function) {
-        return !id
-            ? callback(defaultInputs)
-            : Service.retrieveRequest(id)
-                  .then(resp => (resp.ok ? callback(resp.data) : callback(defaultInputs)))
-                  .catch(() => callback(defaultInputs));
+    static validate({username, email, first_name, last_name}: Object): Object {
+        const errors = {
+            username: !username && 'Required',
+            email: !email && 'Required',
+            first_name: !first_name && 'Required',
+            last_name: !last_name && 'Required'
+        };
+        return Tools.removeEmptyKey(errors);
     }
 }
 
-type Props = {
+type FormProps = {
     id: number,
     open: boolean,
     close: Function,
     onChange: Function,
-    children?: React.Node
-};
-export default ({id, open: _open, close, onChange, children}: Props) => {
-    const [errors, setErrors] = useState({});
-    const [data, setData] = useState(defaultInputs);
-    const [open, setOpen] = useState(false);
-
-    const handleSubmit = Service.handleSubmit(id, close, onChange, setErrors, setData);
-
-    const afterRetrieve = (open: boolean) => (data: Object) => {
-        setData(Tools.prepareUserData(data));
-        setOpen(open);
-    };
-
-    const emptyForm = (): boolean => {
-        setErrors({});
-        setData(defaultInputs);
-        return true;
-    };
-
-    useEffect(() => {
-        emptyForm() && _open ? Service.handleRetrieve(id, afterRetrieve(_open)) : setOpen(_open);
-    }, [_open]);
-
-    return (
-        <DefaultModal open={open} close={close} title="Staff manager">
-            <Form onSubmit={handleSubmit} state={{data, errors}} children={children} />
-        </DefaultModal>
-    );
-};
-
-type FormProps = {
-    onSubmit: Function,
-    state: FormState,
     children?: React.Node,
     submitTitle?: string
 };
-export const Form = ({onSubmit: _onSubmit, children, state, submitTitle = 'Save'}: FormProps) => {
-    const [needToClose, setNeedToClose] = useState(true);
-    const formElm = useRef(null);
-    const firstInputSelector = "[name='email']";
+export default ({id, open, close, onChange, children, submitTitle = 'Save'}: FormProps) => {
+    const {validate, handleSubmit} = Service;
+    const [openModal, setOpenModal] = useState(false);
+    const [initialValues, setInitialValues] = useState(Service.initialValues);
     const {listGroup} = useContext(Context);
 
-    const resetAndFocus = form => {
-        if (!form) return;
-        const firstInput = form.querySelector(firstInputSelector);
-        form.reset();
-        firstInput && firstInput.focus();
+    const retrieveThenOpen = (id: number) => {
+        if (!id) {
+            setOpenModal(true);
+            setInitialValues(Service.initialValues);
+            return;
+        }
+        Service.retrieveRequest(id).then(resp => {
+            if (resp.ok) {
+                setInitialValues({...Tools.prepareUserData(resp.data), password: ''});
+                setOpenModal(true);
+            } else {
+                Tools.popMessage(resp.data.detail, 'error');
+            }
+        });
     };
 
-    const name = 'staff';
-    const fieldId = Tools.getFieldId(name);
-    const {id, email, username, first_name, last_name, password, groups, is_lock, is_sale, is_cust_care} = state.data;
-    const {errors} = state;
-
-    const errMsg = (name: string): Array<string> => state.errors[name] || [];
-
-    const onSubmit = _onSubmit(needToClose);
-
-    const onClick = e => setNeedToClose(!e.screenY && !e.screenY && !id ? false : true);
-
     useEffect(() => {
-        Tools.isEmpty(errors) && resetAndFocus(formElm.current);
-    }, [state]);
+        open ? retrieveThenOpen(id) : setOpenModal(false);
+    }, [open]);
 
     return (
-        <form name={name} ref={formElm} onSubmit={onSubmit}>
-            <div className="row">
-                <div className="col">
-                    <TextInput
-                        id={fieldId('email')}
-                        type="email"
-                        label="Email"
-                        value={email}
-                        errMsg={errMsg('email')}
-                        required={true}
-                        autoFocus={true}
-                    />
-                </div>
-                <div className="col">
-                    <TextInput
-                        id={fieldId('username')}
-                        label="Tên đăng nhập"
-                        value={username}
-                        required={true}
-                        errMsg={errMsg('username')}
-                    />
-                </div>
-            </div>
+        <DefaultModal open={openModal} close={close} title="Staff manager">
+            <Formik initialValues={{...initialValues}} validate={validate} onSubmit={handleSubmit(onChange, id)}>
+                {({errors}) => (
+                    <Form>
+                        <div className="row">
+                            <div className="col">
+                                <TextInput name="email" type="email" label="Email" required={true} autoFocus={true} />
+                            </div>
+                            <div className="col">
+                                <TextInput name="username" label="Tên đăng nhập" required={true} />
+                            </div>
+                        </div>
 
-            <div className="row">
-                <div className="col">
-                    <TextInput
-                        id={fieldId('last_name')}
-                        label="Họ và tên lót"
-                        value={last_name}
-                        errMsg={errMsg('last_name')}
-                        required={true}
-                    />
-                </div>
+                        <div className="row">
+                            <div className="col">
+                                <TextInput name="last_name" label="Họ và tên lót" required={true} />
+                            </div>
 
-                <div className="col">
-                    <TextInput
-                        id={fieldId('first_name')}
-                        label="Tên"
-                        value={first_name}
-                        errMsg={errMsg('first_name')}
-                        required={true}
-                    />
-                </div>
-            </div>
+                            <div className="col">
+                                <TextInput name="first_name" label="Tên" required={true} />
+                            </div>
+                        </div>
 
-            <TextInput
-                id={fieldId('password')}
-                type="password"
-                label="Password"
-                value={password}
-                errMsg={errMsg('password')}
-            />
+                        <TextInput name="password" type="password" label="Password" />
 
-            <SelectInput isMulti={true} id={fieldId('groups')} label="Quyền" options={listGroup} value={groups} />
+                        <SelectInput isMulti={true} name="groups" label="Quyền" options={listGroup} />
 
-            <CheckInput id={fieldId('is_sale')} label="Nhân viên mua hàng" value={is_sale} errMsg={errMsg('is_lock')} />
-            <CheckInput
-                id={fieldId('is_cust_care')}
-                label="Chăm sóc khách hàng"
-                value={is_cust_care}
-                errMsg={errMsg('is_cust_care')}
-            />
+                        <CheckInput name="is_sale" label="Nhân viên mua hàng" />
+                        <CheckInput name="is_cust_care" label="Chăm sóc khách hàng" />
 
-            <CheckInput id={fieldId('is_lock')} label="Khoá" value={is_lock} errMsg={errMsg('is_lock')} />
+                        <CheckInput name="is_lock" label="Khoá" />
 
-            <ErrorMessages errors={errors.detail} alert={true} />
+                        <FormLevelErrMsg errors={errors.detail} />
 
-            <ButtonsBar children={children} submitTitle={submitTitle} onClick={onClick} />
-        </form>
+                        <ButtonsBar children={children} submitTitle={submitTitle} />
+                    </Form>
+                )}
+            </Formik>
+        </DefaultModal>
     );
 };
