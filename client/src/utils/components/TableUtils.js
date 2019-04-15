@@ -156,7 +156,7 @@ type BoolOutputType = {
     value: boolean
 };
 export const BoolOutput = ({value}: BoolOutputType) =>
-    value ? <span>&#x2714;</span> : <span>&#x274C;</span>;
+    value ? <span className="green fas fa-check"/> : <span className="red fas fa-times"/>;
 
 const styles = {
     footer: {
