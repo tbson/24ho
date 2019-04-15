@@ -716,6 +716,7 @@ export default class Tools {
     }
 
     static prepareUserData(data: Object): Object {
+        if (!data.user_data) return {...data};
         const user_data = {...data.user_data};
         delete data.user_data;
         delete user_data.id;

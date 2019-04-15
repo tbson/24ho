@@ -1,11 +1,11 @@
 // @flow
 import * as React from 'react';
-import {useState, useEffect, useContext, useRef} from 'react';
+import {useState, useEffect, useRef} from 'react';
 // $FlowFixMe: do not complain about formik
 import {Formik, Form} from 'formik';
 import Tools from 'src/utils/helpers/Tools';
 import {apiUrls, defaultInputs, Context} from './_data';
-import type {FormState} from 'src/utils/helpers/Tools';
+import type {FormState, SelectOptions} from 'src/utils/helpers/Tools';
 import TextInput from 'src/utils/components/formik_input/TextInput';
 import CheckInput from 'src/utils/components/formik_input/CheckInput';
 import SelectInput from 'src/utils/components/formik_input/SelectInput';
@@ -26,30 +26,32 @@ export class Service {
         is_lock: false
     };
 
-    static async changeRequest(params: Object) {
+    static changeRequest(params: Object) {
         return !params.id
-            ? await Tools.apiCall(apiUrls.crud, params, 'POST')
-            : await Tools.apiCall(apiUrls.crud + params.id, params, 'PUT');
+            ? Tools.apiCall(apiUrls.crud, params, 'POST')
+            : Tools.apiCall(apiUrls.crud + params.id, params, 'PUT');
     }
 
-    static async retrieveRequest(id: number) {
-        return await Tools.apiCall(apiUrls.crud + id);
+    static retrieveRequest(id: number) {
+        return id ? Tools.apiCall(apiUrls.crud + id) : Promise.resolve({ok: true, data: Service.initialValues});
     }
 
-    static handleSubmit(onChange: Function, id: number) {
-        return (values: Object, {setErrors}: Object) => {
-            return Service.changeRequest(id ? {...values, id} : values).then(({ok, data}) => {
-                ok ? onChange({...data, checked: false}, id ? 'update' : 'add') : setErrors(Tools.setFormErrors(data));
-            });
-        };
+    static handleSubmit(onChange: Function, id: number, reOpenDialog: boolean) {
+        return (values: Object, {setErrors}: Object) =>
+            Service.changeRequest(id ? {...values, id} : values).then(({ok, data}) =>
+                ok
+                    ? onChange({...data, checked: false}, id ? 'update' : 'add', reOpenDialog)
+                    : setErrors(Tools.setFormErrors(data))
+            );
     }
 
-    static validate({username, email, first_name, last_name}: Object): Object {
+    static validate({username, email, first_name, last_name, groups}: Object): Object {
         const errors = {
             username: !username && 'Required',
             email: !email && 'Required',
             first_name: !first_name && 'Required',
-            last_name: !last_name && 'Required'
+            last_name: !last_name && 'Required',
+            groups: (!groups || !groups.length) && 'Required'
         };
         return Tools.removeEmptyKey(errors);
     }
@@ -57,42 +59,52 @@ export class Service {
 
 type FormProps = {
     id: number,
+    listGroup: SelectOptions,
     open: boolean,
     close: Function,
     onChange: Function,
     children?: React.Node,
     submitTitle?: string
 };
-export default ({id, open, close, onChange, children, submitTitle = 'Save'}: FormProps) => {
-    const {validate, handleSubmit} = Service;
-    const [openModal, setOpenModal] = useState(false);
-    const [initialValues, setInitialValues] = useState(Service.initialValues);
-    const {listGroup} = useContext(Context);
+export default ({id, listGroup, open, close, onChange, children, submitTitle = 'Save'}: FormProps) => {
+    const firstInputSelector = "[name='email']";
 
-    const retrieveThenOpen = (id: number) => {
-        if (!id) {
-            setOpenModal(true);
-            setInitialValues(Service.initialValues);
-            return;
-        }
+    const {validate, handleSubmit} = Service;
+
+    const [openModal, setOpenModal] = useState(false);
+    const [reOpenDialog, setReOpenDialog] = useState(true);
+    const [initialValues, setInitialValues] = useState(Service.initialValues);
+
+    const retrieveThenOpen = (id: number) =>
         Service.retrieveRequest(id).then(resp => {
-            if (resp.ok) {
-                setInitialValues({...Tools.prepareUserData(resp.data), password: ''});
-                setOpenModal(true);
-            } else {
-                Tools.popMessage(resp.data.detail, 'error');
-            }
+            if (!resp.ok) return Tools.popMessage(resp.data.detail, 'error');
+            setInitialValues({...Tools.prepareUserData(resp.data), password: ''});
+            setOpenModal(true);
         });
-    };
 
     useEffect(() => {
         open ? retrieveThenOpen(id) : setOpenModal(false);
+        setReOpenDialog(true);
     }, [open]);
+
+    const focusFirstInput = () => {
+        const firstInput = document.querySelector(`form ${firstInputSelector}`);
+        firstInput && firstInput.focus();
+    };
+
+    const onClick = (handleSubmit: Function) => () => {
+        setReOpenDialog(false);
+        focusFirstInput();
+        handleSubmit();
+    };
 
     return (
         <DefaultModal open={openModal} close={close} title="Staff manager">
-            <Formik initialValues={{...initialValues}} validate={validate} onSubmit={handleSubmit(onChange, id)}>
-                {({errors}) => (
+            <Formik
+                initialValues={{...initialValues}}
+                validate={validate}
+                onSubmit={handleSubmit(onChange, id, reOpenDialog)}>
+                {({errors, handleSubmit}) => (
                     <Form>
                         <div className="row">
                             <div className="col">
@@ -102,29 +114,21 @@ export default ({id, open, close, onChange, children, submitTitle = 'Save'}: For
                                 <TextInput name="username" label="Tên đăng nhập" required={true} />
                             </div>
                         </div>
-
                         <div className="row">
                             <div className="col">
                                 <TextInput name="last_name" label="Họ và tên lót" required={true} />
                             </div>
-
                             <div className="col">
                                 <TextInput name="first_name" label="Tên" required={true} />
                             </div>
                         </div>
-
                         <TextInput name="password" type="password" label="Password" />
-
-                        <SelectInput isMulti={true} name="groups" label="Quyền" options={listGroup} />
-
+                        <SelectInput isMulti={true} name="groups" label="Quyền" options={listGroup} required={true} />
                         <CheckInput name="is_sale" label="Nhân viên mua hàng" />
                         <CheckInput name="is_cust_care" label="Chăm sóc khách hàng" />
-
                         <CheckInput name="is_lock" label="Khoá" />
-
                         <FormLevelErrMsg errors={errors.detail} />
-
-                        <ButtonsBar children={children} submitTitle={submitTitle} />
+                        <ButtonsBar children={children} submitTitle={submitTitle} onClick={onClick(handleSubmit)} />
                     </Form>
                 )}
             </Formik>

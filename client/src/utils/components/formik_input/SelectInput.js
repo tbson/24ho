@@ -41,27 +41,34 @@ export default ({
         <div className={'form-group'}>
             <Label name={name} label={label} required={required} />
             <Field name={name}>
-                {({field, form}) => {
+                {props => {
+                    const {field, form} = props;
                     let value;
                     if (isMulti) {
                         value = options.filter(option => (field.value || []).includes(option.value));
                     } else {
                         value = options.find(option => option.value === field.value);
                     }
+                    const renderErrorMessage = () => {
+                        if (!form.touched[field.name] || !form.errors[field.name]) return null;
+                        return <div className="red">{form.errors[field.name]}</div>;
+                    };
                     return (
-                        <Select
-                            defaultValue={value}
-                            isMulti={isMulti}
-                            isSearchable={true}
-                            disabled={disabled}
-                            autoFocus={autoFocus}
-                            onChange={handleChange(form.setFieldValue, isMulti)}
-                            options={options}
-                        />
+                        <>
+                            <Select
+                                value={value}
+                                isMulti={isMulti}
+                                isSearchable={true}
+                                disabled={disabled}
+                                autoFocus={autoFocus}
+                                onChange={handleChange(form.setFieldValue, isMulti)}
+                                options={options}
+                            />
+                            {renderErrorMessage()}
+                        </>
                     );
                 }}
             </Field>
-            <ErrorMessage name={name} className="red" component="div" />
         </div>
     );
 };

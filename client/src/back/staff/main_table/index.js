@@ -3,7 +3,7 @@ import * as React from 'react';
 import {useState, useEffect} from 'react';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
-import {apiUrls, Context} from '../_data';
+import {apiUrls} from '../_data';
 import type {TRow, DbRow, ListItem} from '../_data';
 import {Pagination, SearchInput} from 'src/utils/components/TableUtils';
 import MainForm from '../MainForm';
@@ -54,9 +54,10 @@ export default ({}: Props) => {
         setListGroup(Service.groupToOptions(data.extra.list_group));
     };
 
-    const onChange = (data: TRow, type: string) => {
+    const onChange = (data: TRow, type: string, reOpenDialog: boolean) => {
         setIsFormOpen(false);
         setList(listAction(data)[type]());
+        reOpenDialog && setIsFormOpen(true);
     };
 
     const onCheck = id => setList(ListTools.checkOne(id, list));
@@ -144,18 +145,17 @@ export default ({}: Props) => {
                 </tfoot>
             </table>
 
-            <Context.Provider value={{listGroup}}>
-                <MainForm id={modalId} open={isFormOpen} close={() => setIsFormOpen(false)} onChange={onChange}>
-                    <button
-                        type="button"
-                        className="btn btn-warning"
-                        action="close"
-                        onClick={() => setIsFormOpen(false)}>
-                        <span className="fas fa-times" />
-                        &nbsp;Cancel
-                    </button>
-                </MainForm>
-            </Context.Provider>
+            <MainForm
+                id={modalId}
+                listGroup={listGroup}
+                open={isFormOpen}
+                close={() => setIsFormOpen(false)}
+                onChange={onChange}>
+                <button type="button" className="btn btn-warning" action="close" onClick={() => setIsFormOpen(false)}>
+                    <span className="fas fa-times" />
+                    &nbsp;Cancel
+                </button>
+            </MainForm>
         </div>
     );
 };
