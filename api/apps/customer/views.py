@@ -84,18 +84,17 @@ class CustomerViewSet(GenericViewSet):
 
     @action(methods=['delete'], detail=True)
     def delete(self, request, pk=None):
-        obj = get_object_or_404(Customer, pk=pk)
-        obj.delete()
+        item = get_object_or_404(Customer, pk=pk)
+        item.delete()
         return res(status=status.HTTP_204_NO_CONTENT)
 
     @action(methods=['delete'], detail=False)
     def delete_list(self, request):
         pk = self.request.query_params.get('ids', '')
-        pk = [int(pk)] if pk.isdigit() else map(lambda x: int(x), pk.split(','))
-        result = Customer.objects.filter(pk__in=pk)
-        if result.count() == 0:
-            raise Http404
-        result.delete()
+        pks = [int(pk)] if pk.isdigit() else map(lambda x: int(x), pk.split(','))
+        for pk in pks:
+            item = get_object_or_404(Customer, pk=pk)
+            item.delete()
         return res(status=status.HTTP_204_NO_CONTENT)
 
 
