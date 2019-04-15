@@ -5,6 +5,19 @@ beforeEach(() => {
     jest.restoreAllMocks();
 });
 
+const okResp = {
+    ok: true,
+    data: {
+        key: 'value'
+    }
+};
+const failResp = {
+    ok: false,
+    data: {
+        key: 'value'
+    }
+};
+
 describe('Service.getProfileRequest', () => {
     test('Normal case', () => {
         const apiCall = jest.spyOn(Tools, 'apiCall').mockImplementation(async () => {});
@@ -54,38 +67,28 @@ describe('Service.getProfile', () => {
 
 describe('Service.handleSubmit', () => {
     test('Error', async () => {
-        jest.spyOn(Tools, 'formDataToObj').mockImplementation(() => ({
-            key: 'value'
-        }));
-        jest.spyOn(Service, 'setProfileRequest').mockImplementation(_ => ({
-            ok: false,
-            data: {}
-        }));
-        const onSuccess = jest.fn();
-        const onError = jest.fn();
-        const e = {
-            preventDefault: () => {}
+        jest.spyOn(Service, 'setProfileRequest').mockImplementation(async () => failResp);
+        const values = {key: 'value'};
+        const onChange = jest.fn();
+        const form = {
+            setErrors: jest.fn()
         };
-        await Service.handleSubmit(onSuccess, onError)(e);
-        expect(onSuccess).not.toHaveBeenCalled();
-        expect(onError).toHaveBeenCalled();
+        await Service.handleSubmit(onChange)(values, form);
+        expect(onChange).not.toHaveBeenCalled();
+
+        expect(form.setErrors).toHaveBeenCalled();
+        expect(form.setErrors.mock.calls[0][0]).toEqual({key: ['value']});
     });
 
     test('Success', async () => {
-        jest.spyOn(Tools, 'formDataToObj').mockImplementation(() => ({
-            key: 'value'
-        }));
-        jest.spyOn(Service, 'setProfileRequest').mockImplementation(_ => ({
-            ok: true,
-            data: {}
-        }));
-        const onSuccess = jest.fn();
-        const onError = jest.fn();
-        const e = {
-            preventDefault: () => {}
-        };
-        await Service.handleSubmit(onSuccess, onError)(e);
-        expect(onSuccess).toHaveBeenCalled();
-        expect(onError).not.toHaveBeenCalled();
+        jest.spyOn(Service, 'setProfileRequest').mockImplementation(async () => okResp);
+        const values = {key: 'value'};
+        const onChange = jest.fn();
+        const form = {
+            setErrors: jest.fn()
+        }; 
+        await Service.handleSubmit(onChange)(values, form);
+        expect(onChange).toHaveBeenCalled();
+        expect(form.setErrors).not.toHaveBeenCalled();
     });
 });

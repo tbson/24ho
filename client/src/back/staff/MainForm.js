@@ -36,7 +36,7 @@ export class Service {
         return id ? Tools.apiCall(apiUrls.crud + id) : Promise.resolve({ok: true, data: Service.initialValues});
     }
 
-    static handleSubmit(onChange: Function, id: number, reOpenDialog: boolean) {
+    static handleSubmit(id: number, onChange: Function, reOpenDialog: boolean) {
         return (values: Object, {setErrors}: Object) =>
             Service.changeRequest(id ? {...values, id} : values).then(({ok, data}) =>
                 ok
@@ -103,7 +103,7 @@ export default ({id, listGroup, open, close, onChange, children, submitTitle = '
             <Formik
                 initialValues={{...initialValues}}
                 validate={validate}
-                onSubmit={handleSubmit(onChange, id, reOpenDialog)}>
+                onSubmit={handleSubmit(id, onChange, reOpenDialog)}>
                 {({errors, handleSubmit}) => (
                     <Form>
                         <div className="row">
