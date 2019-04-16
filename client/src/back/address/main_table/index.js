@@ -87,9 +87,11 @@ export default ({}: Props) => {
         setLinks(data.links);
     };
 
-    const onChange = (data: TRow, type: string) => {
+    const onChange = (data: TRow, type: string, reOpenDialog: boolean) => {
+        setIsFormOpen(false);
         data = Service.prepareItem(data, listArea);
         setList(listAction(data)[type]());
+        reOpenDialog && setIsFormOpen(true);
     };
 
     const onCheck = id => setList(ListTools.checkOne(id, list));
@@ -174,18 +176,17 @@ export default ({}: Props) => {
                     </tr>
                 </tfoot>
             </table>
-            <Context.Provider value={{listArea}}>
-                <MainForm id={modalId} open={isFormOpen} close={() => setIsFormOpen(false)} onChange={onChange}>
-                    <button
-                        type="button"
-                        className="btn btn-warning"
-                        action="close"
-                        onClick={() => setIsFormOpen(false)}>
-                        <span className="fas fa-times" />
-                        &nbsp;Cancel
-                    </button>
-                </MainForm>
-            </Context.Provider>
+            <MainForm
+                id={modalId}
+                listArea={listArea}
+                open={isFormOpen}
+                close={() => setIsFormOpen(false)}
+                onChange={onChange}>
+                <button type="button" className="btn btn-warning" action="close" onClick={() => setIsFormOpen(false)}>
+                    <span className="fas fa-times" />
+                    &nbsp;Cancel
+                </button>
+            </MainForm>
         </div>
     );
 };

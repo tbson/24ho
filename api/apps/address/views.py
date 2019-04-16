@@ -20,7 +20,10 @@ class AddressViewSet(GenericViewSet):
     search_fields = ('uid', 'value')
 
     def list(self, request):
-        queryset = Address.objects.all()
+        if hasattr(self.request.user, 'customer'):
+            queryset = Address.objects.filter(customer=self.request.user.customer.pk)
+        else:
+            queryset = Address.objects.all()
         queryset = self.filter_queryset(queryset)
         queryset = self.paginate_queryset(queryset)
         serializer = AddressBaseSr(queryset, many=True)
@@ -40,6 +43,8 @@ class AddressViewSet(GenericViewSet):
 
     @action(methods=['post'], detail=True)
     def add(self, request):
+        if 'customer' not in request.data:
+            request.data['customer'] = self.request.user.customer.pk
         serializer = AddressBaseSr(data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
