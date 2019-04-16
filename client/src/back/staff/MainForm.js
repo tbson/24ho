@@ -5,7 +5,7 @@ import {useState, useEffect, useRef} from 'react';
 import {Formik, Form} from 'formik';
 import Tools from 'src/utils/helpers/Tools';
 import {apiUrls, defaultInputs, Context} from './_data';
-import type {FormState, SelectOptions} from 'src/utils/helpers/Tools';
+import type {SelectOptions} from 'src/utils/helpers/Tools';
 import TextInput from 'src/utils/components/formik_input/TextInput';
 import CheckInput from 'src/utils/components/formik_input/CheckInput';
 import SelectInput from 'src/utils/components/formik_input/SelectInput';
@@ -26,6 +26,17 @@ export class Service {
         is_lock: false
     };
 
+    static validate({username, email, first_name, last_name, groups}: Object): Object {
+        const errors = {
+            username: !username && 'Required',
+            email: !email && 'Required',
+            first_name: !first_name && 'Required',
+            last_name: !last_name && 'Required',
+            groups: (!groups || !groups.length) && 'Required'
+        };
+        return Tools.removeEmptyKey(errors);
+    }
+
     static changeRequest(params: Object) {
         return !params.id
             ? Tools.apiCall(apiUrls.crud, params, 'POST')
@@ -43,21 +54,10 @@ export class Service {
                     ? onChange({...data, checked: false}, id ? 'update' : 'add', reOpenDialog)
                     : setErrors(Tools.setFormErrors(data))
             );
-    }
-
-    static validate({username, email, first_name, last_name, groups}: Object): Object {
-        const errors = {
-            username: !username && 'Required',
-            email: !email && 'Required',
-            first_name: !first_name && 'Required',
-            last_name: !last_name && 'Required',
-            groups: (!groups || !groups.length) && 'Required'
-        };
-        return Tools.removeEmptyKey(errors);
-    }
+    } 
 }
 
-type FormProps = {
+type Props = {
     id: number,
     listGroup: SelectOptions,
     open: boolean,
@@ -66,7 +66,7 @@ type FormProps = {
     children?: React.Node,
     submitTitle?: string
 };
-export default ({id, listGroup, open, close, onChange, children, submitTitle = 'Save'}: FormProps) => {
+export default ({id, listGroup, open, close, onChange, children, submitTitle = 'Save'}: Props) => {
     const firstInputSelector = "[name='email']";
 
     const {validate, handleSubmit} = Service;
@@ -84,7 +84,7 @@ export default ({id, listGroup, open, close, onChange, children, submitTitle = '
 
     useEffect(() => {
         open ? retrieveThenOpen(id) : setOpenModal(false);
-        setReOpenDialog(true);
+        setReOpenDialog(id ? false : true);
     }, [open]);
 
     const focusFirstInput = () => {

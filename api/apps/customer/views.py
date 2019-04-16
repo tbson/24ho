@@ -59,6 +59,8 @@ class CustomerViewSet(GenericViewSet):
 
         remain = data['remain']
         remain.update({'user': userSr.data['id']})
+        if type(remain.get('avatar')) is not InMemoryUploadedFile:
+            remain.pop('avatar', None)
         serializer = CustomerBaseSr(data=remain)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
@@ -77,6 +79,8 @@ class CustomerViewSet(GenericViewSet):
 
         remain = data['remain']
         remain.update({'user': obj.user_id})
+        if type(remain.get('avatar')) is not InMemoryUploadedFile:
+            remain.pop('avatar', None)
         serializer = CustomerBaseSr(obj, data=remain)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
