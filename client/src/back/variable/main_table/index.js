@@ -48,8 +48,10 @@ export default ({}: Props) => {
         setLinks(data.links);
     };
 
-    const onChange = (data: TRow, type: string) => {
+    const onChange = (data: TRow, type: string, reOpenDialog: boolean) => {
+        setIsFormOpen(false);
         setList(listAction(data)[type]());
+        reOpenDialog && setIsFormOpen(true);
     };
 
     const onCheck = id => setList(ListTools.checkOne(id, list));
