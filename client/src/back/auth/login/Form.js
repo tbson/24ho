@@ -43,12 +43,12 @@ export default ({onChange, children, submitTitle = 'Submit'}: Props) => {
     const {initialValues, validate, handleSubmit} = Service;
     return (
         <Formik initialValues={{...initialValues}} validate={validate} onSubmit={handleSubmit(onChange)}>
-            {({errors}) => (
+            {({errors, handleSubmit}) => (
                 <Form>
                     <TextInput name="username" label="Username" autoFocus={true} required={true} />
                     <TextInput name="password" type="password" label="Password" required={true} />
                     <FormLevelErrMsg errors={errors.detail} />
-                    <ButtonsBar children={children} submitTitle={submitTitle} />
+                    <ButtonsBar children={children} submitTitle={submitTitle} onClick={handleSubmit}/>
                 </Form>
             )}
         </Formik>

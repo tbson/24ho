@@ -65,7 +65,7 @@ export default ({mode = 'reset', open, close, onChange, children, submitTitle = 
     return (
         <DefaultModal open={open} close={close} title={submitTitle}>
             <Formik initialValues={initialValues} validate={validate(mode)} onSubmit={handleSubmit(onChange, mode)}>
-                {({errors}) => (
+                {({errors, handleSubmit}) => (
                     <Form>
                         <TextInput name="username" label="Username" autoFocus={true} required={true} />
                         <TextInput name="password" type="password" label="Password" required={true} />
@@ -74,7 +74,7 @@ export default ({mode = 'reset', open, close, onChange, children, submitTitle = 
                             <TextInput name="oldPassword" type="password" label="Old password" required={true} />
                         )}
                         <FormLevelErrMsg errors={errors.detail} />
-                        <ButtonsBar children={children} submitTitle={submitTitle} />
+                        <ButtonsBar children={children} submitTitle={submitTitle} onClick={handleSubmit}/>
                     </Form>
                 )}
             </Formik>
