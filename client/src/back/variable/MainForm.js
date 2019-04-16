@@ -4,8 +4,7 @@ import {useState, useEffect, useRef} from 'react';
 // $FlowFixMe: do not complain about formik
 import {Formik, Form} from 'formik';
 import Tools from 'src/utils/helpers/Tools';
-import {apiUrls, defaultInputs} from './_data';
-import type {FormState} from 'src/utils/helpers/Tools';
+import {apiUrls} from './_data';
 import TextInput from 'src/utils/components/formik_input/TextInput';
 import DefaultModal from 'src/utils/components/modal/DefaultModal';
 import ButtonsBar from 'src/utils/components/form/ButtonsBar';
