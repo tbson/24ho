@@ -37,7 +37,8 @@ services:
                 condition: service_healthy
         networks:
             - proxy
-        command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8001"
+        # command: bash -c "python manage.py migrate && gunicorn core.wsgi -b 0.0.0.0:8001"
+        tty: true
 
     __app_name___client:
         container_name: __app_name___client
