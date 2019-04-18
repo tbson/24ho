@@ -292,7 +292,7 @@ $(function() {
         '<span class="bg-img-cart"></span> Giỏ hàng',
         function(ev) {
             ev.preventDefault();
-            var tab = window.open(host + '/AdminAccount/Cart/ProductCart');
+            var tab = window.open(host + '/user/cart');
             tab.focus();
         }
     );
