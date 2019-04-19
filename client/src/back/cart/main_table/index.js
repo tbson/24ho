@@ -12,18 +12,8 @@ import Row from './Row.js';
 type Props = {};
 
 export class Service {
-    static listRequest(url?: string, params?: Object): Promise<Object> {
-        return Tools.apiCall(url ? url : apiUrls.crud, params);
-    }
-
     static bulkRemoveRequest(ids: Array<number>): Promise<Object> {
         return Tools.apiCall(apiUrls.crud, {ids: ids.join(',')}, 'DELETE');
-    }
-
-    static handleGetList(url?: string, params?: Object = {}): Promise<Object> {
-        return Service.listRequest(url, params)
-            .then(resp => (resp.ok ? resp.data || {} : Promise.reject(resp)))
-            .catch(Tools.popMessageOrRedirect);
     }
 
     static handleBulkRemove(ids: Array<number>): Promise<Object> {
@@ -32,16 +22,105 @@ export class Service {
             .catch(Tools.popMessageOrRedirect);
     }
 
-    static onMessage(callback: Function) {
-        return (resp: Object) => {
-            if (!resp?.data?.data) return;
-            const items = resp.data.data['extension_products'] || [];
-            if (items.length) {
-                window.postMessage({ type: "CLEAR_DATA" }, window.location.origin);
-                callback(items);
+    static formatCartItem(item: Object, index: number): Object {
+        const colortxt = item.colortxt;
+        const sizetxt = item.sizetxt;
+
+        const rate = item.rate;
+        const quantity = item.amount;
+
+        const cny_unit_price = item.price;
+        const vnd_unit_price = cny_unit_price * rate;
+
+        const cny_price = cny_unit_price * quantity;
+        const vnd_price = vnd_unit_price * quantity;
+
+        return {
+            id: index + 1,
+            site: item.site,
+            title: item.name.trim(),
+            color: colortxt ? colortxt.trim() : '',
+            size: sizetxt ? sizetxt.trim() : '',
+            link: item.pro_link,
+            image: item.image,
+            shop_link: item.shop_link,
+            shop_nick: item.shop_nick,
+            note: '',
+            rate,
+            quantity,
+            cny_unit_price,
+            vnd_unit_price,
+            cny_price,
+            vnd_price
+        };
+    }
+
+    static recalculate(item: Object): Object {
+        item.cny_price = item.quantity * item.cny_unit_price;
+        item.vnd_price = item.quantity * item.vnd_unit_price;
+        return item;
+    }
+
+    static processPostMessage(resp: Object, setList: Function) {
+        let items = resp?.data?.data?.extension_products;
+        if (items?.length) {
+            window.postMessage({type: 'CLEAR_DATA'}, window.location.origin);
+            items = items.map(Service.formatCartItem);
+            let newItems = Service.merge(Tools.getStorageObj('cart_items'), items);
+            Tools.setStorage('cart_items', newItems);
+            setList(ListTools.prepare(newItems));
+        }
+    }
+
+    static merge(oldItems: Array<Object>, newItems: Array<Object>): Array<Object> {
+        const realNewItems = [];
+        const lastOldId = oldItems.reduce((lastId, item) => (item.id > lastId ? item.id : lastId), 0);
+        let lastId = lastOldId + 1;
+        for (const newItem of newItems) {
+            const index = oldItems.findIndex(
+                item => item.title === newItem.title && item.size === newItem.size && item.color === newItem.color
+            );
+            if (index === -1) {
+                realNewItems.push({...newItem, id: lastId});
+                lastId++;
+            } else {
+                oldItems[index].quantity += newItem.quantity;
             }
         }
-    };
+        return [...oldItems, ...realNewItems];
+    }
+
+    static requestData() {
+        window.postMessage({type: 'REQUEST_DATA'}, window.location.origin);
+    }
+
+    static onVisibilityChange() {
+        const {hidden} = Tools.visibilityChangeParams();
+        window.document[hidden] || Service.requestData();
+    }
+
+    static onMessage(setList: Function) {
+        return (resp: Object) => Service.processPostMessage(resp, setList);
+    }
+
+    static events(setList: Function) {
+        const {visibilityChange} = Tools.visibilityChangeParams();
+        const onMessage = Service.onMessage(setList);
+        return {
+            subscribe: () => {
+                document.addEventListener(visibilityChange, Service.onVisibilityChange, false);
+                window.addEventListener('message', onMessage);
+            },
+            unsubscribe: () => {
+                document.removeEventListener(visibilityChange, Service.onVisibilityChange, false);
+                window.removeEventListener('message', onMessage);
+            }
+        };
+    }
+
+    static checkNewItem(list: ListItem, item: DbRow): Object {
+        return {};
+    }
 }
 
 export default ({}: Props) => {
@@ -52,26 +131,38 @@ export default ({}: Props) => {
 
     const listAction = ListTools.actions(list);
 
-    const getList = (items: Array<Object>) => {
-        console.log(items);
+    const getList = () => {
+        setList(ListTools.prepare(Tools.getStorageObj('cart_items')));
     };
 
-    const onChange = (data: TRow, type: string) => {
-        setList(listAction(data)[type]());
+    const onChange = (data: TRow, type: string, reOpenDialog: boolean) => {
+        setIsFormOpen(false);
+        const items = listAction(Service.recalculate(data))[type]();
+        Tools.setStorage('cart_items', items);
+        setList(items);
+        reOpenDialog && setIsFormOpen(true);
     };
 
     const onCheck = id => setList(ListTools.checkOne(id, list));
 
     const onCheckAll = () => setList(ListTools.checkAll(list));
 
-    const onRemove = data => setList(listAction(data).remove());
+    const onRemove = data => {
+        const items = listAction(data).remove();
+        Tools.setStorage('cart_items', items);
+        setList(items);
+    };
 
     const onBulkRemove = () => {
         const ids = ListTools.getChecked(list);
         if (!ids.length) return;
 
         const r = confirm(ListTools.getDeleteMessage(ids.length));
-        r && Service.handleBulkRemove(ids).then(data => setList(listAction(data).bulkRemove()));
+        if (r) {
+            const items = listAction({ids}).bulkRemove();
+            Tools.setStorage('cart_items', items);
+            setList(items);
+        }
     };
 
     const showForm = (id: number) => {
@@ -81,9 +172,12 @@ export default ({}: Props) => {
 
     const searchList = (keyword: string) => {};
 
+    const events = Service.events(setList);
+
     useEffect(() => {
-        window.postMessage({type: 'REQUEST_DATA'}, window.location.origin);
-        window.addEventListener('message', Service.onMessage(getList));
+        events.subscribe();
+        getList();
+        return () => events.unsubscribe();
     }, []);
 
     return (
@@ -96,8 +190,12 @@ export default ({}: Props) => {
                         </th>
                         <th scope="col">Sản phẩm</th>
                         <th scope="col">Số lượng</th>
-                        <th scope="col">Đơn giá</th>
-                        <th scope="col">Tiền hàng</th>
+                        <th scope="col" className="right">
+                            Đơn giá
+                        </th>
+                        <th scope="col" className="right">
+                            Tiền hàng
+                        </th>
                         <th scope="col">Ghi chú</th>
                         <th scope="col" style={{padding: 8}} className="row80">
                             {/*
@@ -146,7 +244,12 @@ export default ({}: Props) => {
                 </tfoot>
             </table>
 
-            <MainForm id={modalId} open={isFormOpen} close={() => setIsFormOpen(false)} onChange={onChange}>
+            <MainForm
+                id={modalId}
+                listItem={list}
+                open={isFormOpen}
+                close={() => setIsFormOpen(false)}
+                onChange={onChange}>
                 <button type="button" className="btn btn-warning" action="close" onClick={() => setIsFormOpen(false)}>
                     <span className="fas fa-times" />
                     &nbsp;Cancel

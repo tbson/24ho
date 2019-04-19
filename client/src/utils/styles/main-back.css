@@ -7,6 +7,10 @@ input:invalid {
 }
 */
 
+.transparent {
+    background-color: transparent !important;
+}
+
 .invalid-feedback {
     display: block !important;
 }
@@ -107,4 +111,18 @@ input:invalid {
 }
 .note-toolbar {
     z-index: 1 !important;
+}
+
+.vnd {
+    text-align: right;
+}
+.vnd::after {
+    content: ' ₫';
+}
+
+.cny {
+    text-align: right;
+}
+.cny::after {
+    content: ' ¥';
 }

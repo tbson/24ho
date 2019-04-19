@@ -29,8 +29,29 @@ export function seeding(numberOfItems: number, single: boolean = false): any {
 }
 
 export type FormValues = {
-    uid: string,
-    value: string
+    site: string,
+
+    title: string,
+
+    color?: string,
+    size?: string,
+
+    link: string,
+    image: string,
+
+    rate: number,
+    quantity: number,
+
+    cny_unit_price: number,
+    vnd_unit_price: number,
+
+    cny_price: number,
+    vnd_price: number,
+
+    shop_link: string,
+    shop_nick: string,
+
+    note: string
 };
 
 export type DbRow = FormValues & {
@@ -41,10 +62,10 @@ export type TRow = DbRow & {
     checked: boolean
 };
 
-export type ListItem = Array<TRow>;
+export const defaultInputs = {
+    id: 0, 
+    quantity: 0,
+    note: 0
+}
 
-export const defaultInputs: FormValues = {
-    id: 0,
-    uid: '',
-    value: ''
-};
+export type ListItem = Array<TRow>;

@@ -11,144 +11,210 @@ beforeEach(() => {
     jest.restoreAllMocks();
 });
 
-describe('Service.listRequest', () => {
-    it('No params', () => {
-        const apiCall = jest.spyOn(Tools, 'apiCall').mockImplementation(async () => {});
-        Service.listRequest();
-        expect(apiCall).toHaveBeenCalled();
-        expect(apiCall.mock.calls[0][0]).toEqual('http://localhost/api/v1/cart/');
-        expect(apiCall.mock.calls[0][1]).toBe(undefined);
-    });
-
-    it('With params', () => {
-        const apiCall = jest.spyOn(Tools, 'apiCall').mockImplementation(async () => {});
-        const params = {search: 'keyword'};
-
-        Service.listRequest('', params);
-        expect(apiCall).toHaveBeenCalled();
-        expect(apiCall.mock.calls[0][0]).toEqual('http://localhost/api/v1/cart/');
-        expect(apiCall.mock.calls[0][1]).toEqual(params);
-    });
-
-    it('With url', () => {
-        const apiCall = jest.spyOn(Tools, 'apiCall').mockImplementation(async () => {});
-        const params = {search: 'keyword'};
-        const url = 'sample_url';
-
-        Service.listRequest(url, params);
-        expect(apiCall).toHaveBeenCalled();
-        expect(apiCall.mock.calls[0][0]).toEqual(url);
-        expect(apiCall.mock.calls[0][1]).toEqual(params);
-    });
-});
-
-describe('Service.bulkRemoveRequest', () => {
+describe('Service.formatCartItem', () => {
     it('Normal case', () => {
-        const apiCall = jest.spyOn(Tools, 'apiCall').mockImplementation(async () => {});
-        const ids = [1, 2];
-        Service.bulkRemoveRequest(ids);
-        expect(apiCall).toHaveBeenCalled();
-        expect(apiCall.mock.calls[0][0]).toEqual('http://localhost/api/v1/cart/');
-        expect(apiCall.mock.calls[0][1]).toEqual({ids: '1,2'});
-        expect(apiCall.mock.calls[0][2]).toEqual('DELETE');
+        const index = 1;
+        const item = {
+            site: 'site1',
+            name: '  name1   ',
+            colortxt: '   color1   ',
+            sizetxt: '   size1    ',
+            pro_link: 'pro_link1',
+            image: 'image1',
+            shop_link: 'shop_link1',
+            shop_nick: 'shop_nick1',
+            rate: 3300,
+            amount: 5,
+            price: 12.3
+        };
+        const eput = {
+            id: 2,
+            site: 'site1',
+            title: 'name1',
+            color: 'color1',
+            size: 'size1',
+            link: 'pro_link1',
+            image: 'image1',
+            shop_link: 'shop_link1',
+            shop_nick: 'shop_nick1',
+            note: '',
+            rate: 3300,
+            quantity: 5,
+            cny_unit_price: 12.3,
+            vnd_unit_price: 40590,
+            cny_price: 61.5,
+            vnd_price: 202950
+        };
+        const output = Service.formatCartItem(item, index);
+
+        expect(output).toEqual(eput);
+    });
+
+    it('No color and size', () => {
+        const index = 1;
+        const item = {
+            site: 'site1',
+            name: '  name1   ',
+            pro_link: 'pro_link1',
+            image: 'image1',
+            shop_link: 'shop_link1',
+            shop_nick: 'shop_nick1',
+            rate: 3300,
+            amount: 5,
+            price: 12.3
+        };
+        const eput = {
+            id: 2,
+            site: 'site1',
+            title: 'name1',
+            color: '',
+            size: '',
+            link: 'pro_link1',
+            image: 'image1',
+            shop_link: 'shop_link1',
+            shop_nick: 'shop_nick1',
+            note: '',
+            rate: 3300,
+            quantity: 5,
+            cny_unit_price: 12.3,
+            vnd_unit_price: 40590,
+            cny_price: 61.5,
+            vnd_price: 202950
+        };
+        const output = Service.formatCartItem(item, index);
+
+        expect(output).toEqual(eput);
     });
 });
 
-describe('Service.handleGetList', () => {
-    const okResp = {
-        ok: true,
-        data: {
-            key: 'value'
-        }
-    };
-    const failResp = {
-        ok: false,
-        data: {
-            key: 'value'
-        }
-    };
-    it('On success', async () => {
-        const listRequest = jest.spyOn(Service, 'listRequest').mockImplementation(async () => okResp);
-        jest.spyOn(Tools, 'popMessageOrRedirect');
-        const url = 'sample_url';
-        const params = {key: 'value'};
-
-        const result = await Service.handleGetList(url, params);
-
-        expect(Tools.popMessageOrRedirect).not.toHaveBeenCalled();
-        expect(listRequest).toHaveBeenCalled();
-        expect(listRequest.mock.calls[0][0]).toEqual(url);
-        expect(listRequest.mock.calls[0][1]).toEqual(params);
-        expect(result).toEqual(okResp.data);
-    });
-
-    it('On error', async () => {
-        const listRequest = jest.spyOn(Service, 'listRequest').mockImplementation(async () => failResp);
-        jest.spyOn(Tools, 'popMessageOrRedirect');
-
-        const result = await Service.handleGetList();
-
-        expect(Tools.popMessageOrRedirect).toHaveBeenCalled();
-        expect(Tools.popMessageOrRedirect.mock.calls[0][0]).toEqual(failResp);
-    });
-
-    it('On exception', async () => {
-        const listRequest = jest.spyOn(Service, 'listRequest').mockImplementation(async () => Promise.reject(failResp));
-        jest.spyOn(Tools, 'popMessageOrRedirect');
-
-        const result = await Service.handleGetList();
-
-        expect(Tools.popMessageOrRedirect).toHaveBeenCalled();
-        expect(Tools.popMessageOrRedirect.mock.calls[0][0]).toEqual(failResp);
+describe('Service.recalculate', () => {
+    it('Normal case', () => {
+        const input = {
+            quantity: 2,
+            cny_unit_price: 1.6,
+            vnd_unit_price: 4500,
+            cny_price: 999,
+            vnd_price: 999
+        };
+        const eput = {
+            quantity: 2,
+            cny_unit_price: 1.6,
+            vnd_unit_price: 4500,
+            cny_price: 3.2,
+            vnd_price: 9000
+        };
+        const output = Service.recalculate(input);
+        expect(output).toEqual(eput);
     });
 });
 
-describe('Service.handleBulkRemove', () => {
-    const okResp = {
-        ok: true,
-        data: {
-            key: 'value'
-        }
-    };
-    const failResp = {
-        ok: false,
-        data: {
-            key: 'value'
-        }
-    };
-
-    it('On success', async () => {
-        const bulkRemoveRequest = jest.spyOn(Service, 'bulkRemoveRequest').mockImplementation(async () => okResp);
-        jest.spyOn(Tools, 'popMessageOrRedirect');
-        const ids = [1, 2];
-        const result = await Service.handleBulkRemove(ids);
-
-        expect(Tools.popMessageOrRedirect).not.toHaveBeenCalled();
-        expect(bulkRemoveRequest).toHaveBeenCalled();
-        expect(bulkRemoveRequest.mock.calls[0][0]).toEqual(ids);
-        expect(result).toEqual({ids});
-    });
-
-    it('On error', async () => {
-        const bulkRemoveRequest = jest.spyOn(Service, 'bulkRemoveRequest').mockImplementation(async () => failResp);
-        jest.spyOn(Tools, 'popMessageOrRedirect');
-        const ids = [1, 2];
-        const result = await Service.handleBulkRemove(ids);
-
-        expect(Tools.popMessageOrRedirect).toHaveBeenCalled();
-        expect(Tools.popMessageOrRedirect.mock.calls[0][0]).toEqual(failResp);
-    });
-
-    it('On error', async () => {
-        const bulkRemoveRequest = jest
-            .spyOn(Service, 'bulkRemoveRequest')
-            .mockImplementation(async () => Promise.reject(failResp));
-        jest.spyOn(Tools, 'popMessageOrRedirect');
-        const ids = [1, 2];
-        const result = await Service.handleBulkRemove(ids);
-
-        expect(Tools.popMessageOrRedirect).toHaveBeenCalled();
-        expect(Tools.popMessageOrRedirect.mock.calls[0][0]).toEqual(failResp);
+describe('Service.merge', () => {
+    it('Normal case', () => {
+        const oldItems = [
+            {
+                id: 4,
+                title: 'title1',
+                size: 'size1',
+                color: 'color1',
+                quantity: 2
+            },
+            {
+                id: 2,
+                title: 'title2',
+                size: 'size2',
+                color: 'color2',
+                quantity: 2
+            },
+            {
+                id: 3,
+                title: 'title3',
+                size: 'size3',
+                color: 'color3',
+                quantity: 2
+            },
+            {
+                id: 1,
+                title: 'title4',
+                size: 'size4',
+                color: 'color4',
+                quantity: 2
+            }
+        ];
+        const newItems = [
+            {
+                id: 1,
+                title: 'title2',
+                size: 'size2',
+                color: 'color2',
+                quantity: 2
+            },
+            {
+                id: 2,
+                title: 'title3',
+                size: 'size3',
+                color: 'color3',
+                quantity: 2
+            },
+            {
+                id: 3,
+                title: 'title5',
+                size: 'size5',
+                color: 'color5',
+                quantity: 2
+            },
+            {
+                id: 4,
+                title: 'title6',
+                size: 'size6',
+                color: 'color6',
+                quantity: 2
+            }
+        ];
+        const eput = [
+            {
+                id: 4,
+                title: 'title1',
+                size: 'size1',
+                color: 'color1',
+                quantity: 2
+            },
+            {
+                id: 2,
+                title: 'title2',
+                size: 'size2',
+                color: 'color2',
+                quantity: 4
+            },
+            {
+                id: 3,
+                title: 'title3',
+                size: 'size3',
+                color: 'color3',
+                quantity: 4
+            },
+            {
+                id: 1,
+                title: 'title4',
+                size: 'size4',
+                color: 'color4',
+                quantity: 2
+            },
+            {
+                id: 5,
+                title: 'title5',
+                size: 'size5',
+                color: 'color5',
+                quantity: 2
+            },
+            {
+                id: 6,
+                title: 'title6',
+                size: 'size6',
+                color: 'color6',
+                quantity: 2
+            }
+        ];
+        const output = Service.merge(oldItems, newItems);
+        expect(output).toEqual(eput);
     });
 });
-

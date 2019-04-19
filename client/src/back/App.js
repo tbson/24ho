@@ -39,20 +39,6 @@ class App extends React.Component<Props> {
         Trans.initTranslations(translations);
     }
 
-    componentDidMount() {
-        const body = window.document.body;
-        body.style.backgroundImage = 'none';
-    }
-
-    setUpProps = (props: Object): Object => {
-        const {parentType, parentId, id} = props.match.params;
-        const parent = {type: parentType, id: parentId};
-        if (!parent.id) {
-            parent.id = 0;
-        }
-        return {...props, parent, id};
-    };
-
     render() {
         return (
             <div>

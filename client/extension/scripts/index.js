@@ -7,10 +7,14 @@ const REQUEST_DATA = 'REQUEST_DATA';
 const CLEAR_DATA = 'CLEAR_DATA';
 
 const manifest = chrome.runtime.getManifest();
-const host = 'https://' + manifest.content_scripts[0].matches[0].split('*')[1].split('/')[0].substring(1);
+const host =
+    'https://' +
+    manifest.content_scripts[0].matches[0]
+        .split('*')[1]
+        .split('/')[0]
+        .substring(1);
 
 const identityClass = '_order_extension_';
-
 
 const config = {
     rate: 3500,
@@ -30,12 +34,8 @@ window.addEventListener(
         var emptyData = {};
         switch (event.data.type) {
             case REQUEST_DATA:
-                getData(STORAGE, function(items) {
-                    if (items) {
-                        event.source.postMessage({error: 0, message: '', data: items}, event.origin);
-                    } else {
-                        event.source.postMessage({error: 1, message: msg}, event.origin);
-                    }
+                getData(STORAGE, items => {
+                    event.source.postMessage({error: 0, message: '', data: items || []}, event.origin);
                 });
                 break;
             case CLEAR_DATA:

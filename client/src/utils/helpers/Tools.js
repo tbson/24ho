@@ -730,4 +730,23 @@ export default class Tools {
         }
         return obj;
     }
+
+    static visibilityChangeParams(): Object {
+        let visibilityChange;
+        let hidden;
+        if (typeof window.document.hidden !== 'undefined') {
+            visibilityChange = 'visibilitychange';
+            hidden = 'hidden';
+        } else if (typeof window.document.mozHidden !== 'undefined') {
+            visibilityChange = 'mozvisibilitychange';
+            hidden = 'mozHidden';
+        } else if (typeof window.document.msHidden !== 'undefined') {
+            visibilityChange = 'msvisibilitychange';
+            hidden = 'msHidden';
+        } else if (typeof window.document.webkitHidden !== 'undefined') {
+            visibilityChange = 'webkitvisibilitychange';
+            hidden = 'webkitHidden';
+        }
+        return {visibilityChange, hidden};
+    }
 }

@@ -1,5 +1,6 @@
 // @flow
 import * as React from 'react';
+import {vnd, cny} from 'src/constants';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
 import {apiUrls} from '../_data';
@@ -28,16 +29,31 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
 
     const _onRemove = id => {
         const r = confirm(ListTools.getDeleteMessage(1));
-        r && Service.handleRemove(id).then(onRemove);
+        r && onRemove({id});
     };
+
+    const {quantity, cny_unit_price, vnd_unit_price, cny_price, vnd_price, rate} = data;
 
     return (
         <tr>
             <th className="row25">
                 <input id={id} className="check" type="checkbox" checked={data.checked} onChange={() => onCheck(id)} />
             </th>
-            <td className="uid">{data.uid}</td>
-            <td className="value">{data.value}</td>
+            <td>
+                <Description {...data} />
+            </td>
+            <td>{data.quantity}</td>
+            <td>
+                <div className="vnd">{Tools.numberFormat(vnd_unit_price)}</div>
+                <div className="cny">{Tools.numberFormat(cny_unit_price)}</div>
+            </td>
+            <td>
+                <div className="vnd">{Tools.numberFormat(vnd_price)}</div>
+                <div className="cny">{Tools.numberFormat(cny_price)}</div>
+            </td>
+            <td>
+                <Note note={data.note} />
+            </td>
             <td className="center">
                 <a className="editBtn" onClick={() => showForm(data.id)}>
                     <span className="fas fa-edit text-info pointer" />
@@ -48,5 +64,43 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
                 </a>
             </td>
         </tr>
+    );
+};
+
+export const Note = ({note}: Object) => {
+    if (!note) return <em>Chưa có ghi chú...</em>;
+    return note;
+};
+
+export const Description = ({title, image, color, size, link}: Object) => {
+    return (
+        <table width="100%">
+            <tbody>
+                <tr>
+                    <td width="72px">
+                        <img src={image} width="100%" />
+                    </td>
+                    <td>
+                        <div>
+                            <a href={link} target="_blank">
+                                {title}
+                            </a>
+                        </div>
+                        {color && (
+                            <div>
+                                <strong>Màu: </strong>
+                                <span>{color}</span>
+                            </div>
+                        )}
+                        {size && (
+                            <div>
+                                <strong>Size: </strong>
+                                <span>{size}</span>
+                            </div>
+                        )}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     );
 };
