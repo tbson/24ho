@@ -203,7 +203,21 @@ export default ({}: Props) => {
         setModalId(id);
     };
 
-    const searchList = (keyword: string) => {};
+    const searchList = (keyword: string) => {
+        const originalList = Tools.getStorageObj('cart_items');
+        if (!keyword) return setList(originalList);
+        const filteredList = originalList.filter(item => {
+            const {title, size, color, note, shop_nick} = item;
+            return (
+                title.includes(keyword) ||
+                size.includes(keyword) ||
+                color.includes(keyword) ||
+                note.includes(keyword) ||
+                shop_nick.includes(keyword)
+            );
+        });
+        setList(filteredList);
+    };
 
     const events = Service.events(setList);
 
