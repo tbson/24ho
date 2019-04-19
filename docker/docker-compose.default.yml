@@ -45,7 +45,6 @@ services:
         build:
             context: ../client
             dockerfile: ../docker/dockerfiles/client
-        command: yarn start
         working_dir: /code
         ports:
             - '3000:3000'
@@ -54,3 +53,4 @@ services:
             - /code/node_modules
         networks:
             - proxy
+        tty: true

@@ -19,6 +19,12 @@ Add `- ../../web/24ho/api/public/:/resource/public/24ho` to `volumes` of `nginx`
 ./setup app_name domain.test dev
 docker-compose build
 ./up
+
+# Start django dev server:
+./devserver
+
+# Start webpack dev server:
+./yarn start
 ```
 
 ### Step 4
@@ -53,8 +59,10 @@ docker-compose build
 ```
 Place `db.sql` file in `docker` folder
 
-Uncomment `# - ./db.sql:/docker-entrypoint-initdb.d/db.sql`
+Uncomment
+
+`# - ./db.sql:/docker-entrypoint-initdb.d/db.sql`
 
 ```
-./up -d
+./up
 ```
