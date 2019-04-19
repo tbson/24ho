@@ -226,19 +226,28 @@ describe('Service.group', () => {
                 id: 1,
                 site: 'TMALL',
                 shop_link: 'link1',
-                shop_nick: 'nick1'
+                shop_nick: 'nick1',
+                quantity: 4,
+                cny_price: 5.5,
+                vnd_price: 20000
             },
             {
                 id: 2,
                 site: 'TAOBAO',
                 shop_link: 'link2',
-                shop_nick: 'nick2'
+                shop_nick: 'nick2',
+                quantity: 4,
+                cny_price: 5.5,
+                vnd_price: 20000
             },
             {
                 id: 3,
                 site: 'TMALL',
                 shop_link: 'link1',
-                shop_nick: 'nick1'
+                shop_nick: 'nick1',
+                quantity: 4,
+                cny_price: 5.5,
+                vnd_price: 20000
             }
         ];
         const eput = [
@@ -246,20 +255,29 @@ describe('Service.group', () => {
                 shop: {
                     nick: 'nick1',
                     link: 'link1',
-                    site: 'TMALL'
+                    site: 'TMALL',
+                    quantity: 8,
+                    cny_total: 11,
+                    vnd_total: 40000
                 },
                 items: [
                     {
                         id: 1,
                         site: 'TMALL',
                         shop_link: 'link1',
-                        shop_nick: 'nick1'
+                        shop_nick: 'nick1',
+                        quantity: 4,
+                        cny_price: 5.5,
+                        vnd_price: 20000
                     },
                     {
                         id: 3,
                         site: 'TMALL',
                         shop_link: 'link1',
-                        shop_nick: 'nick1'
+                        shop_nick: 'nick1',
+                        quantity: 4,
+                        cny_price: 5.5,
+                        vnd_price: 20000
                     }
                 ]
             },
@@ -267,14 +285,20 @@ describe('Service.group', () => {
                 shop: {
                     nick: 'nick2',
                     link: 'link2',
-                    site: 'TAOBAO'
+                    site: 'TAOBAO',
+                    quantity: 4,
+                    cny_total: 5.5,
+                    vnd_total: 20000
                 },
                 items: [
                     {
                         id: 2,
                         site: 'TAOBAO',
                         shop_link: 'link2',
-                        shop_nick: 'nick2'
+                        shop_nick: 'nick2',
+                        quantity: 4,
+                        cny_price: 5.5,
+                        vnd_price: 20000
                     }
                 ]
             }

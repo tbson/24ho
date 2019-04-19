@@ -82,7 +82,10 @@ export class Service {
                     shop: {
                         nick: item.shop_nick,
                         link: item.shop_link,
-                        site: item.site
+                        site: item.site,
+                        quantity: 0,
+                        cny_total: 0,
+                        vnd_total: 0
                     },
                     items: [item]
                 });
@@ -90,7 +93,12 @@ export class Service {
                 group.items.push(item);
             }
         }
-        return groups;
+        return groups.map(group => {
+            group.shop.cny_total = group.items.reduce((total, item) => total + item.cny_price, 0);
+            group.shop.vnd_total = group.items.reduce((total, item) => total + item.vnd_price, 0);
+            group.shop.quantity = group.items.reduce((total, item) => total + item.quantity, 0);
+            return group;
+        });
     }
 
     static processPostMessage(resp: Object, setList: Function) {
@@ -236,7 +244,7 @@ export default ({}: Props) => {
                             <span className="fas fa-check text-info pointer check-all-button" onClick={onCheckAll} />
                         </th>
                         <th scope="col">Sản phẩm</th>
-                        <th scope="col">Số lượng</th>
+                        <th scope="col" className="right">Số lượng</th>
                         <th scope="col" className="right">
                             Đơn giá
                         </th>
@@ -323,5 +331,15 @@ export const Group = ({data, children}: Object) => (
             </td>
         </tr>
         {children}
+        <tr>
+            <td colSpan={2}></td>
+            <td className="right">{data.shop.quantity}</td>
+            <td></td>
+            <td>
+                <div className="vnd">{Tools.numberFormat(data.shop.vnd_total)}</div>
+                <div className="cny">{Tools.numberFormat(data.shop.cny_total)}</div>
+            </td>
+            <td colSpan={2}></td>
+        </tr>
     </tbody>
 );

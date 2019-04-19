@@ -42,7 +42,7 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
             <td>
                 <Description {...data} />
             </td>
-            <td>{data.quantity}</td>
+            <td className="right">{data.quantity}</td>
             <td>
                 <div className="vnd">{Tools.numberFormat(vnd_unit_price)}</div>
                 <div className="cny">{Tools.numberFormat(cny_unit_price)}</div>
