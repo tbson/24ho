@@ -218,3 +218,68 @@ describe('Service.merge', () => {
         expect(output).toEqual(eput);
     });
 });
+
+describe('Service.group', () => {
+    it('Normal case', () => {
+        const input = [
+            {
+                id: 1,
+                site: 'TMALL',
+                shop_link: 'link1',
+                shop_nick: 'nick1'
+            },
+            {
+                id: 2,
+                site: 'TAOBAO',
+                shop_link: 'link2',
+                shop_nick: 'nick2'
+            },
+            {
+                id: 3,
+                site: 'TMALL',
+                shop_link: 'link1',
+                shop_nick: 'nick1'
+            }
+        ];
+        const eput = [
+            {
+                shop: {
+                    nick: 'nick1',
+                    link: 'link1',
+                    site: 'TMALL'
+                },
+                items: [
+                    {
+                        id: 1,
+                        site: 'TMALL',
+                        shop_link: 'link1',
+                        shop_nick: 'nick1'
+                    },
+                    {
+                        id: 3,
+                        site: 'TMALL',
+                        shop_link: 'link1',
+                        shop_nick: 'nick1'
+                    }
+                ]
+            },
+            {
+                shop: {
+                    nick: 'nick2',
+                    link: 'link2',
+                    site: 'TAOBAO'
+                },
+                items: [
+                    {
+                        id: 2,
+                        site: 'TAOBAO',
+                        shop_link: 'link2',
+                        shop_nick: 'nick2'
+                    }
+                ]
+            }
+        ];
+        const output = Service.group(input);
+        expect(output).toEqual(eput);
+    });
+});

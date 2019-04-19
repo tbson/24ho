@@ -9,6 +9,15 @@ import {Pagination, SearchInput} from 'src/utils/components/TableUtils';
 import MainForm from '../MainForm';
 import Row from './Row.js';
 
+type CartGroup = {
+    shop: {
+        nick: string,
+        link: string,
+        site: string
+    },
+    items: Array<Object>
+};
+
 type Props = {};
 
 export class Service {
@@ -59,6 +68,29 @@ export class Service {
         item.cny_price = item.quantity * item.cny_unit_price;
         item.vnd_price = item.quantity * item.vnd_unit_price;
         return item;
+    }
+
+    static group(items: Array<Object>): Array<CartGroup> {
+        const groups = [];
+        for (let item of items) {
+            const group = groups.find(group => {
+                const {nick, link, site} = group.shop;
+                return nick === item.shop_nick && link === item.shop_link && site === item.site;
+            });
+            if (!group) {
+                groups.push({
+                    shop: {
+                        nick: item.shop_nick,
+                        link: item.shop_link,
+                        site: item.site
+                    },
+                    items: [item]
+                });
+            } else {
+                group.items.push(item);
+            }
+        }
+        return groups;
     }
 
     static processPostMessage(resp: Object, setList: Function) {
@@ -132,7 +164,8 @@ export default ({}: Props) => {
     const listAction = ListTools.actions(list);
 
     const getList = () => {
-        setList(ListTools.prepare(Tools.getStorageObj('cart_items')));
+        const items = Tools.getStorageObj('cart_items');
+        setList(ListTools.prepare(items));
     };
 
     const onChange = (data: TRow, type: string, reOpenDialog: boolean) => {
@@ -216,18 +249,20 @@ export default ({}: Props) => {
                     </tr>
                 </tbody>
 
-                <tbody>
-                    {list.map((data, key) => (
-                        <Row
-                            className="table-row"
-                            data={data}
-                            key={key}
-                            onCheck={onCheck}
-                            onRemove={onRemove}
-                            showForm={showForm}
-                        />
-                    ))}
-                </tbody>
+                {Service.group(list).map((group, groupKey) => (
+                    <Group data={group} key={groupKey}>
+                        {group.items.map((data, key) => (
+                            <Row
+                                className="table-row"
+                                data={data}
+                                key={`${groupKey}${key}`}
+                                onCheck={onCheck}
+                                onRemove={onRemove}
+                                showForm={showForm}
+                            />
+                        ))}
+                    </Group>
+                ))}
 
                 <tfoot className="thead-light">
                     <tr>
@@ -258,3 +293,21 @@ export default ({}: Props) => {
         </div>
     );
 };
+
+export const Group = ({data, children}: Object) => (
+    <tbody>
+        <tr>
+            <td colSpan={99} className="white-bg" />
+        </tr>
+        <tr>
+            <td colSpan={99} className="shop-header">
+                <strong>[{data.shop.site}]</strong>
+                <span>&nbsp;/&nbsp;</span>
+                <a href={data.shop.link} target="_blank">
+                    <strong>{data.shop.nick}</strong>
+                </a>
+            </td>
+        </tr>
+        {children}
+    </tbody>
+);

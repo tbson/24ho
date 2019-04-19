@@ -50,6 +50,14 @@ input:invalid {
   user-select: none;          /* Likely future */
 }
 
+.white-bg {
+    background-color: white;
+}
+
+.shop-header {
+    background-color: #F5F5DC;
+}
+
 .button-success,
 .button-error,
 .button-warning,
