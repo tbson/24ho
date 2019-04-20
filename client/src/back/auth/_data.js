@@ -3,7 +3,6 @@
 import Tools from 'src/utils/helpers/Tools';
 import {APP} from 'src/constants';
 
-
 const rawApiUrls = [
     {
         controller: Tools.mapApp(APP),
@@ -11,9 +10,17 @@ const rawApiUrls = [
             profile: 'profile',
             auth: 'auth',
             resetPassword: 'reset-password',
-            changePassword: 'change-password',
-        },
-    },
+            changePassword: 'change-password'
+        }
+    }
 ];
 
 export const apiUrls = Tools.getApiUrls(rawApiUrls);
+
+export type FormOpenType = {
+    resetPwd: boolean,
+    changePwd: boolean,
+    profile: boolean
+};
+
+export type FormOpenKeyType = 'resetPwd' | 'changePwd' | 'profile';

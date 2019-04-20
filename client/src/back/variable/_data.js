@@ -14,19 +14,11 @@ const rawApiUrls = [
 
 export const apiUrls = Tools.getApiUrls(rawApiUrls);
 
-export function seeding(numberOfItems: number, single: boolean = false): any {
-    let result = [];
-    for (let i = 1; i <= numberOfItems; i++) {
-        result.push({
-            id: i,
-            uid: `key${i}`,
-            value: `value ${i}`,
-            checked: false
-        });
-    }
-    if (!single) return result;
-    return result[numberOfItems - 1];
-}
+export type FormOpenType = {
+    main: boolean
+};
+
+export type FormOpenKeyType = 'main';
 
 export type FormValues = {
     uid: string,

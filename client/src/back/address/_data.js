@@ -18,6 +18,12 @@ const rawApiUrls = [
 
 export const apiUrls = Tools.getApiUrls(rawApiUrls);
 
+export type FormOpenType = {
+    main: boolean
+};
+
+export type FormOpenKeyType = 'main';
+
 export type FormValues = {
     area: number,
     area_name?: string,

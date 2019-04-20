@@ -4,7 +4,7 @@ import {useState, useEffect} from 'react';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
 import {apiUrls} from '../_data';
-import type {TRow, DbRow, ListItem} from '../_data';
+import type {TRow, DbRow, ListItem, FormOpenType, FormOpenKeyType} from '../_data';
 import {Pagination, SearchInput} from 'src/utils/components/TableUtils';
 import MainForm from '../MainForm';
 import Row from './Row.js';
@@ -40,9 +40,13 @@ export class Service {
 export default ({}: Props) => {
     const [list, setList] = useState([]);
     const [listGroup, setListGroup] = useState([]);
-    const [isFormOpen, setIsFormOpen] = useState(false);
+    const [formOpen, setFormOpen] = useState<FormOpenType>({
+        main: false
+    });
     const [modalId, setModalId] = useState(0);
     const [links, setLinks] = useState({next: '', previous: ''});
+
+    const toggleForm = (value: boolean, key: FormOpenKeyType = 'main') => setFormOpen({...formOpen, [key]: value});
 
     const listAction = ListTools.actions(list);
 
@@ -55,9 +59,9 @@ export default ({}: Props) => {
     };
 
     const onChange = (data: TRow, type: string, reOpenDialog: boolean) => {
-        setIsFormOpen(false);
+        toggleForm(false);
         setList(listAction(data)[type]());
-        reOpenDialog && setIsFormOpen(true);
+        reOpenDialog && toggleForm(true);
     };
 
     const onCheck = id => setList(ListTools.checkOne(id, list));
@@ -75,7 +79,7 @@ export default ({}: Props) => {
     };
 
     const showForm = (id: number) => {
-        setIsFormOpen(true);
+        toggleForm(true);
         setModalId(id);
     };
 
@@ -148,10 +152,10 @@ export default ({}: Props) => {
             <MainForm
                 id={modalId}
                 listGroup={listGroup}
-                open={isFormOpen}
-                close={() => setIsFormOpen(false)}
+                open={formOpen.main}
+                close={() => toggleForm(false)}
                 onChange={onChange}>
-                <button type="button" className="btn btn-warning" action="close" onClick={() => setIsFormOpen(false)}>
+                <button type="button" className="btn btn-warning" action="close" onClick={() => toggleForm(false)}>
                     <span className="fas fa-times" />
                     &nbsp;Cancel
                 </button>

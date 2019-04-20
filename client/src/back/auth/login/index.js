@@ -5,6 +5,7 @@ import {useState, useEffect} from 'react';
 // $FlowFixMe: do not complain about importing node_modules
 import {withRouter} from 'react-router-dom';
 import {APP} from 'src/constants';
+import type {FormOpenType, FormOpenKeyType} from '../_data';
 import Form from './Form';
 import ResetPwdForm from '../PwdForm';
 import Tools from 'src/utils/helpers/Tools';
@@ -15,7 +16,13 @@ type Props = {
 
 export const Login = ({history}: Props) => {
     const navigateTo = Tools.navigateTo(history);
-    const [modal, setModal] = useState(false);
+    const [formOpen, setFormOpen] = useState<FormOpenType>({
+        resetPwd: false,
+        changePwd: false,
+        profile: false
+    });
+
+    const toggleForm = (value: boolean, key: FormOpenKeyType = 'resetPwd') => setFormOpen({...formOpen, [key]: value});
 
     useEffect(() => {
         Tools.getToken() && navigateTo();
@@ -27,7 +34,7 @@ export const Login = ({history}: Props) => {
     };
 
     const onResetPwd = () => {
-        setModal(false);
+        toggleForm(false);
         const message = 'Reset password success. Please checking your email to confirm.';
         Tools.popMessage(message);
     };
@@ -40,7 +47,7 @@ export const Login = ({history}: Props) => {
                         <div className="jumbotron">
                             <h2 className="center">{APP.toUpperCase()} LOGIN</h2>
                             <Form onChange={onLogin}>
-                                <span className="pointer link" onClick={() => setModal(true)}>
+                                <span className="pointer link" onClick={() => toggleForm(true)}>
                                     Reset password
                                 </span>
                             </Form>
@@ -48,8 +55,8 @@ export const Login = ({history}: Props) => {
                     </div>
                 </div>
             </div>
-            <ResetPwdForm open={modal} close={() => setModal(false)} onChange={onResetPwd}>
-                <button type="button" className="btn btn-warning" action="close" onClick={() => setModal(false)}>
+            <ResetPwdForm open={formOpen.resetPwd} close={() => toggleForm(false)} onChange={onResetPwd}>
+                <button type="button" className="btn btn-warning" action="close" onClick={() => toggleForm(false)}>
                     <span className="fas fa-times" />
                     &nbsp;Cancel
                 </button>

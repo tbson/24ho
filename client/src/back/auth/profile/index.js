@@ -5,6 +5,7 @@ import {useState, useEffect} from 'react';
 // $FlowFixMe: do not complain about importing node_modules
 import {withRouter} from 'react-router-dom';
 import {APP} from 'src/constants';
+import type {FormOpenType, FormOpenKeyType} from '../_data';
 import Tools from 'src/utils/helpers/Tools';
 import NavWrapper from 'src/utils/components/nav_wrapper';
 import ProfileForm from './Form';
@@ -25,8 +26,14 @@ export class Service {
 
 export const Profile = () => {
     const [profile, setProfile] = useState({});
-    const [profileModal, setProfileModal] = useState(false);
-    const [changePwdModal, setChangePwdModal] = useState(false);
+
+    const [formOpen, setFormOpen] = useState<FormOpenType>({
+        resetPwd: false,
+        changePwd: false,
+        profile: false
+    });
+
+    const toggleForm = (value: boolean, key: FormOpenKeyType = 'profile') => setFormOpen({...formOpen, [key]: value});
 
     useEffect(() => {
         document.title = 'Profile manager';
@@ -36,12 +43,12 @@ export const Profile = () => {
     }, []);
 
     const onChangeProfile = (data: Object) => {
-        setProfileModal(false);
+        toggleForm(false);
         setProfile(Tools.prepareUserData(data));
     };
 
     const onChangePwd = () => {
-        setChangePwdModal(false);
+        toggleForm(false, 'changePwd');
     };
 
     return (
@@ -63,16 +70,16 @@ export const Profile = () => {
                 </tbody>
             </table>
             <div className="btn-group">
-                <button type="button" onClick={() => setProfileModal(true)} className="btn btn-success">
+                <button type="button" onClick={() => toggleForm(true)} className="btn btn-success">
                     Update profile
                 </button>
-                <button type="button" onClick={() => setChangePwdModal(true)} className="btn btn-primary">
+                <button type="button" onClick={() => toggleForm(true, 'changePwd')} className="btn btn-primary">
                     Change password
                 </button>
             </div>
 
-            <ProfileForm open={profileModal} close={() => setProfileModal(false)} onChange={onChangeProfile}>
-                <button type="button" className="btn btn-warning" action="close" onClick={() => setProfileModal(false)}>
+            <ProfileForm open={formOpen.profile} close={() => toggleForm(false)} onChange={onChangeProfile}>
+                <button type="button" className="btn btn-warning" action="close" onClick={() => toggleForm(false)}>
                     <span className="fas fa-times" />
                     &nbsp;Cancel
                 </button>
@@ -80,14 +87,14 @@ export const Profile = () => {
 
             <ChangePwdForm
                 mode="change"
-                open={changePwdModal}
-                close={() => setChangePwdModal(false)}
+                open={formOpen.changePwd}
+                close={() => toggleForm(false, 'changePwd')}
                 onChange={onChangePwd}>
                 <button
                     type="button"
                     className="btn btn-warning"
                     action="close"
-                    onClick={() => setChangePwdModal(false)}>
+                    onClick={() => toggleForm(false, 'changePwd')}>
                     <span className="fas fa-times" />
                     &nbsp;Cancel
                 </button>
