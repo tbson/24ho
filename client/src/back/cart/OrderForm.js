@@ -4,8 +4,10 @@ import {useState, useEffect, useRef} from 'react';
 // $FlowFixMe: do not complain about formik
 import {Formik, Form} from 'formik';
 import Tools from 'src/utils/helpers/Tools';
+import type {SelectOptions} from 'src/utils/helpers/Tools';
 import {apiUrls} from './_data';
 import TextInput from 'src/utils/components/formik_input/TextInput';
+import SelectInput from 'src/utils/components/formik_input/SelectInput';
 import DefaultModal from 'src/utils/components/modal/DefaultModal';
 import ButtonsBar from 'src/utils/components/form/ButtonsBar';
 import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
@@ -20,8 +22,14 @@ export class Service {
         return Tools.removeEmptyKey(errors);
     }
 
-    static handleSubmit(id: number, onChange: Function) {
+    static getAddressLabel(id: number, listAddress: SelectOptions): string {
+        const address = listAddress.find(item => item.value === id);
+        return address ? address.label : '';
+    }
+
+    static handleSubmit(id: number, listAddress: SelectOptions, onChange: Function) {
         return (values: Object) => {
+            values.address_title = Service.getAddressLabel(values.address, listAddress);
             onChange({[id]: values});
         };
     }
@@ -30,13 +38,14 @@ export class Service {
 type Props = {
     id: number,
     listOrder: Object,
+    listAddress: SelectOptions,
     open: boolean,
     close: Function,
     onChange: Function,
     children?: React.Node,
     submitTitle?: string
 };
-export default ({id, listOrder, open, close, onChange, children, submitTitle = 'Save'}: Props) => {
+export default ({id, listOrder, listAddress, open, close, onChange, children, submitTitle = 'Save'}: Props) => {
     const firstInputSelector = "[name='note']";
     const {validate, handleSubmit} = Service;
 
@@ -60,9 +69,13 @@ export default ({id, listOrder, open, close, onChange, children, submitTitle = '
 
     return (
         <DefaultModal open={openModal} close={close} title="Cart order manager">
-            <Formik initialValues={{...initialValues}} validate={validate} onSubmit={handleSubmit(id, onChange)}>
+            <Formik
+                initialValues={{...initialValues}}
+                validate={validate}
+                onSubmit={handleSubmit(id, listAddress, onChange)}>
                 {({errors, handleSubmit}) => (
                     <Form>
+                        <SelectInput name="address" label="Address" options={listAddress} required={true} />
                         <TextInput name="note" label="Note" autoFocus={true} />
                         <FormLevelErrMsg errors={errors.detail} />
                         <ButtonsBar children={children} submitTitle={submitTitle} onClick={onClick(handleSubmit)} />

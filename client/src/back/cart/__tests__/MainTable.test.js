@@ -251,8 +251,8 @@ describe('Service.group', () => {
             }
         ];
         const orders = {
-            nick1: {note: 'hello'},
-            nick2: {note: 'world'}
+            nick1: {note: 'hello', address: 1, address_title: 'address 1'},
+            nick2: {note: 'world', address: 2, address_title: 'address 2'}
         };
         const eput = [
             {
@@ -261,6 +261,8 @@ describe('Service.group', () => {
                     link: 'link1',
                     site: 'TMALL',
                     note: 'hello',
+                    address: 1,
+                    address_title: 'address 1',
                     quantity: 8,
                     cny_total: 11,
                     vnd_total: 40000
@@ -292,6 +294,8 @@ describe('Service.group', () => {
                     link: 'link2',
                     site: 'TAOBAO',
                     note: 'world',
+                    address: 2,
+                    address_title: 'address 2',
                     quantity: 4,
                     cny_total: 5.5,
                     vnd_total: 20000
@@ -310,6 +314,35 @@ describe('Service.group', () => {
             }
         ];
         const output = Service.group(items, orders);
+        expect(output).toEqual(eput);
+    });
+});
+
+describe('Service.addressesToOptions', () => {
+    it('Normal case', () => {
+        const input = [
+            {
+                id: 1,
+                uid: 'uid1',
+                title: 'title1'
+            },
+            {
+                id: 2,
+                uid: 'uid2',
+                title: 'title2'
+            }
+        ];
+        const eput = [
+            {
+                value: 1,
+                label: 'uid1 - title1'
+            },
+            {
+                value: 2,
+                label: 'uid2 - title2'
+            }
+        ];
+        const output = Service.addressesToOptions(input);
         expect(output).toEqual(eput);
     });
 });

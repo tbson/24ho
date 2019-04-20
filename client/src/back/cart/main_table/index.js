@@ -22,6 +22,10 @@ type CartGroup = {
 type Props = {};
 
 export class Service {
+    static listAddressRequest(): Promise<Object> {
+        return Tools.apiCall(apiUrls.addressCrud);
+    }
+
     static formatCartItem(item: Object, index: number): Object {
         const colortxt = item.colortxt;
         const sizetxt = item.sizetxt;
@@ -92,6 +96,8 @@ export class Service {
                         link: item.shop_link,
                         site: item.site,
                         note: '',
+                        address: 0,
+                        address_title: '',
                         quantity: 0,
                         cny_total: 0,
                         vnd_total: 0
@@ -106,8 +112,13 @@ export class Service {
             group.shop.cny_total = group.items.reduce((total, item) => total + item.cny_price, 0);
             group.shop.vnd_total = group.items.reduce((total, item) => total + item.vnd_price, 0);
             group.shop.quantity = group.items.reduce((total, item) => total + item.quantity, 0);
-            const note = orders[group.shop.nick]?.note;
+            const order = orders[group.shop.nick] || {};
+            const {note, address, address_title} = order;
             if (note) group.shop.note = note;
+            if (address) {
+                group.shop.address = address;
+                group.shop.address_title = address_title;
+            }
             return group;
         });
     }
@@ -169,14 +180,15 @@ export class Service {
         };
     }
 
-    static checkNewItem(list: ListItem, item: DbRow): Object {
-        return {};
+    static addressesToOptions(list: Array<Object>): Array<Object> {
+        return list.map(item => ({value: item.id, label: `${item.uid} - ${item.title}`}));
     }
 }
 
 export default ({}: Props) => {
     const [list, setList] = useState([]);
     const [listOrder, setListOrder] = useState({});
+    const [listAddress, setListAddress] = useState([]);
     const [formOpen, setFormOpen] = useState<FormOpenType>({
         main: false,
         order: false
@@ -259,6 +271,7 @@ export default ({}: Props) => {
     const events = Service.events(setList);
 
     useEffect(() => {
+        Service.listAddressRequest().then(resp => setListAddress(Service.addressesToOptions(resp.data.items)));
         events.subscribe();
         getList();
         return () => events.unsubscribe();
@@ -269,10 +282,12 @@ export default ({}: Props) => {
             <table className="table table-striped">
                 <thead className="thead-light">
                     <tr>
+                        {/*
                         <th className="row25">
                             <span className="fas fa-check text-info pointer check-all-button" onClick={onCheckAll} />
                         </th>
-                        <th>Sản phẩm</th>
+                        */}
+                        <th colSpan={2}>Sản phẩm</th>
                         <th className="right">Số lượng</th>
                         <th className="right">Đơn giá</th>
                         <th className="right">Tiền hàng</th>
@@ -333,6 +348,7 @@ export default ({}: Props) => {
             <OrderForm
                 id={formId}
                 listOrder={listOrder}
+                listAddress={listAddress}
                 open={formOpen.order}
                 close={() => toggleForm(false, 'order')}
                 onChange={onOrderChange}>
@@ -360,6 +376,9 @@ export const Group = ({data, showForm, children}: Object) => (
             <td colSpan={99} className="white-bg" />
         </tr>
         <tr>
+            <td className="shop-header">
+                <span className="fas fa-check green" />
+            </td>
             <td colSpan={99} className="shop-header">
                 <strong>[{data.shop.site}]</strong>
                 <span>&nbsp;/&nbsp;</span>
@@ -370,18 +389,41 @@ export const Group = ({data, showForm, children}: Object) => (
         </tr>
         {children}
         <tr>
-            <td colSpan={2} />
-            <td className="right">{data.shop.quantity}</td>
+            <td colSpan={2}>
+                <button
+                    className="btn btn-success"
+                    disabled={!data.shop.address}
+                    onClick={() => showForm(data.shop.nick)}>
+                    <span className="fas fa-check" />
+                    &nbsp; Tạo đơn
+                </button>
+            </td>
+            <td className="right">
+                <strong>{data.shop.quantity}</strong>
+            </td>
             <td />
             <td>
-                <div className="vnd">{Tools.numberFormat(data.shop.vnd_total)}</div>
-                <div className="cny">{Tools.numberFormat(data.shop.cny_total)}</div>
+                <div className="vnd">
+                    <strong>{Tools.numberFormat(data.shop.vnd_total)}</strong>
+                </div>
+                <div className="cny">
+                    <strong>{Tools.numberFormat(data.shop.cny_total)}</strong>
+                </div>
             </td>
-            <td>{data.shop.note || <em>Chưa có ghi chú...</em>}</td>
+            <td>
+                <div>
+                    <strong>Address: </strong>
+                    {data.shop.address_title || <em className="red">Chưa có địa chỉ nhận hàng...</em>}
+                </div>
+                <div>
+                    <strong>Note: </strong>
+                    {data.shop.note || <em>Chưa có ghi chú...</em>}
+                </div>
+            </td>
             <td className="right">
-                <button className="btn btn-info btn-sm btn-block" onClick={() => showForm(data.shop.nick)}>
-                    <span className="fas fa-comment" />
-                    &nbsp; Order
+                <button className="btn btn-info btn-block" onClick={() => showForm(data.shop.nick)}>
+                    <span className="fas fa-edit" />
+                    &nbsp; Sửa đơn
                 </button>
             </td>
         </tr>

@@ -9,6 +9,12 @@ const rawApiUrls = [
         endpoints: {
             crud: ''
         }
+    },
+    {
+        controller: 'address',
+        endpoints: {
+            crud: ''
+        }
     }
 ];
 
