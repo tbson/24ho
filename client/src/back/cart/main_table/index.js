@@ -4,9 +4,10 @@ import {useState, useEffect} from 'react';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
 import {apiUrls} from '../_data';
-import type {TRow, DbRow, ListItem} from '../_data';
+import type {TRow, DbRow, ListItem, FormOpenType, FormOpenKeyType} from '../_data';
 import {Pagination, SearchInput} from 'src/utils/components/TableUtils';
 import MainForm from '../MainForm';
+import OrderForm from '../OrderForm';
 import Row from './Row.js';
 
 type CartGroup = {
@@ -64,13 +65,30 @@ export class Service {
         };
     }
 
+    static set savedCartItems(items: Object): Object {
+        Tools.setStorage('cart_items', items);
+
+        return items;
+    }
+    static get savedCartItems(): Object {
+        return Tools.getStorageObj('cart_items');
+    }
+
+    static set savedOrderList(items: Object): Object {
+        Tools.setStorage('orders', items);
+        return items;
+    }
+    static get savedOrderList(): Object {
+        return Tools.getStorageObj('orders');
+    }
+
     static recalculate(item: Object): Object {
         item.cny_price = item.quantity * item.cny_unit_price;
         item.vnd_price = item.quantity * item.vnd_unit_price;
         return item;
     }
 
-    static group(items: Array<Object>): Array<CartGroup> {
+    static group(items: Array<Object>, orders: Object): Array<CartGroup> {
         const groups = [];
         for (let item of items) {
             const group = groups.find(group => {
@@ -83,6 +101,7 @@ export class Service {
                         nick: item.shop_nick,
                         link: item.shop_link,
                         site: item.site,
+                        note: '',
                         quantity: 0,
                         cny_total: 0,
                         vnd_total: 0
@@ -97,6 +116,8 @@ export class Service {
             group.shop.cny_total = group.items.reduce((total, item) => total + item.cny_price, 0);
             group.shop.vnd_total = group.items.reduce((total, item) => total + item.vnd_price, 0);
             group.shop.quantity = group.items.reduce((total, item) => total + item.quantity, 0);
+            const note = orders[group.shop.nick]?.note;
+            if (note) group.shop.note = note;
             return group;
         });
     }
@@ -106,8 +127,8 @@ export class Service {
         if (items?.length) {
             window.postMessage({type: 'CLEAR_DATA'}, window.location.origin);
             items = items.map(Service.formatCartItem);
-            let newItems = Service.merge(Tools.getStorageObj('cart_items'), items);
-            Tools.setStorage('cart_items', newItems);
+            let newItems = Service.merge(Service.savedCartItems, items);
+            Service.savedCartItems = newItems;
             setList(ListTools.prepare(newItems));
         }
     }
@@ -165,23 +186,36 @@ export class Service {
 
 export default ({}: Props) => {
     const [list, setList] = useState([]);
-    const [isFormOpen, setIsFormOpen] = useState(false);
-    const [modalId, setModalId] = useState(0);
+    const [listOrder, setListOrder] = useState({});
+    const [formOpen, setFormOpen] = useState<FormOpenType>({
+        main: false,
+        order: false
+    });
+    const [orderFormOpen, setOrderFormOpen] = useState(false);
+    const [formId, setFormId] = useState(0);
     const [links, setLinks] = useState({next: '', previous: ''});
+
+    const toggleForm = (key: FormOpenKeyType, value: boolean) => setFormOpen({...formOpen, [key]: value});
 
     const listAction = ListTools.actions(list);
 
     const getList = () => {
-        const items = Tools.getStorageObj('cart_items');
+        const items = Service.savedCartItems;
+        setListOrder(Service.savedOrderList);
         setList(ListTools.prepare(items));
     };
 
-    const onChange = (data: TRow, type: string, reOpenDialog: boolean) => {
-        setIsFormOpen(false);
+    const onChange = (data: TRow, type: string) => {
+        toggleForm('main', false);
         const items = listAction(Service.recalculate(data))[type]();
-        Tools.setStorage('cart_items', items);
+        Service.savedCartItems = items;
         setList(items);
-        reOpenDialog && setIsFormOpen(true);
+    };
+
+    const onOrderChange = (data: Object) => {
+        toggleForm('order', false);
+        Service.savedOrderList = {...Service.savedOrderList, ...data};
+        setListOrder(Service.savedOrderList);
     };
 
     const onCheck = id => setList(ListTools.checkOne(id, list));
@@ -190,7 +224,7 @@ export default ({}: Props) => {
 
     const onRemove = data => {
         const items = listAction(data).remove();
-        Tools.setStorage('cart_items', items);
+        Service.savedCartItems = items;
         setList(items);
     };
 
@@ -201,18 +235,23 @@ export default ({}: Props) => {
         const r = confirm(ListTools.getDeleteMessage(ids.length));
         if (r) {
             const items = listAction({ids}).bulkRemove();
-            Tools.setStorage('cart_items', items);
+            Service.savedCartItems = items;
             setList(items);
         }
     };
 
     const showForm = (id: number) => {
-        setIsFormOpen(true);
-        setModalId(id);
+        toggleForm('main', true);
+        setFormId(id);
+    };
+
+    const showOrderForm = (id: number) => {
+        toggleForm('order', true);
+        setFormId(id);
     };
 
     const searchList = (keyword: string) => {
-        const originalList = Tools.getStorageObj('cart_items');
+        const originalList = Service.savedCartItems;
         if (!keyword) return setList(originalList);
         const filteredList = originalList.filter(item => {
             const {title, size, color, note, shop_nick} = item;
@@ -244,7 +283,9 @@ export default ({}: Props) => {
                             <span className="fas fa-check text-info pointer check-all-button" onClick={onCheckAll} />
                         </th>
                         <th scope="col">Sản phẩm</th>
-                        <th scope="col" className="right">Số lượng</th>
+                        <th scope="col" className="right">
+                            Số lượng
+                        </th>
                         <th scope="col" className="right">
                             Đơn giá
                         </th>
@@ -271,8 +312,8 @@ export default ({}: Props) => {
                     </tr>
                 </tbody>
 
-                {Service.group(list).map((group, groupKey) => (
-                    <Group data={group} key={groupKey}>
+                {Service.group(list, listOrder).map((group, groupKey) => (
+                    <Group data={group} key={groupKey} showForm={showOrderForm}>
                         {group.items.map((data, key) => (
                             <Row
                                 className="table-row"
@@ -302,21 +343,45 @@ export default ({}: Props) => {
             </table>
 
             <MainForm
-                id={modalId}
+                id={formId}
                 listItem={list}
-                open={isFormOpen}
-                close={() => setIsFormOpen(false)}
+                open={formOpen.main}
+                close={() => toggleForm('main', false)}
                 onChange={onChange}>
-                <button type="button" className="btn btn-warning" action="close" onClick={() => setIsFormOpen(false)}>
+                <button
+                    type="button"
+                    className="btn btn-warning"
+                    action="close"
+                    onClick={() => toggleForm('main', false)}>
                     <span className="fas fa-times" />
                     &nbsp;Cancel
                 </button>
             </MainForm>
+            <OrderForm
+                id={formId}
+                listOrder={listOrder}
+                open={formOpen.order}
+                close={() => toggleForm('order', false)}
+                onChange={onOrderChange}>
+                <button
+                    type="button"
+                    className="btn btn-warning"
+                    action="close"
+                    onClick={() => toggleForm('order', false)}>
+                    <span className="fas fa-times" />
+                    &nbsp;Cancel
+                </button>
+            </OrderForm>
         </div>
     );
 };
 
-export const Group = ({data, children}: Object) => (
+type GroupType = {
+    data: Object,
+    showForm: Function,
+    children: React.Node
+};
+export const Group = ({data, showForm, children}: Object) => (
     <tbody>
         <tr>
             <td colSpan={99} className="white-bg" />
@@ -332,14 +397,20 @@ export const Group = ({data, children}: Object) => (
         </tr>
         {children}
         <tr>
-            <td colSpan={2}></td>
+            <td colSpan={2} />
             <td className="right">{data.shop.quantity}</td>
-            <td></td>
+            <td />
             <td>
                 <div className="vnd">{Tools.numberFormat(data.shop.vnd_total)}</div>
                 <div className="cny">{Tools.numberFormat(data.shop.cny_total)}</div>
             </td>
-            <td colSpan={2}></td>
+            <td>{data.shop.note || <em>Chưa có ghi chú...</em>}</td>
+            <td className="right">
+                <button className="btn btn-info btn-sm btn-block" onClick={() => showForm(data.shop.nick)}>
+                    <span className="fas fa-comment" />
+                    &nbsp; Note
+                </button>
+            </td>
         </tr>
     </tbody>
 );

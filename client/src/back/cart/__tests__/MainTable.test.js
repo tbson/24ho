@@ -221,7 +221,7 @@ describe('Service.merge', () => {
 
 describe('Service.group', () => {
     it('Normal case', () => {
-        const input = [
+        const items = [
             {
                 id: 1,
                 site: 'TMALL',
@@ -250,12 +250,17 @@ describe('Service.group', () => {
                 vnd_price: 20000
             }
         ];
+        const orders = {
+            nick1: {note: 'hello'},
+            nick2: {note: 'world'}
+        };
         const eput = [
             {
                 shop: {
                     nick: 'nick1',
                     link: 'link1',
                     site: 'TMALL',
+                    note: 'hello',
                     quantity: 8,
                     cny_total: 11,
                     vnd_total: 40000
@@ -286,6 +291,7 @@ describe('Service.group', () => {
                     nick: 'nick2',
                     link: 'link2',
                     site: 'TAOBAO',
+                    note: 'world',
                     quantity: 4,
                     cny_total: 5.5,
                     vnd_total: 20000
@@ -303,7 +309,7 @@ describe('Service.group', () => {
                 ]
             }
         ];
-        const output = Service.group(input);
+        const output = Service.group(items, orders);
         expect(output).toEqual(eput);
     });
 });

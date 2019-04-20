@@ -28,6 +28,13 @@ export function seeding(numberOfItems: number, single: boolean = false): any {
     return result[numberOfItems - 1];
 }
 
+export type FormOpenType = {
+    main: boolean,
+    order: boolean
+};
+
+export type FormOpenKeyType = 'main' | 'order';
+
 export type FormValues = {
     site: string,
 
@@ -63,9 +70,9 @@ export type TRow = DbRow & {
 };
 
 export const defaultInputs = {
-    id: 0, 
+    id: 0,
     quantity: 0,
     note: 0
-}
+};
 
 export type ListItem = Array<TRow>;
