@@ -22,16 +22,6 @@ type CartGroup = {
 type Props = {};
 
 export class Service {
-    static bulkRemoveRequest(ids: Array<number>): Promise<Object> {
-        return Tools.apiCall(apiUrls.crud, {ids: ids.join(',')}, 'DELETE');
-    }
-
-    static handleBulkRemove(ids: Array<number>): Promise<Object> {
-        return Service.bulkRemoveRequest(ids)
-            .then(resp => (resp.ok ? {ids} : Promise.reject(resp)))
-            .catch(Tools.popMessageOrRedirect);
-    }
-
     static formatCartItem(item: Object, index: number): Object {
         const colortxt = item.colortxt;
         const sizetxt = item.sizetxt;
