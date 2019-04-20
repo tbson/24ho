@@ -45,8 +45,7 @@ export default ({id, listOrder, open, close, onChange, children, submitTitle = '
 
     useEffect(() => {
         setOpenModal(open);
-        const values = listOrder[id];
-        values && setInitialValues(values);
+        setInitialValues(listOrder[id] || Service.initialValues);
     }, [open]);
 
     const focusFirstInput = () => {

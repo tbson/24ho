@@ -195,7 +195,7 @@ export default ({}: Props) => {
     const [formId, setFormId] = useState(0);
     const [links, setLinks] = useState({next: '', previous: ''});
 
-    const toggleForm = (key: FormOpenKeyType, value: boolean) => setFormOpen({...formOpen, [key]: value});
+    const toggleForm = (value: boolean, key: FormOpenKeyType = 'main') => setFormOpen({...formOpen, [key]: value});
 
     const listAction = ListTools.actions(list);
 
@@ -206,14 +206,14 @@ export default ({}: Props) => {
     };
 
     const onChange = (data: TRow, type: string) => {
-        toggleForm('main', false);
+        toggleForm(false);
         const items = listAction(Service.recalculate(data))[type]();
         Service.savedCartItems = items;
         setList(items);
     };
 
     const onOrderChange = (data: Object) => {
-        toggleForm('order', false);
+        toggleForm(false, 'order');
         Service.savedOrderList = {...Service.savedOrderList, ...data};
         setListOrder(Service.savedOrderList);
     };
@@ -241,12 +241,12 @@ export default ({}: Props) => {
     };
 
     const showForm = (id: number) => {
-        toggleForm('main', true);
+        toggleForm(true);
         setFormId(id);
     };
 
     const showOrderForm = (id: number) => {
-        toggleForm('order', true);
+        toggleForm(true, 'order');
         setFormId(id);
     };
 
@@ -282,25 +282,12 @@ export default ({}: Props) => {
                         <th className="row25">
                             <span className="fas fa-check text-info pointer check-all-button" onClick={onCheckAll} />
                         </th>
-                        <th scope="col">Sản phẩm</th>
-                        <th scope="col" className="right">
-                            Số lượng
-                        </th>
-                        <th scope="col" className="right">
-                            Đơn giá
-                        </th>
-                        <th scope="col" className="right">
-                            Tiền hàng
-                        </th>
-                        <th scope="col">Ghi chú</th>
-                        <th scope="col" style={{padding: 8}} className="row80">
-                            {/*
-                            <button className="btn btn-primary btn-sm btn-block add-button" onClick={() => showForm(0)}>
-                                <span className="fas fa-plus" />
-                                &nbsp; Add
-                            </button>
-                            */}
-                        </th>
+                        <th>Sản phẩm</th>
+                        <th className="right">Số lượng</th>
+                        <th className="right">Đơn giá</th>
+                        <th className="right">Tiền hàng</th>
+                        <th>Ghi chú</th>
+                        <th className="row80" />
                     </tr>
                 </thead>
 
@@ -346,13 +333,9 @@ export default ({}: Props) => {
                 id={formId}
                 listItem={list}
                 open={formOpen.main}
-                close={() => toggleForm('main', false)}
+                close={() => toggleForm(false)}
                 onChange={onChange}>
-                <button
-                    type="button"
-                    className="btn btn-warning"
-                    action="close"
-                    onClick={() => toggleForm('main', false)}>
+                <button type="button" className="btn btn-warning" action="close" onClick={() => toggleForm(false)}>
                     <span className="fas fa-times" />
                     &nbsp;Cancel
                 </button>
@@ -361,13 +344,13 @@ export default ({}: Props) => {
                 id={formId}
                 listOrder={listOrder}
                 open={formOpen.order}
-                close={() => toggleForm('order', false)}
+                close={() => toggleForm(false, 'order')}
                 onChange={onOrderChange}>
                 <button
                     type="button"
                     className="btn btn-warning"
                     action="close"
-                    onClick={() => toggleForm('order', false)}>
+                    onClick={() => toggleForm(false, 'order')}>
                     <span className="fas fa-times" />
                     &nbsp;Cancel
                 </button>
@@ -408,7 +391,7 @@ export const Group = ({data, showForm, children}: Object) => (
             <td className="right">
                 <button className="btn btn-info btn-sm btn-block" onClick={() => showForm(data.shop.nick)}>
                     <span className="fas fa-comment" />
-                    &nbsp; Note
+                    &nbsp; Order
                 </button>
             </td>
         </tr>
