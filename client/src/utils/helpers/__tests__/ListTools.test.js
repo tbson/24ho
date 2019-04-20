@@ -8,7 +8,7 @@ beforeEach(() => {
     jest.restoreAllMocks();
 });
 
-describe('checkOrUncheckAll', () => {
+describe('checkAll without condition', () => {
     test('Full', () => {
         const input = [{id: 1, checked: true}, {id: 2, checked: true}, {id: 3, checked: true}, {id: 4, checked: true}];
 
@@ -45,6 +45,108 @@ describe('checkOrUncheckAll', () => {
 
         const eput = [{id: 1, checked: true}, {id: 2, checked: true}, {id: 3, checked: true}, {id: 4, checked: true}];
         const output = ListTools.checkAll(input);
+        expect(output).toEqual(eput);
+    });
+});
+
+describe('checkAll with condition', () => {
+    const condition = {condition: 1};
+    test('Full', () => {
+        const input = [
+            {id: 1, condition: 1, checked: true},
+            {id: 2, condition: 1, checked: true},
+            {id: 3, condition: 2, checked: true}
+        ];
+
+        const eput = [
+            {id: 1, condition: 1, checked: false},
+            {id: 2, condition: 1, checked: false},
+            {id: 3, condition: 2, checked: true}
+        ];
+        const output = ListTools.checkAll(input, condition);
+        expect(output).toEqual(eput);
+    });
+
+    test('Empty', () => {
+        const input = [
+            {id: 1, condition: 1, checked: false},
+            {id: 2, condition: 1, checked: false},
+            {id: 3, condition: 2, checked: false}
+        ];
+
+        const eput = [
+            {id: 1, condition: 1, checked: true},
+            {id: 2, condition: 1, checked: true},
+            {id: 3, condition: 2, checked: false}
+        ];
+        const output = ListTools.checkAll(input, condition);
+        expect(output).toEqual(eput);
+    });
+
+    test('Half full', () => {
+        const input = [
+            {id: 1, condition: 1, checked: true},
+            {id: 2, condition: 1, checked: false},
+            {id: 3, condition: 2, checked: false}
+        ];
+
+        const eput = [
+            {id: 1, condition: 1, checked: true},
+            {id: 2, condition: 1, checked: true},
+            {id: 3, condition: 2, checked: false}
+        ];
+        const output = ListTools.checkAll(input, condition);
+        expect(output).toEqual(eput);
+    });
+});
+
+describe('subList', () => {
+    const {subList} = ListTools;
+    it('Match 1', () => {
+        const input = [
+            {id: 1, key1: 4, key2: 1},
+            {id: 2, key1: 3, key2: 2},
+            {id: 3, key1: 2, key2: 3},
+            {id: 4, key1: 1, key2: 4}
+        ];
+        const condition = {
+            key1: 1,
+            key2: 4
+        };
+        const eput = [{id: 4, key1: 1, key2: 4}];
+        const output = input.filter(subList(condition));
+        expect(output).toEqual(eput);
+    });
+
+    it('Match 2', () => {
+        const input = [
+            {id: 1, key1: 4, key2: 1},
+            {id: 2, key1: 1, key2: 4},
+            {id: 3, key1: 2, key2: 3},
+            {id: 4, key1: 1, key2: 4}
+        ];
+        const condition = {
+            key1: 1,
+            key2: 4
+        };
+        const eput = [{id: 2, key1: 1, key2: 4}, {id: 4, key1: 1, key2: 4}];
+        const output = input.filter(subList(condition));
+        expect(output).toEqual(eput);
+    });
+
+    it('Match 0', () => {
+        const input = [
+            {id: 1, key1: 4, key2: 1},
+            {id: 2, key1: 1, key2: 4},
+            {id: 3, key1: 2, key2: 3},
+            {id: 4, key1: 1, key2: 4}
+        ];
+        const condition = {
+            key1: 0,
+            key2: 4
+        };
+        const eput = [];
+        const output = input.filter(subList(condition));
         expect(output).toEqual(eput);
     });
 });

@@ -1,4 +1,5 @@
 // @flow
+import Tools from 'src/utils/helpers/Tools';
 
 type List = Array<Object>;
 
@@ -22,15 +23,32 @@ export default class ListTools {
         };
     }
 
-    static checkAll(list: List): List {
+    static subList(condition: Object = {}): Function {
+        if (Tools.isEmpty(condition)) return () => true;
+        return (item: Object): boolean =>
+            !Object.entries(condition)
+                .reduce((matched, [key, value]) => {
+                    item[key] === value ? matched.push(true) : matched.push(false);
+                    return matched;
+                }, [])
+                .includes(false);
+    }
+
+    static checkAll(list: List, condition: Object = {}): List {
+        const {subList} = ListTools;
+        const filteredList = list.filter(subList(condition));
+
         let checkAll = false;
-        const checkedItem = list.filter(item => item.checked);
+        const checkedItem = filteredList.filter(item => item.checked);
         if (checkedItem.length) {
-            checkAll = checkedItem.length === list.length ? false : true;
+            checkAll = checkedItem.length === filteredList.length ? false : true;
         } else {
             checkAll = true;
         }
-        return list.map(value => ({...value, checked: checkAll}));
+        return list.map(item => {
+            const matchedItem = filteredList.find(filteredItem => filteredItem === item);
+            return matchedItem ? {...item, checked: checkAll} : item;
+        });
     }
 
     static checkOne(id: number, list: List): Object {

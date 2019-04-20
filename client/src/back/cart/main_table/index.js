@@ -222,7 +222,7 @@ export default ({}: Props) => {
 
     const onCheck = id => setList(ListTools.checkOne(id, list));
 
-    const onCheckAll = () => setList(ListTools.checkAll(list));
+    const onCheckAll = (condition: Object) => () => setList(ListTools.checkAll(list, condition));
 
     const onRemove = data => {
         const items = listAction(data).remove();
@@ -305,7 +305,11 @@ export default ({}: Props) => {
                 </tbody>
 
                 {Service.group(list, listOrder).map((group, groupKey) => (
-                    <Group data={group} key={groupKey} showForm={showOrderForm}>
+                    <Group
+                        data={group}
+                        key={groupKey}
+                        showForm={showOrderForm}
+                        onCheckAll={onCheckAll({shop_nick: group.shop.nick})}>
                         {group.items.map((data, key) => (
                             <Row
                                 className="table-row"
@@ -367,17 +371,18 @@ export default ({}: Props) => {
 
 type GroupType = {
     data: Object,
+    onCheckAll: Function,
     showForm: Function,
     children: React.Node
 };
-export const Group = ({data, showForm, children}: Object) => (
+export const Group = ({data, showForm, onCheckAll, children}: Object) => (
     <tbody>
         <tr>
             <td colSpan={99} className="white-bg" />
         </tr>
         <tr>
             <td className="shop-header">
-                <span className="fas fa-check green" />
+                <span className="fas fa-check green" onClick={onCheckAll} />
             </td>
             <td colSpan={99} className="shop-header">
                 <strong>[{data.shop.site}]</strong>
