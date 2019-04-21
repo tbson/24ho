@@ -216,7 +216,7 @@ class ResetPasswordView(APIView):
         item.reset_password_tmp = make_password(params["password"])
         item.reset_password_created = timezone.now()
         item.save()
-        url = settings.BASE_URL + "customer/reset-password/" + str(token)
+        url = settings.BASE_URL + "user/reset-password/" + str(token)
         subject = "Rest set password for %s %s" % (user.first_name, user.last_name)
         body = "Reset password confirm link: %s" % (url)
         to = user.email
