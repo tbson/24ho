@@ -230,8 +230,8 @@ export default ({}: Props) => {
         setList(items);
     };
 
-    const onBulkRemove = () => {
-        const ids = ListTools.getChecked(list);
+    const onBulkRemove = (shop_nick: string) => () => {
+        const ids = ListTools.getChecked(list.filter(item => item.shop_nick === shop_nick));
         if (!ids.length) return;
 
         const r = confirm(ListTools.getDeleteMessage(ids.length));
@@ -309,6 +309,7 @@ export default ({}: Props) => {
                         data={group}
                         key={groupKey}
                         showForm={showOrderForm}
+                        onBulkRemove={onBulkRemove(group.shop.nick)}
                         onCheckAll={onCheckAll({shop_nick: group.shop.nick})}>
                         {group.items.map((data, key) => (
                             <Row
@@ -322,7 +323,7 @@ export default ({}: Props) => {
                         ))}
                     </Group>
                 ))}
-
+                {/*
                 <tfoot className="thead-light">
                     <tr>
                         <th className="row25">
@@ -336,6 +337,7 @@ export default ({}: Props) => {
                         </th>
                     </tr>
                 </tfoot>
+                */}
             </table>
 
             <MainForm
@@ -372,17 +374,18 @@ export default ({}: Props) => {
 type GroupType = {
     data: Object,
     onCheckAll: Function,
+    onBulkRemove: Function,
     showForm: Function,
     children: React.Node
 };
-export const Group = ({data, showForm, onCheckAll, children}: Object) => (
+export const Group = ({data, showForm, onCheckAll, onBulkRemove, children}: Object) => (
     <tbody>
         <tr>
             <td colSpan={99} className="white-bg" />
         </tr>
         <tr>
             <td className="shop-header">
-                <span className="fas fa-check green" onClick={onCheckAll} />
+                <span className="fas fa-check green pointer" onClick={onCheckAll} />
             </td>
             <td colSpan={99} className="shop-header">
                 <strong>[{data.shop.site}]</strong>
@@ -394,7 +397,10 @@ export const Group = ({data, showForm, onCheckAll, children}: Object) => (
         </tr>
         {children}
         <tr>
-            <td colSpan={2}>
+            <td>
+                <span className="fas fa-trash-alt text-danger pointer bulk-remove-button" onClick={onBulkRemove} />
+            </td>
+            <td>
                 <button
                     className="btn btn-success"
                     disabled={!data.shop.address}
