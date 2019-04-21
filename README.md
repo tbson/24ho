@@ -49,7 +49,15 @@ Issue a SSL for `domain.com` using Let’s Encrypt.
 
 ### Step 2
 
-Add `- /etc/letsencrypt:/resource/ssl` to `volumes` of `nginx` if not exist.
+Add 
+
+```
+- /etc/letsencrypt:/resource/ssl
+
+- ../../code/24ho/api/public/:/resourece/public/24ho
+```
+
+To `volumes` of `nginx` if not exist.
 
 ### Step 3
 
