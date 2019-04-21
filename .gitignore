@@ -8,6 +8,8 @@ tags
 tmp
 nginx.conf
 python_env
+docker/deploy_back
+docker/deploy_front
 docker/dbdata/
 docker/docker-compose.yml
 api/.coverage
