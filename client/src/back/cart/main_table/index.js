@@ -417,7 +417,7 @@ export const Group = ({data, showForm, onCheckAll, onBulkRemove, children}: Obje
                 <button
                     className="btn btn-success"
                     disabled={!data.shop.address}
-                    onClick={() => showForm(data.shop.nick)}>
+                    onClick={() => {}}>
                     <span className="fas fa-check" />
                     &nbsp; Tạo đơn
                 </button>
