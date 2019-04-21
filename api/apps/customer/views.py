@@ -1,3 +1,4 @@
+import json
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
@@ -148,6 +149,27 @@ class ProfileView(APIView):
             return res(serializer.data)
         else:
             return err_res(serializer.errors)
+
+
+class ShoppingCartView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get_object(self):
+        return self.request.user.customer
+
+    def get(self, request, format=None):
+        try:
+            obj = self.get_object()
+            return res(obj.shopping_cart)
+        except Exception:
+            return res({}, status=401)
+
+    def post(self, request, format=None):
+        obj = self.get_object()
+        shopping_cart = request.data.get('shopping_cart', '{}')
+        obj.shopping_cart = json.loads(shopping_cart)
+        obj.save()
+        return res(obj.shopping_cart)
 
 
 class ResetPasswordView(APIView):

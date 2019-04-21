@@ -5,9 +5,9 @@ import {FIELD_TYPE, APP} from 'src/constants';
 
 const rawApiUrls = [
     {
-        controller: 'cart',
+        controller: 'customer',
         endpoints: {
-            crud: ''
+            shoppingCart: 'shopping-cart'
         }
     },
     {

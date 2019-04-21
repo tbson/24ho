@@ -20,6 +20,7 @@ class CustomerBaseSr(ModelSerializer):
             'cust_care',
             'sale',
             'is_lock',
+            'shopping_cart',
             'user',
             'user_data'
         ]

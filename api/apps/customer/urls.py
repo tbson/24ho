@@ -8,6 +8,7 @@ from .views import (
     CustomerViewSet,
     LoginView,
     ProfileView,
+    ShoppingCartView,
     ResetPasswordView,
     ChangePasswordView,
 )
@@ -34,6 +35,7 @@ urlpatterns = [
     path('token-verify/', verify_jwt_token, name='verify'),
 
     path('profile/', ProfileView.as_view(), name='profile'),
+    path('shopping-cart/', ShoppingCartView.as_view(), name='shoppingCart'),
     path('reset-password/', ResetPasswordView.as_view(), name='resetPassword'),
     path('change-password/', ChangePasswordView.as_view(), name='changePassword'),
 ]

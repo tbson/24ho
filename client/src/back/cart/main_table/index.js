@@ -22,6 +22,34 @@ type CartGroup = {
 type Props = {};
 
 export class Service {
+    static getCartRequest(): Promise<Object> {
+        return Tools.apiCall(apiUrls.shoppingCart).then(resp => {
+            if (resp.ok) {
+                Service.savedCartItems = resp.data.items;
+                Service.savedOrderList = resp.data.orders;
+            }
+            return resp;
+        });
+    }
+
+    static syncCartRequest(): Promise<Object> {
+        return Tools.apiCall(apiUrls.shoppingCart, Service.cartPayload, 'POST').then(resp => {
+            if (resp.ok) {
+                Service.savedCartItems = resp.data.items;
+                Service.savedOrderList = resp.data.orders;
+            }
+            return resp;
+        });
+    }
+
+    static get cartPayload() {
+        const payload = {
+            items: Service.savedCartItems,
+            orders: Service.savedOrderList
+        };
+        return {shopping_cart: JSON.stringify(payload)};
+    }
+
     static listAddressRequest(): Promise<Object> {
         return Tools.apiCall(apiUrls.addressCrud);
     }
@@ -131,6 +159,7 @@ export class Service {
             let newItems = Service.merge(Service.savedCartItems, items);
             Service.savedCartItems = newItems;
             setList(ListTools.prepare(newItems));
+            Service.syncCartRequest();
         }
     }
 
@@ -212,12 +241,14 @@ export default ({}: Props) => {
         const items = listAction(Service.recalculate(data))[type]();
         Service.savedCartItems = items;
         setList(items);
+        Service.syncCartRequest();
     };
 
     const onOrderChange = (data: Object) => {
         toggleForm(false, 'order');
         Service.savedOrderList = {...Service.savedOrderList, ...data};
         setListOrder(Service.savedOrderList);
+        Service.syncCartRequest();
     };
 
     const onCheck = id => setList(ListTools.checkOne(id, list));
@@ -228,6 +259,7 @@ export default ({}: Props) => {
         const items = listAction(data).remove();
         Service.savedCartItems = items;
         setList(items);
+        Service.syncCartRequest();
     };
 
     const onBulkRemove = (shop_nick: string) => () => {
@@ -239,6 +271,7 @@ export default ({}: Props) => {
             const items = listAction({ids}).bulkRemove();
             Service.savedCartItems = items;
             setList(items);
+            Service.syncCartRequest();
         }
     };
 
@@ -271,9 +304,9 @@ export default ({}: Props) => {
     const events = Service.events(setList);
 
     useEffect(() => {
+        Service.getCartRequest().then(getList);
         Service.listAddressRequest().then(resp => setListAddress(Service.addressesToOptions(resp.data.items)));
         events.subscribe();
-        getList();
         return () => events.unsubscribe();
     }, []);
 
@@ -282,11 +315,6 @@ export default ({}: Props) => {
             <table className="table table-striped">
                 <thead className="thead-light">
                     <tr>
-                        {/*
-                        <th className="row25">
-                            <span className="fas fa-check text-info pointer check-all-button" onClick={onCheckAll} />
-                        </th>
-                        */}
                         <th colSpan={2}>Sản phẩm</th>
                         <th className="right">Số lượng</th>
                         <th className="right">Đơn giá</th>
@@ -323,21 +351,6 @@ export default ({}: Props) => {
                         ))}
                     </Group>
                 ))}
-                {/*
-                <tfoot className="thead-light">
-                    <tr>
-                        <th className="row25">
-                            <span
-                                className="fas fa-trash-alt text-danger pointer bulk-remove-button"
-                                onClick={onBulkRemove}
-                            />
-                        </th>
-                        <th className="row25 right" colSpan="99">
-                            <Pagination next={links.next} prev={links.previous} onNavigate={getList} />
-                        </th>
-                    </tr>
-                </tfoot>
-                */}
             </table>
 
             <MainForm

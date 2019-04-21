@@ -211,3 +211,46 @@ class CustomerTestCase(TestCase):
             format='json'
         )
         self.assertEqual(resp.status_code, 200)
+
+    def test_get_shopping_cart(self):
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + TestHelpers.getCustomerToken(self))
+
+        resp = self.client.get(
+            "/api/v1/customer/shopping-cart/",
+            format='json'
+        )
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.data, {})
+
+    def test_post_shopping_cart(self):
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + TestHelpers.getCustomerToken(self))
+        payload = {
+            'items': [
+                {
+                    'id': 1,
+                    'site': 'TMALL',
+                    'shop_link': 'link1',
+                    'shop_nick': 'nick1',
+                    'quantity': 4,
+                    'cny_price': 5.5,
+                    'vnd_price': 20000
+                }
+            ],
+            'orders': {
+                'nick1': {
+                    'note': 'hello',
+                    'address': 1,
+                    'address_title': 'address 1'
+                }
+            }
+        }
+        raw_payload = json.dumps(payload)
+        resp = self.client.post(
+            "/api/v1/customer/shopping-cart/",
+            {
+                'shopping_cart': raw_payload
+            },
+            format='json'
+        )
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.data, payload)

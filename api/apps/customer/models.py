@@ -1,6 +1,6 @@
 import os
 import uuid
-
+from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.conf import settings
 from apps.staff.models import Staff
@@ -67,6 +67,7 @@ class Customer(models.Model):
 
     is_lock = models.BooleanField(default=False)
     avatar = models.ImageField(upload_to=imgDest, blank=True)
+    shopping_cart = JSONField(default=dict)
 
     objects = CustomerManager()
 
