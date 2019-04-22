@@ -212,6 +212,19 @@ export class Service {
     static addressesToOptions(list: Array<Object>): Array<Object> {
         return list.map(item => ({value: item.id, label: `${item.uid} - ${item.title}`}));
     }
+
+    static extractShopList(items: Array<Object>): Array<string> {
+        const uniqueItems = new Set(items.map(item => item.shop_nick));
+        return Array.from(uniqueItems);
+    }
+
+    static updateSavedOrderList(listItem: Array<Object>, listOrder: Object): Object {
+        const shopList = Service.extractShopList(listItem);
+        for (let key in listOrder) {
+            if (!shopList.includes(key)) delete listOrder[key];
+        }
+        return listOrder;
+    }
 }
 
 export default ({}: Props) => {
@@ -258,7 +271,9 @@ export default ({}: Props) => {
     const onRemove = data => {
         const items = listAction(data).remove();
         Service.savedCartItems = items;
+        Service.savedOrderList = Service.updateSavedOrderList(items, Service.savedOrderList);
         setList(items);
+        setListOrder(Service.savedOrderList);
         Service.syncCartRequest();
     };
 
@@ -270,7 +285,9 @@ export default ({}: Props) => {
         if (r) {
             const items = listAction({ids}).bulkRemove();
             Service.savedCartItems = items;
+            Service.savedOrderList = Service.updateSavedOrderList(items, Service.savedOrderList);
             setList(items);
+            setListOrder(Service.savedOrderList);
             Service.syncCartRequest();
         }
     };
@@ -414,10 +431,7 @@ export const Group = ({data, showForm, onCheckAll, onBulkRemove, children}: Obje
                 <span className="fas fa-trash-alt text-danger pointer bulk-remove-button" onClick={onBulkRemove} />
             </td>
             <td>
-                <button
-                    className="btn btn-success"
-                    disabled={!data.shop.address}
-                    onClick={() => {}}>
+                <button className="btn btn-success" disabled={!data.shop.address} onClick={() => {}}>
                     <span className="fas fa-check" />
                     &nbsp; Tạo đơn
                 </button>

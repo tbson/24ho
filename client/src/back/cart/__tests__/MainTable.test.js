@@ -346,3 +346,71 @@ describe('Service.addressesToOptions', () => {
         expect(output).toEqual(eput);
     });
 });
+
+describe('Service.extractShopList', () => {
+    it('Normal case', () => {
+        const input = [
+            {
+                id: 1,
+                shop_nick: 'nick1'
+            },
+            {
+                id: 2,
+                shop_nick: 'nick2'
+            },
+            {
+                id: 3,
+                shop_nick: 'nick1'
+            }
+        ];
+        const eput = ['nick1', 'nick2'];
+        const output = Service.extractShopList(input);
+        expect(output).toEqual(eput);
+    });
+});
+
+describe('Service.updateSavedOrderList', () => {
+    it('Normal case', () => {
+        const listItem = [
+            {
+                id: 1,
+                shop_nick: 'nick1'
+            },
+            {
+                id: 2,
+                shop_nick: 'nick2'
+            },
+            {
+                id: 3,
+                shop_nick: 'nick1'
+            }
+        ];
+
+        const listOrder = {
+            nick1: 'test1',
+            nick2: 'test2',
+            nick3: 'test3'
+        };
+
+        const eput = {
+            nick1: 'test1',
+            nick2: 'test2'
+        };
+        const output = Service.updateSavedOrderList(listItem, listOrder);
+        expect(output).toEqual(eput);
+    });
+
+    it('No item', () => {
+        const listItem = [];
+
+        const listOrder = {
+            nick1: 'test1',
+            nick2: 'test2',
+            nick3: 'test3'
+        };
+
+        const eput = {};
+        const output = Service.updateSavedOrderList(listItem, listOrder);
+        expect(output).toEqual(eput);
+    });
+});
