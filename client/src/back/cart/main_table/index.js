@@ -25,8 +25,8 @@ export class Service {
     static getCartRequest(): Promise<Object> {
         return Tools.apiCall(apiUrls.shoppingCart).then(resp => {
             if (resp.ok) {
-                Service.savedCartItems = resp.data.items;
-                Service.savedOrderList = resp.data.orders;
+                Service.savedCartItems = resp.data.items || [];
+                Service.savedOrderList = resp.data.orders || {};
             }
             return resp;
         });
