@@ -28,5 +28,6 @@ client/dist/
 client/ssl/
 client/.cache/
 client/logfile
+client/extension.zip
 client/yarn-error.log
 vclien
