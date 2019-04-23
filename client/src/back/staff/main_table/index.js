@@ -55,7 +55,7 @@ export default ({}: Props) => {
         if (!data) return;
         setList(ListTools.prepare(data.items));
         setLinks(data.links);
-        setListGroup(Service.groupToOptions(data.extra.list_group));
+        setListGroup(Service.groupToOptions(data.extra.list_group).filter(item => item.label !== 'Customer'));
     };
 
     const onChange = (data: TRow, type: string, reOpenDialog: boolean) => {
