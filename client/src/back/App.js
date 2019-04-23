@@ -27,6 +27,7 @@ import Customer from './customer/';
 import Area from './area/';
 import Address from './address/';
 import Cart from './cart/';
+import Rate from './rate/';
 
 import Trans from 'src/utils/helpers/Trans';
 import translations from 'src/utils/translations.json';
@@ -54,6 +55,7 @@ class App extends React.Component<Props> {
                     <PrivateRoute path="/area" component={Area} />
                     <PrivateRoute path="/address" component={Address} />
                     <PrivateRoute path="/cart" component={Cart} />
+                    <PrivateRoute path="/rate" component={Rate} />
                     <Route component={NotMatch} />
                 </Switch>
             </div>

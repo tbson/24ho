@@ -91,6 +91,9 @@ class App extends React.Component<Props, State> {
             case 'cart':
                 if (APP !== 'user') return null;
                 return this.menuItem('cart', 'Cart', 'fas fa-shopping-cart');
+            case 'rate':
+                if (APP !== 'admin') return null;
+                return this.menuItem('rate', 'Rate', 'fas fa-yen-sign');
         }
     };
 
@@ -110,6 +113,7 @@ class App extends React.Component<Props, State> {
                         {renderMenu('area')}
                         {renderMenu('address')}
                         {renderMenu('cart')}
+                        {renderMenu('rate')}
                     </ul>
                 </div>
 

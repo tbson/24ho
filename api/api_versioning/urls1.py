@@ -28,4 +28,8 @@ urlpatterns = (
         'address/',
         include('apps.address.urls', namespace='address'),
     ),
+    path(
+        'rate/',
+        include('apps.rate.urls', namespace='rate'),
+    ),
 )
