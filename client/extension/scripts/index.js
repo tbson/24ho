@@ -18,8 +18,7 @@ const identityClass = '_order_extension_';
 
 const config = {
     rate: 3500,
-    urlGetRate: host + '/api/v1/variable/expose/rate',
-    urlCurrentVersion: host + '/api/v1/variable/expose/version',
+    urlGetRate: host + '/api/v1/rate/latest',
     currentVer: chrome.runtime.getManifest().version,
     urlCart: host + '/user/cart',
     allowedDomains: ['TMALL', 'TAOBAO', '1688']
@@ -59,15 +58,6 @@ fetch(config.urlGetRate)
         newRate = parseInt(newRate);
         if (newRate > 0) {
             config.rate = newRate;
-        }
-    });
-
-// Lấy ra phiên bản hiện tại của plugin
-fetch(config.urlCurrentVersion)
-    .then(resp => resp.json())
-    .then(({value: currentVer}) => {
-        if (currentVer) {
-            config.currentVer = currentVer;
         }
     });
 

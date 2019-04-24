@@ -2,6 +2,7 @@ import os
 from django.urls import path
 from .views import (
     RateViewSet,
+    ExposeView,
 )
 
 
@@ -21,4 +22,5 @@ app_name = os.getcwd().split(os.sep)[-1]
 urlpatterns = [
     path('', baseEndPoint),
     path('<int:pk>', pkEndpoint),
+    path('latest', ExposeView.as_view(), name='latest'),
 ]

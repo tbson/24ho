@@ -3,7 +3,9 @@ from django.utils import timezone
 from rest_framework.test import APIClient
 from django.test import TestCase
 from .models import Rate
+from apps.variable.models import Variable
 from utils.helpers.test_helpers import TestHelpers
+from django.conf import settings
 # Create your tests here.
 
 
@@ -111,3 +113,28 @@ class RateTestCase(TestCase):
         # Duplicate same date
         item = Rate.objects.duplicate()
         self.assertEqual(item, None)
+
+    def test_exposed(self):
+        Variable.objects.all().delete()
+        Rate.objects.all().delete()
+
+        # Get default rate
+        response = self.client.get(
+            "/api/v1/rate/latest"
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['value'], settings.DEFAULT_RATE)
+
+        # Get rate from variables
+        Variable.objects.create(uid='rate', value=1234)
+        response = self.client.get(
+            "/api/v1/rate/latest"
+        )
+        self.assertEqual(response.data['value'], 1234)
+
+        # Get latest rate
+        latest_rate = Rate.objects._seeding(1, True)
+        response = self.client.get(
+            "/api/v1/rate/latest"
+        )
+        self.assertEqual(response.data['value'], latest_rate.order_rate)

@@ -15,6 +15,9 @@ IMAGE_MAX_WIDTH = 1200
 IMAGE_THUMBNAIL_WIDTH = 300
 IMAGE_RATIO = 1.618
 UPLOAD_MAX_SIZE = 4
+
+DEFAULT_RATE = 3400
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
