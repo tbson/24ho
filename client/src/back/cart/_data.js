@@ -75,10 +75,4 @@ export type TRow = DbRow & {
     checked: boolean
 };
 
-export const defaultInputs = {
-    id: 0,
-    quantity: 0,
-    note: 0
-};
-
 export type ListItem = Array<TRow>;

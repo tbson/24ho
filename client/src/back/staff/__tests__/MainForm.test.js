@@ -1,7 +1,6 @@
 import React from 'react';
 import Tools from 'src/utils/helpers/Tools';
 import {Service} from '../MainForm/';
-import {defaultInputs} from '../_data';
 
 beforeEach(() => {
     jest.restoreAllMocks();

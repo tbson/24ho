@@ -34,9 +34,3 @@ export type TRow = DbRow & {
 };
 
 export type ListItem = Array<TRow>;
-
-export const defaultInputs: FormValues = {
-    id: 0,
-    uid: '',
-    value: ''
-};

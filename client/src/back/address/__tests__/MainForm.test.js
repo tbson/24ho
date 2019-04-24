@@ -4,7 +4,6 @@ import React from 'react';
 import {shallow, mount, render} from 'enzyme';
 import Tools from 'src/utils/helpers/Tools';
 import {Service} from '../MainForm/';
-import {defaultInputs} from '../_data';
 
 Enzyme.configure({adapter: new Adapter()});
 

@@ -37,11 +37,3 @@ export type TRow = DbRow & {
 };
 
 export type ListItem = Array<TRow>;
-
-export const defaultInputs: FormValues = {
-    id: 0,
-    rate: 0,
-    buy_rate: 0,
-    sell_rate: 0,
-    order_rate: 0
-};
