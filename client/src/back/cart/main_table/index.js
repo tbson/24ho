@@ -321,7 +321,7 @@ export default ({}: Props) => {
     const events = Service.events(setList);
 
     useEffect(() => {
-        Service.getCartRequest().then(getList);
+        Service.getCartRequest().then(getList).then(Service.requestData);
         Service.listAddressRequest().then(resp => setListAddress(Service.addressesToOptions(resp.data.items)));
         events.subscribe();
         return () => events.unsubscribe();
