@@ -32,4 +32,8 @@ urlpatterns = (
         'rate/',
         include('apps.rate.urls', namespace='rate'),
     ),
+    path(
+        'order/',
+        include('apps.order.urls', namespace='order'),
+    ),
 )

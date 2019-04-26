@@ -3,6 +3,7 @@ import sys
 import uuid
 import magic
 import asyncio
+from enum import Enum
 from PIL import Image
 from rest_framework_jwt.serializers import VerifyJSONWebTokenSerializer
 from django.core.mail import EmailMultiAlternatives
@@ -11,6 +12,19 @@ from django.conf import settings
 
 loop = asyncio.new_event_loop()
 asyncio.set_event_loop(loop)
+
+
+class OrderStatus(Enum):
+    NEW = 1
+    APPROVED = 2
+    DEBT = 3
+    PAID = 4
+    DISPATCHED = 5
+    CN_STORE = 6
+    VN_STORE = 7
+    EXPORTED = 8
+    DONE = 9
+    DISCARD = 10
 
 
 class Tools():
