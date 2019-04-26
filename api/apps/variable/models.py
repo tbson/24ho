@@ -3,6 +3,7 @@ from django.db import models
 
 class VariableManager(models.Manager):
     def _seeding(self, index: int, single: bool = False, save: bool = True) -> models.QuerySet:
+        from apps.variable.serializers import VariableBaseSr
         if index == 0:
             raise Exception('Indext must be start with 1.')
 
@@ -14,7 +15,9 @@ class VariableManager(models.Manager):
             if save is False:
                 return data
 
-            instance, _ = self.get_or_create(uid=data['uid'])
+            instance = VariableBaseSr(data=data)
+            instance.is_valid(raise_exception=True)
+            instance = instance.save()
             return instance
 
         def getListData(index):
