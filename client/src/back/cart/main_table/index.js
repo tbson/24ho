@@ -461,7 +461,6 @@ export const Group = ({data, showForm, onCheckAll, onBulkRemove, children}: Obje
             <td className="right">
                 <button className="btn btn-info btn-block" onClick={() => showForm(data.shop.nick)}>
                     <span className="fas fa-edit" />
-                    &nbsp; Sửa đơn
                 </button>
             </td>
         </tr>
