@@ -88,8 +88,8 @@ class Order(TimeStampedModel):
 
     address = models.ForeignKey(Address, models.SET_NULL, related_name='order', null=True)
 
-    cust_care = models.ForeignKey(Staff, models.SET_NULL, related_name='order_cust_care', null=True)
-    approver = models.ForeignKey(Staff, models.SET_NULL, related_name='order_approver', null=True)
+    cust_care = models.ForeignKey(Staff, models.SET_NULL, related_name='cust_care_orders', null=True)
+    approver = models.ForeignKey(Staff, models.SET_NULL, related_name='approver_orders', null=True)
     approved_date = models.DateTimeField(null=True)
 
     rate = models.IntegerField()

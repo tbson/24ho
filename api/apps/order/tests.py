@@ -3,6 +3,7 @@ from rest_framework.test import APIClient
 from django.test import TestCase
 from .models import Order
 from .serializers import OrderBaseSr
+from apps.address.models import Address
 from utils.helpers.test_helpers import TestHelpers
 # Create your tests here.
 
@@ -123,7 +124,9 @@ class OrderTestCase(TestCase):
         self.assertEqual(Order.objects.getVndTotal(order), 519500)
 
     def test_serializer(self):
+        address = Address.objects._seeding(1, True)
         data = {
+            'address': address.id,
             'rate': 3400,
             'real_rate': 3400,
             'order_fee_factor': 5,

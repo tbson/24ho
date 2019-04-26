@@ -36,4 +36,8 @@ urlpatterns = (
         'order/',
         include('apps.order.urls', namespace='order'),
     ),
+    path(
+        'order-item/',
+        include('apps.order_item.urls', namespace='order_item'),
+    ),
 )
