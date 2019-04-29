@@ -67,7 +67,7 @@ class Address(models.Model):
     objects = AddressManager()
 
     def __str__(self):
-        return '{} - {}'.format(self.area, self.address)
+        return '{} - {}'.format(self.area, self.title)
 
     class Meta:
         db_table = "addresses"
