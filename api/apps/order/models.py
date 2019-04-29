@@ -18,6 +18,9 @@ class OrderManager(models.Manager):
         def getData(i: int) -> dict:
             data = {
                 'address': address.id,
+                'shop_link': "shop_link{}".format(i),
+                'shop_nick': "shop_nick{}".format(i),
+                'site': "site{}".format(i),
                 'rate': 3400,
                 'real_rate': 3300
             }
@@ -87,6 +90,10 @@ class Order(TimeStampedModel):
     )
 
     address = models.ForeignKey(Address, models.SET_NULL, related_name='order', null=True)
+
+    shop_link = models.CharField(max_length=250)
+    shop_nick = models.CharField(max_length=250, blank=True)
+    site = models.CharField(max_length=50)
 
     cust_care = models.ForeignKey(Staff, models.SET_NULL, related_name='cust_care_orders', null=True)
     approver = models.ForeignKey(Staff, models.SET_NULL, related_name='approver_orders', null=True)

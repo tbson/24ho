@@ -1,9 +1,11 @@
 import logging
+import json
 from rest_framework.test import APIClient
 from django.test import TestCase
 from .models import Order
 from .serializers import OrderBaseSr
 from apps.address.models import Address
+from apps.order_item.models import OrderItem
 from utils.helpers.test_helpers import TestHelpers
 # Create your tests here.
 
@@ -40,17 +42,86 @@ class OrderTestCase(TestCase):
         )
         self.assertEqual(response.status_code, 200)
 
-    def test_create(self):
-        item4 = Order.objects._seeding(4, True, False)
+    def test_create_fail(self):
+        self.assertEqual(Order.objects.count(), 3)
+        order = Order.objects._seeding(4, True, False)
+        items = [
+            {
+                'title': "title1",
+                'site': "site1",
+                'quantity': 1,
+                'unit_price': 50.5
+            },
+            {
+                'title': "title2",
+                'url': "url2",
+                'site': "site2",
+                'quantity': 2,
+                'unit_price': 50.5
+            },
+            {
+                'title': "title3",
+                'url': "url3",
+                'site': "site3",
+                'quantity': 3,
+                'unit_price': 50.5
+            }
+        ]
+        payload = {
+            "order": json.dumps(order),
+            "items": json.dumps(items)
+        }
 
         # Add success
         response = self.client.post(
             '/api/v1/order/',
-            item4,
+            payload,
+            format='json'
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(Order.objects.count(), 3)
+        self.assertEqual(OrderItem.objects.count(), 0)
+
+    def test_create_success(self):
+        self.assertEqual(Order.objects.count(), 3)
+        order = Order.objects._seeding(4, True, False)
+        items = [
+            {
+                'title': "title1",
+                'url': "url1",
+                'site': "site1",
+                'quantity': 1,
+                'unit_price': 50.5
+            },
+            {
+                'title': "title2",
+                'url': "url2",
+                'site': "site2",
+                'quantity': 2,
+                'unit_price': 50.5
+            },
+            {
+                'title': "title3",
+                'url': "url3",
+                'site': "site3",
+                'quantity': 3,
+                'unit_price': 50.5
+            }
+        ]
+        payload = {
+            "order": json.dumps(order),
+            "items": json.dumps(items)
+        }
+
+        # Add success
+        response = self.client.post(
+            '/api/v1/order/',
+            payload,
             format='json'
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(Order.objects.count(), 4)
+        self.assertEqual(OrderItem.objects.count(), len(items))
 
     def test_edit(self):
         item3 = Order.objects._seeding(3, True, False)
@@ -127,6 +198,8 @@ class OrderTestCase(TestCase):
         address = Address.objects._seeding(1, True)
         data = {
             'address': address.id,
+            'shop_link': 'link1',
+            'site': 'TAOBAO',
             'rate': 3400,
             'real_rate': 3400,
             'order_fee_factor': 5,

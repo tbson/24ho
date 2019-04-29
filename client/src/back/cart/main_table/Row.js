@@ -32,8 +32,8 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
         r && onRemove({id});
     };
 
-    const {quantity, cny_unit_price, vnd_unit_price, cny_price, vnd_price, rate} = data;
-
+    const {quantity, unit_price, cny_price, vnd_price, rate} = data;
+    const vnd_unit_price = unit_price * rate;
     return (
         <tr>
             <th className="row25">
@@ -42,14 +42,14 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
             <td>
                 <Description {...data} />
             </td>
-            <td className="right">{data.quantity}</td>
+            <td className="right mono">{data.quantity}</td>
             <td>
-                <div className="vnd">{Tools.numberFormat(vnd_unit_price)}</div>
-                <div className="cny">{Tools.numberFormat(cny_unit_price)}</div>
+                <div className="vnd mono">{Tools.numberFormat(vnd_unit_price)}</div>
+                <div className="cny mono">{Tools.numberFormat(unit_price)}</div>
             </td>
             <td>
-                <div className="vnd">{Tools.numberFormat(vnd_price)}</div>
-                <div className="cny">{Tools.numberFormat(cny_price)}</div>
+                <div className="vnd mono">{Tools.numberFormat(vnd_price)}</div>
+                <div className="cny mono">{Tools.numberFormat(cny_price)}</div>
             </td>
             <td>
                 <Note note={data.note} />

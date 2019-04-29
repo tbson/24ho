@@ -16,9 +16,6 @@ class OrderItemManager(models.Manager):
                 'order': order.id,
                 'title': "title{}".format(i),
                 'url': "url{}".format(i),
-                'shop_link': "shop_link{}".format(i),
-                'shop_nick': "shop_nick{}".format(i),
-                'site': "site{}".format(i),
                 'quantity': i,
                 'unit_price': 50.5
             }
@@ -42,11 +39,6 @@ class OrderItem(models.Model):
 
     title = models.CharField(max_length=500)
     url = models.CharField(max_length=500)
-
-    shop_link = models.CharField(max_length=250, blank=True)
-    shop_nick = models.CharField(max_length=250)
-
-    site = models.CharField(max_length=50)
 
     color = models.CharField(max_length=500, blank=True)
     size = models.CharField(max_length=500, blank=True)

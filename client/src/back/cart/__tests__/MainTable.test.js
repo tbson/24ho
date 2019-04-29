@@ -33,17 +33,14 @@ describe('Service.formatCartItem', () => {
             title: 'name1',
             color: 'color1',
             size: 'size1',
-            link: 'pro_link1',
+            url: 'pro_link1',
             image: 'image1',
             shop_link: 'shop_link1',
             shop_nick: 'shop_nick1',
             note: '',
             rate: 3300,
             quantity: 5,
-            cny_unit_price: 12.3,
-            vnd_unit_price: 40590,
-            cny_price: 61.5,
-            vnd_price: 202950
+            unit_price: 12.3
         };
         const output = Service.formatCartItem(item, index);
 
@@ -69,41 +66,17 @@ describe('Service.formatCartItem', () => {
             title: 'name1',
             color: '',
             size: '',
-            link: 'pro_link1',
+            url: 'pro_link1',
             image: 'image1',
             shop_link: 'shop_link1',
             shop_nick: 'shop_nick1',
             note: '',
             rate: 3300,
             quantity: 5,
-            cny_unit_price: 12.3,
-            vnd_unit_price: 40590,
-            cny_price: 61.5,
-            vnd_price: 202950
+            unit_price: 12.3
         };
         const output = Service.formatCartItem(item, index);
 
-        expect(output).toEqual(eput);
-    });
-});
-
-describe('Service.recalculate', () => {
-    it('Normal case', () => {
-        const input = {
-            quantity: 2,
-            cny_unit_price: 1.6,
-            vnd_unit_price: 4500,
-            cny_price: 999,
-            vnd_price: 999
-        };
-        const eput = {
-            quantity: 2,
-            cny_unit_price: 1.6,
-            vnd_unit_price: 4500,
-            cny_price: 3.2,
-            vnd_price: 9000
-        };
-        const output = Service.recalculate(input);
         expect(output).toEqual(eput);
     });
 });
@@ -224,30 +197,51 @@ describe('Service.group', () => {
         const items = [
             {
                 id: 1,
+                title: 'title1',
                 site: 'TMALL',
                 shop_link: 'link1',
                 shop_nick: 'nick1',
+                url: 'link1',
+                image: 'image1',
+                color: 'color1',
+                size: 'size1',
+                rate: 3400,
+                real_rate: 3300,
                 quantity: 4,
-                cny_price: 5.5,
-                vnd_price: 20000
+                unit_price: 5.5,
+                note: 'note1'
             },
             {
                 id: 2,
+                title: 'title2',
                 site: 'TAOBAO',
                 shop_link: 'link2',
                 shop_nick: 'nick2',
-                quantity: 4,
-                cny_price: 5.5,
-                vnd_price: 20000
+                url: 'link2',
+                image: 'image2',
+                color: 'color2',
+                size: 'size2',
+                rate: 3300,
+                real_rate: 3400,
+                quantity: 5,
+                unit_price: 6.5,
+                note: 'note2'
             },
             {
                 id: 3,
+                title: 'title3',
                 site: 'TMALL',
                 shop_link: 'link1',
                 shop_nick: 'nick1',
-                quantity: 4,
-                cny_price: 5.5,
-                vnd_price: 20000
+                url: 'link3',
+                image: 'image3',
+                color: 'color3',
+                size: 'size3',
+                rate: 3300,
+                real_rate: 3500,
+                quantity: 6,
+                unit_price: 7.5,
+                note: 'note3'
             }
         ];
         const orders = {
@@ -256,59 +250,78 @@ describe('Service.group', () => {
         };
         const eput = [
             {
-                shop: {
-                    nick: 'nick1',
-                    link: 'link1',
+                order: {
+                    shop_link: 'link1',
+                    shop_nick: 'nick1',
                     site: 'TMALL',
                     note: 'hello',
                     address: 1,
                     address_title: 'address 1',
-                    quantity: 8,
-                    cny_total: 11,
-                    vnd_total: 40000
+                    rate: 3400,
+                    real_rate: 3500,
+                    quantity: 10,
+                    cny_total: 67,
+                    vnd_total: 227800
                 },
                 items: [
                     {
                         id: 1,
-                        site: 'TMALL',
-                        shop_link: 'link1',
-                        shop_nick: 'nick1',
+                        url: 'link1',
+                        title: 'title1',
+                        color: 'color1',
+                        size: 'size1',
+                        image: 'image1',
+                        rate: 3400,
                         quantity: 4,
-                        cny_price: 5.5,
-                        vnd_price: 20000
+                        unit_price: 5.5,
+                        cny_price: 22,
+                        vnd_price: 74800,
+                        note: 'note1'
                     },
                     {
                         id: 3,
-                        site: 'TMALL',
-                        shop_link: 'link1',
-                        shop_nick: 'nick1',
-                        quantity: 4,
-                        cny_price: 5.5,
-                        vnd_price: 20000
+                        url: 'link3',
+                        title: 'title3',
+                        color: 'color3',
+                        size: 'size3',
+                        image: 'image3',
+                        rate: 3400,
+                        quantity: 6,
+                        unit_price: 7.5,
+                        cny_price: 45,
+                        vnd_price: 153000,
+                        note: 'note3'
                     }
                 ]
             },
             {
-                shop: {
-                    nick: 'nick2',
-                    link: 'link2',
+                order: {
+                    shop_link: 'link2',
+                    shop_nick: 'nick2',
                     site: 'TAOBAO',
                     note: 'world',
                     address: 2,
                     address_title: 'address 2',
-                    quantity: 4,
-                    cny_total: 5.5,
-                    vnd_total: 20000
+                    rate: 3400,
+                    real_rate: 3500,
+                    quantity: 5,
+                    cny_total: 32.5,
+                    vnd_total: 110500
                 },
                 items: [
                     {
                         id: 2,
-                        site: 'TAOBAO',
-                        shop_link: 'link2',
-                        shop_nick: 'nick2',
-                        quantity: 4,
-                        cny_price: 5.5,
-                        vnd_price: 20000
+                        url: 'link2',
+                        title: 'title2',
+                        color: 'color2',
+                        size: 'size2',
+                        image: 'image2',
+                        rate: 3400,
+                        quantity: 5,
+                        unit_price: 6.5,
+                        cny_price: 32.5,
+                        vnd_price: 110500,
+                        note: 'note2'
                     }
                 ]
             }

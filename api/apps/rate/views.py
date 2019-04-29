@@ -70,12 +70,14 @@ class ExposeView(APIView):
 
     def get(self, request, format=None):
         value = settings.DEFAULT_RATE
+        real_value = settings.DEFAULT_REAL_RATE
         try:
             item = Rate.objects.latest('pk')
             value = item.order_rate
+            real_value = item.rate
         except Rate.DoesNotExist:
             try:
                 value = Variable.objects.get(uid='rate').value
             except Variable.DoesNotExist:
                 pass
-        return res({'value': int(value)})
+        return res({'value': int(value), 'real_value': int(real_value)})

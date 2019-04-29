@@ -11,12 +11,17 @@ import OrderForm from '../OrderForm';
 import Row from './Row.js';
 
 type CartGroup = {
-    shop: {
-        nick: string,
-        link: string,
+    order: {
+        shop_nick: string,
+        shop_link: string,
         site: string
     },
     items: Array<Object>
+};
+
+type CartGroupPayload = {
+    order: string,
+    items: string
 };
 
 type Props = {};
@@ -42,6 +47,10 @@ export class Service {
         });
     }
 
+    static sentCartRequest(payload: CartGroupPayload): Promise<Object> {
+        return Tools.apiCall(apiUrls.orderCrud, payload, 'POST');
+    }
+
     static get cartPayload() {
         const payload = {
             items: Service.savedCartItems,
@@ -59,13 +68,10 @@ export class Service {
         const sizetxt = item.sizetxt;
 
         const rate = item.rate;
+        const real_rate = item.real_rate;
         const quantity = item.amount;
 
-        const cny_unit_price = item.price;
-        const vnd_unit_price = cny_unit_price * rate;
-
-        const cny_price = cny_unit_price * quantity;
-        const vnd_price = vnd_unit_price * quantity;
+        const unit_price = item.price;
 
         return {
             id: index + 1,
@@ -73,17 +79,15 @@ export class Service {
             title: item.name.trim(),
             color: colortxt ? colortxt.trim() : '',
             size: sizetxt ? sizetxt.trim() : '',
-            link: item.pro_link,
+            url: item.pro_link,
             image: item.image,
             shop_link: item.shop_link,
             shop_nick: item.shop_nick,
-            note: '',
+            note: item.note || '',
             rate,
+            real_rate,
             quantity,
-            cny_unit_price,
-            vnd_unit_price,
-            cny_price,
-            vnd_price
+            unit_price
         };
     }
 
@@ -104,48 +108,70 @@ export class Service {
         return Tools.getStorageObj('orders');
     }
 
-    static recalculate(item: Object): Object {
-        item.cny_price = item.quantity * item.cny_unit_price;
-        item.vnd_price = item.quantity * item.vnd_unit_price;
-        return item;
+    static calculate(items: Array<Object>): Array<Object> {
+        const rate = items.reduce((result, item) => (item.rate > result ? item.rate : result), 0);
+        const realRate = items.reduce((result, item) => (item.real_rate > result ? item.real_rate : result), 0);
+        return items.map(item => {
+            item.rate = rate;
+            item.real_rate = realRate;
+
+            item.cny_unit_price = item.unit_price;
+            item.vnd_unit_price = item.unit_price * rate;
+
+            item.cny_price = item.quantity * item.cny_unit_price;
+            item.vnd_price = item.cny_price * rate;
+
+            return item;
+        });
     }
 
     static group(items: Array<Object>, orders: Object): Array<CartGroup> {
         const groups = [];
-        for (let item of items) {
+        for (let item of Service.calculate(items)) {
             const group = groups.find(group => {
-                const {nick, link, site} = group.shop;
-                return nick === item.shop_nick && link === item.shop_link && site === item.site;
+                const {shop_link, shop_nick, site} = group.order;
+                return shop_link === item.shop_link && shop_nick === item.shop_nick && site === item.site;
             });
+            const _item = {...item};
+            delete _item.real_rate;
+            delete _item.cny_unit_price;
+            delete _item.vnd_unit_price;
+            delete _item.shop_link;
+            delete _item.shop_nick;
+            delete _item.site;
             if (!group) {
                 groups.push({
-                    shop: {
-                        nick: item.shop_nick,
-                        link: item.shop_link,
+                    order: {
+                        shop_nick: item.shop_nick,
+                        shop_link: item.shop_link,
                         site: item.site,
                         note: '',
                         address: 0,
                         address_title: '',
+                        rate: item.rate,
+                        real_rate: item.real_rate,
                         quantity: 0,
                         cny_total: 0,
                         vnd_total: 0
                     },
-                    items: [item]
+                    items: [_item]
                 });
             } else {
-                group.items.push(item);
+                group.items.push(_item);
             }
         }
         return groups.map(group => {
-            group.shop.cny_total = group.items.reduce((total, item) => total + item.cny_price, 0);
-            group.shop.vnd_total = group.items.reduce((total, item) => total + item.vnd_price, 0);
-            group.shop.quantity = group.items.reduce((total, item) => total + item.quantity, 0);
-            const order = orders[group.shop.nick] || {};
+            group.order.cny_total = parseFloat(
+                group.items.reduce((total, item) => total + item.cny_price, 0).toFixed(3)
+            );
+            group.order.vnd_total = parseInt(group.items.reduce((total, item) => total + item.vnd_price, 0));
+            group.order.quantity = parseInt(group.items.reduce((total, item) => total + item.quantity, 0));
+            const order = orders[group.order.shop_nick] || {};
             const {note, address, address_title} = order;
-            if (note) group.shop.note = note;
+            if (note) group.order.note = note;
             if (address) {
-                group.shop.address = address;
-                group.shop.address_title = address_title;
+                group.order.address = address;
+                group.order.address_title = address_title;
             }
             return group;
         });
@@ -176,6 +202,7 @@ export class Service {
                 lastId++;
             } else {
                 oldItems[index].quantity += newItem.quantity;
+                if (newItem.note) oldItems[index].note = newItem.note;
             }
         }
         return [...oldItems, ...realNewItems];
@@ -210,6 +237,7 @@ export class Service {
     }
 
     static addressesToOptions(list: Array<Object>): Array<Object> {
+        console.log(list);
         return list.map(item => ({value: item.id, label: `${item.uid} - ${item.title}`}));
     }
 
@@ -251,7 +279,7 @@ export default ({}: Props) => {
 
     const onChange = (data: TRow, type: string) => {
         toggleForm(false);
-        const items = listAction(Service.recalculate(data))[type]();
+        const items = listAction(data)[type]();
         Service.savedCartItems = items;
         setList(items);
         Service.syncCartRequest();
@@ -318,10 +346,29 @@ export default ({}: Props) => {
         setList(filteredList);
     };
 
+    const sendOrder = (data: Object) => {
+        const payload = {
+            order: JSON.stringify(data.order),
+            items: JSON.stringify(data.items)
+        };
+        Service.sentCartRequest(payload).then(resp => {
+            if (resp.ok) {
+                onCheckAll({shop_nick: data.order.shop_nick});
+                onBulkRemove(data.order.shop_nick);
+                Service.syncCartRequest();
+                Tools.popMessage('Order created successfully!');
+            } else {
+                Tools.popMessage('Can not create order.', 'error');
+            }
+        });
+    };
+
     const events = Service.events(setList);
 
     useEffect(() => {
-        Service.getCartRequest().then(getList).then(Service.requestData);
+        Service.getCartRequest()
+            .then(getList)
+            .then(Service.requestData);
         Service.listAddressRequest().then(resp => setListAddress(Service.addressesToOptions(resp.data.items)));
         events.subscribe();
         return () => events.unsubscribe();
@@ -353,9 +400,10 @@ export default ({}: Props) => {
                     <Group
                         data={group}
                         key={groupKey}
+                        sendOrder={sendOrder}
                         showForm={showOrderForm}
-                        onBulkRemove={onBulkRemove(group.shop.nick)}
-                        onCheckAll={onCheckAll({shop_nick: group.shop.nick})}>
+                        onBulkRemove={onBulkRemove(group.order.shop_nick)}
+                        onCheckAll={onCheckAll({shop_nick: group.order.shop_nick})}>
                         {group.items.map((data, key) => (
                             <Row
                                 className="table-row"
@@ -403,25 +451,26 @@ export default ({}: Props) => {
 
 type GroupType = {
     data: Object,
+    sendOrder: Function,
     onCheckAll: Function,
     onBulkRemove: Function,
     showForm: Function,
     children: React.Node
 };
-export const Group = ({data, showForm, onCheckAll, onBulkRemove, children}: Object) => (
+export const Group = ({data, sendOrder, showForm, onCheckAll, onBulkRemove, children}: Object) => (
     <tbody>
         <tr>
             <td colSpan={99} className="white-bg" />
         </tr>
         <tr>
-            <td className="shop-header">
+            <td className="order-header">
                 <span className="fas fa-check green pointer" onClick={onCheckAll} />
             </td>
-            <td colSpan={99} className="shop-header">
-                <strong>[{data.shop.site}]</strong>
+            <td colSpan={99} className="order-header">
+                <strong>[{data.order.site}]</strong>
                 <span>&nbsp;/&nbsp;</span>
-                <a href={data.shop.link} target="_blank">
-                    <strong>{data.shop.nick}</strong>
+                <a href={data.order.shop_link} target="_blank">
+                    <strong>{data.order.shop_nick}</strong>
                 </a>
             </td>
         </tr>
@@ -431,35 +480,39 @@ export const Group = ({data, showForm, onCheckAll, onBulkRemove, children}: Obje
                 <span className="fas fa-trash-alt text-danger pointer bulk-remove-button" onClick={onBulkRemove} />
             </td>
             <td>
-                <button className="btn btn-success" disabled={!data.shop.address} onClick={() => {}}>
+                <button
+                    className="btn btn-success"
+                    type="button"
+                    disabled={!data.order.address}
+                    onClick={() => sendOrder(data)}>
                     <span className="fas fa-check" />
                     &nbsp; Tạo đơn
                 </button>
             </td>
-            <td className="right">
-                <strong>{data.shop.quantity}</strong>
+            <td className="right mono">
+                <strong>{data.order.quantity}</strong>
             </td>
             <td />
             <td>
-                <div className="vnd">
-                    <strong>{Tools.numberFormat(data.shop.vnd_total)}</strong>
+                <div className="vnd mono">
+                    <strong>{Tools.numberFormat(data.order.vnd_total)}</strong>
                 </div>
-                <div className="cny">
-                    <strong>{Tools.numberFormat(data.shop.cny_total)}</strong>
+                <div className="cny mono">
+                    <strong>{Tools.numberFormat(data.order.cny_total)}</strong>
                 </div>
             </td>
             <td>
                 <div>
                     <strong>Address: </strong>
-                    {data.shop.address_title || <em className="red">Chưa có địa chỉ nhận hàng...</em>}
+                    {data.order.address_title || <em className="red">Chưa có địa chỉ nhận hàng...</em>}
                 </div>
                 <div>
                     <strong>Note: </strong>
-                    {data.shop.note || <em>Chưa có ghi chú...</em>}
+                    {data.order.note || <em>Chưa có ghi chú...</em>}
                 </div>
             </td>
             <td className="right">
-                <button className="btn btn-info btn-block" onClick={() => showForm(data.shop.nick)}>
+                <button className="btn btn-info btn-block" onClick={() => showForm(data.order.shop_nick)}>
                     <span className="fas fa-edit" />
                 </button>
             </td>

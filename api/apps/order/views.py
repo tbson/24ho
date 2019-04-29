@@ -1,12 +1,13 @@
+import json
+from django.db import transaction
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import action
 from rest_framework.viewsets import (GenericViewSet, )
 from rest_framework import status
 from .models import Order
-from .serializers import (
-    OrderBaseSr,
-)
+from .serializers import OrderBaseSr
+from apps.order_item.serializers import OrderItemBaseSr
 from utils.common_classes.custom_permission import CustomPermission
 from utils.helpers.res_tools import res
 
@@ -29,12 +30,24 @@ class OrderViewSet(GenericViewSet):
         serializer = OrderBaseSr(obj)
         return res(serializer.data)
 
+    @transaction.atomic
     @action(methods=['post'], detail=True)
     def add(self, request):
-        serializer = OrderBaseSr(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-        return res(serializer.data)
+        payload = request.data
+        order = json.loads(payload['order'])
+        order_items = json.loads(payload['items'])
+
+        order_sr = OrderBaseSr(data=order)
+        order_sr.is_valid(raise_exception=True)
+        order = order_sr.save()
+
+        for item in order_items:
+            item['order'] = order.id
+            order_item_sr = OrderItemBaseSr(data=item)
+            order_item_sr.is_valid(raise_exception=True)
+            order_item_sr.save()
+
+        return res(order_sr.data)
 
     @action(methods=['put'], detail=True)
     def change(self, request, pk=None):

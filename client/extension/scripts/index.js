@@ -54,10 +54,11 @@ window.addEventListener(
 // Lấy tỉ giá ngoại tệ
 fetch(config.urlGetRate)
     .then(resp => resp.json())
-    .then(({value: newRate}) => {
+    .then(({value: newRate, real_value: realRate}) => {
         newRate = parseInt(newRate);
         if (newRate > 0) {
             config.rate = newRate;
+            config.realRate = realRate;
         }
     });
 
@@ -436,6 +437,7 @@ function addToCart(ev) {
         created: new Date(),
         updated: new Date(),
         rate: config.rate,
+        real_rate: config.realRate,
         name: proName,
         pro_link: changeLink(window.location.href),
         image: changeLink(correctLink($(rules[currentDomain].crawle.image).attr('src'))),
@@ -516,6 +518,7 @@ function addToCartOf1688() {
                 proId: parseInt(ids[1], 10),
                 skullId: parseInt(ids[0], 10),
                 rate: config.rate,
+                real_rate: config.realRate,
                 pro_link: changeLink(window.location.href),
                 image: changeLink(prd.img),
                 name: proName,

@@ -15,6 +15,12 @@ const rawApiUrls = [
         endpoints: {
             crud: ''
         }
+    },
+    {
+        controller: 'order',
+        endpoints: {
+            crud: ''
+        }
     }
 ];
 
@@ -55,8 +61,7 @@ export type FormValues = {
     rate: number,
     quantity: number,
 
-    cny_unit_price: number,
-    vnd_unit_price: number,
+    unit_price: number,
 
     cny_price: number,
     vnd_price: number,

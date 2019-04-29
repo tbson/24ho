@@ -1,11 +1,16 @@
 html {
-  font-size: 13px;
+    font-size: 13px;
 }
 /*
 input:invalid {
     border-color: #dc3545;
 }
 */
+
+.mono {
+    font-family: 'Lucida Console', monospace;
+    font-weight: bold;
+}
 
 .transparent {
     background-color: transparent !important;
@@ -44,18 +49,18 @@ input:invalid {
 }
 
 .no-select {
-  -webkit-user-select: none;  /* Chrome all / Safari all */
-  -moz-user-select: none;     /* Firefox all */
-  -ms-user-select: none;      /* IE 10+ */
-  user-select: none;          /* Likely future */
+    -webkit-user-select: none; /* Chrome all / Safari all */
+    -moz-user-select: none; /* Firefox all */
+    -ms-user-select: none; /* IE 10+ */
+    user-select: none; /* Likely future */
 }
 
 .white-bg {
     background-color: white;
 }
 
-.shop-header {
-    background-color: #F5F5DC;
+.order-header {
+    background-color: #f5f5dc;
 }
 
 .button-success,
