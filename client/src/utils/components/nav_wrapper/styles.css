@@ -27,6 +27,24 @@ body {
     cursor: pointer;
 }
 
+.nav-toggler {
+    position: absolute;
+    top: 0;
+    left: 10px;
+    font-size: 31px;
+    line-height: 37px;
+    cursor: pointer;
+}
+
+.nav-toggler-small {
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-size: 13px;
+    line-height: 37px;
+    cursor: pointer;
+}
+
 #page-content-wrapper .container-fluid {
     padding: 0;
 }
