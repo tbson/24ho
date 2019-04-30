@@ -1,6 +1,5 @@
 import json
 from django.db import transaction
-from django.http import Http404
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import action
 from rest_framework.viewsets import (GenericViewSet, )
@@ -63,12 +62,12 @@ class OrderViewSet(GenericViewSet):
         obj.delete()
         return res(status=status.HTTP_204_NO_CONTENT)
 
+    @transaction.atomic
     @action(methods=['delete'], detail=False)
     def delete_list(self, request):
-        pk = self.request.query_params.get('ids', '')
-        pk = [int(pk)] if pk.isdigit() else map(lambda x: int(x), pk.split(','))
-        result = Order.objects.filter(pk__in=pk)
-        if result.count() == 0:
-            raise Http404
-        result.delete()
+        pks = self.request.query_params.get('ids', '')
+        pks = [int(pks)] if pks.isdigit() else map(lambda x: int(x), pks.split(','))
+        for pk in pks:
+            obj = get_object_or_404(Order, pk=pk)
+            obj.delete()
         return res(status=status.HTTP_204_NO_CONTENT)

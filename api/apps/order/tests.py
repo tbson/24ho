@@ -142,7 +142,15 @@ class OrderTestCase(TestCase):
         )
         self.assertEqual(response.status_code, 200)
 
-    def test_delete(self):
+    def test_delete_fail(self):
+        # Remove list fail
+        response = self.client.delete(
+            "/api/v1/order/?ids={}".format(','.join([str(self.items[1].pk), str(self.items[2].pk), '99']))
+        )
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(Order.objects.count(), 3)
+
+    def test_delete_success(self):
         # Remove not exist
         response = self.client.delete(
             "/api/v1/order/{}".format(0)
