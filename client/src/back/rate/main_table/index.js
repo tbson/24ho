@@ -92,10 +92,10 @@ export default ({}: Props) => {
                             <span className="fas fa-check text-info pointer check-all-button" onClick={onCheckAll} />
                         </th>
                         <th scope="col">Ngày</th>
-                        <th scope="col">Mua vào</th>
-                        <th scope="col">Chuyển khoản</th>
-                        <th scope="col">Nhờ thanh toán</th>
-                        <th scope="col">Order</th>
+                        <th scope="col" className="right">Mua vào</th>
+                        <th scope="col" className="right">Chuyển khoản</th>
+                        <th scope="col" className="right">Nhờ thanh toán</th>
+                        <th scope="col" className="right">Order</th>
                         <th scope="col" style={{padding: 8}} className="row80">
                             <button className="btn btn-primary btn-sm btn-block add-button" onClick={() => showForm(0)}>
                                 <span className="fas fa-plus" />
