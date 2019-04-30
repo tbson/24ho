@@ -723,10 +723,14 @@ export default class Tools {
         return {...data, ...user_data};
     }
 
+    static isBlank(input: any): boolean {
+        return typeof input !== 'number' && !input;
+    }
+
     static removeEmptyKey(obj: Object = {}): Object {
         for (let key in obj) {
             const value = obj[key];
-            if (typeof value !== 'number' && !value) delete obj[key];
+            Tools.isBlank(value) && delete obj[key];
         }
         return obj;
     }
@@ -748,5 +752,5 @@ export default class Tools {
             hidden = 'webkitHidden';
         }
         return {visibilityChange, hidden};
-    }
+    } 
 }

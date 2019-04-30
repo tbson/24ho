@@ -48,7 +48,10 @@ export type TRow = DbRow & {
     sale_name?: string,
     cust_care: number,
     cust_care_name?: string,
-    phone: string
+    phone: string,
+    order_fee_factor: number,
+    delivery_fee_unit_price: number,
+    deposit_factor: number
 };
 
 export type ListItem = Array<TRow>;

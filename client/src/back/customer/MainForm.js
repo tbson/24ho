@@ -22,18 +22,36 @@ export class Service {
         password: '',
         phone: '',
         company: '',
+        order_fee_factor: 10,
+        delivery_fee_unit_price: 0,
+        deposit_factor: 50,
+        complaint_days: 2,
         sale: null,
         cust_care: null,
         is_lock: false
     };
 
-    static validate({username, email, first_name, last_name, phone}: Object): Object {
+    static validate({
+        username,
+        email,
+        first_name,
+        last_name,
+        phone,
+        order_fee_factor,
+        delivery_fee_unit_price,
+        deposit_factor,
+        complaint_days
+    }: Object): Object {
         const errors = {
             username: !username && 'Required',
             email: !email && 'Required',
             first_name: !first_name && 'Required',
             last_name: !last_name && 'Required',
-            phone: !phone && 'Required'
+            phone: !phone && 'Required',
+            order_fee_factor: Tools.isBlank(order_fee_factor) && 'Required',
+            delivery_fee_unit_price: Tools.isBlank(delivery_fee_unit_price) && 'Required',
+            deposit_factor: Tools.isBlank(deposit_factor) && 'Required',
+            complaint_days: Tools.isBlank(complaint_days) && 'Required'
         };
         return Tools.removeEmptyKey(errors);
     }
@@ -144,6 +162,20 @@ export default ({id, listSale, listCustCare, open, close, onChange, children, su
                                 <SelectInput name="cust_care" label="NV chăm sóc" options={listCustCare} />
                             </div>
                         </div>
+
+                        <div className="row">
+                            <div className="col">
+                                <TextInput name="order_fee_factor" label="Phí đặt hàng (%)" />
+                            </div>
+                            <div className="col">
+                                <TextInput name="delivery_fee_unit_price" label="Đơn giá vận chuyển (VND)" />
+                            </div>
+                            <div className="col">
+                                <TextInput name="deposit_factor" label="Hệ số cọc (%)" />
+                            </div>
+                        </div>
+
+                        <TextInput name="complaint_days" label="Hạn khiếu nại (ngày)" />
 
                         <CheckInput name="is_lock" label="Khoá" />
 

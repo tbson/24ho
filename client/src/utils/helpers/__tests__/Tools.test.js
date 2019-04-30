@@ -1169,6 +1169,39 @@ describe('prepareUserData', () => {
     });
 });
 
+describe('isBlank', () => {
+    it('undefined', () => {
+        const input = undefined;
+        const eput = true;
+        const output = Tools.isBlank(input);
+        expect(eput).toEqual(output);
+    });
+    it('null', () => {
+        const input = null;
+        const eput = true;
+        const output = Tools.isBlank(input);
+        expect(eput).toEqual(output);
+    });
+    it('blank', () => {
+        const input = '';
+        const eput = true;
+        const output = Tools.isBlank(input);
+        expect(eput).toEqual(output);
+    });
+    it('zero', () => {
+        const input = 0;
+        const eput = false;
+        const output = Tools.isBlank(input);
+        expect(eput).toEqual(output);
+    });
+    it('nonzero', () => {
+        const input = 1;
+        const eput = false;
+        const output = Tools.isBlank(input);
+        expect(eput).toEqual(output);
+    });
+});
+
 describe('removeEmptyKey', () => {
     it('Normal case', () => {
         const input = {

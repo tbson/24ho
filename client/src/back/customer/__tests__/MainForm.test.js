@@ -174,14 +174,48 @@ describe('Service.validate', () => {
             first_name: '',
             last_name: '',
             password: '',
-            phone: ''
+            phone: '',
+            order_fee_factor: null,
+            delivery_fee_unit_price: null,
+            deposit_factor: null,
+            complaint_days: null
         };
         const eput = {
             email: 'Required',
             username: 'Required',
             first_name: 'Required',
             last_name: 'Required',
-            phone: 'Required'
+            phone: 'Required',
+            order_fee_factor: 'Required',
+            delivery_fee_unit_price: 'Required',
+            deposit_factor: 'Required',
+            complaint_days: 'Required'
+        };
+        const output = Service.validate(values);
+        expect(output).toEqual(eput);
+    });
+
+    test('All empty with some zeroes', async () => {
+        const values = {
+            email: '',
+            username: '',
+            first_name: '',
+            last_name: '',
+            password: '',
+            phone: '',
+            order_fee_factor: 0,
+            delivery_fee_unit_price: null,
+            deposit_factor: null,
+            complaint_days: 0
+        };
+        const eput = {
+            email: 'Required',
+            username: 'Required',
+            first_name: 'Required',
+            last_name: 'Required',
+            phone: 'Required',
+            delivery_fee_unit_price: 'Required',
+            deposit_factor: 'Required'
         };
         const output = Service.validate(values);
         expect(output).toEqual(eput);

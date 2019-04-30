@@ -134,6 +134,13 @@ input:invalid {
     content: ' ₫';
 }
 
+.percent {
+    text-align: right;
+}
+.percent::after {
+    content: '%';
+}
+
 .cny {
     text-align: right;
 }

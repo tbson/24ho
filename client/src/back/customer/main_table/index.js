@@ -140,6 +140,9 @@ export default ({}: Props) => {
                         <th scope="col">Họ và tên</th>
                         <th scope="col">NV mua hàng</th>
                         <th scope="col">NV chăm sóc</th>
+                        <th scope="col" className="right">Phí order</th>
+                        <th scope="col" className="right">Đ.giá v.chuyển</th>
+                        <th scope="col" className="right">Hệ số cọc</th>
                         <th scope="col">Trạng thái</th>
                         <th scope="col" style={{padding: 8}} className="row80">
                             <button className="btn btn-primary btn-sm btn-block add-button" onClick={() => showForm(0)}>
