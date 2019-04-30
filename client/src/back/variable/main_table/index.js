@@ -139,9 +139,8 @@ export default ({}: Props) => {
             </table>
 
             <MainForm id={modalId} open={formOpen.main} close={() => toggleForm(false)} onChange={onChange}>
-                <button type="button" className="btn btn-warning" action="close" onClick={() => toggleForm(false)}>
-                    <span className="fas fa-times" />
-                    &nbsp;Cancel
+                <button type="button" className="btn btn-default" action="close" onClick={() => toggleForm(false)}>
+                    Cancel
                 </button>
             </MainForm>
         </div>

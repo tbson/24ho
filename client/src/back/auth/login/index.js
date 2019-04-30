@@ -56,9 +56,8 @@ export const Login = ({history}: Props) => {
                 </div>
             </div>
             <ResetPwdForm open={formOpen.resetPwd} close={() => toggleForm(false)} onChange={onResetPwd}>
-                <button type="button" className="btn btn-warning" action="close" onClick={() => toggleForm(false)}>
-                    <span className="fas fa-times" />
-                    &nbsp;Cancel
+                <button type="button" className="btn btn-default" action="close" onClick={() => toggleForm(false)}>
+                    Cancel
                 </button>
             </ResetPwdForm>
         </>

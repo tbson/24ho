@@ -79,9 +79,8 @@ export const Profile = () => {
             </div>
 
             <ProfileForm open={formOpen.profile} close={() => toggleForm(false)} onChange={onChangeProfile}>
-                <button type="button" className="btn btn-warning" action="close" onClick={() => toggleForm(false)}>
-                    <span className="fas fa-times" />
-                    &nbsp;Cancel
+                <button type="button" className="btn btn-default" action="close" onClick={() => toggleForm(false)}>
+                    Cancel
                 </button>
             </ProfileForm>
 
@@ -92,11 +91,10 @@ export const Profile = () => {
                 onChange={onChangePwd}>
                 <button
                     type="button"
-                    className="btn btn-warning"
+                    className="btn btn-default"
                     action="close"
                     onClick={() => toggleForm(false, 'changePwd')}>
-                    <span className="fas fa-times" />
-                    &nbsp;Cancel
+                    Cancel
                 </button>
             </ChangePwdForm>
         </NavWrapper>
