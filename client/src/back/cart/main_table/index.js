@@ -47,7 +47,7 @@ export class Service {
         });
     }
 
-    static sentCartRequest(payload: CartGroupPayload): Promise<Object> {
+    static sendCartRequest(payload: CartGroupPayload): Promise<Object> {
         return Tools.apiCall(apiUrls.orderCrud, payload, 'POST');
     }
 
@@ -237,7 +237,6 @@ export class Service {
     }
 
     static addressesToOptions(list: Array<Object>): Array<Object> {
-        console.log(list);
         return list.map(item => ({value: item.id, label: `${item.uid} - ${item.title}`}));
     }
 
@@ -305,19 +304,21 @@ export default ({}: Props) => {
         Service.syncCartRequest();
     };
 
+    const removeItemsAndSave = (ids: Array<number>) => {
+        const items = listAction({ids}).bulkRemove();
+        Service.savedCartItems = items;
+        Service.savedOrderList = Service.updateSavedOrderList(items, Service.savedOrderList);
+        setList(items);
+        setListOrder(Service.savedOrderList);
+        Service.syncCartRequest();
+    };
+
     const onBulkRemove = (shop_nick: string) => () => {
         const ids = ListTools.getChecked(list.filter(item => item.shop_nick === shop_nick));
         if (!ids.length) return;
 
         const r = confirm(ListTools.getDeleteMessage(ids.length));
-        if (r) {
-            const items = listAction({ids}).bulkRemove();
-            Service.savedCartItems = items;
-            Service.savedOrderList = Service.updateSavedOrderList(items, Service.savedOrderList);
-            setList(items);
-            setListOrder(Service.savedOrderList);
-            Service.syncCartRequest();
-        }
+        r && removeItemsAndSave(ids);
     };
 
     const showForm = (id: number) => {
@@ -351,11 +352,14 @@ export default ({}: Props) => {
             order: JSON.stringify(data.order),
             items: JSON.stringify(data.items)
         };
-        Service.sentCartRequest(payload).then(resp => {
+        Service.sendCartRequest(payload).then(resp => {
             if (resp.ok) {
-                onCheckAll({shop_nick: data.order.shop_nick});
-                onBulkRemove(data.order.shop_nick);
-                Service.syncCartRequest();
+                const ids = list
+                    .filter(item => {
+                        return item.shop_nick === data.order.shop_nick;
+                    })
+                    .map(item => item.id);
+                removeItemsAndSave(ids);
                 Tools.popMessage('Order created successfully!');
             } else {
                 Tools.popMessage('Can not create order.', 'error');
@@ -373,6 +377,8 @@ export default ({}: Props) => {
         events.subscribe();
         return () => events.unsubscribe();
     }, []);
+
+    const groups = Service.group(list, listOrder);
 
     return (
         <div>
@@ -396,26 +402,34 @@ export default ({}: Props) => {
                     </tr>
                 </tbody>
 
-                {Service.group(list, listOrder).map((group, groupKey) => (
-                    <Group
-                        data={group}
-                        key={groupKey}
-                        sendOrder={sendOrder}
-                        showForm={showOrderForm}
-                        onBulkRemove={onBulkRemove(group.order.shop_nick)}
-                        onCheckAll={onCheckAll({shop_nick: group.order.shop_nick})}>
-                        {group.items.map((data, key) => (
-                            <Row
-                                className="table-row"
-                                data={data}
-                                key={`${groupKey}${key}`}
-                                onCheck={onCheck}
-                                onRemove={onRemove}
-                                showForm={showForm}
-                            />
-                        ))}
-                    </Group>
-                ))}
+                {groups.length ? (
+                    groups.map((group, groupKey) => (
+                        <Group
+                            data={group}
+                            key={groupKey}
+                            sendOrder={sendOrder}
+                            showForm={showOrderForm}
+                            onBulkRemove={onBulkRemove(group.order.shop_nick)}
+                            onCheckAll={onCheckAll({shop_nick: group.order.shop_nick})}>
+                            {group.items.map((data, key) => (
+                                <Row
+                                    className="table-row"
+                                    data={data}
+                                    key={`${groupKey}${key}`}
+                                    onCheck={onCheck}
+                                    onRemove={onRemove}
+                                    showForm={showForm}
+                                />
+                            ))}
+                        </Group>
+                    ))
+                ) : (
+                    <tbody>
+                        <tr>
+                            <td colSpan={99}>Không có sản phẩm nào.</td>
+                        </tr>
+                    </tbody>
+                )}
             </table>
 
             <MainForm
