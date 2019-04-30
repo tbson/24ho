@@ -245,8 +245,22 @@ describe('Service.group', () => {
             }
         ];
         const orders = {
-            nick1: {note: 'hello', address: 1, address_title: 'address 1'},
-            nick2: {note: 'world', address: 2, address_title: 'address 2'}
+            nick1: {
+                note: 'hello',
+                address: 1,
+                address_title: 'address 1',
+                count_check: true,
+                wooden_box: false,
+                shockproof: true
+            },
+            nick2: {
+                note: 'world',
+                address: 2,
+                address_title: 'address 2',
+                count_check: false,
+                wooden_box: false,
+                shockproof: false
+            }
         };
         const eput = [
             {
@@ -257,6 +271,9 @@ describe('Service.group', () => {
                     note: 'hello',
                     address: 1,
                     address_title: 'address 1',
+                    count_check: true,
+                    wooden_box: false,
+                    shockproof: true,
                     rate: 3400,
                     real_rate: 3500,
                     quantity: 10,
@@ -302,6 +319,9 @@ describe('Service.group', () => {
                     note: 'world',
                     address: 2,
                     address_title: 'address 2',
+                    count_check: false,
+                    wooden_box: false,
+                    shockproof: false,
                     rate: 3400,
                     real_rate: 3500,
                     quantity: 5,

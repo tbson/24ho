@@ -95,6 +95,10 @@ class Order(TimeStampedModel):
     shop_nick = models.CharField(max_length=250, blank=True)
     site = models.CharField(max_length=50)
 
+    count_check = models.BooleanField(default=False)
+    wooden_box = models.BooleanField(default=False)
+    shockproof = models.BooleanField(default=False)
+
     cust_care = models.ForeignKey(Staff, models.SET_NULL, related_name='cust_care_orders', null=True)
     approver = models.ForeignKey(Staff, models.SET_NULL, related_name='approver_orders', null=True)
     approved_date = models.DateTimeField(null=True)

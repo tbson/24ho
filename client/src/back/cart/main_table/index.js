@@ -5,7 +5,7 @@ import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
 import {apiUrls} from '../_data';
 import type {TRow, DbRow, ListItem, FormOpenType, FormOpenKeyType} from '../_data';
-import {Pagination, SearchInput} from 'src/utils/components/TableUtils';
+import {Pagination, SearchInput, BoolOutput} from 'src/utils/components/TableUtils';
 import MainForm from '../MainForm';
 import OrderForm from '../OrderForm';
 import Row from './Row.js';
@@ -146,6 +146,9 @@ export class Service {
                         shop_link: item.shop_link,
                         site: item.site,
                         note: '',
+                        count_check: false,
+                        wooden_box: false,
+                        shockproof: false,
                         address: 0,
                         address_title: '',
                         rate: item.rate,
@@ -167,12 +170,15 @@ export class Service {
             group.order.vnd_total = parseInt(group.items.reduce((total, item) => total + item.vnd_price, 0));
             group.order.quantity = parseInt(group.items.reduce((total, item) => total + item.quantity, 0));
             const order = orders[group.order.shop_nick] || {};
-            const {note, address, address_title} = order;
+            const {note, address, address_title, count_check, wooden_box, shockproof} = order;
             if (note) group.order.note = note;
             if (address) {
                 group.order.address = address;
                 group.order.address_title = address_title;
             }
+            group.order.count_check = count_check || false;
+            group.order.wooden_box = wooden_box || false;
+            group.order.shockproof = shockproof || false;
             return group;
         });
     }
@@ -438,7 +444,7 @@ export default ({}: Props) => {
                 open={formOpen.main}
                 close={() => toggleForm(false)}
                 onChange={onChange}>
-                <button type="button" className="btn btn-default" action="close" onClick={() => toggleForm(false)}>
+                <button type="button" className="btn btn-light" action="close" onClick={() => toggleForm(false)}>
                     Cancel
                 </button>
             </MainForm>
@@ -451,7 +457,7 @@ export default ({}: Props) => {
                 onChange={onOrderChange}>
                 <button
                     type="button"
-                    className="btn btn-default"
+                    className="btn btn-light"
                     action="close"
                     onClick={() => toggleForm(false, 'order')}>
                     Cancel
@@ -515,11 +521,37 @@ export const Group = ({data, sendOrder, showForm, onCheckAll, onBulkRemove, chil
             </td>
             <td>
                 <div>
-                    <strong>Address: </strong>
+                    <strong>Địa chỉ: </strong>
                     {data.order.address_title || <em className="red">Chưa có địa chỉ nhận hàng...</em>}
                 </div>
+                <hr />
+                <div className="row">
+                    <div className="col-sm">
+                        <strong>Kiểm đếm: </strong>
+                    </div>
+                    <div className="col-sm">
+                        <BoolOutput value={data.order.count_check} />
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col-sm">
+                        <strong>Đóng gỗ: </strong>
+                    </div>
+                    <div className="col-sm">
+                        <BoolOutput value={data.order.wooden_box} />
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col-sm">
+                        <strong>Chống sốc: </strong>
+                    </div>
+                    <div className="col-sm">
+                        <BoolOutput value={data.order.shockproof} />
+                    </div>
+                </div>
+                <hr />
                 <div>
-                    <strong>Note: </strong>
+                    <strong>Ghi chú: </strong>
                     {data.order.note || <em>Chưa có ghi chú...</em>}
                 </div>
             </td>
