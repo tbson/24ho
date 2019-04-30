@@ -193,7 +193,7 @@ export default ({}: Props) => {
                 open={formOpen.main}
                 close={() => toggleForm(false)}
                 onChange={onChange}>
-                <button type="button" className="btn btn-default" action="close" onClick={() => toggleForm(false)}>
+                <button type="button" className="btn btn-light" action="close" onClick={() => toggleForm(false)}>
                     Cancel
                 </button>
             </MainForm>

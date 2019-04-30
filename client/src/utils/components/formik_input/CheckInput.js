@@ -27,7 +27,7 @@ export default ({name, label}: Props) => {
                     );
                 }}
             </Field>
-            <Label name={name} label={label} className="form-check-label" />
+            <Label name={name} label={label} className="form-check-label no-select" />
             <ErrorMessage name={name} className="red" component="div" />
         </div>
     );

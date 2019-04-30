@@ -56,7 +56,7 @@ export const Login = ({history}: Props) => {
                 </div>
             </div>
             <ResetPwdForm open={formOpen.resetPwd} close={() => toggleForm(false)} onChange={onResetPwd}>
-                <button type="button" className="btn btn-default" action="close" onClick={() => toggleForm(false)}>
+                <button type="button" className="btn btn-light" action="close" onClick={() => toggleForm(false)}>
                     Cancel
                 </button>
             </ResetPwdForm>

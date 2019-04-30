@@ -8,13 +8,18 @@ import type {SelectOptions} from 'src/utils/helpers/Tools';
 import {apiUrls} from './_data';
 import TextInput from 'src/utils/components/formik_input/TextInput';
 import SelectInput from 'src/utils/components/formik_input/SelectInput';
+import CheckInput from 'src/utils/components/formik_input/CheckInput';
 import DefaultModal from 'src/utils/components/modal/DefaultModal';
 import ButtonsBar from 'src/utils/components/form/ButtonsBar';
 import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
 
 export class Service {
     static initialValues = {
-        note: ''
+        address: null,
+        note: '',
+        count_check: false,
+        wooden_box: false,
+        shockproof: false
     };
 
     static validate({quantity}: Object): Object {
@@ -77,6 +82,9 @@ export default ({id, listOrder, listAddress, open, close, onChange, children, su
                     <Form>
                         <SelectInput name="address" label="Address" options={listAddress} required={true} />
                         <TextInput name="note" label="Note" autoFocus={true} />
+                        <CheckInput name="count_check" label="Kiểm đếm" />
+                        <CheckInput name="wooden_box" label="Đóng gỗ" />
+                        <CheckInput name="shockproof" label="Chống sốc" />
                         <FormLevelErrMsg errors={errors.detail} />
                         <ButtonsBar children={children} submitTitle={submitTitle} onClick={onClick(handleSubmit)} />
                     </Form>
