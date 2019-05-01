@@ -52,6 +52,7 @@ PROJECT_APPS = [
     'apps.rate',
     'apps.order',
     'apps.order_item',
+    'apps.order_fee',
     'apps.sr',
 ]
 
