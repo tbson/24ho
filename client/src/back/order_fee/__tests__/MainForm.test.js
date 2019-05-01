@@ -3,6 +3,7 @@ import Adapter from 'enzyme-adapter-react-16';
 import React from 'react';
 import {shallow, mount, render} from 'enzyme';
 import Tools from 'src/utils/helpers/Tools';
+import ErrMsgs from 'src/utils/helpers/ErrMsgs';
 import {Service} from '../MainForm/';
 
 Enzyme.configure({adapter: new Adapter()});
@@ -172,51 +173,45 @@ describe('Service.handleSubmit', () => {
 });
 
 describe('Service.validate', () => {
-    test('All empty', async () => {
-        const values = {
-            from_amount: null,
-            to_amount: null,
-            fee: null
-        };
-        const eput = {
-            from_amount: 'Required',
-            to_amount: 'Required',
-            fee: 'Required'
-        };
-        const output = Service.validate(values);
-        expect(output).toEqual(eput);
-    });
-
-    test('From < 0', async () => {
-        const values = {
-            from_amount: -1,
-            to_amount: 1,
-            fee: 2
-        };
-        const eput = Service.COMPARE_ERROR;
-        const output = Service.validate(values);
-        expect(output).toEqual(eput);
-    });
-
-    test('To < 0', async () => {
-        const values = {
-            from_amount: 1,
-            to_amount: -1,
-            fee: 2
-        };
-        const eput = Service.COMPARE_ERROR;
-        const output = Service.validate(values);
-        expect(output).toEqual(eput);
-    });
-
     test('From > To', async () => {
         const values = {
             from_amount: 2,
             to_amount: 1,
             fee: 2
         };
-        const eput = Service.COMPARE_ERROR;
+        const eput = {from_amount: ErrMsgs.RANGE};
         const output = Service.validate(values);
+        expect(output).toEqual(eput);
+    });
+});
+
+describe('Service.validationSchema', () => {
+    test('Success', () => {
+        const values = {
+            from_amount: 1.5,
+            to_amount: 2.5,
+            fee: 3.5
+        };
+        const output = Service.validationSchema.isValidSync(values);
+        expect(output).toEqual(true);
+    });
+
+    test('Fail', () => {
+        const values = {
+            from_amount: undefined,
+            to_amount: -1,
+            fee: 3
+        };
+        const eput = {
+            from_amount: [ErrMsgs.REQUIRED],
+            to_amount: [ErrMsgs.GT_0]
+        };
+        let output = {};
+        try {
+            Service.validationSchema.validateSync(values, {abortEarly: false});
+        } catch (err) {
+            output = err.inner.reduce((errors, item) => ({...errors, [item.path]: item.errors}), {});
+        }
         expect(output).toEqual(eput);
     });
 });

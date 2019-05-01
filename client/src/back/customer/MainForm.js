@@ -3,9 +3,12 @@ import * as React from 'react';
 import {useState, useEffect, useContext, useRef} from 'react';
 // $FlowFixMe: do not complain about formik
 import {Formik, Form} from 'formik';
+// $FlowFixMe: do not complain about formik
+import * as Yup from 'yup';
 import Tools from 'src/utils/helpers/Tools';
 import {apiUrls, Context} from './_data';
 import type {SelectOptions} from 'src/utils/helpers/Tools';
+import ErrMsgs from 'src/utils/helpers/ErrMsgs';
 import TextInput from 'src/utils/components/formik_input/TextInput';
 import CheckInput from 'src/utils/components/formik_input/CheckInput';
 import SelectInput from 'src/utils/components/formik_input/SelectInput';
@@ -31,30 +34,31 @@ export class Service {
         is_lock: false
     };
 
-    static validate({
-        username,
-        email,
-        first_name,
-        last_name,
-        phone,
-        order_fee_factor,
-        delivery_fee_unit_price,
-        deposit_factor,
-        complaint_days
-    }: Object): Object {
-        const errors = {
-            username: !username && 'Required',
-            email: !email && 'Required',
-            first_name: !first_name && 'Required',
-            last_name: !last_name && 'Required',
-            phone: !phone && 'Required',
-            order_fee_factor: Tools.isBlank(order_fee_factor) && 'Required',
-            delivery_fee_unit_price: Tools.isBlank(delivery_fee_unit_price) && 'Required',
-            deposit_factor: Tools.isBlank(deposit_factor) && 'Required',
-            complaint_days: Tools.isBlank(complaint_days) && 'Required'
-        };
-        return Tools.removeEmptyKey(errors);
-    }
+    static validationSchema = Yup.object().shape({
+        username: Yup.string().required('Required'),
+        email: Yup.string()
+            .email(ErrMsgs.EMAIL)
+            .required(ErrMsgs.REQUIRED),
+        first_name: Yup.string().required(ErrMsgs.REQUIRED),
+        last_name: Yup.string().required(ErrMsgs.REQUIRED),
+        phone: Yup.string()
+            .required(ErrMsgs.REQUIRED)
+            .matches(Tools.phoneRegex, {message: ErrMsgs.PHONE}),
+        order_fee_factor: Yup.number()
+            .required(ErrMsgs.REQUIRED)
+            .min(0, ErrMsgs.GT_0),
+        delivery_fee_unit_price: Yup.number()
+            .required(ErrMsgs.REQUIRED)
+            .integer(ErrMsgs.INTEGER)
+            .min(0, ErrMsgs.GT_0),
+        deposit_factor: Yup.number()
+            .required(ErrMsgs.REQUIRED)
+            .min(0, ErrMsgs.GT_0),
+        complaint_days: Yup.number()
+            .required(ErrMsgs.REQUIRED)
+            .integer(ErrMsgs.INTEGER)
+            .min(0, ErrMsgs.GT_0)
+    });
 
     static changeRequest(params: Object) {
         return !params.id
@@ -89,7 +93,7 @@ type Props = {
 export default ({id, listSale, listCustCare, open, close, onChange, children, submitTitle = 'Save'}: Props) => {
     const firstInputSelector = "[name='email']";
 
-    const {validate, handleSubmit} = Service;
+    const {validationSchema, handleSubmit} = Service;
 
     const [openModal, setOpenModal] = useState(false);
     const [reOpenDialog, setReOpenDialog] = useState(true);
@@ -122,7 +126,7 @@ export default ({id, listSale, listCustCare, open, close, onChange, children, su
         <DefaultModal open={openModal} close={close} title="Customer manager">
             <Formik
                 initialValues={{...initialValues}}
-                validate={validate}
+                validationSchema={validationSchema}
                 onSubmit={handleSubmit(id, onChange, reOpenDialog)}>
                 {({errors, handleSubmit}) => (
                     <Form>

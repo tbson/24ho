@@ -3,7 +3,10 @@ import * as React from 'react';
 import {useState, useEffect, useRef} from 'react';
 // $FlowFixMe: do not complain about formik
 import {Formik, Form} from 'formik';
+// $FlowFixMe: do not complain about formik
+import * as Yup from 'yup';
 import Tools from 'src/utils/helpers/Tools';
+import ErrMsgs from 'src/utils/helpers/ErrMsgs';
 import {apiUrls} from './_data';
 import TextInput from 'src/utils/components/formik_input/TextInput';
 import DefaultModal from 'src/utils/components/modal/DefaultModal';
@@ -17,14 +20,14 @@ export class Service {
         unit_price: 0
     };
 
-    static validate({uid, title, unit_price}: Object): Object {
-        const errors = {
-            uid: !uid && 'Required',
-            title: !title && 'Required',
-            unit_price: !unit_price && 'Required'
-        };
-        return Tools.removeEmptyKey(errors);
-    }
+    static validationSchema = Yup.object().shape({
+        uid: Yup.string().required(ErrMsgs.REQUIRED),
+        title: Yup.string().required(ErrMsgs.REQUIRED),
+        unit_price: Yup.number()
+            .required(ErrMsgs.REQUIRED)
+            .integer(ErrMsgs.INTEGER)
+            .min(0, ErrMsgs.GT_0)
+    });
 
     static changeRequest(params: Object) {
         return !params.id
@@ -56,7 +59,7 @@ type Props = {
 };
 export default ({id, open, close, onChange, children, submitTitle = 'Save'}: Props) => {
     const firstInputSelector = "[name='uid']";
-    const {validate, handleSubmit} = Service;
+    const {validationSchema, handleSubmit} = Service;
 
     const [openModal, setOpenModal] = useState(false);
     const [reOpenDialog, setReOpenDialog] = useState(true);
@@ -89,7 +92,7 @@ export default ({id, open, close, onChange, children, submitTitle = 'Save'}: Pro
         <DefaultModal open={openModal} close={close} title="Staff manager">
             <Formik
                 initialValues={{...initialValues}}
-                validate={validate}
+                validationSchema={validationSchema}
                 onSubmit={handleSubmit(id, onChange, reOpenDialog)}>
                 {({errors, handleSubmit}) => (
                     <Form>

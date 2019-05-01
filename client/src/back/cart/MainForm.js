@@ -3,7 +3,10 @@ import * as React from 'react';
 import {useState, useEffect, useRef} from 'react';
 // $FlowFixMe: do not complain about formik
 import {Formik, Form} from 'formik';
+// $FlowFixMe: do not complain about Yup
+import * as Yup from 'yup';
 import Tools from 'src/utils/helpers/Tools';
+import ErrMsgs from 'src/utils/helpers/ErrMsgs';
 import {apiUrls} from './_data';
 import TextInput from 'src/utils/components/formik_input/TextInput';
 import DefaultModal from 'src/utils/components/modal/DefaultModal';
@@ -16,15 +19,11 @@ export class Service {
         note: ''
     };
 
-    static validate({quantity}: Object): Object {
-        const errors = {
-            quantity: typeof quantity !== 'number' && !quantity && 'Required'
-        };
-        if (quantity < 0) {
-            errors.quantity = 'At least 0 items.';
-        }
-        return Tools.removeEmptyKey(errors);
-    }
+    static validationSchema = Yup.object().shape({
+        quantity: Yup.number()
+            .required(ErrMsgs.REQUIRED)
+            .min(0, ErrMsgs.GT_0)
+    });
 
     static handleSubmit(id: number, onChange: Function) {
         return (values: Object, {setErrors}: Object) => {
@@ -45,7 +44,7 @@ type Props = {
 };
 export default ({id, listItem, open, close, onChange, children, submitTitle = 'Save'}: Props) => {
     const firstInputSelector = "[name='quantity']";
-    const {validate, handleSubmit} = Service;
+    const {validationSchema, handleSubmit} = Service;
 
     const [openModal, setOpenModal] = useState(false);
     const [initialValues, setInitialValues] = useState(Service.initialValues);
@@ -74,7 +73,7 @@ export default ({id, listItem, open, close, onChange, children, submitTitle = 'S
         <DefaultModal open={openModal} close={close} title="Cart item manager">
             <Formik
                 initialValues={{...initialValues}}
-                validate={validate}
+                validationSchema={validationSchema}
                 onSubmit={handleSubmit(id, onChange)}>
                 {({errors, handleSubmit}) => (
                     <Form>

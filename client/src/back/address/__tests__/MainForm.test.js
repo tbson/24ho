@@ -3,6 +3,7 @@ import Adapter from 'enzyme-adapter-react-16';
 import React from 'react';
 import {shallow, mount, render} from 'enzyme';
 import Tools from 'src/utils/helpers/Tools';
+import ErrMsgs from 'src/utils/helpers/ErrMsgs';
 import {Service} from '../MainForm/';
 
 Enzyme.configure({adapter: new Adapter()});
@@ -171,17 +172,33 @@ describe('Service.handleSubmit', () => {
     });
 });
 
-describe('Service.validate', () => {
-    test('All empty', async () => {
+describe('Service.validationSchema', () => {
+    test('Success', () => {
         const values = {
-            title: '',
-            area: null
+            title: 'title1',
+            area: 1,
+            phone: '0906696527'
+        };
+        const output = Service.validationSchema.isValidSync(values);
+        expect(output).toEqual(true);
+    });
+
+    test('Fail', () => {
+        const values = {
+            title: 'uid1',
+            area: undefined,
+            phone: '1234567890'
         };
         const eput = {
-            title: 'Required',
-            area: 'Required'
+            area: [ErrMsgs.REQUIRED],
+            phone: [ErrMsgs.PHONE]
         };
-        const output = Service.validate(values);
+        let output = {};
+        try {
+            Service.validationSchema.validateSync(values, {abortEarly: false});
+        } catch (err) {
+            output = err.inner.reduce((errors, item) => ({...errors, [item.path]: item.errors}), {});
+        }
         expect(output).toEqual(eput);
     });
 });

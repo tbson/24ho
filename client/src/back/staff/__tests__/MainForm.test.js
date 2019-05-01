@@ -1,5 +1,6 @@
 import React from 'react';
 import Tools from 'src/utils/helpers/Tools';
+import ErrMsgs from 'src/utils/helpers/ErrMsgs';
 import {Service} from '../MainForm/';
 
 beforeEach(() => {
@@ -166,24 +167,40 @@ describe('Service.handleSubmit', () => {
     });
 });
 
-describe('Service.validate', () => {
-    test('All empty', async () => {
+describe('Service.validationSchema', () => {
+    test('Success', () => {
         const values = {
-            email: '',
+            email: 'email1@gmail.com',
+            username: 'usedrname1',
+            first_name: 'firt',
+            last_name: 'last',
+            password: 'password',
+            groups: [1]
+        };
+        const output = Service.validationSchema.isValidSync(values);
+        expect(output).toEqual(true);
+    });
+
+    test('Fail', () => {
+        const values = {
+            email: 'abc',
             username: '',
-            first_name: '',
-            last_name: '',
-            password: '',
+            first_name: 'test',
+            last_name: 'test',
+            password: 'test',
             groups: []
         };
         const eput = {
-            email: 'Required',
-            username: 'Required',
-            first_name: 'Required',
-            last_name: 'Required',
-            groups: 'Required'
+            email: [ErrMsgs.EMAIL],
+            username: [ErrMsgs.REQUIRED],
+            groups: [ErrMsgs.REQUIRED]
         };
-        const output = Service.validate(values);
+        let output = {};
+        try {
+            Service.validationSchema.validateSync(values, {abortEarly: false});
+        } catch (err) {
+            output = err.inner.reduce((errors, item) => ({...errors, [item.path]: item.errors}), {});
+        }
         expect(output).toEqual(eput);
     });
 });

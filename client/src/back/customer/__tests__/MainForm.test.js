@@ -1,5 +1,6 @@
 import React from 'react';
 import Tools from 'src/utils/helpers/Tools';
+import ErrMsgs from 'src/utils/helpers/ErrMsgs';
 import {Service} from '../MainForm/';
 
 beforeEach(() => {
@@ -166,58 +167,50 @@ describe('Service.handleSubmit', () => {
     });
 });
 
-describe('Service.validate', () => {
-    test('All empty', async () => {
+describe('Service.validationSchema', () => {
+    test('Success', () => {
         const values = {
-            email: '',
-            username: '',
-            first_name: '',
-            last_name: '',
-            password: '',
-            phone: '',
-            order_fee_factor: null,
-            delivery_fee_unit_price: null,
-            deposit_factor: null,
-            complaint_days: null
+            email: 'email@gmail.com',
+            username: 'username1',
+            first_name: 'test',
+            last_name: 'test',
+            password: 'test',
+            phone: '0906696527',
+            order_fee_factor: 5.5,
+            delivery_fee_unit_price: 25000,
+            deposit_factor: 4.1,
+            complaint_days: 2
         };
-        const eput = {
-            email: 'Required',
-            username: 'Required',
-            first_name: 'Required',
-            last_name: 'Required',
-            phone: 'Required',
-            order_fee_factor: 'Required',
-            delivery_fee_unit_price: 'Required',
-            deposit_factor: 'Required',
-            complaint_days: 'Required'
-        };
-        const output = Service.validate(values);
-        expect(output).toEqual(eput);
+        const output = Service.validationSchema.isValidSync(values);
+        expect(output).toEqual(true);
     });
 
-    test('All empty with some zeroes', async () => {
+    test('Fail', () => {
         const values = {
-            email: '',
+            email: 'hello',
             username: '',
-            first_name: '',
-            last_name: '',
+            first_name: 'test',
+            last_name: 'test',
             password: '',
-            phone: '',
+            phone: '1234567890',
             order_fee_factor: 0,
-            delivery_fee_unit_price: null,
-            deposit_factor: null,
+            delivery_fee_unit_price: 0.5,
+            deposit_factor: -1,
             complaint_days: 0
         };
         const eput = {
-            email: 'Required',
-            username: 'Required',
-            first_name: 'Required',
-            last_name: 'Required',
-            phone: 'Required',
-            delivery_fee_unit_price: 'Required',
-            deposit_factor: 'Required'
+            email: [ErrMsgs.EMAIL],
+            username: [ErrMsgs.REQUIRED],
+            phone: [ErrMsgs.PHONE],
+            delivery_fee_unit_price: [ErrMsgs.INTEGER],
+            deposit_factor: [ErrMsgs.GT_0]
         };
-        const output = Service.validate(values);
+        let output = {};
+        try {
+            Service.validationSchema.validateSync(values, {abortEarly: false});
+        } catch (err) {
+            output = err.inner.reduce((errors, item) => ({...errors, [item.path]: item.errors}), {});
+        }
         expect(output).toEqual(eput);
     });
 });

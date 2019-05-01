@@ -3,7 +3,10 @@ import * as React from 'react';
 import {useState, useEffect, useContext, useRef} from 'react';
 // $FlowFixMe: do not complain about formik
 import {Formik, Form} from 'formik';
+// $FlowFixMe: do not complain about formik
+import * as Yup from 'yup';
 import Tools from 'src/utils/helpers/Tools';
+import ErrMsgs from 'src/utils/helpers/ErrMsgs';
 import {apiUrls, Context} from './_data';
 import type {SelectOptions} from 'src/utils/helpers/Tools';
 import TextInput from 'src/utils/components/formik_input/TextInput';
@@ -15,18 +18,18 @@ import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
 export class Service {
     static initialValues = {
         title: '',
-        area: null,
+        area: undefined,
         phone: '',
         fullname: ''
     };
 
-    static validate({area, title}: Object): Object {
-        const errors = {
-            title: !title && 'Required',
-            area: !area && 'Required'
-        };
-        return Tools.removeEmptyKey(errors);
-    }
+    static validationSchema = Yup.object().shape({
+        title: Yup.string().required(ErrMsgs.REQUIRED),
+        area: Yup.number().required(ErrMsgs.REQUIRED),
+        phone: Yup.string()
+            .required(ErrMsgs.REQUIRED)
+            .matches(Tools.phoneRegex, {message: ErrMsgs.PHONE})
+    });
 
     static changeRequest(params: Object) {
         return !params.id
@@ -59,7 +62,7 @@ type Props = {
 };
 export default ({id, listArea, open, close, onChange, children, submitTitle = 'Save'}: Props) => {
     const firstInputSelector = "[name='title']";
-    const {validate, handleSubmit} = Service;
+    const {validationSchema, handleSubmit} = Service;
 
     const [openModal, setOpenModal] = useState(false);
     const [reOpenDialog, setReOpenDialog] = useState(true);
@@ -92,7 +95,7 @@ export default ({id, listArea, open, close, onChange, children, submitTitle = 'S
         <DefaultModal open={openModal} close={close} title="Address manager">
             <Formik
                 initialValues={{...initialValues}}
-                validate={validate}
+                validationSchema={validationSchema}
                 onSubmit={handleSubmit(id, onChange, reOpenDialog)}>
                 {({errors, handleSubmit}) => (
                     <Form>

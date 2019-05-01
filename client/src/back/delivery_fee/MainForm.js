@@ -3,7 +3,10 @@ import * as React from 'react';
 import {useState, useEffect, useRef} from 'react';
 // $FlowFixMe: do not complain about formik
 import {Formik, Form} from 'formik';
+// $FlowFixMe: do not complain about Yup
+import * as Yup from 'yup';
 import Tools from 'src/utils/helpers/Tools';
+import ErrMsgs from 'src/utils/helpers/ErrMsgs';
 import {apiUrls} from './_data';
 import TextInput from 'src/utils/components/formik_input/TextInput';
 import DefaultModal from 'src/utils/components/modal/DefaultModal';
@@ -23,16 +26,21 @@ export class Service {
     };
 
     static validate({from_mass, to_mass, fee}: Object): Object {
-        let errors = {
-            from_mass: Tools.isBlank(from_mass) && 'Required',
-            to_mass: Tools.isBlank(to_mass) && 'Required',
-            fee: Tools.isBlank(fee) && 'Required'
-        };
-        if (from_mass < 0 || from_mass > to_mass) {
-            errors = {...errors, ...Service.COMPARE_ERROR};
-        }
-        return Tools.removeEmptyKey(errors);
+        return from_mass > to_mass ? {from_mass: ErrMsgs.RANGE} : {};
     }
+
+    static validationSchema = Yup.object().shape({
+        from_mass: Yup.number()
+            .required(ErrMsgs.REQUIRED)
+            .min(0, ErrMsgs.GT_0),
+        to_mass: Yup.number()
+            .required(ErrMsgs.REQUIRED)
+            .min(0, ErrMsgs.GT_0),
+        fee: Yup.number()
+            .required(ErrMsgs.REQUIRED)
+            .integer(ErrMsgs.INTEGER)
+            .min(0, ErrMsgs.GT_0)
+    });
 
     static changeRequest(params: Object) {
         return !params.id
@@ -64,7 +72,7 @@ type Props = {
 };
 export default ({id, open, close, onChange, children, submitTitle = 'Save'}: Props) => {
     const firstInputSelector = "[name='uid']";
-    const {validate, handleSubmit} = Service;
+    const {validate, validationSchema, handleSubmit} = Service;
 
     const [openModal, setOpenModal] = useState(false);
     const [reOpenDialog, setReOpenDialog] = useState(true);
@@ -98,6 +106,7 @@ export default ({id, open, close, onChange, children, submitTitle = 'Save'}: Pro
             <Formik
                 initialValues={{...initialValues}}
                 validate={validate}
+                validationSchema={validationSchema}
                 onSubmit={handleSubmit(id, onChange, reOpenDialog)}>
                 {({errors, handleSubmit}) => (
                     <Form>

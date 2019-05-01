@@ -3,6 +3,7 @@ import Adapter from 'enzyme-adapter-react-16';
 import React from 'react';
 import {shallow, mount, render} from 'enzyme';
 import Tools from 'src/utils/helpers/Tools';
+import ErrMsgs from 'src/utils/helpers/ErrMsgs';
 import {Service} from '../MainForm/';
 
 Enzyme.configure({adapter: new Adapter()});
@@ -172,51 +173,46 @@ describe('Service.handleSubmit', () => {
 });
 
 describe('Service.validate', () => {
-    test('All empty', async () => {
-        const values = {
-            from_mass: null,
-            to_mass: null,
-            fee: null
-        };
-        const eput = {
-            from_mass: 'Required',
-            to_mass: 'Required',
-            fee: 'Required'
-        };
-        const output = Service.validate(values);
-        expect(output).toEqual(eput);
-    });
-
-    test('From < 0', async () => {
-        const values = {
-            from_mass: -1,
-            to_mass: 1,
-            fee: 2
-        };
-        const eput = Service.COMPARE_ERROR;
-        const output = Service.validate(values);
-        expect(output).toEqual(eput);
-    });
-
-    test('To < 0', async () => {
-        const values = {
-            from_mass: 1,
-            to_mass: -1,
-            fee: 2
-        };
-        const eput = Service.COMPARE_ERROR;
-        const output = Service.validate(values);
-        expect(output).toEqual(eput);
-    });
-
     test('From > To', async () => {
         const values = {
             from_mass: 2,
             to_mass: 1,
             fee: 2
         };
-        const eput = Service.COMPARE_ERROR;
+        const eput = {from_mass: ErrMsgs.RANGE};
         const output = Service.validate(values);
+        expect(output).toEqual(eput);
+    });
+});
+
+describe('Service.validationSchema', () => {
+    test('Success', () => {
+        const values = {
+            from_mass: 1.5,
+            to_mass: 2.5,
+            fee: 3
+        };
+        const output = Service.validationSchema.isValidSync(values);
+        expect(output).toEqual(true);
+    });
+
+    test('Fail', () => {
+        const values = {
+            from_mass: undefined,
+            to_mass: -1,
+            fee: 3.5
+        };
+        const eput = {
+            from_mass: [ErrMsgs.REQUIRED],
+            to_mass: [ErrMsgs.GT_0],
+            fee: [ErrMsgs.INTEGER]
+        };
+        let output = {};
+        try {
+            Service.validationSchema.validateSync(values, {abortEarly: false});
+        } catch (err) {
+            output = err.inner.reduce((errors, item) => ({...errors, [item.path]: item.errors}), {});
+        }
         expect(output).toEqual(eput);
     });
 });

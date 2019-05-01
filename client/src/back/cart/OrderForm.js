@@ -22,11 +22,6 @@ export class Service {
         shockproof: false
     };
 
-    static validate({quantity}: Object): Object {
-        const errors = {};
-        return Tools.removeEmptyKey(errors);
-    }
-
     static getAddressLabel(id: number, listAddress: SelectOptions): string {
         const address = listAddress.find(item => item.value === id);
         return address ? address.label : '';
@@ -52,7 +47,7 @@ type Props = {
 };
 export default ({id, listOrder, listAddress, open, close, onChange, children, submitTitle = 'Save'}: Props) => {
     const firstInputSelector = "[name='note']";
-    const {validate, handleSubmit} = Service;
+    const {handleSubmit} = Service;
 
     const [openModal, setOpenModal] = useState(false);
     const [initialValues, setInitialValues] = useState(Service.initialValues);
@@ -74,10 +69,7 @@ export default ({id, listOrder, listAddress, open, close, onChange, children, su
 
     return (
         <DefaultModal open={openModal} close={close} title="Cart order manager">
-            <Formik
-                initialValues={{...initialValues}}
-                validate={validate}
-                onSubmit={handleSubmit(id, listAddress, onChange)}>
+            <Formik initialValues={{...initialValues}} onSubmit={handleSubmit(id, listAddress, onChange)}>
                 {({errors, handleSubmit}) => (
                     <Form>
                         <SelectInput name="address" label="Address" options={listAddress} required={true} />

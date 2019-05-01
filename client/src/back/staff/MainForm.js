@@ -3,7 +3,10 @@ import * as React from 'react';
 import {useState, useEffect, useRef} from 'react';
 // $FlowFixMe: do not complain about formik
 import {Formik, Form} from 'formik';
+// $FlowFixMe: do not complain about formik
+import * as Yup from 'yup';
 import Tools from 'src/utils/helpers/Tools';
+import ErrMsgs from 'src/utils/helpers/ErrMsgs';
 import {apiUrls, Context} from './_data';
 import type {SelectOptions} from 'src/utils/helpers/Tools';
 import TextInput from 'src/utils/components/formik_input/TextInput';
@@ -26,16 +29,15 @@ export class Service {
         is_lock: false
     };
 
-    static validate({username, email, first_name, last_name, groups}: Object): Object {
-        const errors = {
-            username: !username && 'Required',
-            email: !email && 'Required',
-            first_name: !first_name && 'Required',
-            last_name: !last_name && 'Required',
-            groups: (!groups || !groups.length) && 'Required'
-        };
-        return Tools.removeEmptyKey(errors);
-    }
+    static validationSchema = Yup.object().shape({
+        username: Yup.string().required(ErrMsgs.REQUIRED),
+        email: Yup.string()
+            .email(ErrMsgs.EMAIL)
+            .required(ErrMsgs.REQUIRED),
+        first_name: Yup.string().required(ErrMsgs.REQUIRED),
+        last_name: Yup.string().required(ErrMsgs.REQUIRED),
+        groups: Yup.array().required(ErrMsgs.REQUIRED)
+    });
 
     static changeRequest(params: Object) {
         return !params.id
@@ -54,7 +56,7 @@ export class Service {
                     ? onChange({...data, checked: false}, id ? 'update' : 'add', reOpenDialog)
                     : setErrors(Tools.setFormErrors(data))
             );
-    } 
+    }
 }
 
 type Props = {
@@ -69,7 +71,7 @@ type Props = {
 export default ({id, listGroup, open, close, onChange, children, submitTitle = 'Save'}: Props) => {
     const firstInputSelector = "[name='email']";
 
-    const {validate, handleSubmit} = Service;
+    const {validationSchema, handleSubmit} = Service;
 
     const [openModal, setOpenModal] = useState(false);
     const [reOpenDialog, setReOpenDialog] = useState(true);
@@ -102,7 +104,7 @@ export default ({id, listGroup, open, close, onChange, children, submitTitle = '
         <DefaultModal open={openModal} close={close} title="Staff manager">
             <Formik
                 initialValues={{...initialValues}}
-                validate={validate}
+                validationSchema={validationSchema}
                 onSubmit={handleSubmit(id, onChange, reOpenDialog)}>
                 {({errors, handleSubmit}) => (
                     <Form>

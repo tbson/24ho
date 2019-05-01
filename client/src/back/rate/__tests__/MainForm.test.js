@@ -3,6 +3,7 @@ import Adapter from 'enzyme-adapter-react-16';
 import React from 'react';
 import {shallow, mount, render} from 'enzyme';
 import Tools from 'src/utils/helpers/Tools';
+import ErrMsgs from 'src/utils/helpers/ErrMsgs';
 import {Service} from '../MainForm/';
 
 Enzyme.configure({adapter: new Adapter()});
@@ -171,21 +172,36 @@ describe('Service.handleSubmit', () => {
     });
 });
 
-describe('Service.validate', () => {
-    test('All empty', async () => {
+describe('Service.validationSchema', () => {
+    test('Success', () => {
         const values = {
-            rate: 0,
-            buy_rate: 0,
-            sell_rate: 0,
-            order_rate: 0
+            rate: 3400,
+            buy_rate: 3400,
+            sell_rate: 3400,
+            order_rate: 3400
+        };
+        const output = Service.validationSchema.isValidSync(values);
+        expect(output).toEqual(true);
+    });
+
+    test('Fail', () => {
+        const values = {
+            rate: -1,
+            buy_rate: undefined,
+            sell_rate: 3400.5,
+            order_rate: 3400
         };
         const eput = {
-            rate: 'Required',
-            buy_rate: 'Required',
-            sell_rate: 'Required',
-            order_rate: 'Required'
+            rate: [ErrMsgs.GT_0],
+            buy_rate: [ErrMsgs.REQUIRED],
+            sell_rate: [ErrMsgs.INTEGER]
         };
-        const output = Service.validate(values);
+        let output = {};
+        try {
+            Service.validationSchema.validateSync(values, {abortEarly: false});
+        } catch (err) {
+            output = err.inner.reduce((errors, item) => ({...errors, [item.path]: item.errors}), {});
+        }
         expect(output).toEqual(eput);
     });
 });

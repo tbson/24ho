@@ -3,7 +3,10 @@ import * as React from 'react';
 import {useState, useEffect, useRef} from 'react';
 // $FlowFixMe: do not complain about formik
 import {Formik, Form} from 'formik';
+// $FlowFixMe: do not complain about Yup
+import * as Yup from 'yup';
 import Tools from 'src/utils/helpers/Tools';
+import ErrMsgs from 'src/utils/helpers/ErrMsgs';
 import {apiUrls} from './_data';
 import TextInput from 'src/utils/components/formik_input/TextInput';
 import DefaultModal from 'src/utils/components/modal/DefaultModal';
@@ -16,13 +19,10 @@ export class Service {
         value: ''
     };
 
-    static validate({uid, value}: Object): Object {
-        const errors = {
-            uid: !uid && 'Required',
-            value: !value && 'Required'
-        };
-        return Tools.removeEmptyKey(errors);
-    }
+    static validationSchema = Yup.object().shape({
+        uid: Yup.string().required(ErrMsgs.REQUIRED),
+        value: Yup.string().required(ErrMsgs.REQUIRED)
+    });
 
     static changeRequest(params: Object) {
         return !params.id
@@ -54,7 +54,7 @@ type Props = {
 };
 export default ({id, open, close, onChange, children, submitTitle = 'Save'}: Props) => {
     const firstInputSelector = "[name='uid']";
-    const {validate, handleSubmit} = Service;
+    const {validationSchema, handleSubmit} = Service;
 
     const [openModal, setOpenModal] = useState(false);
     const [reOpenDialog, setReOpenDialog] = useState(true);
@@ -87,7 +87,7 @@ export default ({id, open, close, onChange, children, submitTitle = 'Save'}: Pro
         <DefaultModal open={openModal} close={close} title="Staff manager">
             <Formik
                 initialValues={{...initialValues}}
-                validate={validate}
+                validationSchema={validationSchema}
                 onSubmit={handleSubmit(id, onChange, reOpenDialog)}>
                 {({errors, handleSubmit}) => (
                     <Form>
