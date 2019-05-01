@@ -73,6 +73,9 @@ const App = ({history, location, children}: Props) => {
             case 'orderFee':
                 if (APP !== 'admin') return null;
                 return menuItem('order-fee', 'Order fee', 'fas fa-yen-sign');
+            case 'deliveryFee':
+                if (APP !== 'admin') return null;
+                return menuItem('delivery-fee', 'Delivery fee', 'fas fa-yen-sign');
         }
     };
 
@@ -93,6 +96,7 @@ const App = ({history, location, children}: Props) => {
                     {renderMenu('cart')}
                     {renderMenu('rate')}
                     {renderMenu('orderFee')}
+                    {renderMenu('deliveryFee')}
                 </ul>
             </div>
 

@@ -141,6 +141,13 @@ input:invalid {
     content: '%';
 }
 
+.kg {
+    text-align: right;
+}
+.kg::after {
+    content: ' Kg';
+}
+
 .cny {
     text-align: right;
 }
