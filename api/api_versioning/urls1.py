@@ -44,4 +44,8 @@ urlpatterns = (
         'order-fee/',
         include('apps.order_fee.urls', namespace='order_fee'),
     ),
+    path(
+        'delivery-fee/',
+        include('apps.delivery_fee.urls', namespace='delivery_fee'),
+    ),
 )
