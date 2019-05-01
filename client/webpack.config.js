@@ -65,7 +65,7 @@ const common = {
 if (TARGET === 'start' || !TARGET) {
     module.exports = merge(common, {
         entry: {
-            app: path.join(PATHS.app, 'index.js')
+            app: [path.join(PATHS.app, 'index.js')]
         },
         mode: 'development',
         watchOptions: {
