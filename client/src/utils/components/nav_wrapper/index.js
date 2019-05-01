@@ -72,10 +72,10 @@ const App = ({history, location, children}: Props) => {
                 return menuItem('rate', 'Rate', 'fas fa-yen-sign');
             case 'orderFee':
                 if (APP !== 'admin') return null;
-                return menuItem('order-fee', 'Order fee', 'fas fa-yen-sign');
+                return menuItem('order-fee', 'Order fee', 'fas fa-percent');
             case 'deliveryFee':
                 if (APP !== 'admin') return null;
-                return menuItem('delivery-fee', 'Delivery fee', 'fas fa-yen-sign');
+                return menuItem('delivery-fee', 'Delivery fee', 'fas fa-balance-scale');
         }
     };
 
