@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 
 class OrderFeeManager(models.Manager):
@@ -26,8 +27,15 @@ class OrderFeeManager(models.Manager):
 
         return getData(index) if single is True else getListData(index)
 
+    def getMatchedFactor(self, amount: float) -> float:
+        result = self.filter(from_amount__lte=amount, to_amount__gte=amount)
+        if result.count():
+            return result.first().fee
+        return settings.DEFAULT_ORDER_FEE_FACTOR
 
 # Create your models here.
+
+
 class OrderFee(models.Model):
     from_amount = models.IntegerField()
     to_amount = models.IntegerField()

@@ -5,6 +5,7 @@ from django.test import TestCase
 from .models import OrderFee
 from .serializers import OrderFeeBaseSr
 from utils.helpers.test_helpers import TestHelpers
+from django.conf import settings
 # Create your tests here.
 
 
@@ -131,3 +132,15 @@ class OrderFeeTestCase(TestCase):
             order_fee.save()
         except ValidationError as err:
             self.assertEqual(err.detail, OrderFeeBaseSr.COMPARE_MESSAGE)
+
+    def test_getMatchedFactor_not_matched(self):
+        self.assertEqual(OrderFee.objects.getMatchedFactor(0), settings.DEFAULT_ORDER_FEE_FACTOR)
+
+    def test_getMatchedFactor_matched_1(self):
+        self.assertEqual(OrderFee.objects.getMatchedFactor(10), 20)
+
+    def test_getMatchedFactor_matched_2(self):
+        self.assertEqual(OrderFee.objects.getMatchedFactor(19), 20)
+
+    def test_getMatchedFactor_matched_3(self):
+        self.assertEqual(OrderFee.objects.getMatchedFactor(20), 10)

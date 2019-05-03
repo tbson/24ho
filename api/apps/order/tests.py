@@ -6,6 +6,7 @@ from .models import Order
 from .serializers import OrderBaseSr
 from apps.address.models import Address
 from apps.order_item.models import OrderItem
+from apps.order_fee.models import OrderFee
 from utils.helpers.test_helpers import TestHelpers
 # Create your tests here.
 
@@ -222,3 +223,13 @@ class OrderTestCase(TestCase):
         order.is_valid(raise_exception=True)
         order.save()
         self.assertEqual(order.data['vnd_total'], 519500)
+
+    def test_calAmount(self):
+        order_items = OrderItem.objects._seeding(3)
+        order = order_items[0].order
+        self.assertEqual(Order.objects.calAmount(order), 77)
+
+    def test_calOrderFee(self):
+        amount = 15
+        OrderFee.objects._seeding(3)
+        self.assertEqual(Order.objects.calOrderFee(amount), 3)

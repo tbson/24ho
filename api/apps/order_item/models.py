@@ -17,7 +17,7 @@ class OrderItemManager(models.Manager):
                 'title': "title{}".format(i),
                 'url': "url{}".format(i),
                 'quantity': i,
-                'unit_price': 50.5
+                'unit_price': 10.5 + i
             }
             if save is False:
                 return data

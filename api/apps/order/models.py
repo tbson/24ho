@@ -1,7 +1,9 @@
 from django.db import models
+from django.db.models import Sum, F
 from utils.models.model import TimeStampedModel
 from apps.staff.models import Staff
 from apps.address.models import Address
+from apps.order_fee.models import OrderFee
 from utils.helpers.tools import OrderStatus
 
 
@@ -71,6 +73,33 @@ class OrderManager(models.Manager):
         cny = self.sumCny(order)
         vnd = self.sumVnd(order)
         return int(rate * cny + vnd)
+
+    def calAmount(self, item: models.QuerySet) -> float:
+        return item.order_items.aggregate(
+            amount=Sum(
+                F('quantity') * F('unit_price'),
+                output_field=models.FloatField()
+            )
+        )['amount']
+
+    def calOrderFee(self, amount: float) -> float:
+        return OrderFee.objects.getMatchedFactor(amount) * amount / 100
+
+    def calInsuranceFee(self, item: models.QuerySet) -> float:
+        # sum of bols's insurance value * insurance factor / 100
+        return 0
+
+    def calDeliveryFee(self, item: models.QuerySet) -> float:
+        # sum of bols's delivery fee
+        return 0
+
+    def reCal(self, item: models.QuerySet) -> models.QuerySet:
+        item.cny_amount = self.calAmount(item)
+        item.cny_order_fee = self.calOrderFee(item.cny_amount)
+        item.cny_insurance_fee = self.calInsuranceFee(item)
+        item.vnd_delivery_fee = self.calDeliveryFee(item)
+        item.save()
+        return item
 
 # Create your models here.
 
