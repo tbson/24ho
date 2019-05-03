@@ -3,20 +3,29 @@ from django.db.models import Q
 from django.db.models import QuerySet
 from django.contrib.auth.models import Permission
 from django.contrib.auth.models import User
-from django.conf import settings
 from utils.serializers.user import UserSr
 # from utils.serializers.user import UserSr
 
 
 class TestHelpers():
 
+    TEST_ADMIN = {
+        'username': 'admin',
+        'email': 'admin@gmail.com',
+        'password': '1234567890',
+        'first_name': 'First',
+        'last_name': 'Admin'
+    }
+
+    TEST_FINGERPRINT = 'test-fingerprint'
+
     @staticmethod
     def testSetup(self):
         from apps.staff.models import Staff
         # Add original user
         user = User.objects.create_superuser(
-            username=settings.TEST_ADMIN['username'],
-            password=settings.TEST_ADMIN['password'],
+            username=TestHelpers.TEST_ADMIN['username'],
+            password=TestHelpers.TEST_ADMIN['password'],
             email=''
         )
 
@@ -24,15 +33,15 @@ class TestHelpers():
         permissions = Permission.objects.all()
         user.user_permissions.set(permissions)
 
-        fingerprint = settings.TEST_FINGERPRINT
+        fingerprint = TestHelpers.TEST_FINGERPRINT
         Staff.objects.create(user=user, fingerprint=fingerprint)
 
         # Test user login and get token
         resp = self.client.post(
             reverse('api_v1:staff:login'),
             {
-                'username': settings.TEST_ADMIN['username'],
-                'password': settings.TEST_ADMIN['password']
+                'username': TestHelpers.TEST_ADMIN['username'],
+                'password': TestHelpers.TEST_ADMIN['password']
             }
         )
         token = resp.json()['user']['token']

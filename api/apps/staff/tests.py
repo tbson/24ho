@@ -5,7 +5,6 @@ from django.test import TestCase
 from .models import Staff
 from utils.serializers.user import UserSr
 from utils.helpers.test_helpers import TestHelpers
-from core import env
 # Create your tests here.
 
 
@@ -139,7 +138,7 @@ class StaffTestCase(TestCase):
 
     def test_changePassword(self):
         data = {
-            "oldPassword": env.TEST_ADMIN['password'],
+            "oldPassword": TestHelpers.TEST_ADMIN['password'],
             "password": "newpassword"
         }
 
@@ -155,7 +154,7 @@ class StaffTestCase(TestCase):
         resp = self.client.post(
             "/api/v1/staff/auth/",
             {
-                'username': env.TEST_ADMIN['username'],
+                'username': TestHelpers.TEST_ADMIN['username'],
                 'password': "newpassword"
             },
             format='json'
@@ -166,7 +165,7 @@ class StaffTestCase(TestCase):
     def test_resetPassword(self):
         #  Reset password
         data = {
-            "username": env.TEST_ADMIN['username'],
+            "username": TestHelpers.TEST_ADMIN['username'],
             "password": "newpassword"
         }
 
@@ -196,7 +195,7 @@ class StaffTestCase(TestCase):
         resp = self.client.post(
             "/api/v1/staff/auth/",
             {
-                'username': env.TEST_ADMIN['username'],
+                'username': TestHelpers.TEST_ADMIN['username'],
                 'password': "newpassword"
             },
             format='json'

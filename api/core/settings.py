@@ -13,7 +13,17 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 import os
 import datetime
 from django.utils.log import DEFAULT_LOGGING
-from .env import *
+
+SECRET_KEY = os.environ.get('SECRET_KEY')
+DEBUG = os.environ.get('DEBUG')
+EMAIL_ENABLE = os.environ.get('EMAIL_ENABLE')
+
+PROTOCOL = 'https'
+DOMAIN = os.environ.get('DOMAIN')
+ALLOWED_HOSTS = [DOMAIN, '127.0.0.1']
+
+APP_TITLE = os.environ.get('APP_TITLE')
+APP_DESCRTIPTION = os.environ.get('APP_DESCRTIPTION')
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -94,7 +104,28 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
-# DATABASES = env.DATABASES
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('DB_NAME'),
+        'USER': os.environ.get('DB_USER'),
+        'PASSWORD': os.environ.get('DB_PASSWORD'),
+        'HOST': os.environ.get('DB_HOST'),
+        'PORT': os.environ.get('DB_PORT'),
+        'TEST': {
+            'NAME': os.environ.get('DB_TEST'),
+        },
+    },
+}
+
+# Email
+
+EMAIL_HOST = os.environ.get('EMAIL_HOST')
+EMAIL_PORT = os.environ.get('EMAIL_PORT')
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS')
+DEFAULT_FROM_EMAIL = '"{}"<{}>'.format(APP_TITLE, EMAIL_HOST_USER)
 
 PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.Argon2PasswordHasher',
@@ -192,6 +223,17 @@ MAX_UPLOAD_SIZE = 3145728
 MAX_IMAGE_SIZE = 1680
 GOLDEN_RATIO = 1.618
 
+TIME_ZONE = 'Asia/Saigon'
+IMAGE_MAX_WIDTH = 1200
+IMAGE_THUMBNAIL_WIDTH = 300
+IMAGE_RATIO = 1.618
+UPLOAD_MAX_SIZE = 4
+
+DEFAULT_RATE = 3600
+DEFAULT_REAL_RATE = 3456
+DEFAULT_ORDER_FEE_FACTOR = 5
+DEFAULT_DELIVERY_FACTOR = 25000
+
 DEFAULT_META = {
     'title': APP_TITLE,
     'description': APP_DESCRTIPTION,
@@ -209,6 +251,8 @@ ERROR_CODES = {
 }
 
 LOGGING = DEFAULT_LOGGING
+
+SLACK_WEBHOOK_URL = os.environ.get('SLACK_WEBHOOK_URL', '')
 
 LOGGING['handlers']['slack_admins'] = {
     'level': 'ERROR',

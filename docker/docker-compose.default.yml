@@ -33,13 +33,35 @@ services:
             dockerfile: ../docker/dockerfiles/api
         volumes:
             - ../api:/code:delegated
+        environment:
+            - SECRET_KEY='__app_secret__'
+            - DEBUG=true
+            - EMAIL_ENABLE=true
+
+            - APP_TITLE=__app_name__
+            - APP_DESCRTIPTION=__app_name__
+            - DOMAIN=my.domain
+
+            - DB_NAME=docker
+            - DB_USER=docker
+            - DB_PASSWORD=docker
+            - DB_HOST=__app_name___db
+            - DB_PORT=5432
+            - DB_TEST=docker_test
+
+            - EMAIL_HOST=smtp.gmail.com
+            - EMAIL_PORT=587
+            - EMAIL_HOST_USER=root@localhost
+            - EMAIL_HOST_PASSWORD=password
+            - EMAIL_USE_TLS=true
+
+            - SLACK_WEBHOOK_URL=''
         depends_on:
             __app_name___db:
                 condition: service_healthy
         networks:
             - proxy
-        # command: bash -c "python manage.py migrate && gunicorn core.wsgi -b 0.0.0.0:8001"
-        tty: true
+        __app_env__
 
     __app_name___client:
         container_name: __app_name___client

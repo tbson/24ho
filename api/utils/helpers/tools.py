@@ -37,9 +37,7 @@ class Tools():
         exc_type, exc_obj, exc_tb = sys.exc_info()
         fileName = exc_tb.tb_frame.f_code.co_filename
         result = str(e) + ' => ' + fileName + ':' + str(exc_tb.tb_lineno)
-        if settings.ENV == 'LOCAL':
-            print(result)
-            return result
+        return result
 
     @staticmethod
     def stringToBool(input):
