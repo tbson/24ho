@@ -3,7 +3,7 @@
 
 NGINX_CONFIG=nginx.conf
 APP_SECRET=`python -c 'import random; result = "".join([random.choice("abcdefghijklmnopqrstuvwxyz0123456789(-_=+)") for i in range(50)]); print(result)'`
-COMMAND="command: bash -c \"python manage.py migrate && gunicorn core.wsgi -b 0.0.0.0:8001\""
+COMMAND="command: bash -c \"python manage.py migrate \&\& gunicorn core.wsgi -b 0.0.0.0:8001\""
 TTY="tty: true"
 
 # Config nginx
