@@ -66,7 +66,9 @@ class Customer(models.Model):
     cust_care = models.ForeignKey(Staff, models.SET_NULL, related_name='cust_care', blank=True, null=True)
 
     order_fee_factor = models.FloatField(default=10)
-    delivery_fee_unit_price = models.IntegerField(default=0)
+    delivery_fee_mass_unit_price = models.IntegerField(default=0)
+    delivery_fee_volume_unit_price = models.IntegerField(default=0)
+
     deposit_factor = models.FloatField(default=50)
     complaint_days = models.IntegerField(default=2)
 

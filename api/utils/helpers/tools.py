@@ -27,6 +27,13 @@ class OrderStatus(Enum):
     DISCARD = 10
 
 
+class LandingStatus(Enum):
+    NEW = 1
+    CN = 2
+    VN = 3
+    EXPORTED = 4
+
+
 class Tools():
 
     def __init__(self):
