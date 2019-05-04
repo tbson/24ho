@@ -52,6 +52,9 @@ class Bol(TimeStampedModel):
     vn_date = models.DateTimeField(null=True)
     exported_date = models.DateTimeField(null=True)
 
+    delivery_fee_mass_unit_price = models.IntegerField(default=0)
+    delivery_fee_volume_unit_price = models.IntegerField(default=0)
+
     mass_convert_factor = models.IntegerField(default=6000)
 
     input_mass = models.FloatField(default=0)
