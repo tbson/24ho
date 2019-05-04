@@ -40,7 +40,10 @@ class OrderManager(models.Manager):
         return getData(index) if single is True else getListData(index)
 
     def sumCny(self, order: dict) -> float:
+        order_fee_factor_fixed = order.get('order_fee_factor_fixed', 0)
         order_fee_factor = order.get('order_fee_factor', 0)
+        if order_fee_factor_fixed:
+            order_fee_factor = order_fee_factor_fixed
         cny_amount = order.get('cny_amount', 0)
         cny_order_fee = cny_amount * order_fee_factor / 100
         cny_inland_delivery_fee = order.get('cny_inland_delivery_fee', 0)
@@ -144,7 +147,10 @@ class Order(TimeStampedModel):
     vnd_sub_fee = models.IntegerField(default=0)
 
     order_fee_factor = models.FloatField(default=0)
+    order_fee_factor_fixed = models.FloatField(default=0)
+
     deposit_factor = models.FloatField(default=0)
+
     mass = models.FloatField(default=0)
     packages = models.IntegerField(default=0)
     number_of_bol = models.IntegerField(default=0)

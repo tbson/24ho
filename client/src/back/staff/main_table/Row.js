@@ -31,7 +31,6 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
         const r = confirm(ListTools.getDeleteMessage(1));
         r && Service.handleRemove(id).then(onRemove);
     };
-    console.log(data.groups);
     return (
         <tr>
             <th className="row25">

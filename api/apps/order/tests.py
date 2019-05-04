@@ -173,7 +173,7 @@ class OrderTestCase(TestCase):
         self.assertEqual(response.status_code, 204)
         self.assertEqual(Order.objects.count(), 0)
 
-    def test_sumCny(self):
+    def test_sumCny_without_order_fee_factor_fixed(self):
         order = {
             'order_fee_factor': 5,
             'cny_amount': 100,
@@ -182,6 +182,17 @@ class OrderTestCase(TestCase):
             'cny_insurance_fee': 3
         }
         self.assertEqual(Order.objects.sumCny(order), 117.5)
+
+    def test_sumCny_with_order_fee_factor_fixed(self):
+        order = {
+            'order_fee_factor': 5,
+            'order_fee_factor_fixed': 6,
+            'cny_amount': 100,
+            'cny_inland_delivery_fee': 5.5,
+            'cny_sub_fee': 4,
+            'cny_insurance_fee': 3
+        }
+        self.assertEqual(Order.objects.sumCny(order), 118.5)
 
     def test_sumVnd(self):
         order = {
