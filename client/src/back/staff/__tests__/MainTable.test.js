@@ -178,3 +178,13 @@ describe('Service.groupToOptions', () => {
         expect(eput).toEqual(output);
     });
 });
+
+describe('Service.groupIdToName', () => {
+    it('Normal case', () => {
+        const input = [1, 2, 3];
+        const groups = [{value: 1, label: 'Group 1'}, {value: 3, label: 'Group 3'}];
+        const eput = ['Group 1', 'Unknown', 'Group 3'];
+        const output = Service.groupIdToName(input, groups);
+        expect(eput).toEqual(output);
+    });
+});

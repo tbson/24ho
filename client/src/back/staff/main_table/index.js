@@ -5,6 +5,7 @@ import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
 import {apiUrls} from '../_data';
 import type {TRow, DbRow, ListItem, FormOpenType, FormOpenKeyType} from '../_data';
+import type {SelectOptions} from 'src/utils/helpers/Tools';
 import {Pagination, SearchInput} from 'src/utils/components/TableUtils';
 import MainForm from '../MainForm';
 import Row from './Row.js';
@@ -35,6 +36,20 @@ export class Service {
     static groupToOptions(listGroup: Array<Object>): Array<Object> {
         return listGroup.map(item => ({value: item.id, label: item.name}));
     }
+
+    static groupIdToName(groupIds: Array<number>, groups: SelectOptions): Array<string> {
+        return groupIds.map(groupId => {
+            const result = groups.find(group => group.value === groupId);
+            return result ? result.label : 'Unknown';
+        });
+    }
+
+    static prepare(items: Array<Object>, groups: SelectOptions): Array<Object> {
+        return ListTools.prepare(items).map(item => {
+            item.group_names = Service.groupIdToName(item.groups, groups);
+            return item;
+        });
+    }
 }
 
 export default ({}: Props) => {
@@ -53,9 +68,10 @@ export default ({}: Props) => {
     const getList = async (url?: string, params?: Object) => {
         const data = await Service.handleGetList(url, params);
         if (!data) return;
-        setList(ListTools.prepare(data.items));
+        const _listGroup = Service.groupToOptions(data.extra.list_group).filter(item => item.label !== 'Customer');
+        setList(Service.prepare(data.items, _listGroup));
         setLinks(data.links);
-        setListGroup(Service.groupToOptions(data.extra.list_group).filter(item => item.label !== 'Customer'));
+        setListGroup(_listGroup);
     };
 
     const onChange = (data: TRow, type: string, reOpenDialog: boolean) => {

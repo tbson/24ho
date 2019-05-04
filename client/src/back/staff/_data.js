@@ -43,7 +43,8 @@ export type DbRow = FormValues & {
 export type TRow = DbRow & {
     user_data: Object,
     checked: boolean,
-    groups?: Array<Object>,
+    groups: Array<number>,
+    group_names: Array<string>,
     is_lock: boolean,
     is_sale: boolean,
     is_cust_care: boolean

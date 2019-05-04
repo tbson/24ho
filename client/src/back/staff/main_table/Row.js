@@ -31,7 +31,7 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
         const r = confirm(ListTools.getDeleteMessage(1));
         r && Service.handleRemove(id).then(onRemove);
     };
-
+    console.log(data.groups);
     return (
         <tr>
             <th className="row25">
@@ -39,11 +39,17 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
             </th>
             <td className="email">{data.user_data.email}</td>
             <td className="username">{data.user_data.username}</td>
-            <td className="fullname">{data.user_data.fullname}</td> 
-            <td className="is_sale"><BoolOutput value={data.is_sale}/></td> 
-            <td className="is_cust_care"><BoolOutput value={data.is_cust_care}/></td> 
-            <td className="groups">{data.groups && data.groups.map(({name}) => name).join(', ')}</td> 
-            <td className="fullname"><BoolOutput value={!data.is_lock}/></td> 
+            <td className="fullname">{data.user_data.fullname}</td>
+            <td className="is_sale">
+                <BoolOutput value={data.is_sale} />
+            </td>
+            <td className="is_cust_care">
+                <BoolOutput value={data.is_cust_care} />
+            </td>
+            <td className="groups">{data.group_names.join(', ')}</td>
+            <td className="fullname">
+                <BoolOutput value={!data.is_lock} />
+            </td>
             <td className="center">
                 <a className="editBtn" onClick={() => showForm(data.id)}>
                     <span className="fas fa-edit text-info pointer" />
