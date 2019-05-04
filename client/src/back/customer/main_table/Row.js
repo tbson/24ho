@@ -31,7 +31,7 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
         const r = confirm(ListTools.getDeleteMessage(1));
         r && Service.handleRemove(id).then(onRemove);
     };
-    
+
     return (
         <tr>
             <th className="row25">
@@ -39,13 +39,15 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
             </th>
             <td>{data.user_data.email}</td>
             <td>{data.phone}</td>
-            <td>{data.user_data.fullname}</td> 
-            <td>{data.sale_name}</td> 
-            <td>{data.cust_care_name}</td> 
-            <td className="percent mono">{data.order_fee_factor}</td> 
-            <td className="vnd mono">{Tools.numberFormat(data.delivery_fee_unit_price)}</td> 
-            <td className="percent mono">{data.deposit_factor}</td> 
-            <td><BoolOutput value={!data.is_lock}/></td> 
+            <td>{data.user_data.fullname}</td>
+            <td>{data.sale_name}</td>
+            <td>{data.cust_care_name}</td>
+            <td className="percent mono">{data.order_fee_factor}</td>
+            <td className="vnd mono">{Tools.numberFormat(data.delivery_fee_mass_unit_price)}</td>
+            <td className="percent mono">{data.deposit_factor}</td>
+            <td>
+                <BoolOutput value={!data.is_lock} />
+            </td>
             <td className="center">
                 <a className="editBtn" onClick={() => showForm(data.id)}>
                     <span className="fas fa-edit text-info pointer" />

@@ -50,7 +50,8 @@ export type TRow = DbRow & {
     cust_care_name?: string,
     phone: string,
     order_fee_factor: number,
-    delivery_fee_unit_price: number,
+    delivery_fee_mass_unit_price: number,
+    delivery_fee_volume_unit_price: number,
     deposit_factor: number
 };
 

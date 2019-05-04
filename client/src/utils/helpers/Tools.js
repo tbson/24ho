@@ -753,8 +753,4 @@ export default class Tools {
         }
         return {visibilityChange, hidden};
     }
-
-    static get phoneRegex() {
-        return /((09|03|07|08|05)+([0-9]{8})\b)/g;
-    }
 }

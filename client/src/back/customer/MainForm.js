@@ -26,7 +26,8 @@ export class Service {
         phone: '',
         company: '',
         order_fee_factor: 10,
-        delivery_fee_unit_price: 0,
+        delivery_fee_mass_unit_price: 0,
+        delivery_fee_volume_unit_price: 0,
         deposit_factor: 50,
         complaint_days: 2,
         sale: null,
@@ -42,12 +43,15 @@ export class Service {
         first_name: Yup.string().required(ErrMsgs.REQUIRED),
         last_name: Yup.string().required(ErrMsgs.REQUIRED),
         phone: Yup.string()
-            .required(ErrMsgs.REQUIRED)
-            .matches(Tools.phoneRegex, {message: ErrMsgs.PHONE}),
+            .required(ErrMsgs.REQUIRED),
         order_fee_factor: Yup.number()
             .required(ErrMsgs.REQUIRED)
             .min(0, ErrMsgs.GT_0),
-        delivery_fee_unit_price: Yup.number()
+        delivery_fee_mass_unit_price: Yup.number()
+            .required(ErrMsgs.REQUIRED)
+            .integer(ErrMsgs.INTEGER)
+            .min(0, ErrMsgs.GT_0),
+        delivery_fee_volume_unit_price: Yup.number()
             .required(ErrMsgs.REQUIRED)
             .integer(ErrMsgs.INTEGER)
             .min(0, ErrMsgs.GT_0),
@@ -172,10 +176,19 @@ export default ({id, listSale, listCustCare, open, close, onChange, children, su
                                 <TextInput name="order_fee_factor" label="Phí đặt hàng (%)" />
                             </div>
                             <div className="col">
-                                <TextInput name="delivery_fee_unit_price" label="Đơn giá vận chuyển (VND)" />
+                                <TextInput name="deposit_factor" label="Hệ số cọc (%)" />
+                            </div>
+                        </div>
+
+                        <div className="row">
+                            <div className="col">
+                                <TextInput name="delivery_fee_mass_unit_price" label="Đơn giá vận chuyển Kg (VND)" />
                             </div>
                             <div className="col">
-                                <TextInput name="deposit_factor" label="Hệ số cọc (%)" />
+                                <TextInput
+                                    name="delivery_fee_volume_unit_price"
+                                    label="Đơn giá vận chuyển khối (VND)"
+                                />
                             </div>
                         </div>
 
