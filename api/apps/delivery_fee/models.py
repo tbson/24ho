@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 
 class DeliveryFeeManager(models.Manager):
@@ -25,6 +26,12 @@ class DeliveryFeeManager(models.Manager):
             return [getData(i) for i in range(1, index + 1)]
 
         return getData(index) if single is True else getListData(index)
+
+    def getMatchedUnitPrice(self, mass: float) -> float:
+        result = self.filter(from_mass__lte=mass, to_mass__gte=mass)
+        if result.count():
+            return result.first().fee
+        return settings.DEFAULT_DELIVERY_UNIT_PRICE
 
 
 # Create your models here.

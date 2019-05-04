@@ -5,6 +5,7 @@ from django.test import TestCase
 from .models import DeliveryFee
 from .serializers import DeliveryFeeBaseSr
 from utils.helpers.test_helpers import TestHelpers
+from django.conf import settings
 # Create your tests here.
 
 
@@ -131,3 +132,15 @@ class DeliveryFeeTestCase(TestCase):
             delivery_fee.save()
         except ValidationError as err:
             self.assertEqual(err.detail, DeliveryFeeBaseSr.COMPARE_MESSAGE)
+
+    def test_getMatchedUnitPrice_not_matched(self):
+        self.assertEqual(DeliveryFee.objects.getMatchedUnitPrice(0), settings.DEFAULT_DELIVERY_UNIT_PRICE)
+
+    def test_getMatchedUnitPrice_matched_1(self):
+        self.assertEqual(DeliveryFee.objects.getMatchedUnitPrice(10), 200000)
+
+    def test_getMatchedUnitPrice_matched_2(self):
+        self.assertEqual(DeliveryFee.objects.getMatchedUnitPrice(19), 200000)
+
+    def test_getMatchedUnitPrice_matched_3(self):
+        self.assertEqual(DeliveryFee.objects.getMatchedUnitPrice(20), 100000)
