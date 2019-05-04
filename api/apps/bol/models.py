@@ -1,6 +1,6 @@
 from django.db import models
 from utils.models.model import TimeStampedModel
-from utils.helpers.tools import LandingStatus
+from utils.helpers.tools import LandingStatus, DeliveryFeeType
 from apps.customer.models import Customer
 from apps.address.models import Address
 
@@ -28,6 +28,9 @@ class BolManager(models.Manager):
 
         return getData(index) if single is True else getListData(index)
 
+    def calDeliveryFee(self, item: models.QuerySet) -> float:
+        return 0
+
 
 # Create your models here.
 class Bol(TimeStampedModel):
@@ -37,6 +40,14 @@ class Bol(TimeStampedModel):
         (LandingStatus.VN, 'Về VN'),
         (LandingStatus.EXPORTED, 'Đã xuất'),
     )
+
+    DELIVERY_FEE_TYPE_CHOICES = (
+        (DeliveryFeeType.MAX, 'Max lợi nhuận'),
+        (DeliveryFeeType.RANGE, 'Thang khối lượng'),
+        (DeliveryFeeType.MASS, 'Đơn giá khối lượng'),
+        (DeliveryFeeType.VOLUME, 'Đơn giá mét khối'),
+    )
+
     customer = models.ForeignKey(Customer, models.SET_NULL, related_name='customer_bols', null=True)
     address = models.ForeignKey(Address, models.SET_NULL, related_name='address_bols', null=True)
 
@@ -54,6 +65,8 @@ class Bol(TimeStampedModel):
 
     delivery_fee_mass_unit_price = models.IntegerField(default=0)
     delivery_fee_volume_unit_price = models.IntegerField(default=0)
+
+    delivery_fee_type = models.IntegerField(choices=DELIVERY_FEE_TYPE_CHOICES, default=1)
 
     mass_convert_factor = models.IntegerField(default=6000)
 

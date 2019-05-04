@@ -34,6 +34,13 @@ class LandingStatus(Enum):
     EXPORTED = 4
 
 
+class DeliveryFeeType(Enum):
+    MAX = 1
+    RANGE = 2
+    MASS = 3
+    VOLUME = 4
+
+
 class Tools():
 
     def __init__(self):
