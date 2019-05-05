@@ -4,7 +4,6 @@ from utils.models.model import TimeStampedModel
 from apps.staff.models import Staff
 from apps.address.models import Address
 from apps.order_fee.models import OrderFee
-from utils.helpers.tools import OrderStatus
 
 
 class OrderManager(models.Manager):
@@ -88,12 +87,28 @@ class OrderManager(models.Manager):
     def calOrderFee(self, amount: float) -> float:
         return OrderFee.objects.getMatchedFactor(amount) * amount / 100
 
+    def calDeliveryFee(self, item: models.QuerySet) -> float:
+        from apps.bol.models import Bol
+        # sum of bols's delivery fee
+        result = 0
+        for bol in item.order_bols.all():
+            result += Bol.objects.calDeliveryFee(bol)
+        return result
+
     def calInsuranceFee(self, item: models.QuerySet) -> float:
         # sum of bols's insurance value * insurance factor / 100
         return 0
 
-    def calDeliveryFee(self, item: models.QuerySet) -> float:
-        # sum of bols's delivery fee
+    def calShockproofFee(self, item: models.QuerySet) -> float:
+        # sum of bols's insurance value * insurance factor / 100
+        return 0
+
+    def calWoodenBoxFee(self, item: models.QuerySet) -> float:
+        # sum of bols's insurance value * insurance factor / 100
+        return 0
+
+    def calCountCheckFee(self, item: models.QuerySet) -> float:
+        # sum of bols's insurance value * insurance factor / 100
         return 0
 
     def reCal(self, item: models.QuerySet) -> models.QuerySet:

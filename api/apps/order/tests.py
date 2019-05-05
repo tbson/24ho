@@ -1,5 +1,6 @@
 import logging
 import json
+from unittest.mock import patch, MagicMock
 from rest_framework.test import APIClient
 from django.test import TestCase
 from .models import Order
@@ -7,6 +8,7 @@ from .serializers import OrderBaseSr
 from apps.address.models import Address
 from apps.order_item.models import OrderItem
 from apps.order_fee.models import OrderFee
+from apps.bol.models import Bol
 from utils.helpers.test_helpers import TestHelpers
 # Create your tests here.
 
@@ -222,17 +224,28 @@ class ManagerGetVndTotal(TestCase):
 
 
 class ManagerCalAmount(TestCase):
-    def test_calAmount(self):
+    def test_normal_case(self):
         order_items = OrderItem.objects._seeding(3)
         order = order_items[0].order
         self.assertEqual(Order.objects.calAmount(order), 77)
 
 
 class ManagerCalOrderFee(TestCase):
-    def test_calOrderFee(self):
+    def test_normal_case(self):
         amount = 15
         OrderFee.objects._seeding(3)
         self.assertEqual(Order.objects.calOrderFee(amount), 3)
+
+
+@patch('apps.bol.models.Bol.objects.calDeliveryFee', MagicMock(return_value=2))
+class ManagerCalDeliveryFee(TestCase):
+    def test_normal_case(self):
+        bols = Bol.objects._seeding(3)
+        item = Order.objects._seeding(1, True)
+        for bol in bols:
+            bol.order = item
+            bol.save()
+        self.assertEqual(Order.objects.calDeliveryFee(item), 6)
 
 
 class Serializer(TestCase):

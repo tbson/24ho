@@ -4,6 +4,7 @@ from utils.helpers.tools import DeliveryFeeType
 from apps.customer.models import Customer
 from apps.address.models import Address
 from apps.delivery_fee.models import DeliveryFee
+from apps.order.models import Order
 from django.conf import settings
 
 
@@ -96,6 +97,7 @@ class Bol(TimeStampedModel):
         (4, 'Đơn giá mét khối'),
     )
 
+    order = models.ForeignKey(Order, models.SET_NULL, related_name='order_bols', null=True)
     customer = models.ForeignKey(Customer, models.SET_NULL, related_name='customer_bols', null=True)
     address = models.ForeignKey(Address, models.SET_NULL, related_name='address_bols', null=True)
 
