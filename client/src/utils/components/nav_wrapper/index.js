@@ -76,6 +76,9 @@ const App = ({history, location, children}: Props) => {
             case 'deliveryFee':
                 if (APP !== 'admin') return null;
                 return menuItem('delivery-fee', 'Delivery fee', 'fas fa-balance-scale');
+            case 'countCheck':
+                if (APP !== 'admin') return null;
+                return menuItem('count-check', 'Count check', 'fas fa-tasks');
         }
     };
 
@@ -97,6 +100,7 @@ const App = ({history, location, children}: Props) => {
                     {renderMenu('rate')}
                     {renderMenu('orderFee')}
                     {renderMenu('deliveryFee')}
+                    {renderMenu('countCheck')}
                 </ul>
             </div>
 

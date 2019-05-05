@@ -30,6 +30,7 @@ import Cart from './cart/';
 import Rate from './rate/';
 import OrderFee from './order_fee/';
 import DeliveryFee from './delivery_fee/';
+import CountCheck from './count_check/';
 
 import Trans from 'src/utils/helpers/Trans';
 import translations from 'src/utils/translations.json';
@@ -60,6 +61,7 @@ class App extends React.Component<Props> {
                     <PrivateRoute path="/rate" component={Rate} />
                     <PrivateRoute path="/order-fee" component={OrderFee} />
                     <PrivateRoute path="/delivery-fee" component={DeliveryFee} />
+                    <PrivateRoute path="/count-check" component={CountCheck} />
                     <Route component={NotMatch} />
                 </Switch>
             </div>
