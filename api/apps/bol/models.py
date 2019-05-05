@@ -85,6 +85,16 @@ class BolManager(models.Manager):
             return item.insurance_value * settings.DEFAULT_INSURANCE_FACTOR / 100
         return 0
 
+    def calShockproofFee(self, item: models.QuerySet) -> float:
+        if item.shockproof:
+            return item.cny_shockproof_fee
+        return 0
+
+    def calWoodenBoxFee(self, item: models.QuerySet) -> float:
+        if item.wooden_box:
+            return item.cny_wooden_box_fee
+        return 0
+
 
 # Create your models here.
 class Bol(TimeStampedModel):
@@ -135,6 +145,9 @@ class Bol(TimeStampedModel):
 
     wooden_box = models.BooleanField(default=False)
     shockproof = models.BooleanField(default=False)
+
+    cny_wooden_box_fee = models.FloatField(default=0)
+    cny_shockproof_fee = models.FloatField(default=0)
 
     insurance_register = models.BooleanField(default=False)
     insurance_value = models.FloatField(default=0)

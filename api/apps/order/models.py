@@ -97,17 +97,22 @@ class OrderManager(models.Manager):
         # sum of bols's insurance fee
         return sum([Bol.objects.calInsuranceFee(bol) for bol in item.order_bols.all()])
 
+    def calCountCheckFee(self, item: models.QuerySet) -> float:
+        from apps.count_check.models import CountCheck
+        result = CountCheck.objects.getMatchedFee(item.order_items.count())
+        if item.count_check_fee_input:
+            result = item.count_check_fee_input
+        return result
+
     def calShockproofFee(self, item: models.QuerySet) -> float:
-        # sum of bols's insurance value * insurance factor / 100
-        return 0
+        from apps.bol.models import Bol
+        # sum of bols's shockproof fee
+        return sum([Bol.objects.calShockproofFee(bol) for bol in item.order_bols.all()])
 
     def calWoodenBoxFee(self, item: models.QuerySet) -> float:
-        # sum of bols's insurance value * insurance factor / 100
-        return 0
-
-    def calCountCheckFee(self, item: models.QuerySet) -> float:
-        # sum of bols's insurance value * insurance factor / 100
-        return 0
+        from apps.bol.models import Bol
+        # sum of bols's wooden box fee
+        return sum([Bol.objects.calWoodenBoxFee(bol) for bol in item.order_bols.all()])
 
     def reCal(self, item: models.QuerySet) -> models.QuerySet:
         item.cny_amount = self.calAmount(item)
@@ -143,6 +148,8 @@ class Order(TimeStampedModel):
     count_check = models.BooleanField(default=False)
     wooden_box = models.BooleanField(default=False)
     shockproof = models.BooleanField(default=False)
+
+    count_check_fee_input = models.FloatField(default=0)
 
     cust_care = models.ForeignKey(Staff, models.SET_NULL, related_name='cust_care_orders', null=True)
     approver = models.ForeignKey(Staff, models.SET_NULL, related_name='approver_orders', null=True)

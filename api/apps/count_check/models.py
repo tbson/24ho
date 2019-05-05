@@ -27,11 +27,11 @@ class CountCheckManager(models.Manager):
 
         return getData(index) if single is True else getListData(index)
 
-    def getMatchedFactor(self, items: float) -> float:
+    def getMatchedFee(self, items: int) -> float:
         result = self.filter(from_items__lte=items, to_items__gte=items)
         if result.count():
             return result.first().fee
-        return settings.DEFAULT_COUNT_CHECK_UNIT_PRICE
+        return settings.DEFAULT_COUNT_CHECK_PRICE
 
 # Create your models here.
 

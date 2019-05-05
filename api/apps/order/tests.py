@@ -9,7 +9,9 @@ from apps.address.models import Address
 from apps.order_item.models import OrderItem
 from apps.order_fee.models import OrderFee
 from apps.bol.models import Bol
+from apps.count_check.models import CountCheck
 from utils.helpers.test_helpers import TestHelpers
+from django.conf import settings
 # Create your tests here.
 
 
@@ -257,6 +259,82 @@ class ManagerCalInsuranceFee(TestCase):
             bol.order = order
             bol.save()
         self.assertEqual(Order.objects.calInsuranceFee(order), 6)
+
+
+class ManagerCalCountCheckFee(TestCase):
+    def test_no_manual_input_out_range(self):
+        CountCheck.objects._seeding(5)
+        orderItems = OrderItem.objects._seeding(5)
+
+        item = orderItems[0].order
+        item.count_check_fee_input = 0
+        item.save()
+
+        self.assertEqual(Order.objects.calCountCheckFee(item), settings.DEFAULT_COUNT_CHECK_PRICE)
+
+    def test_no_manual_input_in_range(self):
+        CountCheck.objects._seeding(5)
+        orderItems = OrderItem.objects._seeding(15)
+
+        item = orderItems[0].order
+        item.count_check_fee_input = 0
+        item.save()
+
+        self.assertEqual(Order.objects.calCountCheckFee(item), 21)
+
+    def test_manual_input(self):
+        CountCheck.objects._seeding(5)
+        orderItems = OrderItem.objects._seeding(5)
+
+        item = orderItems[0].order
+        item.count_check_fee_input = 5
+        item.save()
+
+        self.assertEqual(Order.objects.calCountCheckFee(item), 5)
+
+
+class ManagerCalShockproofFee(TestCase):
+    def test_without_register(self):
+        bols = Bol.objects._seeding(3)
+        order = Order.objects._seeding(1, True)
+        for bol in bols:
+            bol.order = order
+            bol.shockproof = False
+            bol.cny_shockproof_fee = 2
+            bol.save()
+        self.assertEqual(Order.objects.calShockproofFee(order), 0)
+
+    def test_with_register(self):
+        bols = Bol.objects._seeding(3)
+        order = Order.objects._seeding(1, True)
+        for bol in bols:
+            bol.order = order
+            bol.shockproof = True
+            bol.cny_shockproof_fee = 2
+            bol.save()
+        self.assertEqual(Order.objects.calShockproofFee(order), 6)
+
+
+class ManagerCalWoodenBoxFee(TestCase):
+    def test_without_register(self):
+        bols = Bol.objects._seeding(3)
+        order = Order.objects._seeding(1, True)
+        for bol in bols:
+            bol.order = order
+            bol.wooden_box = False
+            bol.cny_wooden_box_fee = 2
+            bol.save()
+        self.assertEqual(Order.objects.calWoodenBoxFee(order), 0)
+
+    def test_with_register(self):
+        bols = Bol.objects._seeding(3)
+        order = Order.objects._seeding(1, True)
+        for bol in bols:
+            bol.order = order
+            bol.wooden_box = True
+            bol.cny_wooden_box_fee = 2
+            bol.save()
+        self.assertEqual(Order.objects.calWoodenBoxFee(order), 6)
 
 
 class Serializer(TestCase):

@@ -95,21 +95,21 @@ class CountCheckTestCase(TestCase):
         self.assertEqual(CountCheck.objects.count(), 0)
 
 
-class ManagerGetMatchedFactor(TestCase):
+class ManagerGetMatchedFee(TestCase):
     def setUp(self):
         self.items = CountCheck.objects._seeding(3)
 
     def test_not_matched(self):
-        self.assertEqual(CountCheck.objects.getMatchedFactor(0), settings.DEFAULT_COUNT_CHECK_UNIT_PRICE)
+        self.assertEqual(CountCheck.objects.getMatchedFee(0), settings.DEFAULT_COUNT_CHECK_PRICE)
 
     def test_matched_lower(self):
-        self.assertEqual(CountCheck.objects.getMatchedFactor(10), 21)
+        self.assertEqual(CountCheck.objects.getMatchedFee(10), 21)
 
     def test_matched_upper(self):
-        self.assertEqual(CountCheck.objects.getMatchedFactor(19), 21)
+        self.assertEqual(CountCheck.objects.getMatchedFee(19), 21)
 
     def test_matched_other_level(self):
-        self.assertEqual(CountCheck.objects.getMatchedFactor(20), 22)
+        self.assertEqual(CountCheck.objects.getMatchedFee(20), 22)
 
 
 class Serializer(TestCase):
