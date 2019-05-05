@@ -117,8 +117,11 @@ class OrderManager(models.Manager):
     def reCal(self, item: models.QuerySet) -> models.QuerySet:
         item.cny_amount = self.calAmount(item)
         item.cny_order_fee = self.calOrderFee(item.cny_amount)
-        item.cny_insurance_fee = self.calInsuranceFee(item)
         item.vnd_delivery_fee = self.calDeliveryFee(item)
+        item.cny_insurance_fee = self.calInsuranceFee(item)
+        item.cny_count_check_fee = self.calCountCheckFee(item)
+        item.cny_shockproof_fee = self.calShockproofFee(item)
+        item.cny_wooden_box_fee = self.calWoodenBoxFee(item)
         item.save()
         return item
 
@@ -162,6 +165,9 @@ class Order(TimeStampedModel):
     cny_inland_delivery_fee = models.FloatField(default=0)
     cny_sub_fee = models.FloatField(default=0)
     cny_insurance_fee = models.FloatField(default=0)
+    cny_count_check_fee = models.FloatField(default=0)
+    cny_shockproof_fee = models.FloatField(default=0)
+    cny_wooden_box_fee = models.FloatField(default=0)
 
     vnd_delivery_fee = models.IntegerField(default=0)
     vnd_sub_fee = models.IntegerField(default=0)
