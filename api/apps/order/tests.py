@@ -173,7 +173,9 @@ class OrderTestCase(TestCase):
         self.assertEqual(response.status_code, 204)
         self.assertEqual(Order.objects.count(), 0)
 
-    def test_sumCny_without_order_fee_factor_fixed(self):
+
+class ManagerSumCny(TestCase):
+    def test_without_order_fee_factor_fixed(self):
         order = {
             'order_fee_factor': 5,
             'cny_amount': 100,
@@ -183,7 +185,7 @@ class OrderTestCase(TestCase):
         }
         self.assertEqual(Order.objects.sumCny(order), 117.5)
 
-    def test_sumCny_with_order_fee_factor_fixed(self):
+    def test_with_order_fee_factor_fixed(self):
         order = {
             'order_fee_factor': 5,
             'order_fee_factor_fixed': 6,
@@ -194,14 +196,18 @@ class OrderTestCase(TestCase):
         }
         self.assertEqual(Order.objects.sumCny(order), 118.5)
 
-    def test_sumVnd(self):
+
+class ManagerSumVnd(TestCase):
+    def test_normal_case(self):
         order = {
             'vnd_delivery_fee': 100000,
             'vnd_sub_fee': 20000,
         }
         self.assertEqual(Order.objects.sumVnd(order), 120000)
 
-    def test_getVndTotal(self):
+
+class ManagerGetVndTotal(TestCase):
+    def test_normal_case(self):
         order = {
             'rate': 3400,
             'order_fee_factor': 5,
@@ -214,7 +220,23 @@ class OrderTestCase(TestCase):
         }
         self.assertEqual(Order.objects.getVndTotal(order), 519500)
 
-    def test_serializer(self):
+
+class ManagerCalAmount(TestCase):
+    def test_calAmount(self):
+        order_items = OrderItem.objects._seeding(3)
+        order = order_items[0].order
+        self.assertEqual(Order.objects.calAmount(order), 77)
+
+
+class ManagerCalOrderFee(TestCase):
+    def test_calOrderFee(self):
+        amount = 15
+        OrderFee.objects._seeding(3)
+        self.assertEqual(Order.objects.calOrderFee(amount), 3)
+
+
+class Serializer(TestCase):
+    def test_normal_case(self):
         address = Address.objects._seeding(1, True)
         data = {
             'address': address.id,
@@ -234,13 +256,3 @@ class OrderTestCase(TestCase):
         order.is_valid(raise_exception=True)
         order.save()
         self.assertEqual(order.data['vnd_total'], 519500)
-
-    def test_calAmount(self):
-        order_items = OrderItem.objects._seeding(3)
-        order = order_items[0].order
-        self.assertEqual(Order.objects.calAmount(order), 77)
-
-    def test_calOrderFee(self):
-        amount = 15
-        OrderFee.objects._seeding(3)
-        self.assertEqual(Order.objects.calOrderFee(amount), 3)

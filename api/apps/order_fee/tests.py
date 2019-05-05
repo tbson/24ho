@@ -94,7 +94,26 @@ class OrderFeeTestCase(TestCase):
         self.assertEqual(response.status_code, 204)
         self.assertEqual(OrderFee.objects.count(), 0)
 
-    def test_serializer_from_gt_to(self):
+
+class ManagerGetMatchedFactor(TestCase):
+    def setUp(self):
+        self.items = OrderFee.objects._seeding(3)
+
+    def test_not_matched(self):
+        self.assertEqual(OrderFee.objects.getMatchedFactor(0), settings.DEFAULT_ORDER_FEE_FACTOR)
+
+    def test_matched_lower(self):
+        self.assertEqual(OrderFee.objects.getMatchedFactor(10), 20)
+
+    def test_matched_upper(self):
+        self.assertEqual(OrderFee.objects.getMatchedFactor(19), 20)
+
+    def test_matched_other_level(self):
+        self.assertEqual(OrderFee.objects.getMatchedFactor(20), 10)
+
+
+class Serializer(TestCase):
+    def test_from_gt_to(self):
         data = {
             'from_amount': 4,
             'to_amount': 3,
@@ -107,7 +126,7 @@ class OrderFeeTestCase(TestCase):
         except ValidationError as err:
             self.assertEqual(err.detail, OrderFeeBaseSr.COMPARE_MESSAGE)
 
-    def test_serializer_negative_from(self):
+    def test_negative_from(self):
         data = {
             'from_amount': -1,
             'to_amount': 3,
@@ -120,7 +139,7 @@ class OrderFeeTestCase(TestCase):
         except ValidationError as err:
             self.assertEqual(err.detail, OrderFeeBaseSr.COMPARE_MESSAGE)
 
-    def test_serializer_negative_to(self):
+    def test_negative_to(self):
         data = {
             'from_amount': 3,
             'to_amount': -1,
@@ -132,15 +151,3 @@ class OrderFeeTestCase(TestCase):
             order_fee.save()
         except ValidationError as err:
             self.assertEqual(err.detail, OrderFeeBaseSr.COMPARE_MESSAGE)
-
-    def test_getMatchedFactor_not_matched(self):
-        self.assertEqual(OrderFee.objects.getMatchedFactor(0), settings.DEFAULT_ORDER_FEE_FACTOR)
-
-    def test_getMatchedFactor_matched_1(self):
-        self.assertEqual(OrderFee.objects.getMatchedFactor(10), 20)
-
-    def test_getMatchedFactor_matched_2(self):
-        self.assertEqual(OrderFee.objects.getMatchedFactor(19), 20)
-
-    def test_getMatchedFactor_matched_3(self):
-        self.assertEqual(OrderFee.objects.getMatchedFactor(20), 10)

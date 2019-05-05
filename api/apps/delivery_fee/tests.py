@@ -94,7 +94,26 @@ class DeliveryFeeTestCase(TestCase):
         self.assertEqual(response.status_code, 204)
         self.assertEqual(DeliveryFee.objects.count(), 0)
 
-    def test_serializer_from_gt_to(self):
+
+class ManagerGetMatchedUnitPrice(TestCase):
+    def setUp(self):
+        self.items = DeliveryFee.objects._seeding(3)
+
+    def test_not_matched(self):
+        self.assertEqual(DeliveryFee.objects.getMatchedUnitPrice(0), settings.DEFAULT_DELIVERY_MASS_UNIT_PRICE)
+
+    def test_matched_lower(self):
+        self.assertEqual(DeliveryFee.objects.getMatchedUnitPrice(10), 200000)
+
+    def test_matched_upper(self):
+        self.assertEqual(DeliveryFee.objects.getMatchedUnitPrice(19), 200000)
+
+    def test_matched_other_level(self):
+        self.assertEqual(DeliveryFee.objects.getMatchedUnitPrice(20), 100000)
+
+
+class Serializer(TestCase):
+    def test_from_gt_to(self):
         data = {
             'from_mass': 4,
             'to_mass': 3,
@@ -107,7 +126,7 @@ class DeliveryFeeTestCase(TestCase):
         except ValidationError as err:
             self.assertEqual(err.detail, DeliveryFeeBaseSr.COMPARE_MESSAGE)
 
-    def test_serializer_negative_from(self):
+    def test_negative_from(self):
         data = {
             'from_mass': -1,
             'to_mass': 3,
@@ -120,7 +139,7 @@ class DeliveryFeeTestCase(TestCase):
         except ValidationError as err:
             self.assertEqual(err.detail, DeliveryFeeBaseSr.COMPARE_MESSAGE)
 
-    def test_serializer_negative_to(self):
+    def test_negative_to(self):
         data = {
             'from_mass': 3,
             'to_mass': -1,
@@ -132,15 +151,3 @@ class DeliveryFeeTestCase(TestCase):
             delivery_fee.save()
         except ValidationError as err:
             self.assertEqual(err.detail, DeliveryFeeBaseSr.COMPARE_MESSAGE)
-
-    def test_getMatchedUnitPrice_not_matched(self):
-        self.assertEqual(DeliveryFee.objects.getMatchedUnitPrice(0), settings.DEFAULT_DELIVERY_MASS_UNIT_PRICE)
-
-    def test_getMatchedUnitPrice_matched_1(self):
-        self.assertEqual(DeliveryFee.objects.getMatchedUnitPrice(10), 200000)
-
-    def test_getMatchedUnitPrice_matched_2(self):
-        self.assertEqual(DeliveryFee.objects.getMatchedUnitPrice(19), 200000)
-
-    def test_getMatchedUnitPrice_matched_3(self):
-        self.assertEqual(DeliveryFee.objects.getMatchedUnitPrice(20), 100000)

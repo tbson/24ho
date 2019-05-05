@@ -93,7 +93,9 @@ class OrderItemTestCase(TestCase):
         self.assertEqual(response.status_code, 204)
         self.assertEqual(OrderItem.objects.count(), 0)
 
-    def test_serializer(self):
+
+class Serializer(TestCase):
+    def test_normal_case(self):
         order = Order.objects._seeding(1, True)
         data = {
             'order': order.id,
