@@ -64,6 +64,7 @@ PROJECT_APPS = [
     'apps.order_item',
     'apps.order_fee',
     'apps.delivery_fee',
+    'apps.count_check',
     'apps.bol',
     'apps.sr',
 ]
@@ -236,6 +237,7 @@ DEFAULT_ORDER_FEE_FACTOR = 5
 DEFAULT_DELIVERY_MASS_UNIT_PRICE = 25000
 DEFAULT_DELIVERY_VOLUME_UNIT_PRICE = 50000
 DEFAULT_INSURANCE_FACTOR = 3
+DEFAULT_COUNT_CHECK_UNIT_PRICE = 20
 
 DEFAULT_META = {
     'title': APP_TITLE,

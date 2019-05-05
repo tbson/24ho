@@ -49,6 +49,10 @@ urlpatterns = (
         include('apps.delivery_fee.urls', namespace='delivery_fee'),
     ),
     path(
+        'count-check/',
+        include('apps.count_check.urls', namespace='count_check'),
+    ),
+    path(
         'bol/',
         include('apps.bol.urls', namespace='bol'),
     ),
