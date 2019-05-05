@@ -31,7 +31,7 @@ class DeliveryFeeManager(models.Manager):
         result = self.filter(from_mass__lte=mass, to_mass__gte=mass)
         if result.count():
             return result.first().fee
-        return settings.DEFAULT_DELIVERY_UNIT_PRICE
+        return settings.DEFAULT_DELIVERY_MASS_UNIT_PRICE
 
 
 # Create your models here.

@@ -109,16 +109,16 @@ class OrderManager(models.Manager):
 
 class Order(TimeStampedModel):
     STATUS_CHOICES = (
-        (OrderStatus.NEW, 'Chờ duyệt'),
-        (OrderStatus.APPROVED, 'Đã duyệt'),
-        (OrderStatus.DEBT, 'Chờ thanh toán'),
-        (OrderStatus.PAID, 'Đã thanh toán'),
-        (OrderStatus.DISPATCHED, 'Đã phát hàng'),
-        (OrderStatus.CN_STORE, 'Về kho TQ'),
-        (OrderStatus.VN_STORE, 'Về kho VN'),
-        (OrderStatus.EXPORTED, 'Đã xuất hàng'),
-        (OrderStatus.DONE, 'Hoàn thành'),
-        (OrderStatus.DISCARD, 'Huỷ'),
+        (1, 'Chờ duyệt'),
+        (2, 'Đã duyệt'),
+        (3, 'Chờ thanh toán'),
+        (4, 'Đã thanh toán'),
+        (5, 'Đã phát hàng'),
+        (6, 'Về kho TQ'),
+        (7, 'Về kho VN'),
+        (8, 'Đã xuất hàng'),
+        (9, 'Hoàn thành'),
+        (10, 'Huỷ'),
     )
 
     address = models.ForeignKey(Address, models.SET_NULL, related_name='order', null=True)

@@ -1,8 +1,13 @@
 import logging
+from unittest.mock import patch, MagicMock
 from rest_framework.test import APIClient
 from django.test import TestCase
 from .models import Bol
 from utils.helpers.test_helpers import TestHelpers
+from apps.delivery_fee.models import DeliveryFee
+from apps.customer.models import Customer
+from django.conf import settings
+from utils.helpers.tools import DeliveryFeeType
 # Create your tests here.
 
 
@@ -107,3 +112,203 @@ class BolTestCase(TestCase):
         )
         self.assertEqual(response.status_code, 204)
         self.assertEqual(Bol.objects.count(), 0)
+
+
+class ManagerGetVolume(TestCase):
+    def test_normal_case(self):
+        item = Bol.objects._seeding(1, True)
+        item.length = 100
+        item.width = 100
+        item.height = 100
+        item.save()
+        self.assertEqual(Bol.objects.getVolume(item), 1)
+
+
+class ManagerGetConvertMass(TestCase):
+    def test_default_convert_factor(self):
+        item = Bol.objects._seeding(1, True)
+        item.length = 20
+        item.width = 30
+        item.height = 10
+        item.save()
+        self.assertEqual(Bol.objects.getMass(item), 1)
+
+    def test_manual_convert_factor(self):
+        item = Bol.objects._seeding(1, True)
+        item.mass_convert_factor = 8000
+        item.length = 20
+        item.width = 20
+        item.height = 20
+        item.save()
+        self.assertEqual(Bol.objects.getMass(item), 1)
+
+
+class ManagerGetMass(TestCase):
+    def test_all_zero(self):
+        item = Bol.objects._seeding(1, True)
+        self.assertEqual(Bol.objects.getMass(item), 0)
+
+    def test_only_input_mass(self):
+        item = Bol.objects._seeding(1, True)
+        item.input_mass = 1.5
+        item.save()
+        self.assertEqual(Bol.objects.getMass(item), 1.5)
+
+    def test_only_convert_mass(self):
+        item = Bol.objects._seeding(1, True)
+        item.length = 20
+        item.width = 30
+        item.height = 10
+        item.save()
+        self.assertEqual(Bol.objects.getMass(item), 1)
+
+    def test_input_mass_bigger(self):
+        item = Bol.objects._seeding(1, True)
+        item.input_mass = 1.5
+        item.length = 20
+        item.width = 30
+        item.height = 10
+        item.save()
+        self.assertEqual(Bol.objects.getMass(item), 1.5)
+
+    def test_convert_mass_bigger(self):
+        item = Bol.objects._seeding(1, True)
+        item.input_mass = 0.5
+        item.length = 20
+        item.width = 30
+        item.height = 10
+        item.save()
+        self.assertEqual(Bol.objects.getMass(item), 1)
+
+
+class ManagerCalDeliveryFeeRange(TestCase):
+    def test_normal_case(self):
+        DeliveryFee.objects._seeding(4)
+        item = Bol.objects._seeding(1, True)
+        item.input_mass = 20
+        item.save()
+        deliveryFee = Bol.objects.calDeliveryFeeRange(item)
+        self.assertEqual(deliveryFee, 100000)
+
+
+class ManagerCalDeliveryFeeMass(TestCase):
+    def test_only_set_in_customer(self):
+        customer = Customer.objects._seeding(1, True)
+        customer.delivery_fee_mass_unit_price = 30000
+        customer.save()
+
+        item = Bol.objects._seeding(1, True)
+        item.customer = customer
+        item.input_mass = 20
+        item.save()
+
+        deliveryFee = Bol.objects.calDeliveryFeeMass(item)
+        self.assertEqual(deliveryFee, 600000)
+
+    def test_set_in_customer_and_bol(self):
+        customer = Customer.objects._seeding(1, True)
+        customer.delivery_fee_mass_unit_price = 30000
+        customer.save()
+
+        item = Bol.objects._seeding(1, True)
+        item.customer = customer
+        item.input_mass = 20
+        item.delivery_fee_mass_unit_price = 40000
+        item.save()
+
+        deliveryFee = Bol.objects.calDeliveryFeeMass(item)
+        self.assertEqual(deliveryFee, 800000)
+
+    def test_fall_back_to_default_value(self):
+        customer = Customer.objects._seeding(1, True)
+        customer.delivery_fee_mass_unit_price = 0
+        customer.save()
+
+        item = Bol.objects._seeding(1, True)
+        item.customer = customer
+        item.input_mass = 20
+        item.delivery_fee_mass_unit_price = 0
+        item.save()
+
+        deliveryFee = Bol.objects.calDeliveryFeeMass(item)
+        self.assertEqual(deliveryFee, settings.DEFAULT_DELIVERY_MASS_UNIT_PRICE * item.input_mass)
+
+
+class ManagerCalDeliveryFeeVolume(TestCase):
+    def test_only_set_in_customer(self):
+        customer = Customer.objects._seeding(1, True)
+        customer.delivery_fee_volume_unit_price = 30000
+        customer.save()
+
+        item = Bol.objects._seeding(1, True)
+        item.customer = customer
+        item.length = 200
+        item.width = 200
+        item.height = 200
+        item.save()
+
+        deliveryFee = Bol.objects.calDeliveryFeeVolume(item)
+        self.assertEqual(deliveryFee, 240000)
+
+    def test_set_in_customer_and_bol(self):
+        customer = Customer.objects._seeding(1, True)
+        customer.delivery_fee_volume_unit_price = 30000
+        customer.save()
+
+        item = Bol.objects._seeding(1, True)
+        item.customer = customer
+        item.length = 200
+        item.width = 200
+        item.height = 200
+        item.delivery_fee_volume_unit_price = 40000
+        item.save()
+
+        deliveryFee = Bol.objects.calDeliveryFeeVolume(item)
+        self.assertEqual(deliveryFee, 320000)
+
+    def test_fall_back_to_default_value(self):
+        customer = Customer.objects._seeding(1, True)
+        customer.delivery_fee_volume_unit_price = 0
+        customer.save()
+
+        item = Bol.objects._seeding(1, True)
+        item.customer = customer
+        item.length = 200
+        item.width = 200
+        item.height = 200
+        item.delivery_fee_volume_unit_price = 0
+        item.save()
+
+        deliveryFee = Bol.objects.calDeliveryFeeVolume(item)
+        self.assertEqual(deliveryFee, settings.DEFAULT_DELIVERY_VOLUME_UNIT_PRICE * 8)
+
+
+class ManagerCalDeliveryFee(TestCase):
+    def setUp(self):
+        self.item = Bol.objects._seeding(1, True)
+
+    @patch('apps.bol.models.Bol.objects.calDeliveryFeeRange', MagicMock(return_value=1))
+    @patch('apps.bol.models.Bol.objects.calDeliveryFeeMass', MagicMock(return_value=3))
+    @patch('apps.bol.models.Bol.objects.calDeliveryFeeVolume', MagicMock(return_value=2))
+    def test_max_type(self):
+        self.item.delivery_fee_type = DeliveryFeeType.MAX
+        self.item.save()
+
+        deliveryFee = Bol.objects.calDeliveryFee(self.item)
+
+        self.assertEqual(deliveryFee, 3)
+
+
+'''
+    def test_range_type(self):
+        deliveryFee = 1
+        self.assertEqual(deliveryFee, 0)
+
+    def test_mass_type(self):
+        deliveryFee = 1
+        self.assertEqual(deliveryFee, 0)
+
+    def test_volume_type(self):
+        deliveryFee = 1
+        self.assertEqual(deliveryFee, 0)
+'''

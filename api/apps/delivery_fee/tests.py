@@ -134,7 +134,7 @@ class DeliveryFeeTestCase(TestCase):
             self.assertEqual(err.detail, DeliveryFeeBaseSr.COMPARE_MESSAGE)
 
     def test_getMatchedUnitPrice_not_matched(self):
-        self.assertEqual(DeliveryFee.objects.getMatchedUnitPrice(0), settings.DEFAULT_DELIVERY_UNIT_PRICE)
+        self.assertEqual(DeliveryFee.objects.getMatchedUnitPrice(0), settings.DEFAULT_DELIVERY_MASS_UNIT_PRICE)
 
     def test_getMatchedUnitPrice_matched_1(self):
         self.assertEqual(DeliveryFee.objects.getMatchedUnitPrice(10), 200000)

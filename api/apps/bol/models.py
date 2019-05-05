@@ -1,8 +1,10 @@
 from django.db import models
 from utils.models.model import TimeStampedModel
-from utils.helpers.tools import LandingStatus, DeliveryFeeType
+from utils.helpers.tools import DeliveryFeeType
 from apps.customer.models import Customer
 from apps.address.models import Address
+from apps.delivery_fee.models import DeliveryFee
+from django.conf import settings
 
 
 class BolManager(models.Manager):
@@ -28,24 +30,70 @@ class BolManager(models.Manager):
 
         return getData(index) if single is True else getListData(index)
 
-    def calDeliveryFee(self, item: models.QuerySet) -> float:
-        return 0
+    def getConvertMass(self, item: models.QuerySet) -> float:
+        return item.width * item.height * item.length / item.mass_convert_factor
+
+    def getVolume(self, item: models.QuerySet) -> float:
+        return item.width * item.height * item.length / 1000000
+
+    def getMass(self, item: models.QuerySet) -> float:
+        return max(item.input_mass, self.getConvertMass(item))
+
+    def calDeliveryFeeRange(self, item: models.QuerySet) -> int:
+        mass = self.getMass(item)
+        return DeliveryFee.objects.getMatchedUnitPrice(mass)
+
+    def calDeliveryFeeMass(self, item: models.QuerySet) -> int:
+        deliveryFeeUnitPrice = item.customer.delivery_fee_mass_unit_price
+        if item.delivery_fee_mass_unit_price:
+            deliveryFeeUnitPrice = item.delivery_fee_mass_unit_price
+        if not deliveryFeeUnitPrice:
+            deliveryFeeUnitPrice = settings.DEFAULT_DELIVERY_MASS_UNIT_PRICE
+        mass = self.getMass(item)
+        return deliveryFeeUnitPrice * mass
+
+    def calDeliveryFeeVolume(self, item: models.QuerySet) -> int:
+        deliveryFeeUnitPrice = item.customer.delivery_fee_volume_unit_price
+        if item.delivery_fee_volume_unit_price:
+            deliveryFeeUnitPrice = item.delivery_fee_volume_unit_price
+        if not deliveryFeeUnitPrice:
+            deliveryFeeUnitPrice = settings.DEFAULT_DELIVERY_VOLUME_UNIT_PRICE
+        volume = self.getVolume(item)
+        return deliveryFeeUnitPrice * volume
+
+    def calDeliveryFee(self, item: models.QuerySet) -> int:
+        fromRange = self.calDeliveryFeeRange(item)
+        fromMass = self.calDeliveryFeeMass(item)
+        fromVolume = self.calDeliveryFeeVolume(item)
+
+        result = max(fromRange, fromMass, fromVolume)
+
+        if fromRange and item.delivery_fee_type == DeliveryFeeType.RANGE:
+            result = fromRange
+
+        if fromMass and item.delivery_fee_type == DeliveryFeeType.MASS:
+            result = fromMass
+
+        if fromVolume and item.delivery_fee_type == DeliveryFeeType.VOLUME:
+            result = fromVolume
+
+        return result
 
 
 # Create your models here.
 class Bol(TimeStampedModel):
     STATUS_CHOICES = (
-        (LandingStatus.NEW, 'Mới'),
-        (LandingStatus.CN, 'Về TQ'),
-        (LandingStatus.VN, 'Về VN'),
-        (LandingStatus.EXPORTED, 'Đã xuất'),
+        (1, 'Mới'),
+        (2, 'Về TQ'),
+        (3, 'Về VN'),
+        (4, 'Đã xuất'),
     )
 
     DELIVERY_FEE_TYPE_CHOICES = (
-        (DeliveryFeeType.MAX, 'Max lợi nhuận'),
-        (DeliveryFeeType.RANGE, 'Thang khối lượng'),
-        (DeliveryFeeType.MASS, 'Đơn giá khối lượng'),
-        (DeliveryFeeType.VOLUME, 'Đơn giá mét khối'),
+        (1, 'Max lợi nhuận'),
+        (2, 'Thang khối lượng'),
+        (3, 'Đơn giá khối lượng'),
+        (4, 'Đơn giá mét khối'),
     )
 
     customer = models.ForeignKey(Customer, models.SET_NULL, related_name='customer_bols', null=True)
