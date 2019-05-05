@@ -6,6 +6,7 @@ from .models import Bol
 from utils.helpers.test_helpers import TestHelpers
 from apps.delivery_fee.models import DeliveryFee
 from apps.customer.models import Customer
+from apps.order.models import Order
 from django.conf import settings
 from utils.helpers.tools import DeliveryFeeType
 # Create your tests here.
@@ -321,3 +322,31 @@ class ManagerCalDeliveryFee(TestCase):
         deliveryFee = Bol.objects.calDeliveryFee(self.item)
 
         self.assertEqual(deliveryFee, 2)
+
+
+class ManagerCalInsuranceFee(TestCase):
+    def test_transport_order_without_register(self):
+        item = Bol.objects._seeding(1, True)
+
+        item.insurance_register = False
+        item.insurance_value = 50
+        item.save()
+        self.assertEqual(Bol.objects.calInsuranceFee(item), 0)
+
+    def test_transport_order_with_register(self):
+        item = Bol.objects._seeding(1, True)
+
+        item.insurance_register = True
+        item.insurance_value = 50
+        item.save()
+        self.assertEqual(Bol.objects.calInsuranceFee(item), 1.5)
+
+    def test_normal_order_with_register(self):
+        item = Bol.objects._seeding(1, True)
+        order = Order.objects._seeding(1, True)
+
+        item.order = order
+        item.insurance_register = True
+        item.insurance_value = 50
+        item.save()
+        self.assertEqual(Bol.objects.calInsuranceFee(item), 0)

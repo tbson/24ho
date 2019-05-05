@@ -241,11 +241,22 @@ class ManagerCalOrderFee(TestCase):
 class ManagerCalDeliveryFee(TestCase):
     def test_normal_case(self):
         bols = Bol.objects._seeding(3)
-        item = Order.objects._seeding(1, True)
+        order = Order.objects._seeding(1, True)
         for bol in bols:
-            bol.order = item
+            bol.order = order
             bol.save()
-        self.assertEqual(Order.objects.calDeliveryFee(item), 6)
+        self.assertEqual(Order.objects.calDeliveryFee(order), 6)
+
+
+@patch('apps.bol.models.Bol.objects.calInsuranceFee', MagicMock(return_value=2))
+class ManagerCalInsuranceFee(TestCase):
+    def test_normal_case(self):
+        bols = Bol.objects._seeding(3)
+        order = Order.objects._seeding(1, True)
+        for bol in bols:
+            bol.order = order
+            bol.save()
+        self.assertEqual(Order.objects.calInsuranceFee(order), 6)
 
 
 class Serializer(TestCase):

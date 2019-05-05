@@ -90,14 +90,12 @@ class OrderManager(models.Manager):
     def calDeliveryFee(self, item: models.QuerySet) -> float:
         from apps.bol.models import Bol
         # sum of bols's delivery fee
-        result = 0
-        for bol in item.order_bols.all():
-            result += Bol.objects.calDeliveryFee(bol)
-        return result
+        return sum([Bol.objects.calDeliveryFee(bol) for bol in item.order_bols.all()])
 
     def calInsuranceFee(self, item: models.QuerySet) -> float:
-        # sum of bols's insurance value * insurance factor / 100
-        return 0
+        from apps.bol.models import Bol
+        # sum of bols's insurance fee
+        return sum([Bol.objects.calInsuranceFee(bol) for bol in item.order_bols.all()])
 
     def calShockproofFee(self, item: models.QuerySet) -> float:
         # sum of bols's insurance value * insurance factor / 100

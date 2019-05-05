@@ -80,6 +80,11 @@ class BolManager(models.Manager):
 
         return result
 
+    def calInsuranceFee(self, item: models.QuerySet) -> float:
+        if not item.order and item.insurance_register:
+            return item.insurance_value * settings.DEFAULT_INSURANCE_FACTOR / 100
+        return 0
+
 
 # Create your models here.
 class Bol(TimeStampedModel):
