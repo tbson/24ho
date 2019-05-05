@@ -283,13 +283,13 @@ class ManagerCalDeliveryFeeVolume(TestCase):
         self.assertEqual(deliveryFee, settings.DEFAULT_DELIVERY_VOLUME_UNIT_PRICE * 8)
 
 
+@patch('apps.bol.models.Bol.objects.calDeliveryFeeRange', MagicMock(return_value=1))
+@patch('apps.bol.models.Bol.objects.calDeliveryFeeMass', MagicMock(return_value=3))
+@patch('apps.bol.models.Bol.objects.calDeliveryFeeVolume', MagicMock(return_value=2))
 class ManagerCalDeliveryFee(TestCase):
     def setUp(self):
         self.item = Bol.objects._seeding(1, True)
 
-    @patch('apps.bol.models.Bol.objects.calDeliveryFeeRange', MagicMock(return_value=1))
-    @patch('apps.bol.models.Bol.objects.calDeliveryFeeMass', MagicMock(return_value=3))
-    @patch('apps.bol.models.Bol.objects.calDeliveryFeeVolume', MagicMock(return_value=2))
     def test_max_type(self):
         self.item.delivery_fee_type = DeliveryFeeType.MAX
         self.item.save()
@@ -298,17 +298,26 @@ class ManagerCalDeliveryFee(TestCase):
 
         self.assertEqual(deliveryFee, 3)
 
-
-'''
     def test_range_type(self):
-        deliveryFee = 1
-        self.assertEqual(deliveryFee, 0)
+        self.item.delivery_fee_type = DeliveryFeeType.RANGE
+        self.item.save()
+
+        deliveryFee = Bol.objects.calDeliveryFee(self.item)
+
+        self.assertEqual(deliveryFee, 1)
 
     def test_mass_type(self):
-        deliveryFee = 1
-        self.assertEqual(deliveryFee, 0)
+        self.item.delivery_fee_type = DeliveryFeeType.MASS
+        self.item.save()
+
+        deliveryFee = Bol.objects.calDeliveryFee(self.item)
+
+        self.assertEqual(deliveryFee, 3)
 
     def test_volume_type(self):
-        deliveryFee = 1
-        self.assertEqual(deliveryFee, 0)
-'''
+        self.item.delivery_fee_type = DeliveryFeeType.VOLUME
+        self.item.save()
+
+        deliveryFee = Bol.objects.calDeliveryFee(self.item)
+
+        self.assertEqual(deliveryFee, 2)
