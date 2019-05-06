@@ -2,7 +2,7 @@ from django.db import models
 
 
 class AreaManager(models.Manager):
-    def _seeding(self, index: int, single: bool = False, save: bool = True) -> models.QuerySet:
+    def seeding(self, index: int, single: bool = False, save: bool = True) -> models.QuerySet:
         if index == 0:
             raise Exception('Indext must be start with 1.')
 

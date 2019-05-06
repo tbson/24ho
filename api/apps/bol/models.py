@@ -9,7 +9,7 @@ from django.conf import settings
 
 
 class BolManager(models.Manager):
-    def _seeding(self, index: int, single: bool = False, save: bool = True) -> models.QuerySet:
+    def seeding(self, index: int, single: bool = False, save: bool = True) -> models.QuerySet:
         from apps.bol.serializers import BolBaseSr
         if index == 0:
             raise Exception('Indext must be start with 1.')

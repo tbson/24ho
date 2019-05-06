@@ -15,14 +15,14 @@ class AddressService():
 
 
 class AddressManager(models.Manager):
-    def _seeding(self, index: int, single: bool = False, save: bool = True) -> models.QuerySet:
+    def seeding(self, index: int, single: bool = False, save: bool = True) -> models.QuerySet:
         from apps.address.serializers import AddressBaseSr
 
         if index == 0:
             raise Exception('Indext must be start with 1.')
 
-        customer = Customer.objects._seeding(1, True)
-        area = Area.objects._seeding(1, True)
+        customer = Customer.objects.seeding(1, True)
+        area = Area.objects.seeding(1, True)
 
         def getData(i: int) -> dict:
             data = {

@@ -22,7 +22,7 @@ class BolTestCase(TestCase):
         self.client = APIClient()
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + self.token)
 
-        self.items = Bol.objects._seeding(3)
+        self.items = Bol.objects.seeding(3)
 
     def test_list(self):
         response = self.client.get(
@@ -46,8 +46,8 @@ class BolTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_create(self):
-        item3 = Bol.objects._seeding(3, True, False)
-        item4 = Bol.objects._seeding(4, True, False)
+        item3 = Bol.objects.seeding(3, True, False)
+        item4 = Bol.objects.seeding(4, True, False)
 
         # Add duplicate
         response = self.client.post(
@@ -67,7 +67,7 @@ class BolTestCase(TestCase):
         self.assertEqual(Bol.objects.count(), 4)
 
     def test_edit(self):
-        item3 = Bol.objects._seeding(3, True, False)
+        item3 = Bol.objects.seeding(3, True, False)
 
         # Update not exist
         response = self.client.put(
@@ -118,7 +118,7 @@ class BolTestCase(TestCase):
 
 class ManagerGetVolume(TestCase):
     def test_normal_case(self):
-        item = Bol.objects._seeding(1, True)
+        item = Bol.objects.seeding(1, True)
         item.length = 100
         item.width = 100
         item.height = 100
@@ -128,7 +128,7 @@ class ManagerGetVolume(TestCase):
 
 class ManagerGetConvertMass(TestCase):
     def test_default_convert_factor(self):
-        item = Bol.objects._seeding(1, True)
+        item = Bol.objects.seeding(1, True)
         item.length = 20
         item.width = 30
         item.height = 10
@@ -136,7 +136,7 @@ class ManagerGetConvertMass(TestCase):
         self.assertEqual(Bol.objects.getMass(item), 1)
 
     def test_manual_convert_factor(self):
-        item = Bol.objects._seeding(1, True)
+        item = Bol.objects.seeding(1, True)
         item.mass_convert_factor = 8000
         item.length = 20
         item.width = 20
@@ -147,17 +147,17 @@ class ManagerGetConvertMass(TestCase):
 
 class ManagerGetMass(TestCase):
     def test_all_zero(self):
-        item = Bol.objects._seeding(1, True)
+        item = Bol.objects.seeding(1, True)
         self.assertEqual(Bol.objects.getMass(item), 0)
 
     def test_only_input_mass(self):
-        item = Bol.objects._seeding(1, True)
+        item = Bol.objects.seeding(1, True)
         item.input_mass = 1.5
         item.save()
         self.assertEqual(Bol.objects.getMass(item), 1.5)
 
     def test_only_convert_mass(self):
-        item = Bol.objects._seeding(1, True)
+        item = Bol.objects.seeding(1, True)
         item.length = 20
         item.width = 30
         item.height = 10
@@ -165,7 +165,7 @@ class ManagerGetMass(TestCase):
         self.assertEqual(Bol.objects.getMass(item), 1)
 
     def test_input_mass_bigger(self):
-        item = Bol.objects._seeding(1, True)
+        item = Bol.objects.seeding(1, True)
         item.input_mass = 1.5
         item.length = 20
         item.width = 30
@@ -174,7 +174,7 @@ class ManagerGetMass(TestCase):
         self.assertEqual(Bol.objects.getMass(item), 1.5)
 
     def test_convert_mass_bigger(self):
-        item = Bol.objects._seeding(1, True)
+        item = Bol.objects.seeding(1, True)
         item.input_mass = 0.5
         item.length = 20
         item.width = 30
@@ -185,8 +185,8 @@ class ManagerGetMass(TestCase):
 
 class ManagerCalDeliveryFeeRange(TestCase):
     def test_normal_case(self):
-        DeliveryFee.objects._seeding(4)
-        item = Bol.objects._seeding(1, True)
+        DeliveryFee.objects.seeding(4)
+        item = Bol.objects.seeding(1, True)
         item.input_mass = 20
         item.save()
         deliveryFee = Bol.objects.calDeliveryFeeRange(item)
@@ -196,10 +196,10 @@ class ManagerCalDeliveryFeeRange(TestCase):
 @patch('apps.bol.models.Bol.objects.getMass', MagicMock(return_value=1))
 class ManagerCalDeliveryFeeArea(TestCase):
     def test_order_bol(self):
-        address = Address.objects._seeding(1, True)
-        order = Order.objects._seeding(1, True)
+        address = Address.objects.seeding(1, True)
+        order = Order.objects.seeding(1, True)
 
-        item = Bol.objects._seeding(1, True)
+        item = Bol.objects.seeding(1, True)
         item.address = address
         item.order = order
         item.save()
@@ -208,9 +208,9 @@ class ManagerCalDeliveryFeeArea(TestCase):
         self.assertEqual(deliveryFee, 0)
 
     def test_transport_bol(self):
-        address = Address.objects._seeding(1, True)
+        address = Address.objects.seeding(1, True)
 
-        item = Bol.objects._seeding(1, True)
+        item = Bol.objects.seeding(1, True)
         item.address = address
         item.save()
 
@@ -220,11 +220,11 @@ class ManagerCalDeliveryFeeArea(TestCase):
 
 class ManagerCalDeliveryFeeMass(TestCase):
     def test_only_set_in_customer(self):
-        customer = Customer.objects._seeding(1, True)
+        customer = Customer.objects.seeding(1, True)
         customer.delivery_fee_mass_unit_price = 30000
         customer.save()
 
-        item = Bol.objects._seeding(1, True)
+        item = Bol.objects.seeding(1, True)
         item.customer = customer
         item.input_mass = 20
         item.save()
@@ -233,11 +233,11 @@ class ManagerCalDeliveryFeeMass(TestCase):
         self.assertEqual(deliveryFee, 600000)
 
     def test_set_in_customer_and_bol(self):
-        customer = Customer.objects._seeding(1, True)
+        customer = Customer.objects.seeding(1, True)
         customer.delivery_fee_mass_unit_price = 30000
         customer.save()
 
-        item = Bol.objects._seeding(1, True)
+        item = Bol.objects.seeding(1, True)
         item.customer = customer
         item.input_mass = 20
         item.delivery_fee_mass_unit_price = 40000
@@ -247,11 +247,11 @@ class ManagerCalDeliveryFeeMass(TestCase):
         self.assertEqual(deliveryFee, 800000)
 
     def test_fall_back_to_default_value(self):
-        customer = Customer.objects._seeding(1, True)
+        customer = Customer.objects.seeding(1, True)
         customer.delivery_fee_mass_unit_price = 0
         customer.save()
 
-        item = Bol.objects._seeding(1, True)
+        item = Bol.objects.seeding(1, True)
         item.customer = customer
         item.input_mass = 20
         item.delivery_fee_mass_unit_price = 0
@@ -263,11 +263,11 @@ class ManagerCalDeliveryFeeMass(TestCase):
 
 class ManagerCalDeliveryFeeVolume(TestCase):
     def test_only_set_in_customer(self):
-        customer = Customer.objects._seeding(1, True)
+        customer = Customer.objects.seeding(1, True)
         customer.delivery_fee_volume_unit_price = 30000
         customer.save()
 
-        item = Bol.objects._seeding(1, True)
+        item = Bol.objects.seeding(1, True)
         item.customer = customer
         item.length = 200
         item.width = 200
@@ -278,11 +278,11 @@ class ManagerCalDeliveryFeeVolume(TestCase):
         self.assertEqual(deliveryFee, 240000)
 
     def test_set_in_customer_and_bol(self):
-        customer = Customer.objects._seeding(1, True)
+        customer = Customer.objects.seeding(1, True)
         customer.delivery_fee_volume_unit_price = 30000
         customer.save()
 
-        item = Bol.objects._seeding(1, True)
+        item = Bol.objects.seeding(1, True)
         item.customer = customer
         item.length = 200
         item.width = 200
@@ -294,11 +294,11 @@ class ManagerCalDeliveryFeeVolume(TestCase):
         self.assertEqual(deliveryFee, 320000)
 
     def test_fall_back_to_default_value(self):
-        customer = Customer.objects._seeding(1, True)
+        customer = Customer.objects.seeding(1, True)
         customer.delivery_fee_volume_unit_price = 0
         customer.save()
 
-        item = Bol.objects._seeding(1, True)
+        item = Bol.objects.seeding(1, True)
         item.customer = customer
         item.length = 200
         item.width = 200
@@ -316,8 +316,8 @@ class ManagerCalDeliveryFeeVolume(TestCase):
 @patch('apps.bol.models.Bol.objects.calDeliveryFeeArea', MagicMock(return_value=4))
 class ManagerCalDeliveryFee(TestCase):
     def setUp(self):
-        self.order = Order.objects._seeding(1, True)
-        self.item = Bol.objects._seeding(1, True)
+        self.order = Order.objects.seeding(1, True)
+        self.item = Bol.objects.seeding(1, True)
 
     def test_max_type(self):
         self.item.delivery_fee_type = DeliveryFeeType.MAX
@@ -362,7 +362,7 @@ class ManagerCalDeliveryFee(TestCase):
 
 class ManagerCalInsuranceFee(TestCase):
     def test_transport_order_without_register(self):
-        item = Bol.objects._seeding(1, True)
+        item = Bol.objects.seeding(1, True)
 
         item.insurance_register = False
         item.insurance_value = 50
@@ -370,7 +370,7 @@ class ManagerCalInsuranceFee(TestCase):
         self.assertEqual(Bol.objects.calInsuranceFee(item), 0)
 
     def test_transport_order_with_register(self):
-        item = Bol.objects._seeding(1, True)
+        item = Bol.objects.seeding(1, True)
 
         item.insurance_register = True
         item.insurance_value = 50
@@ -378,8 +378,8 @@ class ManagerCalInsuranceFee(TestCase):
         self.assertEqual(Bol.objects.calInsuranceFee(item), 1.5)
 
     def test_normal_order_with_register(self):
-        item = Bol.objects._seeding(1, True)
-        order = Order.objects._seeding(1, True)
+        item = Bol.objects.seeding(1, True)
+        order = Order.objects.seeding(1, True)
 
         item.order = order
         item.insurance_register = True

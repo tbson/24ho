@@ -32,10 +32,10 @@ class AddressManagerTestCase(TestCase):
 
     def test_create(self):
         # Add success
-        Customer.objects._seeding(1, True)
+        Customer.objects.seeding(1, True)
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + TestHelpers.getCustomerToken(self))
 
-        item1 = Address.objects._seeding(1, True, False)
+        item1 = Address.objects.seeding(1, True, False)
         resp = self.client.post(
             '/api/v1/address/',
             item1,
@@ -44,7 +44,7 @@ class AddressManagerTestCase(TestCase):
         resp = resp.json()
         self.assertEqual(resp['uid'], '1uid10')
 
-        item2 = Address.objects._seeding(2, True, False)
+        item2 = Address.objects.seeding(2, True, False)
         resp = self.client.post(
             '/api/v1/address/',
             item2,
@@ -62,7 +62,7 @@ class AddressTestCase(TestCase):
         self.client = APIClient()
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + self.token)
 
-        self.items = Address.objects._seeding(3)
+        self.items = Address.objects.seeding(3)
 
     def test_list(self):
         resp = self.client.get(
@@ -87,7 +87,7 @@ class AddressTestCase(TestCase):
 
     def test_create(self):
         # Add success
-        item4 = Address.objects._seeding(4, True, False)
+        item4 = Address.objects.seeding(4, True, False)
         resp = self.client.post(
             '/api/v1/address/',
             item4,
@@ -97,7 +97,7 @@ class AddressTestCase(TestCase):
         self.assertEqual(Address.objects.count(), 4)
 
     def test_edit(self):
-        item1 = Address.objects._seeding(1, True, False)
+        item1 = Address.objects.seeding(1, True, False)
         # Update not exist
         resp = self.client.put(
             "/api/v1/address/{}".format(0),

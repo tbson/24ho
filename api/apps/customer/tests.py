@@ -17,7 +17,7 @@ class CustomerTestCase(TestCase):
         self.client = APIClient()
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + self.token)
 
-        self.items = Customer.objects._seeding(3)
+        self.items = Customer.objects.seeding(3)
 
     def test_list(self):
         resp = self.client.get(

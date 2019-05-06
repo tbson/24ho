@@ -18,7 +18,7 @@ class RateTestCase(TestCase):
         self.client = APIClient()
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + self.token)
 
-        self.items = Rate.objects._seeding(3)
+        self.items = Rate.objects.seeding(3)
 
     def test_list(self):
         response = self.client.get(
@@ -42,7 +42,7 @@ class RateTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_create(self):
-        item4 = Rate.objects._seeding(4, True, False)
+        item4 = Rate.objects.seeding(4, True, False)
 
         # Add success
         response = self.client.post(
@@ -54,7 +54,7 @@ class RateTestCase(TestCase):
         self.assertEqual(Rate.objects.count(), 4)
 
     def test_edit(self):
-        item3 = Rate.objects._seeding(3, True, False)
+        item3 = Rate.objects.seeding(3, True, False)
 
         # Update not exist
         response = self.client.put(
@@ -102,7 +102,7 @@ class RateTestCase(TestCase):
         self.assertEqual(item, None)
 
         # Duplicate when there are some records
-        self.items = Rate.objects._seeding(1)
+        self.items = Rate.objects.seeding(1)
         self.items[0].created_at = timezone.now() - timezone.timedelta(days=1)
         self.items[0].save()
 
@@ -133,7 +133,7 @@ class RateTestCase(TestCase):
         self.assertEqual(response.data['value'], 1234)
 
         # Get latest rate
-        latest_rate = Rate.objects._seeding(1, True)
+        latest_rate = Rate.objects.seeding(1, True)
         response = self.client.get(
             "/api/v1/rate/latest"
         )

@@ -3,10 +3,10 @@ from apps.order.models import Order
 
 
 class OrderItemManager(models.Manager):
-    def _seeding(self, index: int, single: bool = False, save: bool = True) -> models.QuerySet:
+    def seeding(self, index: int, single: bool = False, save: bool = True) -> models.QuerySet:
         from apps.order_item.serializers import OrderItemBaseSr
 
-        order = Order.objects._seeding(1, True)
+        order = Order.objects.seeding(1, True)
 
         if index == 0:
             raise Exception('Indext must be start with 1.')

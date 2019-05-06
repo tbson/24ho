@@ -18,7 +18,7 @@ class DeliveryFeeTestCase(TestCase):
         self.client = APIClient()
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + self.token)
 
-        self.items = DeliveryFee.objects._seeding(3)
+        self.items = DeliveryFee.objects.seeding(3)
 
     def test_list(self):
         response = self.client.get(
@@ -42,7 +42,7 @@ class DeliveryFeeTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_create(self):
-        item4 = DeliveryFee.objects._seeding(4, True, False)
+        item4 = DeliveryFee.objects.seeding(4, True, False)
 
         # Add success
         response = self.client.post(
@@ -54,7 +54,7 @@ class DeliveryFeeTestCase(TestCase):
         self.assertEqual(DeliveryFee.objects.count(), 4)
 
     def test_edit(self):
-        item3 = DeliveryFee.objects._seeding(3, True, False)
+        item3 = DeliveryFee.objects.seeding(3, True, False)
 
         # Update not exist
         response = self.client.put(
@@ -97,7 +97,7 @@ class DeliveryFeeTestCase(TestCase):
 
 class ManagerGetMatchedUnitPrice(TestCase):
     def setUp(self):
-        self.items = DeliveryFee.objects._seeding(3)
+        self.items = DeliveryFee.objects.seeding(3)
 
     def test_not_matched(self):
         self.assertEqual(DeliveryFee.objects.getMatchedUnitPrice(0), settings.DEFAULT_DELIVERY_MASS_UNIT_PRICE)

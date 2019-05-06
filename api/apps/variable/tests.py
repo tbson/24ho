@@ -15,7 +15,7 @@ class VariableTestCase(TestCase):
         self.client = APIClient()
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + self.token)
 
-        self.items = Variable.objects._seeding(3)
+        self.items = Variable.objects.seeding(3)
 
     def test_list(self):
         response = self.client.get(
@@ -39,8 +39,8 @@ class VariableTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_create(self):
-        item3 = Variable.objects._seeding(3, True, False)
-        item4 = Variable.objects._seeding(4, True, False)
+        item3 = Variable.objects.seeding(3, True, False)
+        item4 = Variable.objects.seeding(4, True, False)
 
         # Add duplicate
         response = self.client.post(
@@ -60,7 +60,7 @@ class VariableTestCase(TestCase):
         self.assertEqual(Variable.objects.count(), 4)
 
     def test_edit(self):
-        item3 = Variable.objects._seeding(3, True, False)
+        item3 = Variable.objects.seeding(3, True, False)
 
         # Update not exist
         response = self.client.put(

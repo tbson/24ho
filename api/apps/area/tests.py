@@ -15,7 +15,7 @@ class AreaTestCase(TestCase):
         self.client = APIClient()
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + self.token)
 
-        self.items = Area.objects._seeding(3)
+        self.items = Area.objects.seeding(3)
 
     def test_list(self):
         response = self.client.get(
@@ -39,8 +39,8 @@ class AreaTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_create(self):
-        item1 = Area.objects._seeding(1, True, False)
-        item4 = Area.objects._seeding(4, True, False)
+        item1 = Area.objects.seeding(1, True, False)
+        item4 = Area.objects.seeding(4, True, False)
 
         # Add duplicate
         response = self.client.post(
@@ -60,8 +60,8 @@ class AreaTestCase(TestCase):
         self.assertEqual(Area.objects.count(), 4)
 
     def test_edit(self):
-        item1 = Area.objects._seeding(1, True, False)
-        item4 = Area.objects._seeding(4, True, False)
+        item1 = Area.objects.seeding(1, True, False)
+        item4 = Area.objects.seeding(4, True, False)
 
         # Update not exist
         response = self.client.put(
