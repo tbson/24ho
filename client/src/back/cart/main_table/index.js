@@ -96,8 +96,9 @@ export class Service {
 
         return items;
     }
-    static get savedCartItems(): Object {
-        return Tools.getStorageObj('cart_items');
+    static get savedCartItems(): Array<Object> {
+        const result = Tools.getStorageObj('cart_items');
+        return Tools.isEmpty(result) ? [] : result;
     }
 
     static set savedOrderList(items: Object): Object {
@@ -105,7 +106,7 @@ export class Service {
         return items;
     }
     static get savedOrderList(): Object {
-        return Tools.getStorageObj('orders');
+        return Tools.getStorageObj('orders') || {};
     }
 
     static calculate(items: Array<Object>): Array<Object> {
