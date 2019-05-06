@@ -46,15 +46,21 @@ class OrderManager(models.Manager):
         cny_amount = order.get('cny_amount', 0)
         cny_order_fee = cny_amount * order_fee_factor / 100
         cny_inland_delivery_fee = order.get('cny_inland_delivery_fee', 0)
-        cny_sub_fee = order.get('cny_sub_fee', 0)
         cny_insurance_fee = order.get('cny_insurance_fee', 0)
+        cny_count_check_fee = order.get('cny_count_check_fee', 0)
+        cny_shockproof_fee = order.get('cny_shockproof_fee', 0)
+        cny_wooden_box_fee = order.get('cny_wooden_box_fee', 0)
+        cny_sub_fee = order.get('cny_sub_fee', 0)
 
         series = [
             cny_amount,
             cny_order_fee,
             cny_inland_delivery_fee,
+            cny_insurance_fee,
+            cny_count_check_fee,
+            cny_shockproof_fee,
+            cny_wooden_box_fee,
             cny_sub_fee,
-            cny_insurance_fee
         ]
 
         return sum(series)
@@ -113,6 +119,10 @@ class OrderManager(models.Manager):
         from apps.bol.models import Bol
         # sum of bols's wooden box fee
         return sum([Bol.objects.calWoodenBoxFee(bol) for bol in item.order_bols.all()])
+
+    def calSubFee(self, item: models.QuerySet) -> float:
+        # sum of bols's sub fee
+        return sum([bol.cny_sub_fee for bol in item.order_bols.all()])
 
     def reCal(self, item: models.QuerySet) -> models.QuerySet:
         item.cny_amount = self.calAmount(item)

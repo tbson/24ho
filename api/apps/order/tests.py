@@ -184,10 +184,13 @@ class ManagerSumCny(TestCase):
             'order_fee_factor': 5,
             'cny_amount': 100,
             'cny_inland_delivery_fee': 5.5,
+            'cny_insurance_fee': 3,
+            'cny_count_check_fee': 3,
+            'cny_shockproof_fee': 3,
+            'cny_wooden_box_fee': 3,
             'cny_sub_fee': 4,
-            'cny_insurance_fee': 3
         }
-        self.assertEqual(Order.objects.sumCny(order), 117.5)
+        self.assertEqual(Order.objects.sumCny(order), 126.5)
 
     def test_with_order_fee_factor_fixed(self):
         order = {
@@ -195,10 +198,13 @@ class ManagerSumCny(TestCase):
             'order_fee_factor_fixed': 6,
             'cny_amount': 100,
             'cny_inland_delivery_fee': 5.5,
+            'cny_insurance_fee': 3,
+            'cny_count_check_fee': 3,
+            'cny_shockproof_fee': 3,
+            'cny_wooden_box_fee': 3,
             'cny_sub_fee': 4,
-            'cny_insurance_fee': 3
         }
-        self.assertEqual(Order.objects.sumCny(order), 118.5)
+        self.assertEqual(Order.objects.sumCny(order), 127.5)
 
 
 class ManagerSumVnd(TestCase):
@@ -217,12 +223,15 @@ class ManagerGetVndTotal(TestCase):
             'order_fee_factor': 5,
             'cny_amount': 100,
             'cny_inland_delivery_fee': 5.5,
-            'cny_sub_fee': 4,
             'cny_insurance_fee': 3,
+            'cny_count_check_fee': 3,
+            'cny_shockproof_fee': 3,
+            'cny_wooden_box_fee': 3,
+            'cny_sub_fee': 4,
             'vnd_delivery_fee': 100000,
             'vnd_sub_fee': 20000,
         }
-        self.assertEqual(Order.objects.getVndTotal(order), 519500)
+        self.assertEqual(Order.objects.getVndTotal(order), 550100)
 
 
 class ManagerCalAmount(TestCase):
@@ -335,6 +344,16 @@ class ManagerCalWoodenBoxFee(TestCase):
             bol.cny_wooden_box_fee = 2
             bol.save()
         self.assertEqual(Order.objects.calWoodenBoxFee(order), 6)
+
+
+class ManagerCalSubFee(TestCase):
+    def test_normal_normal(self):
+        bols = Bol.objects.seeding(3)
+        order = Order.objects.seeding(1, True)
+        for bol in bols:
+            bol.cny_sub_fee = 2
+            bol.save()
+        self.assertEqual(Order.objects.calSubFee(order), 0)
 
 
 class Serializer(TestCase):
