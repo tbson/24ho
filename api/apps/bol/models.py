@@ -44,6 +44,16 @@ class BolManager(models.Manager):
         mass = self.getMass(item)
         return DeliveryFee.objects.getMatchedUnitPrice(mass)
 
+    def calDeliveryFeeArea(self, item: models.QuerySet) -> int:
+        if item.order:
+            return 0
+
+        if item.address and item.address.area:
+            mass = self.getMass(item)
+            return mass * item.address.area.unit_price
+
+        return 0
+
     def calDeliveryFeeMass(self, item: models.QuerySet) -> int:
         deliveryFeeUnitPrice = item.customer.delivery_fee_mass_unit_price
         if item.delivery_fee_mass_unit_price:
@@ -64,19 +74,25 @@ class BolManager(models.Manager):
 
     def calDeliveryFee(self, item: models.QuerySet) -> int:
         fromRange = self.calDeliveryFeeRange(item)
+        fromArea = self.calDeliveryFeeArea(item)
         fromMass = self.calDeliveryFeeMass(item)
         fromVolume = self.calDeliveryFeeVolume(item)
 
-        result = max(fromRange, fromMass, fromVolume)
+        result = 0
 
-        if fromRange and item.delivery_fee_type == DeliveryFeeType.RANGE:
-            result = fromRange
+        if item.order:
+            result = max(fromRange, fromMass, fromVolume)
 
-        if fromMass and item.delivery_fee_type == DeliveryFeeType.MASS:
-            result = fromMass
+            if fromRange and item.delivery_fee_type == DeliveryFeeType.RANGE:
+                result = fromRange
 
-        if fromVolume and item.delivery_fee_type == DeliveryFeeType.VOLUME:
-            result = fromVolume
+            if fromMass and item.delivery_fee_type == DeliveryFeeType.MASS:
+                result = fromMass
+
+            if fromVolume and item.delivery_fee_type == DeliveryFeeType.VOLUME:
+                result = fromVolume
+        else:
+            result = fromArea
 
         return result
 

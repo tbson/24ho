@@ -7,6 +7,7 @@ from utils.helpers.test_helpers import TestHelpers
 from apps.delivery_fee.models import DeliveryFee
 from apps.customer.models import Customer
 from apps.order.models import Order
+from apps.address.models import Address
 from django.conf import settings
 from utils.helpers.tools import DeliveryFeeType
 # Create your tests here.
@@ -192,6 +193,31 @@ class ManagerCalDeliveryFeeRange(TestCase):
         self.assertEqual(deliveryFee, 100000)
 
 
+@patch('apps.bol.models.Bol.objects.getMass', MagicMock(return_value=1))
+class ManagerCalDeliveryFeeArea(TestCase):
+    def test_order_bol(self):
+        address = Address.objects._seeding(1, True)
+        order = Order.objects._seeding(1, True)
+
+        item = Bol.objects._seeding(1, True)
+        item.address = address
+        item.order = order
+        item.save()
+
+        deliveryFee = Bol.objects.calDeliveryFeeArea(item)
+        self.assertEqual(deliveryFee, 0)
+
+    def test_transport_bol(self):
+        address = Address.objects._seeding(1, True)
+
+        item = Bol.objects._seeding(1, True)
+        item.address = address
+        item.save()
+
+        deliveryFee = Bol.objects.calDeliveryFeeArea(item)
+        self.assertEqual(deliveryFee, 1001)
+
+
 class ManagerCalDeliveryFeeMass(TestCase):
     def test_only_set_in_customer(self):
         customer = Customer.objects._seeding(1, True)
@@ -287,12 +313,15 @@ class ManagerCalDeliveryFeeVolume(TestCase):
 @patch('apps.bol.models.Bol.objects.calDeliveryFeeRange', MagicMock(return_value=1))
 @patch('apps.bol.models.Bol.objects.calDeliveryFeeMass', MagicMock(return_value=3))
 @patch('apps.bol.models.Bol.objects.calDeliveryFeeVolume', MagicMock(return_value=2))
+@patch('apps.bol.models.Bol.objects.calDeliveryFeeArea', MagicMock(return_value=4))
 class ManagerCalDeliveryFee(TestCase):
     def setUp(self):
+        self.order = Order.objects._seeding(1, True)
         self.item = Bol.objects._seeding(1, True)
 
     def test_max_type(self):
         self.item.delivery_fee_type = DeliveryFeeType.MAX
+        self.item.order = self.order
         self.item.save()
 
         deliveryFee = Bol.objects.calDeliveryFee(self.item)
@@ -301,6 +330,7 @@ class ManagerCalDeliveryFee(TestCase):
 
     def test_range_type(self):
         self.item.delivery_fee_type = DeliveryFeeType.RANGE
+        self.item.order = self.order
         self.item.save()
 
         deliveryFee = Bol.objects.calDeliveryFee(self.item)
@@ -309,6 +339,7 @@ class ManagerCalDeliveryFee(TestCase):
 
     def test_mass_type(self):
         self.item.delivery_fee_type = DeliveryFeeType.MASS
+        self.item.order = self.order
         self.item.save()
 
         deliveryFee = Bol.objects.calDeliveryFee(self.item)
@@ -317,11 +348,16 @@ class ManagerCalDeliveryFee(TestCase):
 
     def test_volume_type(self):
         self.item.delivery_fee_type = DeliveryFeeType.VOLUME
+        self.item.order = self.order
         self.item.save()
 
         deliveryFee = Bol.objects.calDeliveryFee(self.item)
 
         self.assertEqual(deliveryFee, 2)
+
+    def test_transport_bol(self):
+        deliveryFee = Bol.objects.calDeliveryFee(self.item)
+        self.assertEqual(deliveryFee, 4)
 
 
 class ManagerCalInsuranceFee(TestCase):

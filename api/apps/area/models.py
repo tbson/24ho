@@ -15,8 +15,10 @@ class AreaManager(models.Manager):
             if save is False:
                 return data
 
-            instance, _ = self.get_or_create(uid=data['uid'])
-            return instance
+            try:
+                return self.get(uid=data['uid'])
+            except Area.DoesNotExist:
+                return self.create(**data)
 
         def getListData(index):
             return [getData(i) for i in range(1, index + 1)]
