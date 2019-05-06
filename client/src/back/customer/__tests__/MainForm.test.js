@@ -177,7 +177,8 @@ describe('Service.validationSchema', () => {
             password: 'test',
             phone: '0906696527',
             order_fee_factor: 5.5,
-            delivery_fee_unit_price: 25000,
+            delivery_fee_mass_unit_price: 25000,
+            delivery_fee_volume_unit_price: 25000,
             deposit_factor: 4.1,
             complaint_days: 2
         };
@@ -192,9 +193,9 @@ describe('Service.validationSchema', () => {
             first_name: 'test',
             last_name: 'test',
             password: '',
-            phone: '1234567890',
+            phone: '12345678900',
             order_fee_factor: 0,
-            delivery_fee_unit_price: 0.5,
+            delivery_fee_mass_unit_price: 0.5,
             deposit_factor: -1,
             complaint_days: 0
         };
@@ -202,7 +203,8 @@ describe('Service.validationSchema', () => {
             email: [ErrMsgs.EMAIL],
             username: [ErrMsgs.REQUIRED],
             phone: [ErrMsgs.PHONE],
-            delivery_fee_unit_price: [ErrMsgs.INTEGER],
+            delivery_fee_mass_unit_price: [ErrMsgs.INTEGER],
+            delivery_fee_volume_unit_price: [ErrMsgs.REQUIRED],
             deposit_factor: [ErrMsgs.GT_0]
         };
         let output = {};

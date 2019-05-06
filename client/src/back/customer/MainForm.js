@@ -43,7 +43,8 @@ export class Service {
         first_name: Yup.string().required(ErrMsgs.REQUIRED),
         last_name: Yup.string().required(ErrMsgs.REQUIRED),
         phone: Yup.string()
-            .required(ErrMsgs.REQUIRED),
+            .required(ErrMsgs.REQUIRED)
+            .max(10, ErrMsgs.PHONE),
         order_fee_factor: Yup.number()
             .required(ErrMsgs.REQUIRED)
             .min(0, ErrMsgs.GT_0),

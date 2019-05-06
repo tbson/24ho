@@ -28,6 +28,7 @@ export class Service {
         area: Yup.number().required(ErrMsgs.REQUIRED),
         phone: Yup.string()
             .required(ErrMsgs.REQUIRED)
+            .max(10, ErrMsgs.PHONE)
     });
 
     static changeRequest(params: Object) {

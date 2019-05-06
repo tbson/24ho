@@ -187,7 +187,7 @@ describe('Service.validationSchema', () => {
         const values = {
             title: 'uid1',
             area: undefined,
-            phone: '1234567890'
+            phone: '12345678900'
         };
         const eput = {
             area: [ErrMsgs.REQUIRED],
