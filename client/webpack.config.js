@@ -79,12 +79,7 @@ if (TARGET === 'start' || !TARGET) {
             hot: true,
             stats: 'errors-only',
             host: '0.0.0.0',
-            port: 3000,
-            https: {
-                cert: fs.readFileSync('/code/ssl/cer.crt'),
-                key: fs.readFileSync('/code/ssl/rsa.key'),
-                ca: fs.readFileSync('/code/ssl/localca.pem')
-            }
+            port: 3000
         },
         plugins: [new ErrorOverlayPlugin(), new webpack.NamedModulesPlugin()]
     });
