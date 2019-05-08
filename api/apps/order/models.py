@@ -58,8 +58,6 @@ class OrderManager(models.Manager):
         cny_shockproof_fee = order.get('cny_shockproof_fee', 0)
         cny_wooden_box_fee = order.get('cny_wooden_box_fee', 0)
 
-        cny_sub_fee = order.get('cny_sub_fee', 0)
-
         series = [
             cny_amount,
             cny_order_fee,
@@ -68,7 +66,6 @@ class OrderManager(models.Manager):
             cny_count_check_fee,
             cny_shockproof_fee,
             cny_wooden_box_fee,
-            cny_sub_fee,
         ]
 
         return sum(series)
@@ -128,21 +125,23 @@ class OrderManager(models.Manager):
         # sum of bols's wooden box fee
         return sum([Bol.objects.calWoodenBoxFee(bol) for bol in item.order_bols.all()])
 
-    def calSubFee(self, item: models.QuerySet) -> float:
-        # sum of bols's sub fee
-        return sum([bol.cny_sub_fee for bol in item.order_bols.all()])
-
     def reCal(self, item: models.QuerySet) -> models.QuerySet:
-        # Frezee after confirm
+        '''
+        Frezee after confirm
+        '''
         item.cny_amount = self.calAmount(item)
         item.cny_order_fee = self.calOrderFee(item.cny_amount)
-        item.cny_insurance_fee = self.calInsuranceFee(item)
+        # item.cny_inland_delivery_fee
 
-        # Frezee after export
+        '''
+        Frezee after export
+        '''
         item.vnd_delivery_fee = self.calDeliveryFee(item)
+        item.cny_insurance_fee = self.calInsuranceFee(item)
         item.cny_count_check_fee = self.calCountCheckFee(item)
         item.cny_shockproof_fee = self.calShockproofFee(item)
         item.cny_wooden_box_fee = self.calWoodenBoxFee(item)
+        # item.vnd_sub_fee
 
         item.save()
         return item
@@ -185,7 +184,6 @@ class Order(TimeStampedModel):
 
     cny_amount = models.FloatField(default=0)
     cny_inland_delivery_fee = models.FloatField(default=0)
-    cny_sub_fee = models.FloatField(default=0)
     cny_insurance_fee = models.FloatField(default=0)
     cny_count_check_fee = models.FloatField(default=0)
     cny_shockproof_fee = models.FloatField(default=0)
