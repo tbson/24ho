@@ -48,7 +48,8 @@ class Customer(models.Model):
 
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        primary_key=True
     )
     fingerprint = models.CharField(max_length=250, blank=True)
 
@@ -78,6 +79,10 @@ class Customer(models.Model):
 
     objects = CustomerManager()
 
+    @property
+    def id(self):
+        return self.user_id
+
     def save(self, *args, **kwargs):
 
         if not self._state.adding:
@@ -101,4 +106,4 @@ class Customer(models.Model):
 
     class Meta:
         db_table = "customers"
-        ordering = ['-id']
+        ordering = ['-user']

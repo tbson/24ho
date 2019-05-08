@@ -54,7 +54,8 @@ class Staff(models.Model):
 
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        primary_key=True
     )
     fingerprint = models.CharField(max_length=250, blank=True)
 
@@ -71,6 +72,10 @@ class Staff(models.Model):
 
     objects = StaffManager()
 
+    @property
+    def id(self):
+        return self.user_id
+
     def delete(self, *args, **kwargs):
         self.user.delete()
         return super().delete(*args, **kwargs)
@@ -80,4 +85,4 @@ class Staff(models.Model):
 
     class Meta:
         db_table = "staffs"
-        ordering = ['-id']
+        ordering = ['-user']
