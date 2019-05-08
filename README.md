@@ -9,7 +9,6 @@ Issue a selfsign SSL certificate: use [https://github.com/tbson/localca](https:/
 ### Step 2
 
 Copy all files to `nginx/ssl/app_name` 
-Copy all files to `client/ssl` 
 
 Add `- ../../web/24ho/api/public/:/resource/public/24ho` to `volumes` of `nginx` if not exist.
 
