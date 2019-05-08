@@ -38,18 +38,26 @@ class OrderManager(models.Manager):
 
         return getData(index) if single is True else getListData(index)
 
-    def sumCny(self, order: dict) -> float:
+    def getCnyOrderFee(self, order):
         order_fee_factor_fixed = order.get('order_fee_factor_fixed', 0)
-        order_fee_factor = order.get('order_fee_factor', 0)
+        factor = order.get('order_fee_factor', 0)
         if order_fee_factor_fixed:
-            order_fee_factor = order_fee_factor_fixed
+            factor = order_fee_factor_fixed
+        return factor * order.get('cny_amount', 0) / 100
+
+    def sumCny(self, order: dict) -> float:
         cny_amount = order.get('cny_amount', 0)
-        cny_order_fee = cny_amount * order_fee_factor / 100
+
+        cny_order_fee = self.getCnyOrderFee(order)
+
         cny_inland_delivery_fee = order.get('cny_inland_delivery_fee', 0)
+
         cny_insurance_fee = order.get('cny_insurance_fee', 0)
+
         cny_count_check_fee = order.get('cny_count_check_fee', 0)
         cny_shockproof_fee = order.get('cny_shockproof_fee', 0)
         cny_wooden_box_fee = order.get('cny_wooden_box_fee', 0)
+
         cny_sub_fee = order.get('cny_sub_fee', 0)
 
         series = [
@@ -125,13 +133,17 @@ class OrderManager(models.Manager):
         return sum([bol.cny_sub_fee for bol in item.order_bols.all()])
 
     def reCal(self, item: models.QuerySet) -> models.QuerySet:
+        # Frezee after confirm
         item.cny_amount = self.calAmount(item)
         item.cny_order_fee = self.calOrderFee(item.cny_amount)
-        item.vnd_delivery_fee = self.calDeliveryFee(item)
         item.cny_insurance_fee = self.calInsuranceFee(item)
+
+        # Frezee after export
+        item.vnd_delivery_fee = self.calDeliveryFee(item)
         item.cny_count_check_fee = self.calCountCheckFee(item)
         item.cny_shockproof_fee = self.calShockproofFee(item)
         item.cny_wooden_box_fee = self.calWoodenBoxFee(item)
+
         item.save()
         return item
 
