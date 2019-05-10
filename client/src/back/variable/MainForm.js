@@ -84,7 +84,7 @@ export default ({id, open, close, onChange, children, submitTitle = 'Save'}: Pro
     };
 
     return (
-        <DefaultModal open={openModal} close={close} title="Staff manager">
+        <DefaultModal open={openModal} close={close} title="Variable manager">
             <Formik
                 initialValues={{...initialValues}}
                 validationSchema={validationSchema}
