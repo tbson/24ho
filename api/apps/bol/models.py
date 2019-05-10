@@ -55,6 +55,7 @@ class BolManager(models.Manager):
         return 0
 
     def calDeliveryFeeMass(self, item: models.QuerySet) -> int:
+        # fix max and calculated max, get biggest one
         deliveryFeeUnitPrice = item.customer.delivery_fee_mass_unit_price
         if item.delivery_fee_mass_unit_price:
             deliveryFeeUnitPrice = item.delivery_fee_mass_unit_price
@@ -73,8 +74,12 @@ class BolManager(models.Manager):
         return deliveryFeeUnitPrice * volume
 
     def calDeliveryFee(self, item: models.QuerySet) -> int:
-        fromRange = self.calDeliveryFeeRange(item)
+        # Checking area then get corresponding range mass and volume
+
+        # admin can fix unit price of mass and volume
         fromArea = self.calDeliveryFeeArea(item)
+        fromRange = self.calDeliveryFeeRange(item)
+
         fromMass = self.calDeliveryFeeMass(item)
         fromVolume = self.calDeliveryFeeVolume(item)
 

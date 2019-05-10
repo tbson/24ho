@@ -38,21 +38,12 @@ class OrderManager(models.Manager):
 
         return getData(index) if single is True else getListData(index)
 
-    def getCnyOrderFee(self, order):
-        order_fee_factor_fixed = order.get('order_fee_factor_fixed', 0)
-        factor = order.get('order_fee_factor', 0)
-        if order_fee_factor_fixed:
-            factor = order_fee_factor_fixed
-        return factor * order.get('cny_amount', 0) / 100
-
     def sumCny(self, order: dict) -> float:
         cny_amount = order.get('cny_amount', 0)
 
-        cny_order_fee = self.getCnyOrderFee(order)
+        cny_order_fee = order.get('cny_order_fee', 0)
 
         cny_inland_delivery_fee = order.get('cny_inland_delivery_fee', 0)
-
-        cny_insurance_fee = order.get('cny_insurance_fee', 0)
 
         cny_count_check_fee = order.get('cny_count_check_fee', 0)
         cny_shockproof_fee = order.get('cny_shockproof_fee', 0)
@@ -62,10 +53,9 @@ class OrderManager(models.Manager):
             cny_amount,
             cny_order_fee,
             cny_inland_delivery_fee,
-            cny_insurance_fee,
-            cny_count_check_fee,
-            cny_shockproof_fee,
-            cny_wooden_box_fee,
+            cny_count_check_fee,  # VND
+            cny_shockproof_fee,  # CNY
+            cny_wooden_box_fee,  # CNY
         ]
 
         return sum(series)
@@ -95,18 +85,17 @@ class OrderManager(models.Manager):
             )
         )['amount']
 
-    def calOrderFee(self, amount: float) -> float:
-        return OrderFee.objects.getMatchedFactor(amount) * amount / 100
+    def calOrderFee(self, item: models.QuerySet) -> float:
+        amount = item.cny_amount
+        factor = OrderFee.objects.getMatchedFactor(amount)
+        if item.order_fee_factor_fixed:
+            factor = item.order_fee_factor_fixed
+        return factor * amount / 100
 
     def calDeliveryFee(self, item: models.QuerySet) -> float:
         from apps.bol.models import Bol
         # sum of bols's delivery fee
         return sum([Bol.objects.calDeliveryFee(bol) for bol in item.order_bols.all()])
-
-    def calInsuranceFee(self, item: models.QuerySet) -> float:
-        from apps.bol.models import Bol
-        # sum of bols's insurance fee
-        return sum([Bol.objects.calInsuranceFee(bol) for bol in item.order_bols.all()])
 
     def calCountCheckFee(self, item: models.QuerySet) -> float:
         from apps.count_check.models import CountCheck
@@ -130,14 +119,13 @@ class OrderManager(models.Manager):
         Frezee after confirm
         '''
         item.cny_amount = self.calAmount(item)
-        item.cny_order_fee = self.calOrderFee(item.cny_amount)
+        item.cny_order_fee = self.calOrderFee(item)
         # item.cny_inland_delivery_fee
 
         '''
         Frezee after export
         '''
         item.vnd_delivery_fee = self.calDeliveryFee(item)
-        item.cny_insurance_fee = self.calInsuranceFee(item)
         item.cny_count_check_fee = self.calCountCheckFee(item)
         item.cny_shockproof_fee = self.calShockproofFee(item)
         item.cny_wooden_box_fee = self.calWoodenBoxFee(item)
@@ -183,8 +171,8 @@ class Order(TimeStampedModel):
     real_rate = models.IntegerField()
 
     cny_amount = models.FloatField(default=0)
+    cny_order_fee = models.FloatField(default=0)
     cny_inland_delivery_fee = models.FloatField(default=0)
-    cny_insurance_fee = models.FloatField(default=0)
     cny_count_check_fee = models.FloatField(default=0)
     cny_shockproof_fee = models.FloatField(default=0)
     cny_wooden_box_fee = models.FloatField(default=0)

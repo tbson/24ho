@@ -179,30 +179,16 @@ class OrderTestCase(TestCase):
 
 
 class ManagerSumCny(TestCase):
-    def test_without_order_fee_factor_fixed(self):
+    def test_normal_case(self):
         order = {
-            'order_fee_factor': 5,
             'cny_amount': 100,
+            'cny_order_fee': 5,
             'cny_inland_delivery_fee': 5.5,
-            'cny_insurance_fee': 3,
             'cny_count_check_fee': 3,
             'cny_shockproof_fee': 3,
             'cny_wooden_box_fee': 3,
         }
-        self.assertEqual(Order.objects.sumCny(order), 122.5)
-
-    def test_with_order_fee_factor_fixed(self):
-        order = {
-            'order_fee_factor': 5,
-            'order_fee_factor_fixed': 6,
-            'cny_amount': 100,
-            'cny_inland_delivery_fee': 5.5,
-            'cny_insurance_fee': 3,
-            'cny_count_check_fee': 3,
-            'cny_shockproof_fee': 3,
-            'cny_wooden_box_fee': 3,
-        }
-        self.assertEqual(Order.objects.sumCny(order), 123.5)
+        self.assertEqual(Order.objects.sumCny(order), 119.5)
 
 
 class ManagerSumVnd(TestCase):
@@ -218,17 +204,16 @@ class ManagerGetVndTotal(TestCase):
     def test_normal_case(self):
         order = {
             'rate': 3400,
-            'order_fee_factor': 5,
             'cny_amount': 100,
+            'cny_order_fee': 5,
             'cny_inland_delivery_fee': 5.5,
-            'cny_insurance_fee': 3,
             'cny_count_check_fee': 3,
             'cny_shockproof_fee': 3,
             'cny_wooden_box_fee': 3,
             'vnd_delivery_fee': 100000,
             'vnd_sub_fee': 20000,
         }
-        self.assertEqual(Order.objects.getVndTotal(order), 536500)
+        self.assertEqual(Order.objects.getVndTotal(order), 526300)
 
 
 class ManagerCalAmount(TestCase):
@@ -239,10 +224,20 @@ class ManagerCalAmount(TestCase):
 
 
 class ManagerCalOrderFee(TestCase):
-    def test_normal_case(self):
-        amount = 15
+    def test_without_fixed(self):
+        order = Order.objects.seeding(1, True)
+        order.cny_amount = 15
+        order.save()
         OrderFee.objects.seeding(3)
-        self.assertEqual(Order.objects.calOrderFee(amount), 3)
+        self.assertEqual(Order.objects.calOrderFee(order), 3)
+
+    def test_with_fixed(self):
+        order = Order.objects.seeding(1, True)
+        order.cny_amount = 15
+        order.order_fee_factor_fixed = 10
+        order.save()
+        OrderFee.objects.seeding(3)
+        self.assertEqual(Order.objects.calOrderFee(order), 1.5)
 
 
 @patch('apps.bol.models.Bol.objects.calDeliveryFee', MagicMock(return_value=2))
@@ -254,17 +249,6 @@ class ManagerCalDeliveryFee(TestCase):
             bol.order = order
             bol.save()
         self.assertEqual(Order.objects.calDeliveryFee(order), 6)
-
-
-@patch('apps.bol.models.Bol.objects.calInsuranceFee', MagicMock(return_value=2))
-class ManagerCalInsuranceFee(TestCase):
-    def test_normal_case(self):
-        bols = Bol.objects.seeding(3)
-        order = Order.objects.seeding(1, True)
-        for bol in bols:
-            bol.order = order
-            bol.save()
-        self.assertEqual(Order.objects.calInsuranceFee(order), 6)
 
 
 class ManagerCalCountCheckFee(TestCase):
@@ -350,16 +334,19 @@ class Serializer(TestCase):
             'address': address.id,
             'shop_link': 'link1',
             'site': 'TAOBAO',
+            'real_rate': 3300,
+
             'rate': 3400,
-            'real_rate': 3400,
-            'order_fee_factor': 5,
             'cny_amount': 100,
+            'cny_order_fee': 5,
             'cny_inland_delivery_fee': 5.5,
-            'cny_insurance_fee': 3,
+            'cny_count_check_fee': 3,
+            'cny_shockproof_fee': 3,
+            'cny_wooden_box_fee': 3,
             'vnd_delivery_fee': 100000,
             'vnd_sub_fee': 20000,
         }
         order = OrderBaseSr(data=data)
         order.is_valid(raise_exception=True)
         order.save()
-        self.assertEqual(order.data['vnd_total'], 505900)
+        self.assertEqual(order.data['vnd_total'], 526300)
