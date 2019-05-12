@@ -55,6 +55,7 @@ PROJECT_APPS = [
     'utils',
     'apps.variable',
     'apps.group',
+    'apps.category',
     'apps.staff',
     'apps.customer',
     'apps.area',
