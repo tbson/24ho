@@ -6,6 +6,7 @@ from .models import DeliveryFee
 from .serializers import DeliveryFeeBaseSr
 from utils.helpers.test_helpers import TestHelpers
 from django.conf import settings
+from apps.area.models import Area
 # Create your tests here.
 
 
@@ -19,14 +20,23 @@ class DeliveryFeeTestCase(TestCase):
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + self.token)
 
         self.items = DeliveryFee.objects.seeding(3)
+        self.area = Area.objects.seeding(1, True)
 
-    def test_list(self):
+    def test_list_with_area(self):
         response = self.client.get(
-            '/api/v1/delivery-fee/'
+            "/api/v1/delivery-fee/?area={}".format(self.area.id)
         )
         self.assertEqual(response.status_code, 200)
         response = response.json()
         self.assertEqual(response['count'], 3)
+
+    def test_list_without_area(self):
+        response = self.client.get(
+            "/api/v1/delivery-fee/".format(self.area.id)
+        )
+        self.assertEqual(response.status_code, 200)
+        response = response.json()
+        self.assertEqual(response['count'], 0)
 
     def test_detail(self):
         # Item not exist
@@ -113,8 +123,12 @@ class ManagerGetMatchedUnitPrice(TestCase):
 
 
 class Serializer(TestCase):
+    def setUp(self):
+        self.area = Area.objects.seeding(1, True)
+
     def test_from_gt_to(self):
         data = {
+            'area': self.area.pk,
             'from_mass': 4,
             'to_mass': 3,
             'fee': 50
@@ -128,6 +142,7 @@ class Serializer(TestCase):
 
     def test_negative_from(self):
         data = {
+            'area': self.area.pk,
             'from_mass': -1,
             'to_mass': 3,
             'fee': 50
@@ -141,6 +156,7 @@ class Serializer(TestCase):
 
     def test_negative_to(self):
         data = {
+            'area': self.area.pk,
             'from_mass': 3,
             'to_mass': -1,
             'fee': 50

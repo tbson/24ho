@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from apps.area.models import Area
 
 
 class DeliveryFeeManager(models.Manager):
@@ -8,8 +9,11 @@ class DeliveryFeeManager(models.Manager):
         if index == 0:
             raise Exception('Indext must be start with 1.')
 
+        area = Area.objects.seeding(1, True)
+
         def getData(i: int) -> dict:
             data = {
+                'area': area.pk,
                 'from_mass': i * 10,
                 'to_mass': i * 10 + 9,
                 'fee': int(200000 / i)
@@ -36,6 +40,7 @@ class DeliveryFeeManager(models.Manager):
 
 # Create your models here.
 class DeliveryFee(models.Model):
+    area = models.ForeignKey(Area, on_delete=models.CASCADE, related_name='area_delivery_fees')
     from_mass = models.IntegerField()
     to_mass = models.IntegerField()
     fee = models.IntegerField()

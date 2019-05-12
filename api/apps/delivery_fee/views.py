@@ -8,6 +8,7 @@ from .serializers import (
     DeliveryFeeBaseSr,
 )
 from utils.common_classes.custom_permission import CustomPermission
+from utils.common_classes.custom_pagination import NoPagination
 from utils.helpers.res_tools import res
 
 
@@ -15,10 +16,12 @@ class DeliveryFeeViewSet(GenericViewSet):
     _name = 'delivery_fee'
     serializer_class = DeliveryFeeBaseSr
     permission_classes = (CustomPermission, )
+    pagination_class = NoPagination
     search_fields = ('uid', 'value')
 
     def list(self, request):
-        queryset = DeliveryFee.objects.all()
+        area = self.request.query_params.get('area', None)
+        queryset = DeliveryFee.objects.filter(area_id=area)
         queryset = self.filter_queryset(queryset)
         queryset = self.paginate_queryset(queryset)
         serializer = DeliveryFeeBaseSr(queryset, many=True)
