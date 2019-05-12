@@ -26,20 +26,6 @@ class OrderStatus:
     DISCARD = 10
 
 
-class LandingStatus:
-    NEW = 1
-    CN = 2
-    VN = 3
-    EXPORTED = 4
-
-
-class DeliveryFeeType:
-    MAX = 1
-    RANGE = 2
-    MASS = 3
-    VOLUME = 4
-
-
 class Tools:
 
     @staticmethod

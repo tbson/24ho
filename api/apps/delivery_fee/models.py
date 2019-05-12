@@ -2,9 +2,15 @@ from django.db import models
 from django.conf import settings
 from apps.area.models import Area
 
+
+class DeliveryFeeTypes:
+    MASS = 1
+    VOLUME = 2
+
+
 TYPES = (
-    (1, 'MASS'),
-    (2, 'VOLUME')
+    (DeliveryFeeTypes.MASS, 'Mass'),
+    (DeliveryFeeTypes.VOLUME, 'Volume')
 )
 
 
@@ -37,11 +43,11 @@ class DeliveryFeeManager(models.Manager):
 
         return getData(index) if single is True else getListData(index)
 
-    def getMatchedUnitPrice(self, value: float, type: int) -> float:
+    def getMatchedUnitPrice(self, value: float, area_id: int, type: int) -> float:
         if type not in dict(TYPES):
             raise Exception('Invalid type of delivery fee unit price.')
 
-        result = self.filter(start__lte=value, stop__gte=value, type=type)
+        result = self.filter(area_id=area_id, start__lte=value, stop__gte=value, type=type)
         if result.count():
             return result.first().vnd_unit_price
         if type == 1:
