@@ -109,29 +109,39 @@ class ManagerGetMatchedUnitPrice(TestCase):
     def setUp(self):
         self.items = DeliveryFee.objects.seeding(3)
 
-    def test_not_matched(self):
-        self.assertEqual(DeliveryFee.objects.getMatchedUnitPrice(0), settings.DEFAULT_DELIVERY_MASS_UNIT_PRICE)
+    def test_not_matched_range(self):
+        self.assertEqual(DeliveryFee.objects.getMatchedUnitPrice(0, 1), settings.DEFAULT_DELIVERY_MASS_UNIT_PRICE)
+
+    def test_not_matched_type(self):
+        self.assertEqual(DeliveryFee.objects.getMatchedUnitPrice(10, 2), settings.DEFAULT_DELIVERY_VOLUME_UNIT_PRICE)
+
+    def test_invalid_type(self):
+        try:
+            DeliveryFee.objects.getMatchedUnitPrice(10, 3)
+        except Exception as err:
+            self.assertEqual(str(err), 'Invalid type of delivery fee unit price.')
 
     def test_matched_lower(self):
-        self.assertEqual(DeliveryFee.objects.getMatchedUnitPrice(10), 200000)
+        self.assertEqual(DeliveryFee.objects.getMatchedUnitPrice(10, 1), 200000)
 
     def test_matched_upper(self):
-        self.assertEqual(DeliveryFee.objects.getMatchedUnitPrice(19), 200000)
+        self.assertEqual(DeliveryFee.objects.getMatchedUnitPrice(19, 1), 200000)
 
     def test_matched_other_level(self):
-        self.assertEqual(DeliveryFee.objects.getMatchedUnitPrice(20), 100000)
+        self.assertEqual(DeliveryFee.objects.getMatchedUnitPrice(20, 1), 100000)
 
 
 class Serializer(TestCase):
     def setUp(self):
         self.area = Area.objects.seeding(1, True)
 
-    def test_from_gt_to(self):
+    def test_start_gt_to(self):
         data = {
             'area': self.area.pk,
-            'from_mass': 4,
-            'to_mass': 3,
-            'fee': 50
+            'start': 4,
+            'stop': 3,
+            'vnd_unit_price': 50,
+            'type': 1
         }
         delivery_fee = DeliveryFeeBaseSr(data=data)
         delivery_fee.is_valid(raise_exception=True)
@@ -140,12 +150,13 @@ class Serializer(TestCase):
         except ValidationError as err:
             self.assertEqual(err.detail, DeliveryFeeBaseSr.COMPARE_MESSAGE)
 
-    def test_negative_from(self):
+    def test_negative_start(self):
         data = {
             'area': self.area.pk,
-            'from_mass': -1,
-            'to_mass': 3,
-            'fee': 50
+            'start': -1,
+            'stop': 3,
+            'vnd_unit_price': 50,
+            'type': 1
         }
         delivery_fee = DeliveryFeeBaseSr(data=data)
         delivery_fee.is_valid(raise_exception=True)
@@ -154,12 +165,13 @@ class Serializer(TestCase):
         except ValidationError as err:
             self.assertEqual(err.detail, DeliveryFeeBaseSr.COMPARE_MESSAGE)
 
-    def test_negative_to(self):
+    def test_negative_stop(self):
         data = {
             'area': self.area.pk,
-            'from_mass': 3,
-            'to_mass': -1,
-            'fee': 50
+            'start': 3,
+            'stop': -1,
+            'vnd_unit_price': 50,
+            'type': 1
         }
         delivery_fee = DeliveryFeeBaseSr(data=data)
         delivery_fee.is_valid(raise_exception=True)

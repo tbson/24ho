@@ -2,6 +2,11 @@ from django.db import models
 from django.conf import settings
 from apps.area.models import Area
 
+TYPES = (
+    (1, 'MASS'),
+    (2, 'VOLUME')
+)
+
 
 class DeliveryFeeManager(models.Manager):
     def seeding(self, index: int, single: bool = False, save: bool = True) -> models.QuerySet:
@@ -14,9 +19,10 @@ class DeliveryFeeManager(models.Manager):
         def getData(i: int) -> dict:
             data = {
                 'area': area.pk,
-                'from_mass': i * 10,
-                'to_mass': i * 10 + 9,
-                'fee': int(200000 / i)
+                'start': i * 10,
+                'stop': i * 10 + 9,
+                'vnd_unit_price': int(200000 / i),
+                'type': 1
             }
             if save is False:
                 return data
@@ -31,25 +37,31 @@ class DeliveryFeeManager(models.Manager):
 
         return getData(index) if single is True else getListData(index)
 
-    def getMatchedUnitPrice(self, mass: float) -> float:
-        result = self.filter(from_mass__lte=mass, to_mass__gte=mass)
+    def getMatchedUnitPrice(self, value: float, type: int) -> float:
+        if type not in dict(TYPES):
+            raise Exception('Invalid type of delivery fee unit price.')
+
+        result = self.filter(start__lte=value, stop__gte=value, type=type)
         if result.count():
-            return result.first().fee
-        return settings.DEFAULT_DELIVERY_MASS_UNIT_PRICE
+            return result.first().vnd_unit_price
+        if type == 1:
+            return settings.DEFAULT_DELIVERY_MASS_UNIT_PRICE
+        return settings.DEFAULT_DELIVERY_VOLUME_UNIT_PRICE
 
 
 # Create your models here.
 class DeliveryFee(models.Model):
     area = models.ForeignKey(Area, on_delete=models.CASCADE, related_name='area_delivery_fees')
-    from_mass = models.IntegerField()
-    to_mass = models.IntegerField()
-    fee = models.IntegerField()
+    start = models.FloatField()
+    stop = models.FloatField()
+    vnd_unit_price = models.IntegerField()
+    type = models.IntegerField(choices=TYPES, default=1)
 
     objects = DeliveryFeeManager()
 
     def __str__(self):
-        return '{} - {}'.format(self.from_mass, self.to_mass)
+        return '{} - {}'.format(self.start, self.stop)
 
     class Meta:
         db_table = "delivery_fees"
-        ordering = ['-to_mass']
+        ordering = ['-stop']

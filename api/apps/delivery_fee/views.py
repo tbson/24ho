@@ -17,7 +17,7 @@ class DeliveryFeeViewSet(GenericViewSet):
     serializer_class = DeliveryFeeBaseSr
     permission_classes = (CustomPermission, )
     pagination_class = NoPagination
-    search_fields = ('uid', 'value')
+    search_fields = ('start', 'stop', 'vnd_delivery_fee', )
 
     def list(self, request):
         area = self.request.query_params.get('area', None)
