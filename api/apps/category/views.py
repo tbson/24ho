@@ -15,7 +15,7 @@ class CategoryViewSet(GenericViewSet):
     _name = 'Category'
     serializer_class = CategoryBaseSr
     permission_classes = (CustomPermission, )
-    search_fields = ('uid', 'value')
+    search_fields = ('uid')
 
     def list(self, request):
         queryset = Category.objects.all()

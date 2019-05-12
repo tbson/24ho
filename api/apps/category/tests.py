@@ -25,85 +25,85 @@ class CategoryTestCase(TestCase):
         response = response.json()
         self.assertEqual(response['count'], 3)
 
-    # def test_detail(self):
-    #     # Item not exist
-    #     response = self.client.get(
-    #         "/api/v1/Category/{}".format(0)
-    #     )
-    #     self.assertEqual(response.status_code, 404)
+    def test_detail(self):
+        # Item not exist
+        response = self.client.get(
+            "/api/v1/Category/{}".format(0)
+        )
+        self.assertEqual(response.status_code, 404)
 
-    #     # Item exist
-    #     response = self.client.get(
-    #         "/api/v1/Category/".format(self.items[0].pk)
-    #     )
-    #     self.assertEqual(response.status_code, 200)
+        # Item exist
+        response = self.client.get(
+            "/api/v1/Category/".format(self.items[0].pk)
+        )
+        self.assertEqual(response.status_code, 200)
 
-    # def test_create(self):
-    #     item3 = Category.objects.seeding(3, True, False)
-    #     item4 = Category.objects.seeding(4, True, False)
+    def test_create(self):
+        item3 = Category.objects.seeding(3, True, False)
+        item4 = Category.objects.seeding(4, True, False)
 
-    #     # Add duplicate
-    #     response = self.client.post(
-    #         '/api/v1/Category/',
-    #         item3,
-    #         format='json'
-    #     )
-    #     self.assertEqual(response.status_code, 400)
+        # Add duplicate
+        response = self.client.post(
+            '/api/v1/Category/',
+            item3,
+            format='json'
+        )
+        self.assertEqual(response.status_code, 400)
 
-    #     # Add success
-    #     response = self.client.post(
-    #         '/api/v1/Category/',
-    #         item4,
-    #         format='json'
-    #     )
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertEqual(Category.objects.count(), 4)
+        # Add success
+        response = self.client.post(
+            '/api/v1/Category/',
+            item4,
+            format='json'
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Category.objects.count(), 4)
 
-    # def test_edit(self):
-    #     item3 = Category.objects.seeding(3, True, False)
+    def test_edit(self):
+        item3 = Category.objects.seeding(3, True, False)
 
-    #     # Update not exist
-    #     response = self.client.put(
-    #         "/api/v1/Category/{}".format(0),
-    #         item3,
-    #         format='json'
-    #     )
-    #     self.assertEqual(response.status_code, 404)
+        # Update not exist
+        response = self.client.put(
+            "/api/v1/Category/{}".format(0),
+            item3,
+            format='json'
+        )
+        self.assertEqual(response.status_code, 404)
 
-    #     # Update duplicate
-    #     response = self.client.put(
-    #         "/api/v1/Category/{}".format(self.items[0].pk),
-    #         item3,
-    #         format='json'
-    #     )
-    #     self.assertEqual(response.status_code, 400)
+        # Update duplicate
+        response = self.client.put(
+            "/api/v1/Category/{}".format(self.items[0].pk),
+            item3,
+            format='json'
+        )
+        self.assertEqual(response.status_code, 400)
 
-    #     # Update success
-    #     response = self.client.put(
-    #         "/api/v1/Category/{}".format(self.items[2].pk),
-    #         item3,
-    #         format='json'
-    #     )
-    #     self.assertEqual(response.status_code, 200)
+        # Update success
+        response = self.client.put(
+            "/api/v1/Category/{}".format(self.items[2].pk),
+            item3,
+            format='json'
+        )
+        self.assertEqual(response.status_code, 200)
 
-    # def test_delete(self):
-    #     # Remove not exist
-    #     response = self.client.delete(
-    #         "/api/v1/Category/{}".format(0)
-    #     )
-    #     self.assertEqual(response.status_code, 404)
-    #     self.assertEqual(Category.objects.count(), 3)
+    def test_delete(self):
+        # Remove not exist
+        response = self.client.delete(
+            "/api/v1/Category/{}".format(0)
+        )
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(Category.objects.count(), 3)
 
-    #     # Remove single success
-    #     response = self.client.delete(
-    #         "/api/v1/Category/{}".format(self.items[0].pk)
-    #     )
-    #     self.assertEqual(response.status_code, 204)
-    #     self.assertEqual(Category.objects.count(), 2)
+        # Remove single success
+        response = self.client.delete(
+            "/api/v1/Category/{}".format(self.items[0].pk)
+        )
+        self.assertEqual(response.status_code, 204)
+        self.assertEqual(Category.objects.count(), 2)
 
-    #     # Remove list success
-    #     response = self.client.delete(
-    #         "/api/v1/Category/?ids={}".format(','.join([str(self.items[1].pk), str(self.items[2].pk)]))
-    #     )
-    #     self.assertEqual(response.status_code, 204)
-    #     self.assertEqual(Category.objects.count(), 0)
+        # Remove list success
+        response = self.client.delete(
+            "/api/v1/Category/?ids={}".format(','.join([str(self.items[1].pk), str(self.items[2].pk)]))
+        )
+        self.assertEqual(response.status_code, 204)
+        self.assertEqual(Category.objects.count(), 0)
