@@ -41,6 +41,8 @@ class CategoryTestCase(TestCase):
     def test_create(self):
         item3 = Category.objects.seeding(3, True, False)
         item4 = Category.objects.seeding(4, True, False)
+        item5 = Category.objects.seeding(5, True, False)
+        item6 = Category.objects.seeding(6, True, False)
 
         # Add duplicate
         response = self.client.post(
@@ -58,6 +60,25 @@ class CategoryTestCase(TestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(Category.objects.count(), 4)
+
+        # After add success order increase
+        response_1 = self.client.post(
+            '/api/v1/category/',
+            item5,
+            format='json'
+        )
+
+        response_1 = response_1.json()
+
+        response_2 = self.client.post(
+            '/api/v1/category/',
+            item6,
+            format='json'
+        )
+
+        response_2 = response_2.json()
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response_2['order'] - response_1['order'], 1)
 
     def test_edit(self):
         item3 = Category.objects.seeding(3, True, False)
@@ -87,6 +108,7 @@ class CategoryTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_delete(self):
+
         # Remove not exist
         response = self.client.delete(
             "/api/v1/category/{}".format(0)
@@ -98,12 +120,32 @@ class CategoryTestCase(TestCase):
         response = self.client.delete(
             "/api/v1/category/{}".format(self.items[0].pk)
         )
+
         self.assertEqual(response.status_code, 204)
         self.assertEqual(Category.objects.count(), 2)
 
         # Remove list success
         response = self.client.delete(
-            "/api/v1/category/?ids={}".format(','.join([str(self.items[1].pk), str(self.items[2].pk)]))
+            "/api/v1/category/?ids={}".format(','.join(
+                [str(self.items[1].pk), str(self.items[2].pk), str(self.items[0].pk), ]))
         )
         self.assertEqual(response.status_code, 204)
         self.assertEqual(Category.objects.count(), 0)
+
+    def test_add_after_delete(self):
+        item4 = Category.objects.seeding(4, True, False)
+
+        # Remove single success and create success
+        removedOrder = self.items[-1].order
+        response = self.client.delete(
+            "/api/v1/category/{}".format(self.items[-1].pk)
+        )
+
+        postResponse = self.client.post(
+            '/api/v1/category/',
+            item4,
+            format='json'
+        )
+
+        postResponse = postResponse.json()
+        self.assertEqual(postResponse['order'], removedOrder)
