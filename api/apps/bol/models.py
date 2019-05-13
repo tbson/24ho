@@ -2,7 +2,7 @@ from django.db import models
 from utils.models.model import TimeStampedModel
 from apps.customer.models import Customer
 from apps.address.models import Address
-from apps.delivery_fee.models import DeliveryFee, DeliveryFeeTypes
+from apps.delivery_fee.models import DeliveryFee, DeliveryFeeUnitPriceType
 from apps.order.models import Order
 from django.conf import settings
 
@@ -15,6 +15,7 @@ class LandingStatus:
 
 
 class DeliveryFeeType:
+    BLANK = 0
     MAX = 1
     MASS_RANGE = 2
     MASS = 3
@@ -29,9 +30,13 @@ class BolManager(models.Manager):
         if index == 0:
             raise Exception('Indext must be start with 1.')
 
+        address = Address.objects.seeding(1, True)
+
         def getData(i: int) -> dict:
+
             data = {
                 'uid': "uid{}".format(i),
+                'address': address.pk
             }
             if save is False:
                 return data
@@ -55,40 +60,48 @@ class BolManager(models.Manager):
     def get_volume(self, item: models.QuerySet) -> float:
         return item.width * item.height * item.length / 1000000
 
-    def calDeliveryFeeRange(self, item: models.QuerySet) -> dict:
+    def cal_delivery_fee_range(self, item: models.QuerySet) -> dict:
         mass = self.get_mass(item)
         return {
-            'MASS': DeliveryFee.objects.getMatchedUnitPrice(mass, item.area_id, DeliveryFeeTypes.MASS),
-            'VOLUME': DeliveryFee.objects.getMatchedUnitPrice(mass, item.area_id, DeliveryFeeTypes.VOLUME)
+            'MASS': DeliveryFee.objects.getMatchedUnitPrice(
+                mass,
+                item.address.area_id,
+                DeliveryFeeUnitPriceType.MASS
+            ),
+            'VOLUME': DeliveryFee.objects.getMatchedUnitPrice(
+                mass,
+                item.address.area_id,
+                DeliveryFeeUnitPriceType.VOLUME
+            )
         }
 
-    def calDeliveryFeeMassUnitPrice(self, item: models.QuerySet) -> dict:
-        range_unit_price = self.calDeliveryFeeRange(item)['MASS']
+    def cal_delivery_fee_mass_unit_price(self, item: models.QuerySet) -> dict:
+        range_unit_price = self.cal_delivery_fee_range(item)['MASS']
         customer_unit_price = item.customer.delivery_fee_mass_unit_price
-        bol_unit_price = item.delivery_fee_mass_unit_price
+        bol_unit_price = item.mass_unit_price
 
         return {
             'RANGE': range_unit_price,
             'FIXED': bol_unit_price or customer_unit_price or 0
         }
 
-    def calDeliveryFeeVolumeUnitPrice(self, item: models.QuerySet) -> dict:
-        range_unit_price = self.calDeliveryFeeRange(item)['VOLUME']
+    def cal_delivery_fee_volume_unit_price(self, item: models.QuerySet) -> dict:
+        range_unit_price = self.cal_delivery_fee_range(item)['VOLUME']
         customer_unit_price = item.customer.delivery_fee_volume_unit_price
-        bol_unit_price = item.delivery_fee_volume_unit_price
+        bol_unit_price = item.volume_unit_price
 
         return {
             'RANGE': range_unit_price,
             'FIXED': bol_unit_price or customer_unit_price or 0
         }
 
-    def calDeliveryFee(self, item: models.QuerySet, type: int) -> dict:
+    def cal_delivery_fee(self, item: models.QuerySet) -> dict:
         mass = self.get_mass(item)
         mass_convert = self.get_mass_convert(item)
         volume = self.get_volume(item)
 
-        mass_unit_price = self.calDeliveryFeeMassUnitPrice(item)
-        volume_unit_price = self.calDeliveryFeeVolumeUnitPrice(item)
+        mass_unit_price = self.cal_delivery_fee_mass_unit_price(item)
+        volume_unit_price = self.cal_delivery_fee_volume_unit_price(item)
 
         mass_range_price = mass * mass_unit_price['RANGE']
         mass_price = mass * mass_unit_price['FIXED']
@@ -115,17 +128,17 @@ class BolManager(models.Manager):
             'delivery_fee': delivery_fee
         }
 
-    def calInsuranceFee(self, item: models.QuerySet) -> float:
+    def cal_insurance_fee(self, item: models.QuerySet) -> float:
         if not item.order and item.insurance_register:
             return item.insurance_value * settings.DEFAULT_INSURANCE_FACTOR / 100
         return 0
 
-    def calShockproofFee(self, item: models.QuerySet) -> float:
+    def cal_shockproof_fee(self, item: models.QuerySet) -> float:
         if item.shockproof:
             return item.cny_shockproof_fee
         return 0
 
-    def calWoodenBoxFee(self, item: models.QuerySet) -> float:
+    def cal_wooden_box_fee(self, item: models.QuerySet) -> float:
         if item.wooden_box:
             return item.cny_wooden_box_fee
         return 0
@@ -142,6 +155,7 @@ class Bol(TimeStampedModel):
     )
 
     DELIVERY_FEE_TYPE_CHOICES = (
+        (DeliveryFeeType.BLANK, 'Chưa xác định'),
         (DeliveryFeeType.MAX, 'Max lợi nhuận'),
         (DeliveryFeeType.MASS_RANGE, 'Thang khối lượng'),
         (DeliveryFeeType.MASS, 'Đơn giá khối lượng'),
@@ -177,16 +191,15 @@ class Bol(TimeStampedModel):
     mass_range_unit_price = models.IntegerField(default=0)
     volume_range_unit_price = models.IntegerField(default=0)
 
-    delivery_fee_type = models.IntegerField(choices=DELIVERY_FEE_TYPE_CHOICES, blank=True)
+    delivery_fee_type = models.IntegerField(choices=DELIVERY_FEE_TYPE_CHOICES, default=0)
 
     delivery_fee = models.IntegerField(default=0)
 
-    wooden_box = models.BooleanField(default=False)
     shockproof = models.BooleanField(default=False)
+    wooden_box = models.BooleanField(default=False)
 
-    cny_wooden_box_fee = models.FloatField(default=0)
     cny_shockproof_fee = models.FloatField(default=0)
-    cny_sub_fee = models.FloatField(default=0)
+    cny_wooden_box_fee = models.FloatField(default=0)
 
     insurance_register = models.BooleanField(default=False)
     insurance_value = models.FloatField(default=0)

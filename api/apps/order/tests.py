@@ -240,7 +240,7 @@ class ManagerCalOrderFee(TestCase):
         self.assertEqual(Order.objects.calOrderFee(order), 1.5)
 
 
-@patch('apps.bol.models.Bol.objects.calDeliveryFee', MagicMock(return_value=2))
+@patch('apps.bol.models.Bol.objects.cal_delivery_fee', MagicMock(return_value=2))
 class ManagerCalDeliveryFee(TestCase):
     def test_normal_case(self):
         bols = Bol.objects.seeding(3)
@@ -248,7 +248,7 @@ class ManagerCalDeliveryFee(TestCase):
         for bol in bols:
             bol.order = order
             bol.save()
-        self.assertEqual(Order.objects.calDeliveryFee(order), 6)
+        self.assertEqual(Order.objects.cal_delivery_fee(order), 6)
 
 
 class ManagerCalCountCheckFee(TestCase):
@@ -292,7 +292,7 @@ class ManagerCalShockproofFee(TestCase):
             bol.shockproof = False
             bol.cny_shockproof_fee = 2
             bol.save()
-        self.assertEqual(Order.objects.calShockproofFee(order), 0)
+        self.assertEqual(Order.objects.cal_shockproof_fee(order), 0)
 
     def test_with_register(self):
         bols = Bol.objects.seeding(3)
@@ -302,7 +302,7 @@ class ManagerCalShockproofFee(TestCase):
             bol.shockproof = True
             bol.cny_shockproof_fee = 2
             bol.save()
-        self.assertEqual(Order.objects.calShockproofFee(order), 6)
+        self.assertEqual(Order.objects.cal_shockproof_fee(order), 6)
 
 
 class ManagerCalWoodenBoxFee(TestCase):
@@ -314,7 +314,7 @@ class ManagerCalWoodenBoxFee(TestCase):
             bol.wooden_box = False
             bol.cny_wooden_box_fee = 2
             bol.save()
-        self.assertEqual(Order.objects.calWoodenBoxFee(order), 0)
+        self.assertEqual(Order.objects.cal_wooden_box_fee(order), 0)
 
     def test_with_register(self):
         bols = Bol.objects.seeding(3)
@@ -324,7 +324,7 @@ class ManagerCalWoodenBoxFee(TestCase):
             bol.wooden_box = True
             bol.cny_wooden_box_fee = 2
             bol.save()
-        self.assertEqual(Order.objects.calWoodenBoxFee(order), 6)
+        self.assertEqual(Order.objects.cal_wooden_box_fee(order), 6)
 
 
 class Serializer(TestCase):

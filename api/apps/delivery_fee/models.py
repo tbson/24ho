@@ -3,14 +3,14 @@ from django.conf import settings
 from apps.area.models import Area
 
 
-class DeliveryFeeTypes:
+class DeliveryFeeUnitPriceType:
     MASS = 1
     VOLUME = 2
 
 
 TYPES = (
-    (DeliveryFeeTypes.MASS, 'Mass'),
-    (DeliveryFeeTypes.VOLUME, 'Volume')
+    (DeliveryFeeUnitPriceType.MASS, 'Mass'),
+    (DeliveryFeeUnitPriceType.VOLUME, 'Volume')
 )
 
 
@@ -28,7 +28,7 @@ class DeliveryFeeManager(models.Manager):
                 'start': i * 10,
                 'stop': i * 10 + 9,
                 'vnd_unit_price': int(200000 / i),
-                'type': 1
+                'type': DeliveryFeeUnitPriceType.MASS
             }
             if save is False:
                 return data
@@ -50,7 +50,7 @@ class DeliveryFeeManager(models.Manager):
         result = self.filter(area_id=area_id, start__lte=value, stop__gte=value, type=type)
         if result.count():
             return result.first().vnd_unit_price
-        if type == 1:
+        if type == DeliveryFeeUnitPriceType.MASS:
             return settings.DEFAULT_DELIVERY_MASS_UNIT_PRICE
         return settings.DEFAULT_DELIVERY_VOLUME_UNIT_PRICE
 

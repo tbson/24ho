@@ -92,10 +92,10 @@ class OrderManager(models.Manager):
             factor = item.order_fee_factor_fixed
         return factor * amount / 100
 
-    def calDeliveryFee(self, item: models.QuerySet) -> float:
+    def cal_delivery_fee(self, item: models.QuerySet) -> float:
         from apps.bol.models import Bol
         # sum of bols's delivery fee
-        return sum([Bol.objects.calDeliveryFee(bol) for bol in item.order_bols.all()])
+        return sum([Bol.objects.cal_delivery_fee(bol) for bol in item.order_bols.all()])
 
     def calCountCheckFee(self, item: models.QuerySet) -> float:
         from apps.count_check.models import CountCheck
@@ -104,15 +104,15 @@ class OrderManager(models.Manager):
             result = item.count_check_fee_input
         return result
 
-    def calShockproofFee(self, item: models.QuerySet) -> float:
+    def cal_shockproof_fee(self, item: models.QuerySet) -> float:
         from apps.bol.models import Bol
         # sum of bols's shockproof fee
-        return sum([Bol.objects.calShockproofFee(bol) for bol in item.order_bols.all()])
+        return sum([Bol.objects.cal_shockproof_fee(bol) for bol in item.order_bols.all()])
 
-    def calWoodenBoxFee(self, item: models.QuerySet) -> float:
+    def cal_wooden_box_fee(self, item: models.QuerySet) -> float:
         from apps.bol.models import Bol
         # sum of bols's wooden box fee
-        return sum([Bol.objects.calWoodenBoxFee(bol) for bol in item.order_bols.all()])
+        return sum([Bol.objects.cal_wooden_box_fee(bol) for bol in item.order_bols.all()])
 
     def reCal(self, item: models.QuerySet) -> models.QuerySet:
         '''
@@ -125,10 +125,10 @@ class OrderManager(models.Manager):
         '''
         Frezee after export
         '''
-        item.vnd_delivery_fee = self.calDeliveryFee(item)
+        item.vnd_delivery_fee = self.cal_delivery_fee(item)
         item.cny_count_check_fee = self.calCountCheckFee(item)
-        item.cny_shockproof_fee = self.calShockproofFee(item)
-        item.cny_wooden_box_fee = self.calWoodenBoxFee(item)
+        item.cny_shockproof_fee = self.cal_shockproof_fee(item)
+        item.cny_wooden_box_fee = self.cal_wooden_box_fee(item)
         # item.vnd_sub_fee
 
         item.save()
