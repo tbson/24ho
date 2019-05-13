@@ -100,16 +100,16 @@ class ManagerGetMatchedFee(TestCase):
         self.items = CountCheck.objects.seeding(3)
 
     def test_not_matched(self):
-        self.assertEqual(CountCheck.objects.getMatchedFee(0), settings.DEFAULT_COUNT_CHECK_PRICE)
+        self.assertEqual(CountCheck.objects.get_matched_fee(0), settings.DEFAULT_COUNT_CHECK_PRICE)
 
     def test_matched_lower(self):
-        self.assertEqual(CountCheck.objects.getMatchedFee(10), 21)
+        self.assertEqual(CountCheck.objects.get_matched_fee(10), 21)
 
     def test_matched_upper(self):
-        self.assertEqual(CountCheck.objects.getMatchedFee(19), 21)
+        self.assertEqual(CountCheck.objects.get_matched_fee(19), 21)
 
     def test_matched_other_level(self):
-        self.assertEqual(CountCheck.objects.getMatchedFee(20), 22)
+        self.assertEqual(CountCheck.objects.get_matched_fee(20), 22)
 
 
 class Serializer(TestCase):

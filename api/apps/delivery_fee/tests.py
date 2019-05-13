@@ -112,50 +112,50 @@ class ManagerGetMatchedUnitPrice(TestCase):
 
     def test_not_matched_mass_range(self):
         self.assertEqual(
-            DeliveryFee.objects.getMatchedUnitPrice(0, self.area.pk, DeliveryFeeUnitPriceType.MASS),
+            DeliveryFee.objects.get_matched_unit_price(0, self.area.pk, DeliveryFeeUnitPriceType.MASS),
             settings.DEFAULT_DELIVERY_MASS_UNIT_PRICE
         )
 
     def test_not_matched_mass_area(self):
         self.assertEqual(
-            DeliveryFee.objects.getMatchedUnitPrice(10, 2, DeliveryFeeUnitPriceType.MASS),
+            DeliveryFee.objects.get_matched_unit_price(10, 2, DeliveryFeeUnitPriceType.MASS),
             settings.DEFAULT_DELIVERY_MASS_UNIT_PRICE
         )
 
     def test_not_matched_volume_range(self):
         self.assertEqual(
-            DeliveryFee.objects.getMatchedUnitPrice(0, self.area.pk, DeliveryFeeUnitPriceType.VOLUME),
+            DeliveryFee.objects.get_matched_unit_price(0, self.area.pk, DeliveryFeeUnitPriceType.VOLUME),
             settings.DEFAULT_DELIVERY_VOLUME_UNIT_PRICE
         )
 
     def test_not_matched_volume_area(self):
         self.assertEqual(
-            DeliveryFee.objects.getMatchedUnitPrice(10, 2, DeliveryFeeUnitPriceType.VOLUME),
+            DeliveryFee.objects.get_matched_unit_price(10, 2, DeliveryFeeUnitPriceType.VOLUME),
             settings.DEFAULT_DELIVERY_VOLUME_UNIT_PRICE
         )
 
     def test_invalid_type(self):
         try:
-            DeliveryFee.objects.getMatchedUnitPrice(10, 3, 99)
+            DeliveryFee.objects.get_matched_unit_price(10, 3, 99)
             self.assertEqual(1, 0)
         except Exception as err:
             self.assertEqual(str(err), 'Invalid type of delivery fee unit price.')
 
     def test_matched_lower(self):
         self.assertEqual(
-            DeliveryFee.objects.getMatchedUnitPrice(10, self.area.pk, DeliveryFeeUnitPriceType.MASS),
+            DeliveryFee.objects.get_matched_unit_price(10, self.area.pk, DeliveryFeeUnitPriceType.MASS),
             200000
         )
 
     def test_matched_upper(self):
         self.assertEqual(
-            DeliveryFee.objects.getMatchedUnitPrice(19, self.area.pk, DeliveryFeeUnitPriceType.MASS),
+            DeliveryFee.objects.get_matched_unit_price(19, self.area.pk, DeliveryFeeUnitPriceType.MASS),
             200000
         )
 
     def test_matched_other_level(self):
         self.assertEqual(
-            DeliveryFee.objects.getMatchedUnitPrice(20, self.area.pk, DeliveryFeeUnitPriceType.MASS),
+            DeliveryFee.objects.get_matched_unit_price(20, self.area.pk, DeliveryFeeUnitPriceType.MASS),
             100000
         )
 

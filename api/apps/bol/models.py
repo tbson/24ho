@@ -32,7 +32,7 @@ class BolManager(models.Manager):
 
         address = Address.objects.seeding(1, True)
 
-        def getData(i: int) -> dict:
+        def get_data(i: int) -> dict:
 
             data = {
                 'uid': "uid{}".format(i),
@@ -46,10 +46,10 @@ class BolManager(models.Manager):
             instance = instance.save()
             return instance
 
-        def getListData(index):
-            return [getData(i) for i in range(1, index + 1)]
+        def get_list_data(index):
+            return [get_data(i) for i in range(1, index + 1)]
 
-        return getData(index) if single is True else getListData(index)
+        return get_data(index) if single is True else get_list_data(index)
 
     def get_mass(self, item: models.QuerySet) -> float:
         return item.input_mass
@@ -63,12 +63,12 @@ class BolManager(models.Manager):
     def cal_delivery_fee_range(self, item: models.QuerySet) -> dict:
         mass = self.get_mass(item)
         return {
-            'MASS': DeliveryFee.objects.getMatchedUnitPrice(
+            'MASS': DeliveryFee.objects.get_matched_unit_price(
                 mass,
                 item.address.area_id,
                 DeliveryFeeUnitPriceType.MASS
             ),
-            'VOLUME': DeliveryFee.objects.getMatchedUnitPrice(
+            'VOLUME': DeliveryFee.objects.get_matched_unit_price(
                 mass,
                 item.address.area_id,
                 DeliveryFeeUnitPriceType.VOLUME

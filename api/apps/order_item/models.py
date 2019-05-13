@@ -11,7 +11,7 @@ class OrderItemManager(models.Manager):
         if index == 0:
             raise Exception('Indext must be start with 1.')
 
-        def getData(i: int) -> dict:
+        def get_data(i: int) -> dict:
             data = {
                 'order': order.id,
                 'title': "title{}".format(i),
@@ -27,10 +27,10 @@ class OrderItemManager(models.Manager):
             instance = instance.save()
             return instance
 
-        def getListData(index):
-            return [getData(i) for i in range(1, index + 1)]
+        def get_list_data(index):
+            return [get_data(i) for i in range(1, index + 1)]
 
-        return getData(index) if single is True else getListData(index)
+        return get_data(index) if single is True else get_list_data(index)
 
 
 # Create your models here.

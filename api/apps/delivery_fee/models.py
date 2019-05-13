@@ -22,7 +22,7 @@ class DeliveryFeeManager(models.Manager):
 
         area = Area.objects.seeding(1, True)
 
-        def getData(i: int) -> dict:
+        def get_data(i: int) -> dict:
             data = {
                 'area': area.pk,
                 'start': i * 10,
@@ -38,12 +38,12 @@ class DeliveryFeeManager(models.Manager):
             instance = instance.save()
             return instance
 
-        def getListData(index):
-            return [getData(i) for i in range(1, index + 1)]
+        def get_list_data(index):
+            return [get_data(i) for i in range(1, index + 1)]
 
-        return getData(index) if single is True else getListData(index)
+        return get_data(index) if single is True else get_list_data(index)
 
-    def getMatchedUnitPrice(self, value: float, area_id: int, type: int) -> float:
+    def get_matched_unit_price(self, value: float, area_id: int, type: int) -> float:
         if type not in dict(TYPES):
             raise Exception('Invalid type of delivery fee unit price.')
 

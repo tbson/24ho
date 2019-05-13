@@ -16,7 +16,7 @@ class OrderManager(models.Manager):
         if index == 0:
             raise Exception('Indext must be start with 1.')
 
-        def getData(i: int) -> dict:
+        def get_data(i: int) -> dict:
             data = {
                 'address': address.id,
                 'shop_link': "shop_link{}".format(i),
@@ -33,12 +33,12 @@ class OrderManager(models.Manager):
             instance = instance.save()
             return instance
 
-        def getListData(index):
-            return [getData(i) for i in range(1, index + 1)]
+        def get_list_data(index):
+            return [get_data(i) for i in range(1, index + 1)]
 
-        return getData(index) if single is True else getListData(index)
+        return get_data(index) if single is True else get_list_data(index)
 
-    def sumCny(self, order: dict) -> float:
+    def sum_cny(self, order: dict) -> float:
         cny_amount = order.get('cny_amount', 0)
 
         cny_order_fee = order.get('cny_order_fee', 0)
@@ -60,7 +60,7 @@ class OrderManager(models.Manager):
 
         return sum(series)
 
-    def sumVnd(self, order: dict) -> int:
+    def sum_vnd(self, order: dict) -> int:
         vnd_delivery_fee = order.get('vnd_delivery_fee', 0)
         vnd_sub_fee = order.get('vnd_sub_fee', 0)
 
@@ -71,13 +71,13 @@ class OrderManager(models.Manager):
 
         return sum(series)
 
-    def getVndTotal(self, order: dict) -> int:
+    def get_vnd_Total(self, order: dict) -> int:
         rate = order['rate']
-        cny = self.sumCny(order)
-        vnd = self.sumVnd(order)
+        cny = self.sum_cny(order)
+        vnd = self.sum_vnd(order)
         return int(rate * cny + vnd)
 
-    def calAmount(self, item: models.QuerySet) -> float:
+    def cal_amount(self, item: models.QuerySet) -> float:
         return item.order_items.aggregate(
             amount=Sum(
                 F('quantity') * F('unit_price'),
@@ -85,9 +85,9 @@ class OrderManager(models.Manager):
             )
         )['amount']
 
-    def calOrderFee(self, item: models.QuerySet) -> float:
+    def cal_order_fee(self, item: models.QuerySet) -> float:
         amount = item.cny_amount
-        factor = OrderFee.objects.getMatchedFactor(amount)
+        factor = OrderFee.objects.get_matched_factor(amount)
         if item.order_fee_factor_fixed:
             factor = item.order_fee_factor_fixed
         return factor * amount / 100
@@ -97,9 +97,9 @@ class OrderManager(models.Manager):
         # sum of bols's delivery fee
         return sum([Bol.objects.cal_delivery_fee(bol) for bol in item.order_bols.all()])
 
-    def calCountCheckFee(self, item: models.QuerySet) -> float:
+    def cal_count_check_fee(self, item: models.QuerySet) -> float:
         from apps.count_check.models import CountCheck
-        result = CountCheck.objects.getMatchedFee(item.order_items.count())
+        result = CountCheck.objects.get_matched_fee(item.order_items.count())
         if item.count_check_fee_input:
             result = item.count_check_fee_input
         return result
@@ -114,19 +114,19 @@ class OrderManager(models.Manager):
         # sum of bols's wooden box fee
         return sum([Bol.objects.cal_wooden_box_fee(bol) for bol in item.order_bols.all()])
 
-    def reCal(self, item: models.QuerySet) -> models.QuerySet:
+    def re_cal(self, item: models.QuerySet) -> models.QuerySet:
         '''
         Frezee after confirm
         '''
-        item.cny_amount = self.calAmount(item)
-        item.cny_order_fee = self.calOrderFee(item)
+        item.cny_amount = self.cal_amount(item)
+        item.cny_order_fee = self.cal_order_fee(item)
         # item.cny_inland_delivery_fee
 
         '''
         Frezee after export
         '''
         item.vnd_delivery_fee = self.cal_delivery_fee(item)
-        item.cny_count_check_fee = self.calCountCheckFee(item)
+        item.cny_count_check_fee = self.cal_count_check_fee(item)
         item.cny_shockproof_fee = self.cal_shockproof_fee(item)
         item.cny_wooden_box_fee = self.cal_wooden_box_fee(item)
         # item.vnd_sub_fee

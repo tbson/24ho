@@ -8,7 +8,7 @@ class OrderFeeManager(models.Manager):
         if index == 0:
             raise Exception('Indext must be start with 1.')
 
-        def getData(i: int) -> dict:
+        def get_data(i: int) -> dict:
             data = {
                 'from_amount': i * 10,
                 'to_amount': i * 10 + 9,
@@ -22,12 +22,12 @@ class OrderFeeManager(models.Manager):
             instance = instance.save()
             return instance
 
-        def getListData(index):
-            return [getData(i) for i in range(1, index + 1)]
+        def get_list_data(index):
+            return [get_data(i) for i in range(1, index + 1)]
 
-        return getData(index) if single is True else getListData(index)
+        return get_data(index) if single is True else get_list_data(index)
 
-    def getMatchedFactor(self, amount: float) -> float:
+    def get_matched_factor(self, amount: float) -> float:
         result = self.filter(from_amount__lte=amount, to_amount__gte=amount)
         if result.count():
             return result.first().fee
