@@ -28,13 +28,13 @@ class CategoryTestCase(TestCase):
     def test_detail(self):
         # Item not exist
         response = self.client.get(
-            "/api/v1/Category/{}".format(0)
+            "/api/v1/category/{}".format(0)
         )
         self.assertEqual(response.status_code, 404)
 
         # Item exist
         response = self.client.get(
-            "/api/v1/Category/".format(self.items[0].pk)
+            "/api/v1/category/".format(self.items[0].pk)
         )
         self.assertEqual(response.status_code, 200)
 
@@ -44,7 +44,7 @@ class CategoryTestCase(TestCase):
 
         # Add duplicate
         response = self.client.post(
-            '/api/v1/Category/',
+            '/api/v1/category/',
             item3,
             format='json'
         )
@@ -52,7 +52,7 @@ class CategoryTestCase(TestCase):
 
         # Add success
         response = self.client.post(
-            '/api/v1/Category/',
+            '/api/v1/category/',
             item4,
             format='json'
         )
@@ -64,7 +64,7 @@ class CategoryTestCase(TestCase):
 
         # Update not exist
         response = self.client.put(
-            "/api/v1/Category/{}".format(0),
+            "/api/v1/category/{}".format(0),
             item3,
             format='json'
         )
@@ -72,7 +72,7 @@ class CategoryTestCase(TestCase):
 
         # Update duplicate
         response = self.client.put(
-            "/api/v1/Category/{}".format(self.items[0].pk),
+            "/api/v1/category/{}".format(self.items[0].pk),
             item3,
             format='json'
         )
@@ -80,7 +80,7 @@ class CategoryTestCase(TestCase):
 
         # Update success
         response = self.client.put(
-            "/api/v1/Category/{}".format(self.items[2].pk),
+            "/api/v1/category/{}".format(self.items[2].pk),
             item3,
             format='json'
         )
@@ -89,21 +89,21 @@ class CategoryTestCase(TestCase):
     def test_delete(self):
         # Remove not exist
         response = self.client.delete(
-            "/api/v1/Category/{}".format(0)
+            "/api/v1/category/{}".format(0)
         )
         self.assertEqual(response.status_code, 404)
         self.assertEqual(Category.objects.count(), 3)
 
         # Remove single success
         response = self.client.delete(
-            "/api/v1/Category/{}".format(self.items[0].pk)
+            "/api/v1/category/{}".format(self.items[0].pk)
         )
         self.assertEqual(response.status_code, 204)
         self.assertEqual(Category.objects.count(), 2)
 
         # Remove list success
         response = self.client.delete(
-            "/api/v1/Category/?ids={}".format(','.join([str(self.items[1].pk), str(self.items[2].pk)]))
+            "/api/v1/category/?ids={}".format(','.join([str(self.items[1].pk), str(self.items[2].pk)]))
         )
         self.assertEqual(response.status_code, 204)
         self.assertEqual(Category.objects.count(), 0)

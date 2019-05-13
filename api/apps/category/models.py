@@ -10,7 +10,7 @@ class CategoryManager(models.Manager):
             data = {
                 'uid': "uid{}".format(i),
                 'title': "title{}".format(i),
-                'cType': "cType{}".format(i),
+                'categoryType': "categoryType{}".format(i),
                 'single' :i % 2 == 0,
                 'order': 100 + i,
             }
@@ -31,14 +31,25 @@ class CategoryManager(models.Manager):
 class Category(models.Model):
     uid = models.CharField(max_length=60, unique=True)
     title = models.CharField(max_length=250)
-    cType = models.CharField(max_length=60)
+    categoryType = models.CharField(max_length=60)
     single = models.BooleanField(default=False)
-    order = models.IntegerField(default=0)
+    order = models.IntegerField(default=1)
 
-    objects = CategoryManager()
+    # objects = CategoryManager()
+    def save(self, *args, **kwargs):
+      
+        if self._state.adding:
+
+            last_order = Category.objects.all().aggregate(largest=models.Max('order'))['largest']
+
+            if last_order is not None:
+                self.order = last_order + 1
+
+        super(Category, self).save(*args, **kwargs)
 
     def __str__(self):
-        return '{} - {}'.format(self.cType, self.title)
+        return '{} - {}'.format(self.categoryType, self.title)
+
 
     class Meta:
         db_table = "categories"
