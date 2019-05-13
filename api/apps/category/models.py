@@ -7,13 +7,12 @@ class CategoryManager(models.Manager):
         if index == 0:
             raise Exception('Indext must be start with 1.')
 
-        def getData(i: int) -> dict:
+        def get_data(i: int) -> dict:
             data = {
                 'uid': "uid{}".format(i),
                 'title': "title{}".format(i),
                 'type': "type{}".format(i),
                 'single': i % 2 == 0,
-                'order': 100 + i,
             }
             if save is False:
                 return data
@@ -23,10 +22,10 @@ class CategoryManager(models.Manager):
             instance = instance.save()
             return instance
 
-        def getListData(index):
-            return [getData(i) for i in range(1, index + 1)]
+        def get_list_data(index):
+            return [get_data(i) for i in range(1, index + 1)]
 
-        return getData(index) if single is True else getListData(index)
+        return get_data(index) if single is True else get_list_data(index)
 
 # Create your models here.
 
@@ -48,9 +47,11 @@ class Category(models.Model):
 
             if last_order is not None:
                 self.order = last_order + 1
+            else: 
+                self.order = 1
 
         super(Category, self).save(*args, **kwargs)
-
+        
     def __str__(self):
         return '{} - {}'.format(self.type, self.title)
 

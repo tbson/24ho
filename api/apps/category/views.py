@@ -12,7 +12,7 @@ from utils.helpers.res_tools import res
 
 
 class CategoryViewSet(GenericViewSet):
-    _name = 'Category'
+    _name = 'category'
     serializer_class = CategoryBaseSr
     permission_classes = (CustomPermission, )
     search_fields = ('uid')
