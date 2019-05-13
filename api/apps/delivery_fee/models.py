@@ -1,5 +1,17 @@
 from django.db import models
 from django.conf import settings
+from apps.area.models import Area
+
+
+class DeliveryFeeUnitPriceType:
+    MASS = 1
+    VOLUME = 2
+
+
+TYPES = (
+    (DeliveryFeeUnitPriceType.MASS, 'Mass'),
+    (DeliveryFeeUnitPriceType.VOLUME, 'Volume')
+)
 
 
 class DeliveryFeeManager(models.Manager):
@@ -8,11 +20,15 @@ class DeliveryFeeManager(models.Manager):
         if index == 0:
             raise Exception('Indext must be start with 1.')
 
-        def getData(i: int) -> dict:
+        area = Area.objects.seeding(1, True)
+
+        def get_data(i: int) -> dict:
             data = {
-                'from_mass': i * 10,
-                'to_mass': i * 10 + 9,
-                'fee': int(200000 / i)
+                'area': area.pk,
+                'start': i * 10,
+                'stop': i * 10 + 9,
+                'vnd_unit_price': int(200000 / i),
+                'type': DeliveryFeeUnitPriceType.MASS
             }
             if save is False:
                 return data
@@ -22,29 +38,36 @@ class DeliveryFeeManager(models.Manager):
             instance = instance.save()
             return instance
 
-        def getListData(index):
-            return [getData(i) for i in range(1, index + 1)]
+        def get_list_data(index):
+            return [get_data(i) for i in range(1, index + 1)]
 
-        return getData(index) if single is True else getListData(index)
+        return get_data(index) if single is True else get_list_data(index)
 
-    def getMatchedUnitPrice(self, mass: float) -> float:
-        result = self.filter(from_mass__lte=mass, to_mass__gte=mass)
+    def get_matched_unit_price(self, value: float, area_id: int, type: int) -> float:
+        if type not in dict(TYPES):
+            raise Exception('Invalid type of delivery fee unit price.')
+
+        result = self.filter(area_id=area_id, start__lte=value, stop__gte=value, type=type)
         if result.count():
-            return result.first().fee
-        return settings.DEFAULT_DELIVERY_MASS_UNIT_PRICE
+            return result.first().vnd_unit_price
+        if type == DeliveryFeeUnitPriceType.MASS:
+            return settings.DEFAULT_DELIVERY_MASS_UNIT_PRICE
+        return settings.DEFAULT_DELIVERY_VOLUME_UNIT_PRICE
 
 
 # Create your models here.
 class DeliveryFee(models.Model):
-    from_mass = models.IntegerField()
-    to_mass = models.IntegerField()
-    fee = models.IntegerField()
+    area = models.ForeignKey(Area, on_delete=models.CASCADE, related_name='area_delivery_fees')
+    start = models.FloatField()
+    stop = models.FloatField()
+    vnd_unit_price = models.IntegerField()
+    type = models.IntegerField(choices=TYPES, default=1)
 
     objects = DeliveryFeeManager()
 
     def __str__(self):
-        return '{} - {}'.format(self.from_mass, self.to_mass)
+        return '{} - {}'.format(self.start, self.stop)
 
     class Meta:
         db_table = "delivery_fees"
-        ordering = ['-to_mass']
+        ordering = ['-stop']
