@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class CategoryManager(models.Manager):
     def seeding(self, index: int, single: bool = False, save: bool = True) -> models.QuerySet:
         from apps.category.serializers import CategoryBaseSr
@@ -10,8 +11,8 @@ class CategoryManager(models.Manager):
             data = {
                 'uid': "uid{}".format(i),
                 'title': "title{}".format(i),
-                'categoryType': "categoryType{}".format(i),
-                'single' :i % 2 == 0,
+                'type': "type{}".format(i),
+                'single': i % 2 == 0,
                 'order': 100 + i,
             }
             if save is False:
@@ -28,19 +29,22 @@ class CategoryManager(models.Manager):
         return getData(index) if single is True else getListData(index)
 
 # Create your models here.
+
+
 class Category(models.Model):
     uid = models.CharField(max_length=60, unique=True)
     title = models.CharField(max_length=250)
-    categoryType = models.CharField(max_length=60)
+    type = models.CharField(max_length=60)
     single = models.BooleanField(default=False)
     order = models.IntegerField(default=1)
 
-    # objects = CategoryManager()
+    objects = CategoryManager()
     def save(self, *args, **kwargs):
-      
+
         if self._state.adding:
 
-            last_order = Category.objects.all().aggregate(largest=models.Max('order'))['largest']
+            last_order = Category.objects.all().aggregate(
+                largest=models.Max('order'))['largest']
 
             if last_order is not None:
                 self.order = last_order + 1
@@ -48,8 +52,7 @@ class Category(models.Model):
         super(Category, self).save(*args, **kwargs)
 
     def __str__(self):
-        return '{} - {}'.format(self.categoryType, self.title)
-
+        return '{} - {}'.format(self.type, self.title)
 
     class Meta:
         db_table = "categories"
