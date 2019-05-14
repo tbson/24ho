@@ -94,7 +94,7 @@ export default ({}: Props) => {
                         <th scope="col">Mã</th>
                         <th scope="col">Vùng</th>
                         <th scope="col" className="right">Đơn giá vận chuyển</th>
-                        <th scope="col" style={{padding: 8}} className="row80">
+                        <th scope="col" style={{padding: 8}} className="row110">
                             <button className="btn btn-primary btn-sm btn-block add-button" onClick={() => showForm(0)}>
                                 <span className="fas fa-plus" />
                                 &nbsp; Add

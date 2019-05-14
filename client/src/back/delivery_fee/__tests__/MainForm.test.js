@@ -77,6 +77,7 @@ describe('Service.handleSubmit', () => {
             const onChange = jest.fn();
             const reOpenDialog = true;
             const values = {key: 'value'};
+            const extraParams = {extra: 'test'};
             const checkedValue = {key: 'value', checked: false};
             const form = {
                 setErrors: jest.fn()
@@ -84,10 +85,10 @@ describe('Service.handleSubmit', () => {
 
             const changeRequest = jest.spyOn(Service, 'changeRequest').mockImplementation(async () => okResp);
 
-            await Service.handleSubmit(id, onChange, reOpenDialog)(values, form);
+            await Service.handleSubmit(id, onChange, reOpenDialog, extraParams)(values, form);
 
             expect(changeRequest).toHaveBeenCalled();
-            expect(changeRequest.mock.calls[0][0]).toEqual(values);
+            expect(changeRequest.mock.calls[0][0]).toEqual({...values, ...extraParams});
 
             expect(onChange).toHaveBeenCalled();
             expect(onChange.mock.calls[0][0]).toEqual(checkedValue);
@@ -127,6 +128,7 @@ describe('Service.handleSubmit', () => {
             const onChange = jest.fn();
             const reOpenDialog = true;
             const values = {key: 'value'};
+            const extraParams = {extra: 'test'};
             const checkedValue = {key: 'value', checked: false};
             const form = {
                 setErrors: jest.fn()
@@ -134,10 +136,10 @@ describe('Service.handleSubmit', () => {
 
             const changeRequest = jest.spyOn(Service, 'changeRequest').mockImplementation(async () => okResp);
 
-            await Service.handleSubmit(id, onChange, reOpenDialog)(values, form);
+            await Service.handleSubmit(id, onChange, reOpenDialog, extraParams)(values, form);
 
             expect(changeRequest).toHaveBeenCalled();
-            expect(changeRequest.mock.calls[0][0]).toEqual({...values, id});
+            expect(changeRequest.mock.calls[0][0]).toEqual({...values, ...extraParams, id});
 
             expect(onChange).toHaveBeenCalled();
             expect(onChange.mock.calls[0][0]).toEqual(checkedValue);
@@ -175,11 +177,11 @@ describe('Service.handleSubmit', () => {
 describe('Service.validate', () => {
     test('From > To', async () => {
         const values = {
-            from_mass: 2,
-            to_mass: 1,
-            fee: 2
+            start: 2,
+            stop: 1,
+            vnd_unit_price: 2
         };
-        const eput = {from_mass: ErrMsgs.RANGE};
+        const eput = {start: ErrMsgs.RANGE};
         const output = Service.validate(values);
         expect(output).toEqual(eput);
     });
@@ -188,9 +190,9 @@ describe('Service.validate', () => {
 describe('Service.validationSchema', () => {
     test('Success', () => {
         const values = {
-            from_mass: 1.5,
-            to_mass: 2.5,
-            fee: 3
+            start: 1.5,
+            stop: 2.5,
+            vnd_unit_price: 3
         };
         const output = Service.validationSchema.isValidSync(values);
         expect(output).toEqual(true);
@@ -198,14 +200,14 @@ describe('Service.validationSchema', () => {
 
     test('Fail', () => {
         const values = {
-            from_mass: undefined,
-            to_mass: -1,
-            fee: 3.5
+            start: undefined,
+            stop: -1,
+            vnd_unit_price: 3.5
         };
         const eput = {
-            from_mass: [ErrMsgs.REQUIRED],
-            to_mass: [ErrMsgs.GT_0],
-            fee: [ErrMsgs.INTEGER]
+            start: [ErrMsgs.REQUIRED],
+            stop: [ErrMsgs.GT_0],
+            vnd_unit_price: [ErrMsgs.INTEGER]
         };
         let output = {};
         try {

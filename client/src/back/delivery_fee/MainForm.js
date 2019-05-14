@@ -15,28 +15,28 @@ import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
 
 export class Service {
     static initialValues = {
-        from_mass: 0,
-        to_mass: 0,
-        fee: 0
+        start: 0,
+        stop: 0,
+        vnd_unit_price: 0
     };
 
     static COMPARE_ERROR = {
-        from_mass: 'From amount must to larger than 0 and smaller than To amount',
-        to_mass: 'From amount must to larger than 0 and smaller than To amount'
+        start: 'From amount must to larger than 0 and smaller than To amount',
+        stop: 'From amount must to larger than 0 and smaller than To amount'
     };
 
-    static validate({from_mass, to_mass, fee}: Object): Object {
-        return from_mass > to_mass ? {from_mass: ErrMsgs.RANGE} : {};
+    static validate({start, stop, vnd_unit_price}: Object): Object {
+        return start > stop ? {start: ErrMsgs.RANGE} : {};
     }
 
     static validationSchema = Yup.object().shape({
-        from_mass: Yup.number()
+        start: Yup.number()
             .required(ErrMsgs.REQUIRED)
             .min(0, ErrMsgs.GT_0),
-        to_mass: Yup.number()
+        stop: Yup.number()
             .required(ErrMsgs.REQUIRED)
             .min(0, ErrMsgs.GT_0),
-        fee: Yup.number()
+        vnd_unit_price: Yup.number()
             .required(ErrMsgs.REQUIRED)
             .integer(ErrMsgs.INTEGER)
             .min(0, ErrMsgs.GT_0)
@@ -52,17 +52,20 @@ export class Service {
         return id ? Tools.apiCall(apiUrls.crud + id) : Promise.resolve({ok: true, data: Service.initialValues});
     }
 
-    static handleSubmit(id: number, onChange: Function, reOpenDialog: boolean) {
+    static handleSubmit(id: number, onChange: Function, reOpenDialog: boolean, extraParams: Object = {}) {
         return (values: Object, {setErrors}: Object) =>
-            Service.changeRequest(id ? {...values, id} : values).then(({ok, data}) =>
-                ok
-                    ? onChange({...data, checked: false}, id ? 'update' : 'add', reOpenDialog)
-                    : setErrors(Tools.setFormErrors(data))
+            Service.changeRequest(id ? {...values, ...extraParams, id} : {...values, ...extraParams}).then(
+                ({ok, data}) =>
+                    ok
+                        ? onChange({...data, checked: false}, id ? 'update' : 'add', reOpenDialog)
+                        : setErrors(Tools.setFormErrors(data))
             );
     }
 }
 
 type Props = {
+    type: number,
+    area: number,
     id: number,
     open: boolean,
     close: Function,
@@ -70,7 +73,7 @@ type Props = {
     children?: React.Node,
     submitTitle?: string
 };
-export default ({id, open, close, onChange, children, submitTitle = 'Save'}: Props) => {
+export default ({type, area, id, open, close, onChange, children, submitTitle = 'Save'}: Props) => {
     const firstInputSelector = "[name='uid']";
     const {validate, validationSchema, handleSubmit} = Service;
 
@@ -90,6 +93,8 @@ export default ({id, open, close, onChange, children, submitTitle = 'Save'}: Pro
         setReOpenDialog(id ? false : true);
     }, [open]);
 
+    const unit = Tools.deliveryFeeUnitLabel(type);
+
     const focusFirstInput = () => {
         const firstInput = document.querySelector(`form ${firstInputSelector}`);
         firstInput && firstInput.focus();
@@ -107,12 +112,18 @@ export default ({id, open, close, onChange, children, submitTitle = 'Save'}: Pro
                 initialValues={{...initialValues}}
                 validate={validate}
                 validationSchema={validationSchema}
-                onSubmit={handleSubmit(id, onChange, reOpenDialog)}>
+                onSubmit={handleSubmit(id, onChange, reOpenDialog, {type, area})}>
                 {({errors, handleSubmit}) => (
                     <Form>
-                        <TextInput name="from_mass" type="number" label="Từ (Kg)" autoFocus={true} required={true} />
-                        <TextInput name="to_mass" type="number" label="Đến (Kg)" required={true} />
-                        <TextInput name="fee" type="number" label="Phí (VND)" required={true} />
+                        <TextInput
+                            name="start"
+                            type="number"
+                            label={`Từ (${unit})`}
+                            autoFocus={true}
+                            required={true}
+                        />
+                        <TextInput name="stop" type="number" label={`Đến (${unit})`} required={true} />
+                        <TextInput name="vnd_unit_price" type="number" label="Phí (VND)" required={true} />
                         <FormLevelErrMsg errors={errors.detail} />
                         <ButtonsBar children={children} submitTitle={submitTitle} onClick={onClick(handleSubmit)} />
                     </Form>

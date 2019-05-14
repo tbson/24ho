@@ -18,12 +18,13 @@ export class Service {
 }
 
 type RowPropTypes = {
+    type: number,
     data: TRow,
     showForm: Function,
     onCheck: Function,
     onRemove: Function
 };
-export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
+export default ({type, data, showForm, onCheck, onRemove}: RowPropTypes) => {
     const id = parseInt(data.id);
 
     const _onRemove = id => {
@@ -31,14 +32,16 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
         r && Service.handleRemove(id).then(onRemove);
     };
 
+    const unitClass = type === 1 ? 'kg' : 'm3';
+
     return (
         <tr>
             <th className="row25">
                 <input id={id} className="check" type="checkbox" checked={data.checked} onChange={() => onCheck(id)} />
             </th>
-            <td className="kg mono">{Tools.numberFormat(data.from_mass)}</td>
-            <td className="kg mono">{Tools.numberFormat(data.to_mass)}</td>
-            <td className="vnd mono">{Tools.numberFormat(data.fee)}</td>
+            <td className={`${unitClass} mono`}>{Tools.numberFormat(data.start)}</td>
+            <td className={`${unitClass} mono`}>{Tools.numberFormat(data.stop)}</td>
+            <td className="vnd mono">{Tools.numberFormat(data.vnd_unit_price)}</td>
             <td className="center">
                 <a className="editBtn" onClick={() => showForm(data.id)}>
                     <span className="fas fa-edit text-info pointer" />

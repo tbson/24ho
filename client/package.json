@@ -10,7 +10,9 @@
         "test": "jest"
     },
     "jest": {
-        "modulePaths": ["."],
+        "modulePaths": [
+            "."
+        ],
         "testURL": "http://localhost",
         "transform": {
             "^.+\\.js?$": "babel-jest"
@@ -71,9 +73,9 @@
         "stylus": "0.54.5",
         "stylus-loader": "3.0.2",
         "webpack": "^4.30.0",
+        "webpack-bundle-analyzer": "^3.3.2",
         "webpack-cli": "^3.3.1",
         "webpack-dev-server": "^3.3.1",
-        "webpack-bundle-analyzer": "^3.3.2",
         "webpack-merge": "4.2.1"
     },
     "dependencies": {
@@ -93,6 +95,7 @@
         "react-modal": "^3.8.1",
         "react-router-dom": "^5.0.0",
         "react-select": "^2.4.3",
+        "react-tabs": "^3.0.0",
         "react-toastify": "^5.1.0",
         "react-visibility-sensor": "^5.0.2",
         "rummernote": "^1.1.2",

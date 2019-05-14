@@ -753,4 +753,8 @@ export default class Tools {
         }
         return {visibilityChange, hidden};
     }
+
+    static deliveryFeeUnitLabel(type: number): string {
+        return type === 1 ? 'Kg' : 'Khối';
+    }
 }

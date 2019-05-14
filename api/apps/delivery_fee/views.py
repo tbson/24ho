@@ -18,6 +18,7 @@ class DeliveryFeeViewSet(GenericViewSet):
     permission_classes = (CustomPermission, )
     pagination_class = NoPagination
     search_fields = ('start', 'stop', 'vnd_delivery_fee', )
+    filterset_fields = ('type', 'area', )
 
     def list(self, request):
         area = self.request.query_params.get('area', None)

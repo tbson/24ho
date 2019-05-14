@@ -115,6 +115,11 @@ input:invalid {
     width: 80px;
 }
 
+.row110 {
+    min-width: 110px;
+    width: 110px;
+}
+
 .row150 {
     min-width: 150px;
     width: 150px;
@@ -148,9 +153,24 @@ input:invalid {
     content: ' Kg';
 }
 
+.m3 {
+    text-align: right;
+}
+.m3::after {
+    content: ' M3';
+}
+
 .cny {
     text-align: right;
 }
 .cny::after {
     content: ' ¥';
+}
+
+.react-tabs__tab, .react-tabs__tab--selected {
+    border-radius: 0 !important;
+}
+
+.icon-margin {
+    margin-right: 10px;
 }
