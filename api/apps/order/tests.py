@@ -20,7 +20,7 @@ class OrderTestCase(TestCase):
     def setUp(self):
         logging.disable(logging.CRITICAL)
 
-        self.token = TestHelpers.testSetup(self)
+        self.token = TestHelpers.test_setup(self)
         self.client = APIClient()
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + self.token)
 

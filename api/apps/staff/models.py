@@ -11,7 +11,7 @@ class StaffManager(models.Manager):
             raise Exception('Indext must be start with 1.')
 
         def get_data(i: int) -> dict:
-            user = TestHelpers.userSeeding(i, True)
+            user = TestHelpers.user_seeding(i, True)
             data = {
                 "user": user.pk,
                 "is_sale": i % 2 == 1,

@@ -26,7 +26,7 @@ def jwt_response_payload_handler(token, user=None, request=None):
     }
 
 
-def getToken(headers):
+def get_token(headers):
     result = headers.get('Authorization', None)
     if(result):
         return result.split(' ')[1]

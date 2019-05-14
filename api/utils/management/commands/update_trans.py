@@ -10,16 +10,16 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.stdout.write(self.style.SUCCESS('Start...'))
 
-        listBanner = Banner.objects.all()
-        for banner in listBanner:
+        list_banner = Banner.objects.all()
+        for banner in list_banner:
             Banner.objects.addTranslations(banner)
 
-        listArticle = Article.objects.all()
-        for article in listArticle:
+        list_article = Article.objects.all()
+        for article in list_article:
             Article.objects.addTranslations(article)
 
-        listCategory = Category.objects.all()
-        for category in listCategory:
+        list_category = Category.objects.all()
+        for category in list_category:
             Category.objects.addTranslations(category)
 
         self.stdout.write(self.style.SUCCESS('Success!'))

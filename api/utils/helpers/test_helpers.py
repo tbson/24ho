@@ -20,7 +20,7 @@ class TestHelpers():
     TEST_FINGERPRINT = 'test-fingerprint'
 
     @staticmethod
-    def testSetup(self):
+    def test_setup(self):
         from apps.staff.models import Staff
         # Add original user
         user = User.objects.create_superuser(
@@ -48,8 +48,8 @@ class TestHelpers():
         return token
 
     @staticmethod
-    def getCustomerToken(self):
-        user = TestHelpers.userSeeding(1, True, False)
+    def get_customer_token(self):
+        user = TestHelpers.user_seeding(1, True, False)
         resp = self.client.post(
             "/api/v1/customer/auth/",
             {
@@ -63,11 +63,11 @@ class TestHelpers():
         return result['user']['token']
 
     @staticmethod
-    def userSeeding(index: int, single: bool = False, save: bool = True) -> QuerySet:
+    def user_seeding(index: int, single: bool = False, save: bool = True) -> QuerySet:
         if index == 0:
             raise Exception('Indext must be start with 1.')
 
-        def getData(i: int) -> dict:
+        def get_data(i: int) -> dict:
             data = {
                 "username": "tbson{}".format(i),
                 "email": "tbson{}@gmail.com".format(i),
@@ -86,7 +86,7 @@ class TestHelpers():
                 instance = instance.save()
             return instance
 
-        def getListData(index):
-            return [getData(i) for i in range(1, index + 1)]
+        def get_list_data(index):
+            return [get_data(i) for i in range(1, index + 1)]
 
-        return getData(index) if single is True else getListData(index)
+        return get_data(index) if single is True else get_list_data(index)

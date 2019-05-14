@@ -13,7 +13,7 @@ class CustomerTestCase(TestCase):
     def setUp(self):
         logging.disable(logging.CRITICAL)
 
-        self.token = TestHelpers.testSetup(self)
+        self.token = TestHelpers.test_setup(self)
         self.client = APIClient()
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + self.token)
 
@@ -41,8 +41,8 @@ class CustomerTestCase(TestCase):
         self.assertEqual(resp.status_code, 200)
 
     def test_create(self):
-        item3 = TestHelpers.userSeeding(3, True, False)
-        item4 = TestHelpers.userSeeding(4, True, False)
+        item3 = TestHelpers.user_seeding(3, True, False)
+        item4 = TestHelpers.user_seeding(4, True, False)
         item4['phone'] = '000'
 
         # Add duplicate
@@ -63,7 +63,7 @@ class CustomerTestCase(TestCase):
         self.assertEqual(Customer.objects.count(), 4)
 
     def test_edit(self):
-        item2 = TestHelpers.userSeeding(2, True, False)
+        item2 = TestHelpers.user_seeding(2, True, False)
 
         # Update not exist
         resp = self.client.put(
@@ -115,7 +115,7 @@ class CustomerTestCase(TestCase):
         self.assertEqual(Customer.objects.count(), 0)
 
     def test_profile(self):
-        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + TestHelpers.getCustomerToken(self))
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + TestHelpers.get_customer_token(self))
 
         resp = self.client.get(
             "/api/v1/customer/profile/",
@@ -124,9 +124,9 @@ class CustomerTestCase(TestCase):
         self.assertEqual(resp.status_code, 200)
 
     def test_updateProfile(self):
-        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + TestHelpers.getCustomerToken(self))
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + TestHelpers.get_customer_token(self))
 
-        data = TestHelpers.userSeeding(4, True, False)
+        data = TestHelpers.user_seeding(4, True, False)
         data['phone'] = '111'
 
         resp = self.client.post(
@@ -145,8 +145,8 @@ class CustomerTestCase(TestCase):
         self.assertEqual(result["user_data"]["last_name"], data["last_name"])
 
     def test_changePassword(self):
-        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + TestHelpers.getCustomerToken(self))
-        user = TestHelpers.userSeeding(1, True, False)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + TestHelpers.get_customer_token(self))
+        user = TestHelpers.user_seeding(1, True, False)
         data = {
             "oldPassword": user['password'],
             "password": "newpassword"
@@ -173,7 +173,7 @@ class CustomerTestCase(TestCase):
         self.assertEqual(resp.status_code, 200)
 
     def test_resetPassword(self):
-        user = TestHelpers.userSeeding(1, True, False)
+        user = TestHelpers.user_seeding(1, True, False)
 
         #  Reset password
         data = {
@@ -213,7 +213,7 @@ class CustomerTestCase(TestCase):
         self.assertEqual(resp.status_code, 200)
 
     def test_get_shopping_cart(self):
-        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + TestHelpers.getCustomerToken(self))
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + TestHelpers.get_customer_token(self))
 
         resp = self.client.get(
             "/api/v1/customer/shopping-cart/",
@@ -223,7 +223,7 @@ class CustomerTestCase(TestCase):
         self.assertEqual(resp.data, {})
 
     def test_post_shopping_cart(self):
-        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + TestHelpers.getCustomerToken(self))
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + TestHelpers.get_customer_token(self))
         payload = {
             'items': [
                 {

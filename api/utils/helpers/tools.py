@@ -29,87 +29,87 @@ class OrderStatus:
 class Tools:
 
     @staticmethod
-    def returnException(e):
+    def return_exception(e):
         exc_type, exc_obj, exc_tb = sys.exc_info()
-        fileName = exc_tb.tb_frame.f_code.co_filename
-        result = str(e) + ' => ' + fileName + ':' + str(exc_tb.tb_lineno)
+        file_name = exc_tb.tb_frame.f_code.co_filename
+        result = str(e) + ' => ' + file_name + ':' + str(exc_tb.tb_lineno)
         return result
 
     @staticmethod
-    def stringToBool(input):
+    def string_to_bool(input):
         input = input.lower().strip()
         if input == '' or input == 'false':
             return False
         return True
 
     @staticmethod
-    def getUuid():
+    def get_uuid():
         return uuid.uuid4()
 
     @staticmethod
-    def getThumbnail(path):
-        pathArr = path.split('.')
-        pathArr.insert(-1, 'thumb')
-        return '.'.join(pathArr)
+    def get_thumbnail(path):
+        path_arr = path.split('.')
+        path_arr.insert(-1, 'thumb')
+        return '.'.join(path_arr)
 
     @staticmethod
-    def scaleImage(ratio, path, scaleOnly=False):
-        maxWidth = settings.IMAGE_MAX_WIDTH
+    def scale_image(ratio, path, scale_only=False):
+        max_width = settings.IMAGE_MAX_WIDTH
         try:
             image = Image.open(path)
-            (originalWidth, originalHeight) = image.size
-            width = maxWidth
-            if originalWidth < maxWidth:
-                width = originalWidth
+            (original_width, original_height) = image.size
+            width = max_width
+            if original_width < max_width:
+                width = original_width
             if ratio > 0:
                 height = int(width / ratio)
             else:
-                height = originalHeight
-            widthFactor = width / originalWidth
-            heightFactor = height / originalHeight
+                height = original_height
+            width_factor = width / original_width
+            height_factor = height / original_height
 
-            factor = widthFactor
-            if heightFactor > widthFactor:
-                factor = heightFactor
+            factor = width_factor
+            if height_factor > width_factor:
+                factor = height_factor
 
-            size = (int(originalWidth * factor), int(originalHeight * factor))
+            size = (int(original_width * factor), int(original_height * factor))
 
-            if originalWidth > maxWidth:
+            if original_width > max_width:
                 # Resize to 1 sise fit, 1 side larger than golden rectangle
                 image = image.resize(size, Image.ANTIALIAS)
                 image.save(path, 'JPEG')
-                (originalWidth, originalHeight) = image.size
+                (original_width, original_height) = image.size
 
             # Crop to golden ratio
-            if not scaleOnly:
-                image = image.crop((0, (originalHeight - height) / 2, width, height + (originalHeight - height) / 2))
+            if not scale_only:
+                image = image.crop((0, (original_height - height) / 2, width, height + (original_height - height) / 2))
                 image.save(path, 'JPEG')
         except Exception:
             pass
 
     @staticmethod
-    def createThumbnail(width, path):
+    def create_thumbnail(width, path):
         try:
             size = (width, width)
             image = Image.open(path)
             image.thumbnail(size, Image.ANTIALIAS)
-            image.save(Tools.getThumbnail(path), 'JPEG')
+            image.save(Tools.get_thumbnail(path), 'JPEG')
         except Exception:
             pass
 
     @staticmethod
-    def removeFile(path, removeThumbnail=False):
+    def remove_file(path, remove_thumbnail=False):
         if os.path.isfile(path):
             os.remove(path)
-            if removeThumbnail is True:
-                thumbnail = Tools.getThumbnail(path)
+            if remove_thumbnail is True:
+                thumbnail = Tools.get_thumbnail(path)
                 if os.path.isfile(thumbnail):
                     os.remove(thumbnail)
 
     @staticmethod
-    def checkMime(fileBuffer):
-        mimeType = magic.from_buffer(fileBuffer.read(), mime=True)
-        mimeSource = {
+    def check_mime(fileBuffer):
+        mime_type = magic.from_buffer(fileBuffer.read(), mime=True)
+        mime_source = {
             'image': [
                 'image/gif',
                 'image/jpeg',
@@ -157,13 +157,13 @@ class Tools:
                 'application/x-gzip',
             ]
         }
-        for filetype, listMimeType in mimeSource.items():
-            if mimeType in listMimeType:
+        for filetype, list_mime_type in mime_source.items():
+            if mime_type in list_mime_type:
                 return filetype
         return ''
 
     @staticmethod
-    def sendEmail(subject, body, to):
+    def send_email(subject, body, to):
         try:
             if settings.EMAIL_ENABLE is not True:
                 return
@@ -180,18 +180,18 @@ class Tools:
             email.send()
         except Exception as e:
             print(e)
-            Tools.returnException(e)
+            Tools.return_exception(e)
 
     @staticmethod
-    def sendEmailAsync(*args):
-        Tools.asyncExec(Tools.sendEmail, *args)
+    def send_email_async(*args):
+        Tools.async_exec(Tools.send_email, *args)
 
     @staticmethod
-    def asyncExec(func, *args):
+    def async_exec(func, *args):
         loop.run_in_executor(None, func, *args)
 
     @staticmethod
-    def userFromToken(token):
+    def user_from_token(token):
         try:
             token = {'token': token}
             data = VerifyJSONWebTokenSerializer().validate(token)
@@ -200,15 +200,15 @@ class Tools:
             return None
 
     @staticmethod
-    def langFromContext(context):
+    def lang_from_fontext(context):
         return context['request'].META.get('HTTP_LANG', None)
 
     @staticmethod
-    def langFromRequest(request):
+    def lang_from_request(request):
         return request.META.get('HTTP_LANG', None)
 
     @staticmethod
-    def parseUserRelatedData(data):
+    def parse_user_related_data(data):
         user = {
             'email': data.pop('email', None),
             'username': data.pop('username', None),
