@@ -13,7 +13,7 @@ class StaffTestCase(TestCase):
     def setUp(self):
         logging.disable(logging.CRITICAL)
 
-        self.token = TestHelpers.testSetup(self)
+        self.token = TestHelpers.test_setup(self)
         self.client = APIClient()
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + self.token)
 
@@ -41,8 +41,8 @@ class StaffTestCase(TestCase):
         self.assertEqual(resp.status_code, 200)
 
     def test_create(self):
-        item3 = TestHelpers.userSeeding(3, True, False)
-        item4 = TestHelpers.userSeeding(4, True, False)
+        item3 = TestHelpers.user_seeding(3, True, False)
+        item4 = TestHelpers.user_seeding(4, True, False)
 
         # Add duplicate
         resp = self.client.post(
@@ -63,7 +63,7 @@ class StaffTestCase(TestCase):
         self.assertEqual(Staff.objects.count(), 5)
 
     def test_edit(self):
-        item2 = TestHelpers.userSeeding(2, True, False)
+        item2 = TestHelpers.user_seeding(2, True, False)
 
         # Update not exist
         resp = self.client.put(
@@ -120,7 +120,7 @@ class StaffTestCase(TestCase):
         self.assertEqual(resp.status_code, 200)
 
     def test_updateProfile(self):
-        data = TestHelpers.userSeeding(4, True, False)
+        data = TestHelpers.user_seeding(4, True, False)
 
         resp = self.client.post(
             "/api/v1/staff/profile/",

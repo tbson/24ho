@@ -21,9 +21,9 @@ export type FormOpenType = {
 export type FormOpenKeyType = 'main';
 
 export type FormValues = {
-    from_mass: number,
-    to_mass: number,
-    fee: number
+    start: number,
+    stop: number,
+    vnd_unit_price: number
 };
 
 export type DbRow = FormValues & {

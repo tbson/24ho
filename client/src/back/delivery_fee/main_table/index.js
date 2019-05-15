@@ -9,7 +9,10 @@ import {Pagination, SearchInput} from 'src/utils/components/TableUtils';
 import MainForm from '../MainForm';
 import Row from './Row.js';
 
-type Props = {};
+type Props = {
+    area: number,
+    type: number
+};
 
 export class Service {
     static listRequest(url?: string, params?: Object): Promise<Object> {
@@ -33,7 +36,7 @@ export class Service {
     }
 }
 
-export default ({}: Props) => {
+export default ({area, type}: Props) => {
     const [list, setList] = useState([]);
     const [formOpen, setFormOpen] = useState<FormOpenType>({
         main: false
@@ -41,12 +44,14 @@ export default ({}: Props) => {
     const [modalId, setModalId] = useState(0);
     const [links, setLinks] = useState({next: '', previous: ''});
 
+    const unit = Tools.deliveryFeeUnitLabel(type);
+
     const toggleForm = (value: boolean, key: FormOpenKeyType = 'main') => setFormOpen({...formOpen, [key]: value});
 
     const listAction = ListTools.actions(list);
 
     const getList = async (url?: string, params?: Object) => {
-        const data = await Service.handleGetList(url, params);
+        const data = await Service.handleGetList(url, {...params, area, type});
         if (!data) return;
         setList(ListTools.prepare(data.items));
         setLinks(data.links);
@@ -91,9 +96,15 @@ export default ({}: Props) => {
                         <th className="row25">
                             <span className="fas fa-check text-info pointer check-all-button" onClick={onCheckAll} />
                         </th>
-                        <th scope="col" className="right">Từ (Kg)</th>
-                        <th scope="col" className="right">Đến (Kg)</th>
-                        <th scope="col" className="right">Phí (VND)</th>
+                        <th scope="col" className="right">
+                            Từ ({unit})
+                        </th>
+                        <th scope="col" className="right">
+                            Đến ({unit})
+                        </th>
+                        <th scope="col" className="right">
+                            Phí (VND)
+                        </th>
                         <th scope="col" style={{padding: 8}} className="row80">
                             <button className="btn btn-primary btn-sm btn-block add-button" onClick={() => showForm(0)}>
                                 <span className="fas fa-plus" />
@@ -115,6 +126,7 @@ export default ({}: Props) => {
                     {list.map((data, key) => (
                         <Row
                             className="table-row"
+                            type={type}
                             data={data}
                             key={key}
                             onCheck={onCheck}
@@ -139,7 +151,7 @@ export default ({}: Props) => {
                 </tfoot>
             </table>
 
-            <MainForm id={modalId} open={formOpen.main} close={() => toggleForm(false)} onChange={onChange}>
+            <MainForm id={modalId} type={type} area={area} open={formOpen.main} close={() => toggleForm(false)} onChange={onChange}>
                 <button type="button" className="btn btn-light" action="close" onClick={() => toggleForm(false)}>
                     Cancel
                 </button>

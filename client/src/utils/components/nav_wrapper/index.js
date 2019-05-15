@@ -38,7 +38,7 @@ const App = ({history, location, children}: Props) => {
 
     const menuItem = (url: string, title: string, icon: string) => (
         <li>
-            <NavLink exact to={`/${url}`}>
+            <NavLink exact={url ? false : true} to={`/${url}`}>
                 <i className={icon} />
                 {toggled ? <span>&nbsp;&nbsp;{title}</span> : null}
             </NavLink>
@@ -73,9 +73,6 @@ const App = ({history, location, children}: Props) => {
             case 'orderFee':
                 if (APP !== 'admin') return null;
                 return menuItem('order-fee', 'Order fee', 'fas fa-percent');
-            case 'deliveryFee':
-                if (APP !== 'admin') return null;
-                return menuItem('delivery-fee', 'Delivery fee', 'fas fa-balance-scale');
             case 'countCheck':
                 if (APP !== 'admin') return null;
                 return menuItem('count-check', 'Count check', 'fas fa-tasks');
@@ -99,7 +96,6 @@ const App = ({history, location, children}: Props) => {
                     {renderMenu('cart')}
                     {renderMenu('rate')}
                     {renderMenu('orderFee')}
-                    {renderMenu('deliveryFee')}
                     {renderMenu('countCheck')}
                 </ul>
             </div>

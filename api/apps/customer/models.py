@@ -20,8 +20,8 @@ class CustomerManager(models.Manager):
         if index == 0:
             raise Exception('Indext must be start with 1.')
 
-        def getData(i: int) -> dict:
-            user = TestHelpers.userSeeding(i, True)
+        def get_data(i: int) -> dict:
+            user = TestHelpers.user_seeding(i, True)
             data = {
                 "user": user.pk,
                 "phone": "00{}".format(i),
@@ -38,10 +38,10 @@ class CustomerManager(models.Manager):
                 instance = instance.save()
             return instance
 
-        def getListData(index):
-            return [getData(i) for i in range(1, index + 1)]
+        def get_list_data(index):
+            return [get_data(i) for i in range(1, index + 1)]
 
-        return getData(index) if single is True else getListData(index)
+        return get_data(index) if single is True else get_list_data(index)
 
 
 class Customer(models.Model):
@@ -89,16 +89,16 @@ class Customer(models.Model):
             item = Customer.objects.get(pk=self.pk)
             if item.avatar and item.avatar and hasattr(item.avatar, 'url'):
                 if self.avatar and item.avatar != self.avatar:
-                    Tools.removeFile(item.avatar.path, True)
+                    Tools.remove_file(item.avatar.path, True)
         super(Customer, self).save(*args, **kwargs)
 
         if self.avatar and hasattr(self.avatar, 'url'):
-            Tools.scaleImage(1, self.avatar.path)
+            Tools.scale_image(1, self.avatar.path)
 
     def delete(self, *args, **kwargs):
         self.user.delete()
         if self.avatar:
-            Tools.removeFile(self.avatar.path, True)
+            Tools.remove_file(self.avatar.path, True)
         return super().delete(*args, **kwargs)
 
     def __str__(self):

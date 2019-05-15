@@ -11,7 +11,7 @@ from django.views.debug import ExceptionReporter
 loop = asyncio.get_event_loop()
 
 
-def asyncExec(func, *args):
+def async_exec(func, *args):
     loop.run_in_executor(None, func, *args)
 
 
@@ -142,4 +142,4 @@ class SlackExceptionHandler(AdminEmailHandler):
 
         def func():
             requests.post(webhook_url, data=data)
-        asyncExec(func)
+        async_exec(func)

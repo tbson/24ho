@@ -53,7 +53,7 @@ class CustomerViewSet(GenericViewSet):
 
     @action(methods=['post'], detail=True)
     def add(self, request):
-        data = Tools.parseUserRelatedData(request.data)
+        data = Tools.parse_user_related_data(request.data)
         userSr = UserSr(data=data['user'])
         if userSr.is_valid(raise_exception=True):
             userSr.save()
@@ -73,7 +73,7 @@ class CustomerViewSet(GenericViewSet):
     def change(self, request, pk=None):
         obj = get_object_or_404(Customer, pk=pk)
 
-        data = Tools.parseUserRelatedData(request.data)
+        data = Tools.parse_user_related_data(request.data)
         userSr = UserSr(obj.user, data=data['user'])
         if userSr.is_valid(raise_exception=True):
             userSr.save()
@@ -133,7 +133,7 @@ class ProfileView(APIView):
         if (type(request.data) is QueryDict):
             data = request.data.dict()
 
-        data = Tools.parseUserRelatedData(data)
+        data = Tools.parse_user_related_data(data)
 
         userSr = UserSr(user, data=data['user'])
         if userSr.is_valid(raise_exception=True):
@@ -210,7 +210,7 @@ class ResetPasswordView(APIView):
 
         user = item.user
 
-        token = Tools.getUuid()
+        token = Tools.get_uuid()
 
         item.reset_password_token = token
         item.reset_password_tmp = make_password(params["password"])
@@ -221,7 +221,7 @@ class ResetPasswordView(APIView):
         body = "Reset password confirm link: %s" % (url)
         to = user.email
 
-        Tools.sendEmailAsync(subject, body, to)
+        Tools.send_email_async(subject, body, to)
         return res({"url": url})
 
 

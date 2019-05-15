@@ -24,7 +24,7 @@ class AddressManager(models.Manager):
         customer = Customer.objects.seeding(1, True)
         area = Area.objects.seeding(1, True)
 
-        def getData(i: int) -> dict:
+        def get_data(i: int) -> dict:
             data = {
                 'customer': customer.pk,
                 'area': area.pk,
@@ -41,10 +41,10 @@ class AddressManager(models.Manager):
             instance = instance.save()
             return instance
 
-        def getListData(index):
-            return [getData(i) for i in range(1, index + 1)]
+        def get_list_data(index):
+            return [get_data(i) for i in range(1, index + 1)]
 
-        return getData(index) if single is True else getListData(index)
+        return get_data(index) if single is True else get_list_data(index)
 
     def generatetUid(self, customerId: int, areaId: int) -> str:
         area = Area.objects.get(pk=areaId)

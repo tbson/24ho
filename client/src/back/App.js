@@ -25,6 +25,7 @@ import Variable from './variable/';
 import Staff from './staff/';
 import Customer from './customer/';
 import Area from './area/';
+import AreaDetail from './area/detail';
 import Address from './address/';
 import Cart from './cart/';
 import Rate from './rate/';
@@ -55,7 +56,8 @@ class App extends React.Component<Props> {
                     <PrivateRoute path="/variable" component={Variable} />
                     <PrivateRoute path="/staff" component={Staff} />
                     <PrivateRoute path="/customer" component={Customer} />
-                    <PrivateRoute path="/area" component={Area} />
+                    <PrivateRoute path="/area" exact component={Area} />
+                    <PrivateRoute path="/area/:id" exact component={AreaDetail} />
                     <PrivateRoute path="/address" component={Address} />
                     <PrivateRoute path="/cart" component={Cart} />
                     <PrivateRoute path="/rate" component={Rate} />

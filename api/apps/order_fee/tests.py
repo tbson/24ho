@@ -14,7 +14,7 @@ class OrderFeeTestCase(TestCase):
     def setUp(self):
         logging.disable(logging.CRITICAL)
 
-        self.token = TestHelpers.testSetup(self)
+        self.token = TestHelpers.test_setup(self)
         self.client = APIClient()
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + self.token)
 
@@ -100,16 +100,16 @@ class ManagerGetMatchedFactor(TestCase):
         self.items = OrderFee.objects.seeding(3)
 
     def test_not_matched(self):
-        self.assertEqual(OrderFee.objects.getMatchedFactor(0), settings.DEFAULT_ORDER_FEE_FACTOR)
+        self.assertEqual(OrderFee.objects.get_matched_factor(0), settings.DEFAULT_ORDER_FEE_FACTOR)
 
     def test_matched_lower(self):
-        self.assertEqual(OrderFee.objects.getMatchedFactor(10), 20)
+        self.assertEqual(OrderFee.objects.get_matched_factor(10), 20)
 
     def test_matched_upper(self):
-        self.assertEqual(OrderFee.objects.getMatchedFactor(19), 20)
+        self.assertEqual(OrderFee.objects.get_matched_factor(19), 20)
 
     def test_matched_other_level(self):
-        self.assertEqual(OrderFee.objects.getMatchedFactor(20), 10)
+        self.assertEqual(OrderFee.objects.get_matched_factor(20), 10)
 
 
 class Serializer(TestCase):

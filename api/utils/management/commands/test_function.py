@@ -9,5 +9,5 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.stdout.write(self.style.SUCCESS('Start...'))
         path = 'hello/tes/a.b/abc.def.jpg'
-        self.stdout.write(Tools.getThumbnail(path))
+        self.stdout.write(Tools.get_thumbnail(path))
         self.stdout.write(self.style.SUCCESS('Success!'))

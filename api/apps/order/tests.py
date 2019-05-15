@@ -20,7 +20,7 @@ class OrderTestCase(TestCase):
     def setUp(self):
         logging.disable(logging.CRITICAL)
 
-        self.token = TestHelpers.testSetup(self)
+        self.token = TestHelpers.test_setup(self)
         self.client = APIClient()
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + self.token)
 
@@ -188,7 +188,7 @@ class ManagerSumCny(TestCase):
             'cny_shockproof_fee': 3,
             'cny_wooden_box_fee': 3,
         }
-        self.assertEqual(Order.objects.sumCny(order), 119.5)
+        self.assertEqual(Order.objects.sum_cny(order), 119.5)
 
 
 class ManagerSumVnd(TestCase):
@@ -197,7 +197,7 @@ class ManagerSumVnd(TestCase):
             'vnd_delivery_fee': 100000,
             'vnd_sub_fee': 20000,
         }
-        self.assertEqual(Order.objects.sumVnd(order), 120000)
+        self.assertEqual(Order.objects.sum_vnd(order), 120000)
 
 
 class ManagerGetVndTotal(TestCase):
@@ -213,14 +213,14 @@ class ManagerGetVndTotal(TestCase):
             'vnd_delivery_fee': 100000,
             'vnd_sub_fee': 20000,
         }
-        self.assertEqual(Order.objects.getVndTotal(order), 526300)
+        self.assertEqual(Order.objects.get_vnd_Total(order), 526300)
 
 
 class ManagerCalAmount(TestCase):
     def test_normal_case(self):
         order_items = OrderItem.objects.seeding(3)
         order = order_items[0].order
-        self.assertEqual(Order.objects.calAmount(order), 77)
+        self.assertEqual(Order.objects.cal_amount(order), 77)
 
 
 class ManagerCalOrderFee(TestCase):
@@ -229,7 +229,7 @@ class ManagerCalOrderFee(TestCase):
         order.cny_amount = 15
         order.save()
         OrderFee.objects.seeding(3)
-        self.assertEqual(Order.objects.calOrderFee(order), 3)
+        self.assertEqual(Order.objects.cal_order_fee(order), 3)
 
     def test_with_fixed(self):
         order = Order.objects.seeding(1, True)
@@ -237,10 +237,10 @@ class ManagerCalOrderFee(TestCase):
         order.order_fee_factor_fixed = 10
         order.save()
         OrderFee.objects.seeding(3)
-        self.assertEqual(Order.objects.calOrderFee(order), 1.5)
+        self.assertEqual(Order.objects.cal_order_fee(order), 1.5)
 
 
-@patch('apps.bol.models.Bol.objects.calDeliveryFee', MagicMock(return_value=2))
+@patch('apps.bol.models.Bol.objects.cal_delivery_fee', MagicMock(return_value=2))
 class ManagerCalDeliveryFee(TestCase):
     def test_normal_case(self):
         bols = Bol.objects.seeding(3)
@@ -248,7 +248,7 @@ class ManagerCalDeliveryFee(TestCase):
         for bol in bols:
             bol.order = order
             bol.save()
-        self.assertEqual(Order.objects.calDeliveryFee(order), 6)
+        self.assertEqual(Order.objects.cal_delivery_fee(order), 6)
 
 
 class ManagerCalCountCheckFee(TestCase):
@@ -260,7 +260,7 @@ class ManagerCalCountCheckFee(TestCase):
         item.count_check_fee_input = 0
         item.save()
 
-        self.assertEqual(Order.objects.calCountCheckFee(item), settings.DEFAULT_COUNT_CHECK_PRICE)
+        self.assertEqual(Order.objects.cal_count_check_fee(item), settings.DEFAULT_COUNT_CHECK_PRICE)
 
     def test_no_manual_input_in_range(self):
         CountCheck.objects.seeding(5)
@@ -270,7 +270,7 @@ class ManagerCalCountCheckFee(TestCase):
         item.count_check_fee_input = 0
         item.save()
 
-        self.assertEqual(Order.objects.calCountCheckFee(item), 21)
+        self.assertEqual(Order.objects.cal_count_check_fee(item), 21)
 
     def test_manual_input(self):
         CountCheck.objects.seeding(5)
@@ -280,7 +280,7 @@ class ManagerCalCountCheckFee(TestCase):
         item.count_check_fee_input = 5
         item.save()
 
-        self.assertEqual(Order.objects.calCountCheckFee(item), 5)
+        self.assertEqual(Order.objects.cal_count_check_fee(item), 5)
 
 
 class ManagerCalShockproofFee(TestCase):
@@ -292,7 +292,7 @@ class ManagerCalShockproofFee(TestCase):
             bol.shockproof = False
             bol.cny_shockproof_fee = 2
             bol.save()
-        self.assertEqual(Order.objects.calShockproofFee(order), 0)
+        self.assertEqual(Order.objects.cal_shockproof_fee(order), 0)
 
     def test_with_register(self):
         bols = Bol.objects.seeding(3)
@@ -302,7 +302,7 @@ class ManagerCalShockproofFee(TestCase):
             bol.shockproof = True
             bol.cny_shockproof_fee = 2
             bol.save()
-        self.assertEqual(Order.objects.calShockproofFee(order), 6)
+        self.assertEqual(Order.objects.cal_shockproof_fee(order), 6)
 
 
 class ManagerCalWoodenBoxFee(TestCase):
@@ -314,7 +314,7 @@ class ManagerCalWoodenBoxFee(TestCase):
             bol.wooden_box = False
             bol.cny_wooden_box_fee = 2
             bol.save()
-        self.assertEqual(Order.objects.calWoodenBoxFee(order), 0)
+        self.assertEqual(Order.objects.cal_wooden_box_fee(order), 0)
 
     def test_with_register(self):
         bols = Bol.objects.seeding(3)
@@ -324,7 +324,7 @@ class ManagerCalWoodenBoxFee(TestCase):
             bol.wooden_box = True
             bol.cny_wooden_box_fee = 2
             bol.save()
-        self.assertEqual(Order.objects.calWoodenBoxFee(order), 6)
+        self.assertEqual(Order.objects.cal_wooden_box_fee(order), 6)
 
 
 class Serializer(TestCase):

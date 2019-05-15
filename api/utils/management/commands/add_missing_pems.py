@@ -8,7 +8,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.stdout.write(self.style.SUCCESS('Start...'))
-        listPem = [
+        list_pem = [
             {
                 'content_type_id': 'group',
                 'codename': 'view_group_list',
@@ -30,20 +30,20 @@ class Command(BaseCommand):
                 'name': 'Can view permission detail',
             },
         ]
-        contentTypeDict = {}
-        contentTypeList = ContentType.objects.all()
-        for contentType in contentTypeList:
-            contentTypeDict[contentType.model] = contentType.id
+        content_type_dict = {}
+        content_type_list = ContentType.objects.all()
+        for content_type in content_type_list:
+            content_type_dict[content_type.model] = content_type.id
 
-        for pemData in listPem:
-            pemData['content_type_id'] = contentTypeDict[pemData['content_type_id']]
+        for pem_data in list_pem:
+            pem_data['content_type_id'] = content_type_dict[pem_data['content_type_id']]
             try:
-                permission = Permission.objects.get(codename=pemData['codename'])
+                permission = Permission.objects.get(codename=pem_data['codename'])
                 # Update here
                 permission.__dict__.update(permission)
                 permission.save()
             except Permission.DoesNotExist:
                 # Create here
-                permission = Permission(**pemData)
+                permission = Permission(**pem_data)
                 permission.save()
         self.stdout.write(self.style.SUCCESS('Success!'))

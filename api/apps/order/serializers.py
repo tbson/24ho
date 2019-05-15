@@ -14,4 +14,4 @@ class OrderBaseSr(ModelSerializer):
         }
 
     def get_vnd_total(self, obj):
-        return Order.objects.getVndTotal(obj.__dict__)
+        return Order.objects.get_vnd_Total(obj.__dict__)

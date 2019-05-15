@@ -10,8 +10,8 @@ class StaffManager(models.Manager):
         if index == 0:
             raise Exception('Indext must be start with 1.')
 
-        def getData(i: int) -> dict:
-            user = TestHelpers.userSeeding(i, True)
+        def get_data(i: int) -> dict:
+            user = TestHelpers.user_seeding(i, True)
             data = {
                 "user": user.pk,
                 "is_sale": i % 2 == 1,
@@ -29,10 +29,10 @@ class StaffManager(models.Manager):
                 instance = instance.save()
             return instance
 
-        def getListData(index):
-            return [getData(i) for i in range(1, index + 1)]
+        def get_list_data(index):
+            return [get_data(i) for i in range(1, index + 1)]
 
-        return getData(index) if single is True else getListData(index)
+        return get_data(index) if single is True else get_list_data(index)
 
     def getListSale(self):
         return self.filter(is_sale=True)
