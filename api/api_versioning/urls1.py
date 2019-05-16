@@ -56,4 +56,8 @@ urlpatterns = (
         'bol/',
         include('apps.bol.urls', namespace='bol'),
     ),
+    path(
+        'category/',
+        include('apps.category.urls', namespace='category'),
+    ),
 )
