@@ -47,11 +47,11 @@ class Category(models.Model):
 
             if last_order is not None:
                 self.order = last_order + 1
-            else: 
+            else:
                 self.order = 1
 
         super(Category, self).save(*args, **kwargs)
-        
+
     def __str__(self):
         return '{} - {}'.format(self.type, self.title)
 

@@ -137,7 +137,7 @@ class CategoryTestCase(TestCase):
 
         # Remove single success and create success
         removedOrder = self.items[-1].order
-        response = self.client.delete(
+        self.client.delete(
             "/api/v1/category/{}".format(self.items[-1].pk)
         )
 
