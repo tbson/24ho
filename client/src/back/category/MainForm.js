@@ -1,24 +1,25 @@
 // @flow
 import * as React from 'react';
-import {useState, useEffect, useRef} from 'react';
+import { useState, useEffect, useRef } from 'react';
 // $FlowFixMe: do not complain about formik
-import {Formik, Form} from 'formik';
+import { Formik, Form } from 'formik';
 // $FlowFixMe: do not complain about Yup
 import * as Yup from 'yup';
 import Tools from 'src/utils/helpers/Tools';
 import ErrMsgs from 'src/utils/helpers/ErrMsgs';
-import {apiUrls} from './_data';
+import { apiUrls } from './_data';
 import TextInput from 'src/utils/components/formik_input/TextInput';
 import CheckInput from 'src/utils/components/formik_input/CheckInput';
 import DefaultModal from 'src/utils/components/modal/DefaultModal';
 import ButtonsBar from 'src/utils/components/form/ButtonsBar';
 import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
+import SelectInput from 'src/utils/components/formik_input/SelectInput';
 
 export class Service {
     static initialValues = {
         uid: '',
         title: '',
-        type: '',
+        type: 'article',
         single: false
     };
 
@@ -36,14 +37,14 @@ export class Service {
     }
 
     static retrieveRequest(id: number) {
-        return id ? Tools.apiCall(apiUrls.crud + id) : Promise.resolve({ok: true, data: Service.initialValues});
+        return id ? Tools.apiCall(apiUrls.crud + id) : Promise.resolve({ ok: true, data: Service.initialValues });
     }
 
     static handleSubmit(id: number, onChange: Function, reOpenDialog: boolean) {
-        return (values: Object, {setErrors}: Object) =>
-            Service.changeRequest(id ? {...values, id} : values).then(({ok, data}) =>
+        return (values: Object, { setErrors }: Object) =>
+            Service.changeRequest(id ? { ...values, id } : values).then(({ ok, data }) =>
                 ok
-                    ? onChange({...data, checked: false}, id ? 'update' : 'add', reOpenDialog)
+                    ? onChange({ ...data, checked: false }, id ? 'update' : 'add', reOpenDialog)
                     : setErrors(Tools.setFormErrors(data))
             );
     }
@@ -57,9 +58,10 @@ type Props = {
     children?: React.Node,
     submitTitle?: string
 };
-export default ({id, open, close, onChange, children, submitTitle = 'Save'}: Props) => {
+export default ({ id, open, close, onChange, children, submitTitle = 'Save' }: Props) => {
     const firstInputSelector = "[name='uid']";
-    const {validationSchema, handleSubmit} = Service;
+    const { validationSchema, handleSubmit } = Service;
+    const listType = [{ label: "Article", value: "article" }, { label: "Banner", value: "banner", }]
 
     const [openModal, setOpenModal] = useState(false);
     const [reOpenDialog, setReOpenDialog] = useState(true);
@@ -68,7 +70,7 @@ export default ({id, open, close, onChange, children, submitTitle = 'Save'}: Pro
     const retrieveThenOpen = (id: number) =>
         Service.retrieveRequest(id).then(resp => {
             if (!resp.ok) return Tools.popMessage(resp.data.detail, 'error');
-            setInitialValues({...resp.data});
+            setInitialValues({ ...resp.data });
             setOpenModal(true);
         });
 
@@ -88,17 +90,18 @@ export default ({id, open, close, onChange, children, submitTitle = 'Save'}: Pro
         handleSubmit();
     };
 
+
     return (
         <DefaultModal open={openModal} close={close} title="Variable manager">
             <Formik
-                initialValues={{...initialValues}}
+                initialValues={{ ...initialValues }}
                 validationSchema={validationSchema}
                 onSubmit={handleSubmit(id, onChange, reOpenDialog)}>
-                {({errors, handleSubmit}) => (
+                {({ errors, handleSubmit }) => (
                     <Form>
                         <TextInput name="uid" label="Key" autoFocus={true} required={true} />
                         <TextInput name="title" label="Title" required={true} />
-                        <TextInput name="type" label="Type" required={true} />
+                        <SelectInput name="type" label="Type" options={listType} />
                         <CheckInput name="single" label="Single" />
                         <FormLevelErrMsg errors={errors.detail} />
                         <ButtonsBar children={children} submitTitle={submitTitle} onClick={onClick(handleSubmit)} />
