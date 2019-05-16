@@ -89,7 +89,9 @@ class OrderTestCase(TestCase):
 
     def test_create_success(self):
         self.assertEqual(Order.objects.count(), 3)
-        order = Order.objects.seeding(4, True, False)
+        order = Order.objects.seeding(4, True, False, False)
+        address_last = Address.objects.last()
+        uid_order = Order.objects.generate_uid(address_id=address_last.id)
         items = [
             {
                 'title': "title1",
@@ -126,7 +128,29 @@ class OrderTestCase(TestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(Order.objects.count(), 4)
+        self.assertEqual(order['uid'], uid_order)
         self.assertEqual(OrderItem.objects.count(), len(items))
+
+        order1 = Order.objects.seeding(5, True, False)
+        address_first = Address.objects.first()
+        uid_order1 = Order.objects.generate_uid(address_id=address_first.id)
+
+        payload = {
+            "order": json.dumps(order1),
+            "items": json.dumps(items)
+        }
+
+        # Add order with new address success
+        response = self.client.post(
+            '/api/v1/order/',
+            payload,
+            format='json'
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Order.objects.count(), 5)
+        self.assertEqual(order1['uid'], uid_order1)
+        self.assertEqual(OrderItem.objects.count(), len(items)*2)
 
     def test_edit(self):
         item3 = Order.objects.seeding(3, True, False)
