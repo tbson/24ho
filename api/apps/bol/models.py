@@ -143,6 +143,16 @@ class BolManager(models.Manager):
             return item.cny_wooden_box_fee
         return 0
 
+    def re_cal(self, item: models.QuerySet) -> models.QuerySet:
+        '''
+        Frezee after export
+        '''
+        if not item.exported_date:
+            data = self.cal_delivery_fee(item)
+            item.__dict__.update(data)
+            item.save()
+        return item
+
 
 # Create your models here.
 class Bol(TimeStampedModel):

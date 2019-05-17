@@ -2,6 +2,7 @@ import logging
 from unittest.mock import patch, MagicMock
 from rest_framework.test import APIClient
 from django.test import TestCase
+from django.utils import timezone
 from .models import Bol, DeliveryFeeType
 from utils.helpers.test_helpers import TestHelpers
 from apps.delivery_fee.models import DeliveryFee
@@ -426,3 +427,20 @@ class ManagerWoodenBoxFee(TestCase):
         item.cny_wooden_box_fee = 1000
         item.save()
         self.assertEqual(Bol.objects.cal_wooden_box_fee(item), 1000)
+
+
+class ManagerReCal(TestCase):
+    @patch(model_prefix.format('cal_delivery_fee'))
+    def test_before_export(self, cal_delivery_fee):
+        item = Bol.objects.seeding(1, True)
+        item.save()
+        Bol.objects.re_cal(item)
+        cal_delivery_fee.assert_called_once()
+
+    @patch(model_prefix.format('cal_delivery_fee'))
+    def test_after_export(self, cal_delivery_fee):
+        item = Bol.objects.seeding(1, True)
+        item.exported_date = timezone.now()
+        item.save()
+        Bol.objects.re_cal(item)
+        cal_delivery_fee.assert_not_called()
