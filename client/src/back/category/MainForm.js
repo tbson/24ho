@@ -17,14 +17,13 @@ import SelectInput from 'src/utils/components/formik_input/SelectInput';
 
 export class Service {
     static initialValues = {
-        uid: '',
+        uid: 'uid',
         title: '',
         type: 'article',
         single: false
     };
 
     static validationSchema = Yup.object().shape({
-        uid: Yup.string().required(ErrMsgs.REQUIRED),
         title: Yup.string().required(ErrMsgs.REQUIRED),
         type: Yup.string().required(ErrMsgs.REQUIRED),
         single: Yup.string().required(ErrMsgs.REQUIRED)
@@ -59,7 +58,7 @@ type Props = {
     submitTitle?: string
 };
 export default ({ id, open, close, onChange, children, submitTitle = 'Save' }: Props) => {
-    const firstInputSelector = "[name='uid']";
+    const firstInputSelector = "[name='title']";
     const { validationSchema, handleSubmit } = Service;
     const listType = [{ label: "Article", value: "article" }, { label: "Banner", value: "banner", }]
 
@@ -99,8 +98,7 @@ export default ({ id, open, close, onChange, children, submitTitle = 'Save' }: P
                 onSubmit={handleSubmit(id, onChange, reOpenDialog)}>
                 {({ errors, handleSubmit }) => (
                     <Form>
-                        <TextInput name="uid" label="Key" autoFocus={true} required={true} />
-                        <TextInput name="title" label="Title" required={true} />
+                        <TextInput name="title" label="Title" required={true} autoFocus={true} />
                         <SelectInput name="type" label="Type" options={listType} />
                         <CheckInput name="single" label="Single" />
                         <FormLevelErrMsg errors={errors.detail} />

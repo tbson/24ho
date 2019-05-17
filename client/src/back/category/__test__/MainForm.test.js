@@ -1,12 +1,12 @@
 import Enzyme from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import React from 'react';
-import {shallow, mount, render} from 'enzyme';
+import { shallow, mount, render } from 'enzyme';
 import Tools from 'src/utils/helpers/Tools';
 import ErrMsgs from 'src/utils/helpers/ErrMsgs';
-import {Service} from '../MainForm/';
+import { Service } from '../MainForm/';
 
-Enzyme.configure({adapter: new Adapter()});
+Enzyme.configure({ adapter: new Adapter() });
 
 beforeEach(() => {
     jest.restoreAllMocks();
@@ -27,7 +27,7 @@ const failResp = {
 
 describe('Service.changeRequest', () => {
     it('No ID', async () => {
-        const apiCall = jest.spyOn(Tools, 'apiCall').mockImplementation(async () => {});
+        const apiCall = jest.spyOn(Tools, 'apiCall').mockImplementation(async () => { });
         const params = {
             key: 'value'
         };
@@ -39,12 +39,12 @@ describe('Service.changeRequest', () => {
     });
 
     it('With ID', async () => {
-        const apiCall = jest.spyOn(Tools, 'apiCall').mockImplementation(async () => {});
+        const apiCall = jest.spyOn(Tools, 'apiCall').mockImplementation(async () => { });
         const params = {
             id: 1,
             key: 'value'
         };
-        const {id} = params;
+        const { id } = params;
         await Service.changeRequest(params);
         expect(apiCall).toHaveBeenCalled();
         expect(apiCall.mock.calls[0][0]).toEqual(`http://localhost/api/v1/category/${id}`);
@@ -55,14 +55,14 @@ describe('Service.changeRequest', () => {
 
 describe('Service.retrieveRequest', () => {
     it('No id', async () => {
-        const apiCall = jest.spyOn(Tools, 'apiCall').mockImplementation(async () => {});
+        const apiCall = jest.spyOn(Tools, 'apiCall').mockImplementation(async () => { });
         const id = 0;
         const result = await Service.retrieveRequest(id);
         expect(apiCall).not.toHaveBeenCalled();
-        expect(result).toEqual({ok: true, data: Service.initialValues});
+        expect(result).toEqual({ ok: true, data: Service.initialValues });
     });
     it('With id', async () => {
-        const apiCall = jest.spyOn(Tools, 'apiCall').mockImplementation(async () => {});
+        const apiCall = jest.spyOn(Tools, 'apiCall').mockImplementation(async () => { });
         const id = 1;
         await Service.retrieveRequest(id);
         expect(apiCall).toHaveBeenCalled();
@@ -76,8 +76,8 @@ describe('Service.handleSubmit', () => {
             const id = 0;
             const onChange = jest.fn();
             const reOpenDialog = true;
-            const values = {key: 'value'};
-            const checkedValue = {key: 'value', checked: false};
+            const values = { key: 'value' };
+            const checkedValue = { key: 'value', checked: false };
             const form = {
                 setErrors: jest.fn()
             };
@@ -101,8 +101,8 @@ describe('Service.handleSubmit', () => {
             const id = 0;
             const onChange = jest.fn();
             const reOpenDialog = true;
-            const values = {key: 'value'};
-            const checkedValue = {key: 'value', checked: false};
+            const values = { key: 'value' };
+            const checkedValue = { key: 'value', checked: false };
             const form = {
                 setErrors: jest.fn()
             };
@@ -117,7 +117,7 @@ describe('Service.handleSubmit', () => {
             expect(onChange).not.toHaveBeenCalled();
 
             expect(form.setErrors).toHaveBeenCalled();
-            expect(form.setErrors.mock.calls[0][0]).toEqual({key: ['value']});
+            expect(form.setErrors.mock.calls[0][0]).toEqual({ key: ['value'] });
         });
     });
 
@@ -126,8 +126,8 @@ describe('Service.handleSubmit', () => {
             const id = 1;
             const onChange = jest.fn();
             const reOpenDialog = true;
-            const values = {key: 'value'};
-            const checkedValue = {key: 'value', checked: false};
+            const values = { key: 'value' };
+            const checkedValue = { key: 'value', checked: false };
             const form = {
                 setErrors: jest.fn()
             };
@@ -137,7 +137,7 @@ describe('Service.handleSubmit', () => {
             await Service.handleSubmit(id, onChange, reOpenDialog)(values, form);
 
             expect(changeRequest).toHaveBeenCalled();
-            expect(changeRequest.mock.calls[0][0]).toEqual({...values, id});
+            expect(changeRequest.mock.calls[0][0]).toEqual({ ...values, id });
 
             expect(onChange).toHaveBeenCalled();
             expect(onChange.mock.calls[0][0]).toEqual(checkedValue);
@@ -151,8 +151,8 @@ describe('Service.handleSubmit', () => {
             const id = 1;
             const onChange = jest.fn();
             const reOpenDialog = true;
-            const values = {key: 'value'};
-            const checkedValue = {key: 'value', checked: false};
+            const values = { key: 'value' };
+            const checkedValue = { key: 'value', checked: false };
             const form = {
                 setErrors: jest.fn()
             };
@@ -162,12 +162,12 @@ describe('Service.handleSubmit', () => {
             await Service.handleSubmit(id, onChange, reOpenDialog)(values, form);
 
             expect(changeRequest).toHaveBeenCalled();
-            expect(changeRequest.mock.calls[0][0]).toEqual({...values, id});
+            expect(changeRequest.mock.calls[0][0]).toEqual({ ...values, id });
 
             expect(onChange).not.toHaveBeenCalled();
 
             expect(form.setErrors).toHaveBeenCalled();
-            expect(form.setErrors.mock.calls[0][0]).toEqual({key: ['value']});
+            expect(form.setErrors.mock.calls[0][0]).toEqual({ key: ['value'] });
         });
     });
 });
@@ -175,7 +175,6 @@ describe('Service.handleSubmit', () => {
 describe('Service.validationSchema', () => {
     test('Success', () => {
         const values = {
-            uid: 'uid1',
             title: 'title1',
             type: 'type1',
             single: false,
@@ -186,7 +185,6 @@ describe('Service.validationSchema', () => {
 
     test('Fail', () => {
         const values = {
-            uid: 'uid1',
             title: '',
             type: '',
             single: false
@@ -197,9 +195,9 @@ describe('Service.validationSchema', () => {
         };
         let output = {};
         try {
-            Service.validationSchema.validateSync(values, {abortEarly: false});
+            Service.validationSchema.validateSync(values, { abortEarly: false });
         } catch (err) {
-            output = err.inner.reduce((errors, item) => ({...errors, [item.path]: item.errors}), {});
+            output = err.inner.reduce((errors, item) => ({ ...errors, [item.path]: item.errors }), {});
         }
         expect(output).toEqual(eput);
     });
