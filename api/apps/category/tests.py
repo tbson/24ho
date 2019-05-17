@@ -40,18 +40,16 @@ class CategoryTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_create(self):
+<<<<<<< HEAD
         item3 = CategoryUtils.seeding(3, True, False)
         item4 = CategoryUtils.seeding(4, True, False)
         item5 = CategoryUtils.seeding(5, True, False)
         item6 = CategoryUtils.seeding(6, True, False)
-
-        # Add duplicate
-        response = self.client.post(
-            '/api/v1/category/',
-            item3,
-            format='json'
-        )
-        self.assertEqual(response.status_code, 400)
+=======
+        item4 = Category.objects.seeding(4, True, False)
+        item5 = Category.objects.seeding(5, True, False)
+        item6 = Category.objects.seeding(6, True, False)
+>>>>>>> fix category create uid and fix test
 
         # Add success
         response = self.client.post(
@@ -60,6 +58,11 @@ class CategoryTestCase(TestCase):
             format='json'
         )
         self.assertEqual(response.status_code, 200)
+
+        response = response.json()
+
+        self.assertEqual(response['uid'], response['title'].lower().replace(
+            ' ', '-') + '-' + str(response['order']))
         self.assertEqual(Category.objects.count(), 4)
 
         # After add success order increase
@@ -76,9 +79,11 @@ class CategoryTestCase(TestCase):
             item6,
             format='json'
         )
+        
+        self.assertEqual(response_2.status_code, 200)
 
         response_2 = response_2.json()
-        self.assertEqual(response.status_code, 200)
+        
         self.assertEqual(response_2['order'] - response_1['order'], 1)
 
     def test_edit(self):
@@ -91,14 +96,6 @@ class CategoryTestCase(TestCase):
             format='json'
         )
         self.assertEqual(response.status_code, 404)
-
-        # Update duplicate
-        response = self.client.put(
-            "/api/v1/category/{}".format(self.items[0].pk),
-            item3,
-            format='json'
-        )
-        self.assertEqual(response.status_code, 400)
 
         # Update success
         response = self.client.put(
