@@ -79,7 +79,8 @@ if (TARGET === 'start' || !TARGET) {
             hot: true,
             stats: 'errors-only',
             host: '0.0.0.0',
-            port: 3000
+            port: 3000,
+            public: '24ho.test'
         },
         plugins: [new ErrorOverlayPlugin(), new webpack.NamedModulesPlugin()]
     });

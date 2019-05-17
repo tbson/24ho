@@ -6,7 +6,6 @@ module.exports = function(api) {
     const presets = ['@babel/preset-env', '@babel/preset-react', '@babel/preset-flow'];
 
     const plugins = [
-        'react-hot-loader/babel',
         '@babel/plugin-proposal-partial-application',
         ['@babel/plugin-proposal-optional-chaining', {loose: false}],
         ['@babel/plugin-proposal-pipeline-operator', {proposal: 'minimal'}],
