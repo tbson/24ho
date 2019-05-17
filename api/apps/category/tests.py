@@ -71,7 +71,6 @@ class CategoryTestCase(TestCase):
             item5,
             format='json'
         )
-
         response_1 = response_1.json()
 
         response_2 = self.client.post(
@@ -79,11 +78,8 @@ class CategoryTestCase(TestCase):
             item6,
             format='json'
         )
-        
-        self.assertEqual(response_2.status_code, 200)
-
         response_2 = response_2.json()
-        
+
         self.assertEqual(response_2['order'] - response_1['order'], 1)
 
     def test_edit(self):
