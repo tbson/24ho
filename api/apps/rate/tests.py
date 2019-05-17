@@ -3,6 +3,7 @@ from django.utils import timezone
 from rest_framework.test import APIClient
 from django.test import TestCase
 from .models import Rate
+from .serializers import RateBaseSr
 from apps.variable.models import Variable
 from utils.helpers.test_helpers import TestHelpers
 from django.conf import settings
@@ -137,4 +138,19 @@ class RateTestCase(TestCase):
         response = self.client.get(
             "/api/v1/rate/latest"
         )
-        self.assertEqual(response.data['value'], latest_rate.order_rate)
+        self.assertEqual(response.data['value'], latest_rate.rate + latest_rate.order_delta)
+
+
+class Serializer(TestCase):
+    def test_normal_case(self):
+        data = {
+            'rate': 3400,
+            'sub_delta': 400,
+            'order_delta': 300
+        }
+
+        rate = RateBaseSr(data=data)
+        rate.is_valid(raise_exception=True)
+        rate.save()
+        self.assertEqual(rate.data['sub_rate'], 3800)
+        self.assertEqual(rate.data['order_rate'], 3700)

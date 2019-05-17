@@ -12,9 +12,8 @@ class RateManager(models.Manager):
         def get_data(i: int) -> dict:
             data = {
                 'rate': base_rate + i + 1,
-                'buy_rate': base_rate + i + 2,
-                'sell_rate': base_rate + i + 3,
-                'order_rate': base_rate + i + 4,
+                'sub_delta': i + 2,
+                'order_delta': i + 3
             }
             if save is False:
                 return data
@@ -44,9 +43,8 @@ class RateManager(models.Manager):
 # Create your models here.
 class Rate(TimeStampedModel):
     rate = models.IntegerField()
-    buy_rate = models.IntegerField()
-    sell_rate = models.IntegerField()
-    order_rate = models.IntegerField()
+    sub_delta = models.IntegerField()
+    order_delta = models.IntegerField()
 
     objects = RateManager()
 

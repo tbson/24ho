@@ -176,9 +176,8 @@ describe('Service.validationSchema', () => {
     test('Success', () => {
         const values = {
             rate: 3400,
-            buy_rate: 3400,
-            sell_rate: 3400,
-            order_rate: 3400
+            sub_delta: 400,
+            order_delta: 300
         };
         const output = Service.validationSchema.isValidSync(values);
         expect(output).toEqual(true);
@@ -187,14 +186,13 @@ describe('Service.validationSchema', () => {
     test('Fail', () => {
         const values = {
             rate: -1,
-            buy_rate: undefined,
-            sell_rate: 3400.5,
-            order_rate: 3400
+            sub_delta: 3400.5,
+            order_delta: undefined
         };
         const eput = {
             rate: [ErrMsgs.GT_0],
-            buy_rate: [ErrMsgs.REQUIRED],
-            sell_rate: [ErrMsgs.INTEGER]
+            sub_delta: [ErrMsgs.INTEGER],
+            order_delta: [ErrMsgs.REQUIRED]
         };
         let output = {};
         try {

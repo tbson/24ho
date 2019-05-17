@@ -22,9 +22,8 @@ export type FormOpenKeyType = 'main';
 
 export type FormValues = {
     rate: number,
-    buy_rate: number,
-    sell_rate: number,
-    order_rate: number
+    sub_delta: number,
+    order_delta: number
 };
 
 export type DbRow = FormValues & {

@@ -38,9 +38,8 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
             </th>
             <td>{Tools.dateFormat(data.created_at)}</td>
             <td className="vnd mono">{Tools.numberFormat(data.rate)}</td>
-            <td className="vnd mono">{Tools.numberFormat(data.buy_rate)}</td>
-            <td className="vnd mono">{Tools.numberFormat(data.sell_rate)}</td>
-            <td className="vnd mono">{Tools.numberFormat(data.order_rate)}</td>
+            <td className="vnd mono">{Tools.numberFormat(data.sub_delta)}</td>
+            <td className="vnd mono">{Tools.numberFormat(data.order_delta)}</td>
             <td className="center">
                 <a className="editBtn" onClick={() => showForm(data.id)}>
                     <span className="fas fa-edit text-info pointer" />

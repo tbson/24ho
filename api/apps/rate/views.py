@@ -72,9 +72,9 @@ class ExposeView(APIView):
         value = settings.DEFAULT_RATE
         real_value = settings.DEFAULT_REAL_RATE
         try:
-            item = Rate.objects.latest('pk')
-            value = item.order_rate
-            real_value = item.rate
+            item = RateBaseSr(Rate.objects.latest('pk')).data
+            value = item['order_rate']
+            real_value = item['rate']
         except Rate.DoesNotExist:
             try:
                 value = Variable.objects.get(uid='rate').value

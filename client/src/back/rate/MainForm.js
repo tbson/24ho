@@ -26,18 +26,12 @@ export class Service {
             .required(ErrMsgs.REQUIRED)
             .integer(ErrMsgs.INTEGER)
             .min(0, ErrMsgs.GT_0),
-        buy_rate: Yup.number()
+        sub_delta: Yup.number()
+            .required(ErrMsgs.REQUIRED)
+            .integer(ErrMsgs.INTEGER),
+        order_delta: Yup.number()
             .required(ErrMsgs.REQUIRED)
             .integer(ErrMsgs.INTEGER)
-            .min(0, ErrMsgs.GT_0),
-        sell_rate: Yup.number()
-            .required(ErrMsgs.REQUIRED)
-            .integer(ErrMsgs.INTEGER)
-            .min(0, ErrMsgs.GT_0),
-        order_rate: Yup.number()
-            .required(ErrMsgs.REQUIRED)
-            .integer(ErrMsgs.INTEGER)
-            .min(0, ErrMsgs.GT_0)
     });
 
     static changeRequest(params: Object) {
@@ -108,9 +102,8 @@ export default ({id, open, close, onChange, children, submitTitle = 'Save'}: Pro
                 {({errors, handleSubmit}) => (
                     <Form>
                         <TextInput name="rate" type="number" label="Mua vào" autoFocus={true} required={true} />
-                        <TextInput name="buy_rate" type="number" label="Chuyển khoản" required={true} />
-                        <TextInput name="sell_rate" type="number" label="Nhờ thanh toán" required={true} />
-                        <TextInput name="order_rate" type="number" label="Order" required={true} />
+                        <TextInput name="sub_delta" type="number" label="Δ phụ phí" required={true} />
+                        <TextInput name="order_delta" type="number" label="Δ order" required={true} />
                         <FormLevelErrMsg errors={errors.detail} />
                         <ButtonsBar children={children} submitTitle={submitTitle} onClick={onClick(handleSubmit)} />
                     </Form>
