@@ -61,8 +61,8 @@ class CategoryTestCase(TestCase):
 
         response = response.json()
 
-        self.assertEqual(response['uid'], response['title'].lower().replace(
-            ' ', '-') + '-' + str(response['order']))
+        self.assertEqual(response['uid'], response['title'].replace(
+            ' ', '-'))
         self.assertEqual(Category.objects.count(), 4)
 
         # After add success order increase

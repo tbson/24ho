@@ -12,7 +12,7 @@ class CategoryManager(models.Manager):
         def get_data(i: int) -> dict:
             data = {
                 'uid': "uid1",
-                'title': "a dump title",
+                'title': "a dump title{}".format(i),
                 'type': "type{}".format(i),
                 'single': i % 2 == 0,
             }
@@ -36,7 +36,7 @@ class CategoryManager(models.Manager):
 class Category(models.Model):
     uid = models.CharField(max_length=60, unique=True,
                            default='Uid will auto generate defend title')
-    title = models.CharField(max_length=250)
+    title = models.CharField(max_length=250, unique=True,)
     type = models.CharField(max_length=60)
     single = models.BooleanField(default=False)
     order = models.IntegerField(default=1)
@@ -53,7 +53,7 @@ class Category(models.Model):
             else:
                 self.order = 1
 
-        self.uid = self.title.lower().replace(' ', '-') + '-' + str(self.order)
+        self.uid = self.title.replace(' ', '-')
 
         super(Category, self).save(*args, **kwargs)
 
