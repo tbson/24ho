@@ -96,7 +96,8 @@ class OrderTestCase(TestCase):
                 'url': "url1",
                 'site': "site1",
                 'quantity': 1,
-                'unit_price': 50.5
+                'unit_price': 50.5,
+                'image': 'first thumbnail'
             },
             {
                 'title': "title2",
@@ -125,6 +126,7 @@ class OrderTestCase(TestCase):
             format='json'
         )
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['thumbnail'], items[0]['image'])
         self.assertEqual(Order.objects.count(), 4)
         self.assertEqual(OrderItem.objects.count(), len(items))
 

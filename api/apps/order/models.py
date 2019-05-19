@@ -153,6 +153,8 @@ class Order(TimeStampedModel):
 
     address = models.ForeignKey(Address, models.SET_NULL, related_name='order', null=True)
 
+    thumbnail = models.CharField(max_length=500, blank=True)
+
     shop_link = models.CharField(max_length=250)
     shop_nick = models.CharField(max_length=250, blank=True)
     site = models.CharField(max_length=50)

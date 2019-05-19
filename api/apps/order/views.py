@@ -35,6 +35,8 @@ class OrderViewSet(GenericViewSet):
         payload = request.data
         order = json.loads(payload['order'])
         order_items = json.loads(payload['items'])
+        if len(order_items) and 'image' in order_items[0]:
+            order['thumbnail'] = order_items[0]['image']
 
         order_sr = OrderBaseSr(data=order)
         order_sr.is_valid(raise_exception=True)
