@@ -13,19 +13,6 @@ loop = asyncio.new_event_loop()
 asyncio.set_event_loop(loop)
 
 
-class OrderStatus:
-    NEW = 1
-    APPROVED = 2
-    DEBT = 3
-    PAID = 4
-    DISPATCHED = 5
-    CN_STORE = 6
-    VN_STORE = 7
-    EXPORTED = 8
-    DONE = 9
-    DISCARD = 10
-
-
 class Tools:
 
     @staticmethod

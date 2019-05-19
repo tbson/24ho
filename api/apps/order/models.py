@@ -6,6 +6,19 @@ from apps.address.models import Address
 from apps.order_fee.models import OrderFee
 
 
+class Status:
+    NEW = 1
+    APPROVED = 2
+    DEBT = 3
+    PAID = 4
+    DISPATCHED = 5
+    CN_STORE = 6
+    VN_STORE = 7
+    EXPORTED = 8
+    DONE = 9
+    DISCARD = 10
+
+
 class OrderManager(models.Manager):
     def seeding(self, index: int, single: bool = False, save: bool = True) -> models.QuerySet:
         from apps.address.models import Address
@@ -138,17 +151,18 @@ class OrderManager(models.Manager):
 
 
 class Order(TimeStampedModel):
+
     STATUS_CHOICES = (
-        (1, 'Chờ duyệt'),
-        (2, 'Đã duyệt'),
-        (3, 'Chờ thanh toán'),
-        (4, 'Đã thanh toán'),
-        (5, 'Đã phát hàng'),
-        (6, 'Về kho TQ'),
-        (7, 'Về kho VN'),
-        (8, 'Đã xuất hàng'),
-        (9, 'Hoàn thành'),
-        (10, 'Huỷ'),
+        (Status.NEW, 'Chờ duyệt'),
+        (Status.APPROVED, 'Đã duyệt'),
+        (Status.DEBT, 'Chờ thanh toán'),
+        (Status.PAID, 'Đã thanh toán'),
+        (Status.DISPATCHED, 'Đã phát hàng'),
+        (Status.CN_STORE, 'Về kho TQ'),
+        (Status.VN_STORE, 'Về kho VN'),
+        (Status.EXPORTED, 'Đã xuất hàng'),
+        (Status.DONE, 'Hoàn thành'),
+        (Status.DISCARD, 'Huỷ'),
     )
 
     address = models.ForeignKey(Address, models.SET_NULL, related_name='order', null=True)
