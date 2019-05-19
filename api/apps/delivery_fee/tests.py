@@ -4,9 +4,10 @@ from rest_framework.exceptions import ValidationError
 from django.test import TestCase
 from .models import DeliveryFee, DeliveryFeeUnitPriceType
 from .serializers import DeliveryFeeBaseSr
+from .utils import DeliveryFeeUtils
 from utils.helpers.test_helpers import TestHelpers
 from django.conf import settings
-from apps.area.models import Area
+from apps.area.utils import AreaUtils
 # Create your tests here.
 
 
@@ -19,8 +20,8 @@ class DeliveryFeeTestCase(TestCase):
         self.client = APIClient()
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + self.token)
 
-        self.items = DeliveryFee.objects.seeding(3)
-        self.area = Area.objects.seeding(1, True)
+        self.items = DeliveryFeeUtils.seeding(3)
+        self.area = AreaUtils.seeding(1, True)
 
     def test_list_with_area(self):
         response = self.client.get(
@@ -52,7 +53,7 @@ class DeliveryFeeTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_create(self):
-        item4 = DeliveryFee.objects.seeding(4, True, False)
+        item4 = DeliveryFeeUtils.seeding(4, True, False)
 
         # Add success
         response = self.client.post(
@@ -64,7 +65,7 @@ class DeliveryFeeTestCase(TestCase):
         self.assertEqual(DeliveryFee.objects.count(), 4)
 
     def test_edit(self):
-        item3 = DeliveryFee.objects.seeding(3, True, False)
+        item3 = DeliveryFeeUtils.seeding(3, True, False)
 
         # Update not exist
         response = self.client.put(
@@ -107,62 +108,62 @@ class DeliveryFeeTestCase(TestCase):
 
 class ManagerGetMatchedUnitPrice(TestCase):
     def setUp(self):
-        self.area = Area.objects.seeding(1, True)
-        self.items = DeliveryFee.objects.seeding(3)
+        self.area = AreaUtils.seeding(1, True)
+        self.items = DeliveryFeeUtils.seeding(3)
 
     def test_not_matched_mass_range(self):
         self.assertEqual(
-            DeliveryFee.objects.get_matched_unit_price(0, self.area.pk, DeliveryFeeUnitPriceType.MASS),
+            DeliveryFeeUtils.get_matched_unit_price(0, self.area.pk, DeliveryFeeUnitPriceType.MASS),
             settings.DEFAULT_DELIVERY_MASS_UNIT_PRICE
         )
 
     def test_not_matched_mass_area(self):
         self.assertEqual(
-            DeliveryFee.objects.get_matched_unit_price(10, 2, DeliveryFeeUnitPriceType.MASS),
+            DeliveryFeeUtils.get_matched_unit_price(10, 2, DeliveryFeeUnitPriceType.MASS),
             settings.DEFAULT_DELIVERY_MASS_UNIT_PRICE
         )
 
     def test_not_matched_volume_range(self):
         self.assertEqual(
-            DeliveryFee.objects.get_matched_unit_price(0, self.area.pk, DeliveryFeeUnitPriceType.VOLUME),
+            DeliveryFeeUtils.get_matched_unit_price(0, self.area.pk, DeliveryFeeUnitPriceType.VOLUME),
             settings.DEFAULT_DELIVERY_VOLUME_UNIT_PRICE
         )
 
     def test_not_matched_volume_area(self):
         self.assertEqual(
-            DeliveryFee.objects.get_matched_unit_price(10, 2, DeliveryFeeUnitPriceType.VOLUME),
+            DeliveryFeeUtils.get_matched_unit_price(10, 2, DeliveryFeeUnitPriceType.VOLUME),
             settings.DEFAULT_DELIVERY_VOLUME_UNIT_PRICE
         )
 
     def test_invalid_type(self):
         try:
-            DeliveryFee.objects.get_matched_unit_price(10, 3, 99)
+            DeliveryFeeUtils.get_matched_unit_price(10, 3, 99)
             self.assertEqual(1, 0)
         except Exception as err:
             self.assertEqual(str(err), 'Invalid type of delivery fee unit price.')
 
     def test_matched_lower(self):
         self.assertEqual(
-            DeliveryFee.objects.get_matched_unit_price(10, self.area.pk, DeliveryFeeUnitPriceType.MASS),
+            DeliveryFeeUtils.get_matched_unit_price(10, self.area.pk, DeliveryFeeUnitPriceType.MASS),
             200000
         )
 
     def test_matched_upper(self):
         self.assertEqual(
-            DeliveryFee.objects.get_matched_unit_price(19, self.area.pk, DeliveryFeeUnitPriceType.MASS),
+            DeliveryFeeUtils.get_matched_unit_price(19, self.area.pk, DeliveryFeeUnitPriceType.MASS),
             200000
         )
 
     def test_matched_other_level(self):
         self.assertEqual(
-            DeliveryFee.objects.get_matched_unit_price(20, self.area.pk, DeliveryFeeUnitPriceType.MASS),
+            DeliveryFeeUtils.get_matched_unit_price(20, self.area.pk, DeliveryFeeUnitPriceType.MASS),
             100000
         )
 
 
 class Serializer(TestCase):
     def setUp(self):
-        self.area = Area.objects.seeding(1, True)
+        self.area = AreaUtils.seeding(1, True)
 
     def test_start_gt_to(self):
         data = {

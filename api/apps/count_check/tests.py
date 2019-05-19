@@ -3,6 +3,7 @@ from rest_framework.test import APIClient
 from rest_framework.exceptions import ValidationError
 from django.test import TestCase
 from .models import CountCheck
+from .utils import CountCheckUtils
 from .serializers import CountCheckBaseSr
 from utils.helpers.test_helpers import TestHelpers
 from django.conf import settings
@@ -18,7 +19,7 @@ class CountCheckTestCase(TestCase):
         self.client = APIClient()
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + self.token)
 
-        self.items = CountCheck.objects.seeding(3)
+        self.items = CountCheckUtils.seeding(3)
 
     def test_list(self):
         response = self.client.get(
@@ -42,7 +43,7 @@ class CountCheckTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_create(self):
-        item4 = CountCheck.objects.seeding(4, True, False)
+        item4 = CountCheckUtils.seeding(4, True, False)
 
         # Add success
         response = self.client.post(
@@ -54,7 +55,7 @@ class CountCheckTestCase(TestCase):
         self.assertEqual(CountCheck.objects.count(), 4)
 
     def test_edit(self):
-        item3 = CountCheck.objects.seeding(3, True, False)
+        item3 = CountCheckUtils.seeding(3, True, False)
 
         # Update not exist
         response = self.client.put(
@@ -97,19 +98,19 @@ class CountCheckTestCase(TestCase):
 
 class ManagerGetMatchedFee(TestCase):
     def setUp(self):
-        self.items = CountCheck.objects.seeding(3)
+        self.items = CountCheckUtils.seeding(3)
 
     def test_not_matched(self):
-        self.assertEqual(CountCheck.objects.get_matched_fee(0), settings.DEFAULT_COUNT_CHECK_PRICE)
+        self.assertEqual(CountCheckUtils.get_matched_fee(0), settings.DEFAULT_COUNT_CHECK_PRICE)
 
     def test_matched_lower(self):
-        self.assertEqual(CountCheck.objects.get_matched_fee(10), 21)
+        self.assertEqual(CountCheckUtils.get_matched_fee(10), 21)
 
     def test_matched_upper(self):
-        self.assertEqual(CountCheck.objects.get_matched_fee(19), 21)
+        self.assertEqual(CountCheckUtils.get_matched_fee(19), 21)
 
     def test_matched_other_level(self):
-        self.assertEqual(CountCheck.objects.get_matched_fee(20), 22)
+        self.assertEqual(CountCheckUtils.get_matched_fee(20), 22)
 
 
 class Serializer(TestCase):

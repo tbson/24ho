@@ -6,12 +6,12 @@ from django.test import TestCase
 from .models import Order
 from .utils import OrderUtils
 from .serializers import OrderBaseSr
-from apps.address.models import Address
+from apps.address.utils import AddressUtils
 from apps.order_item.models import OrderItem
 from apps.order_item.utils import OrderItemUtils
-from apps.order_fee.models import OrderFee
+from apps.order_fee.utils import OrderFeeUtils
 from apps.bol.utils import BolUtils
-from apps.count_check.models import CountCheck
+from apps.count_check.utils import CountCheckUtils
 from utils.helpers.test_helpers import TestHelpers
 from django.conf import settings
 # Create your tests here.
@@ -232,7 +232,7 @@ class ManagerCalOrderFee(TestCase):
         order = OrderUtils.seeding(1, True)
         order.cny_amount = 15
         order.save()
-        OrderFee.objects.seeding(3)
+        OrderFeeUtils.seeding(3)
         self.assertEqual(OrderUtils.cal_order_fee(order), 3)
 
     def test_with_fixed(self):
@@ -240,7 +240,7 @@ class ManagerCalOrderFee(TestCase):
         order.cny_amount = 15
         order.order_fee_factor_fixed = 10
         order.save()
-        OrderFee.objects.seeding(3)
+        OrderFeeUtils.seeding(3)
         self.assertEqual(OrderUtils.cal_order_fee(order), 1.5)
 
 
@@ -257,7 +257,7 @@ class ManagerCalDeliveryFee(TestCase):
 
 class ManagerCalCountCheckFee(TestCase):
     def test_no_manual_input_out_range(self):
-        CountCheck.objects.seeding(5)
+        CountCheckUtils.seeding(5)
         orderItems = OrderItemUtils.seeding(5)
 
         item = orderItems[0].order
@@ -267,7 +267,7 @@ class ManagerCalCountCheckFee(TestCase):
         self.assertEqual(OrderUtils.cal_count_check_fee(item), settings.DEFAULT_COUNT_CHECK_PRICE)
 
     def test_no_manual_input_in_range(self):
-        CountCheck.objects.seeding(5)
+        CountCheckUtils.seeding(5)
         orderItems = OrderItemUtils.seeding(15)
 
         item = orderItems[0].order
@@ -277,7 +277,7 @@ class ManagerCalCountCheckFee(TestCase):
         self.assertEqual(OrderUtils.cal_count_check_fee(item), 21)
 
     def test_manual_input(self):
-        CountCheck.objects.seeding(5)
+        CountCheckUtils.seeding(5)
         orderItems = OrderItemUtils.seeding(5)
 
         item = orderItems[0].order
@@ -333,7 +333,7 @@ class ManagerCalWoodenBoxFee(TestCase):
 
 class Serializer(TestCase):
     def test_normal_case(self):
-        address = Address.objects.seeding(1, True)
+        address = AddressUtils.seeding(1, True)
         data = {
             'address': address.id,
             'shop_link': 'link1',

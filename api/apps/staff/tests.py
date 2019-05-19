@@ -3,6 +3,7 @@ import logging
 from rest_framework.test import APIClient
 from django.test import TestCase
 from .models import Staff
+from .utils import StaffUtils
 from utils.serializers.user import UserSr
 from utils.helpers.test_helpers import TestHelpers
 # Create your tests here.
@@ -17,7 +18,7 @@ class StaffTestCase(TestCase):
         self.client = APIClient()
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + self.token)
 
-        self.items = Staff.objects.seeding(3)
+        self.items = StaffUtils.seeding(3)
 
     def test_list(self):
         resp = self.client.get(
@@ -210,5 +211,5 @@ class StaffTestCase(TestCase):
         self.assertEqual(Staff.objects.getListCustCare().count(), 1)
 
     def test_manager_getName(self):
-        self.assertEqual(Staff.objects.getName(self.items[0].pk), UserSr(self.items[0].user).data['fullname'])
-        self.assertEqual(Staff.objects.getName(0), "")
+        self.assertEqual(StaffUtils.getName(self.items[0].pk), UserSr(self.items[0].user).data['fullname'])
+        self.assertEqual(StaffUtils.getName(0), "")

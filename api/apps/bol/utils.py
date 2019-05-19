@@ -1,7 +1,7 @@
 from django.db import models
-from .serializers import BolBaseSr
-from apps.address.models import Address
-from apps.delivery_fee.models import DeliveryFee, DeliveryFeeUnitPriceType
+from apps.address.utils import AddressUtils
+from apps.delivery_fee.models import DeliveryFeeUnitPriceType
+from apps.delivery_fee.utils import DeliveryFeeUtils
 from django.conf import settings
 
 
@@ -9,10 +9,12 @@ class BolUtils:
 
     @staticmethod
     def seeding(index: int, single: bool = False, save: bool = True) -> models.QuerySet:
+        from .serializers import BolBaseSr
+
         if index == 0:
             raise Exception('Indext must be start with 1.')
 
-        address = Address.objects.seeding(1, True)
+        address = AddressUtils.seeding(1, True)
 
         def get_data(i: int) -> dict:
 
@@ -49,12 +51,12 @@ class BolUtils:
     def cal_delivery_fee_range(item: models.QuerySet) -> dict:
         mass = BolUtils.get_mass(item)
         return {
-            'MASS': DeliveryFee.objects.get_matched_unit_price(
+            'MASS': DeliveryFeeUtils.get_matched_unit_price(
                 mass,
                 item.address.area_id,
                 DeliveryFeeUnitPriceType.MASS
             ),
-            'VOLUME': DeliveryFee.objects.get_matched_unit_price(
+            'VOLUME': DeliveryFeeUtils.get_matched_unit_price(
                 mass,
                 item.address.area_id,
                 DeliveryFeeUnitPriceType.VOLUME

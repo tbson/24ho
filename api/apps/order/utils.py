@@ -1,17 +1,17 @@
 import json
 from django.db import models
 from django.db.models import Sum, F
-from .serializers import OrderBaseSr
-from apps.address.models import Address
-from apps.order_fee.models import OrderFee
+from apps.address.utils import AddressUtils
+from apps.order_fee.utils import OrderFeeUtils
 
 
 class OrderUtils:
 
     @staticmethod
     def seeding(index: int, single: bool = False, save: bool = True) -> models.QuerySet:
+        from .serializers import OrderBaseSr
 
-        address = Address.objects.seeding(1, True)
+        address = AddressUtils.seeding(1, True)
 
         if index == 0:
             raise Exception('Indext must be start with 1.')
@@ -48,6 +48,8 @@ class OrderUtils:
 
     @staticmethod
     def validate_create(data):
+        from .serializers import OrderBaseSr
+
         order_sr = OrderBaseSr(data=data)
         order_sr.is_valid(raise_exception=True)
         return order_sr.save()
@@ -106,7 +108,7 @@ class OrderUtils:
     @staticmethod
     def cal_order_fee(item: models.QuerySet) -> float:
         amount = item.cny_amount
-        factor = OrderFee.objects.get_matched_factor(amount)
+        factor = OrderFeeUtils.get_matched_factor(amount)
         if item.order_fee_factor_fixed:
             factor = item.order_fee_factor_fixed
         return factor * amount / 100
@@ -119,8 +121,9 @@ class OrderUtils:
 
     @staticmethod
     def cal_count_check_fee(item: models.QuerySet) -> float:
-        from apps.count_check.models import CountCheck
-        result = CountCheck.objects.get_matched_fee(item.order_items.count())
+        from apps.count_check.utils import CountCheckUtils
+
+        result = CountCheckUtils.get_matched_fee(item.order_items.count())
         if item.count_check_fee_input:
             result = item.count_check_fee_input
         return result

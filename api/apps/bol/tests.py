@@ -6,8 +6,8 @@ from django.utils import timezone
 from .models import Bol, DeliveryFeeType
 from .utils import BolUtils
 from utils.helpers.test_helpers import TestHelpers
-from apps.delivery_fee.models import DeliveryFee
-from apps.customer.models import Customer
+from apps.delivery_fee.utils import DeliveryFeeUtils
+from apps.customer.utils import CustomerUtils
 from apps.order.utils import OrderUtils
 from django.conf import settings
 # Create your tests here.
@@ -159,7 +159,7 @@ class ManagerGetMass(TestCase):
 
 class ManagerCalDeliveryFeeRange(TestCase):
     def test_normal_case(self):
-        DeliveryFee.objects.seeding(4)
+        DeliveryFeeUtils.seeding(4)
         item = BolUtils.seeding(1, True)
         item.input_mass = 20
         item.save()
@@ -174,7 +174,7 @@ class ManagerCalDeliveryFeeRange(TestCase):
 @patch(model_prefix.format('cal_delivery_fee_range'), MagicMock(return_value={'MASS': 1.5, 'VOLUME': 2.5}))
 class ManagerCalDeliveryFeeMassUnitPrice(TestCase):
     def test_only_set_in_customer(self):
-        customer = Customer.objects.seeding(1, True)
+        customer = CustomerUtils.seeding(1, True)
         customer.delivery_fee_mass_unit_price = 30000
         customer.save()
 
@@ -190,7 +190,7 @@ class ManagerCalDeliveryFeeMassUnitPrice(TestCase):
         self.assertEqual(output, eput)
 
     def test_set_in_customer_and_bol(self):
-        customer = Customer.objects.seeding(1, True)
+        customer = CustomerUtils.seeding(1, True)
         customer.delivery_fee_mass_unit_price = 30000
         customer.save()
 
@@ -207,7 +207,7 @@ class ManagerCalDeliveryFeeMassUnitPrice(TestCase):
         self.assertEqual(output, eput)
 
     def test_fall_back_to_default_value(self):
-        customer = Customer.objects.seeding(1, True)
+        customer = CustomerUtils.seeding(1, True)
         customer.delivery_fee_mass_unit_price = 0
         customer.save()
 
@@ -228,7 +228,7 @@ class ManagerCalDeliveryFeeMassUnitPrice(TestCase):
 @patch(model_prefix.format('cal_delivery_fee_range'), MagicMock(return_value={'MASS': 1.5, 'VOLUME': 2.5}))
 class ManagerCalDeliveryFeeVolumeUnitPrice(TestCase):
     def test_only_set_in_customer(self):
-        customer = Customer.objects.seeding(1, True)
+        customer = CustomerUtils.seeding(1, True)
         customer.delivery_fee_volume_unit_price = 30000
         customer.save()
 
@@ -244,7 +244,7 @@ class ManagerCalDeliveryFeeVolumeUnitPrice(TestCase):
         self.assertEqual(output, eput)
 
     def test_set_in_customer_and_bol(self):
-        customer = Customer.objects.seeding(1, True)
+        customer = CustomerUtils.seeding(1, True)
         customer.delivery_fee_volume_unit_price = 30000
         customer.save()
 
@@ -261,7 +261,7 @@ class ManagerCalDeliveryFeeVolumeUnitPrice(TestCase):
         self.assertEqual(output, eput)
 
     def test_fall_back_to_default_value(self):
-        customer = Customer.objects.seeding(1, True)
+        customer = CustomerUtils.seeding(1, True)
         customer.delivery_fee_volume_unit_price = 0
         customer.save()
 

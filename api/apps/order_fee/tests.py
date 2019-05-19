@@ -3,6 +3,7 @@ from rest_framework.test import APIClient
 from rest_framework.exceptions import ValidationError
 from django.test import TestCase
 from .models import OrderFee
+from .utils import OrderFeeUtils
 from .serializers import OrderFeeBaseSr
 from utils.helpers.test_helpers import TestHelpers
 from django.conf import settings
@@ -18,7 +19,7 @@ class OrderFeeTestCase(TestCase):
         self.client = APIClient()
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + self.token)
 
-        self.items = OrderFee.objects.seeding(3)
+        self.items = OrderFeeUtils.seeding(3)
 
     def test_list(self):
         response = self.client.get(
@@ -42,7 +43,7 @@ class OrderFeeTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_create(self):
-        item4 = OrderFee.objects.seeding(4, True, False)
+        item4 = OrderFeeUtils.seeding(4, True, False)
 
         # Add success
         response = self.client.post(
@@ -54,7 +55,7 @@ class OrderFeeTestCase(TestCase):
         self.assertEqual(OrderFee.objects.count(), 4)
 
     def test_edit(self):
-        item3 = OrderFee.objects.seeding(3, True, False)
+        item3 = OrderFeeUtils.seeding(3, True, False)
 
         # Update not exist
         response = self.client.put(
@@ -97,19 +98,19 @@ class OrderFeeTestCase(TestCase):
 
 class ManagerGetMatchedFactor(TestCase):
     def setUp(self):
-        self.items = OrderFee.objects.seeding(3)
+        self.items = OrderFeeUtils.seeding(3)
 
     def test_not_matched(self):
-        self.assertEqual(OrderFee.objects.get_matched_factor(0), settings.DEFAULT_ORDER_FEE_FACTOR)
+        self.assertEqual(OrderFeeUtils.get_matched_factor(0), settings.DEFAULT_ORDER_FEE_FACTOR)
 
     def test_matched_lower(self):
-        self.assertEqual(OrderFee.objects.get_matched_factor(10), 20)
+        self.assertEqual(OrderFeeUtils.get_matched_factor(10), 20)
 
     def test_matched_upper(self):
-        self.assertEqual(OrderFee.objects.get_matched_factor(19), 20)
+        self.assertEqual(OrderFeeUtils.get_matched_factor(19), 20)
 
     def test_matched_other_level(self):
-        self.assertEqual(OrderFee.objects.get_matched_factor(20), 10)
+        self.assertEqual(OrderFeeUtils.get_matched_factor(20), 10)
 
 
 class Serializer(TestCase):

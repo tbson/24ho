@@ -4,7 +4,7 @@ from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import Permission
 from .models import Customer
-from apps.staff.models import Staff
+from apps.staff.utils import StaffUtils
 from utils.serializers.user import UserRetrieveSr
 
 
@@ -57,7 +57,7 @@ class CustomerRetrieveSr(CustomerBaseSr):
     cust_care_name = SerializerMethodField()
 
     def get_sale_name(self, obj):
-        return Staff.objects.getName(obj.sale)
+        return StaffUtils.getName(obj.sale)
 
     def get_cust_care_name(self, obj):
-        return Staff.objects.getName(obj.cust_care)
+        return StaffUtils.getName(obj.cust_care)

@@ -1,28 +1,11 @@
 import logging
 from rest_framework.test import APIClient
 from django.test import TestCase
-from .models import Address, AddressService
+from .utils import AddressUtils
+from .models import Address
 from utils.helpers.test_helpers import TestHelpers
-from apps.customer.models import Customer
+from apps.customer.utils import CustomerUtils
 # Create your tests here.
-
-
-class AddressServiceTestCase(TestCase):
-    def test_matchUid_first_order(self):
-        customerId = 1
-        areaCode = 'HN'
-        lastUid = ''
-        eput = '1HN0'
-        output = AddressService.matchUid(customerId, areaCode, lastUid)
-        self.assertEqual(eput, output)
-
-    def test_matchUid_normal_case(self):
-        customerId = 1
-        areaCode = 'HN'
-        lastUid = '1HN1'
-        eput = '1HN2'
-        output = AddressService.matchUid(customerId, areaCode, lastUid)
-        self.assertEqual(eput, output)
 
 
 class AddressManagerTestCase(TestCase):
@@ -30,12 +13,12 @@ class AddressManagerTestCase(TestCase):
         logging.disable(logging.CRITICAL)
         self.client = APIClient()
 
-    def test_create(self):
+    def test_create_new_uid(self):
         # Add success
-        Customer.objects.seeding(1, True)
+        CustomerUtils.seeding(1, True)
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + TestHelpers.get_customer_token(self))
 
-        item1 = Address.objects.seeding(1, True, False)
+        item1 = AddressUtils.seeding(1, True, False)
         resp = self.client.post(
             '/api/v1/address/',
             item1,
@@ -44,7 +27,7 @@ class AddressManagerTestCase(TestCase):
         resp = resp.json()
         self.assertEqual(resp['uid'], '1uid10')
 
-        item2 = Address.objects.seeding(2, True, False)
+        item2 = AddressUtils.seeding(2, True, False)
         resp = self.client.post(
             '/api/v1/address/',
             item2,
@@ -52,6 +35,22 @@ class AddressManagerTestCase(TestCase):
         )
         resp = resp.json()
         self.assertEqual(resp['uid'], '1uid11')
+
+    def test_match_uid_first_order(self):
+        customerId = 1
+        areaCode = 'HN'
+        lastUid = ''
+        eput = '1HN0'
+        output = AddressUtils.match_uid(customerId, areaCode, lastUid)
+        self.assertEqual(eput, output)
+
+    def test_match_uid_normal_case(self):
+        customerId = 1
+        areaCode = 'HN'
+        lastUid = '1HN1'
+        eput = '1HN2'
+        output = AddressUtils.match_uid(customerId, areaCode, lastUid)
+        self.assertEqual(eput, output)
 
 
 class AddressTestCase(TestCase):
@@ -62,7 +61,7 @@ class AddressTestCase(TestCase):
         self.client = APIClient()
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + self.token)
 
-        self.items = Address.objects.seeding(3)
+        self.items = AddressUtils.seeding(3)
 
     def test_list(self):
         resp = self.client.get(
@@ -87,7 +86,7 @@ class AddressTestCase(TestCase):
 
     def test_create(self):
         # Add success
-        item4 = Address.objects.seeding(4, True, False)
+        item4 = AddressUtils.seeding(4, True, False)
         resp = self.client.post(
             '/api/v1/address/',
             item4,
@@ -97,7 +96,7 @@ class AddressTestCase(TestCase):
         self.assertEqual(Address.objects.count(), 4)
 
     def test_edit(self):
-        item1 = Address.objects.seeding(1, True, False)
+        item1 = AddressUtils.seeding(1, True, False)
         # Update not exist
         resp = self.client.put(
             "/api/v1/address/{}".format(0),
