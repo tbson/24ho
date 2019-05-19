@@ -12,8 +12,6 @@ import {toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 // $FlowFixMe: do not complain about importing node_modules
 import camelCase from 'lodash/camelCase';
-// $FlowFixMe: do not complain about importing node_modules
-import EventEmitter from 'fbemitter';
 
 import {
     LOCAL_STORAGE_PREFIX,
@@ -71,7 +69,6 @@ export type ObjResp = {
 export type SelectOptions = Array<{value: string | number, label: string}>;
 
 export default class Tools {
-    static emitter = new EventEmitter();
 
     static checkDevMode(): boolean {
         const domainArr = window.location.host.split('.');
@@ -328,7 +325,8 @@ export default class Tools {
     }
 
     static toggleGlobalLoading(spinning: boolean = true): void {
-        this.emitter.emit('TOGGLE_SPINNER', spinning);
+        const event = new CustomEvent('TOGGLE_SPINNER', {detail: spinning});
+        window.document.dispatchEvent(event);
     }
 
     static defaultRequestConfig(method: string): Object {

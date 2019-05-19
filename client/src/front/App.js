@@ -26,7 +26,7 @@ class App extends React.Component<Props> {
     constructor(props: Props) {
         super(props);
         Trans.initTranslations(translations);
-        Tools.emitter.addListener('CHANGE_LANG', Trans.setLang);
+        window.document.addEventListener('CHANGE_LANG', ({detail}) => Trans.setLang(detail), false);
     }
 
     render() {
