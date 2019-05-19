@@ -8,15 +8,10 @@ from apps.order_fee.models import OrderFee
 class OrderService():
     @staticmethod
     def match_uid(last_order_uid: str) -> str:
+        import re
         if last_order_uid:
-            last_order = ''
-            for index, value in enumerate(last_order_uid[::-1]):
-                try:
-                    int(value)
-                    last_order = last_order + value
-                except ValueError:
-                    break
-        return int(last_order[::-1])
+            last_order = re.split('[A-L]', last_order_uid)[-1]
+        return int(last_order)
 
 class OrderManager(models.Manager):
     def seeding(self, index: int, single: bool = False, save: bool = True, new_address: bool = True) -> models.QuerySet:
@@ -152,28 +147,28 @@ class OrderManager(models.Manager):
 
     def generate_uid(self,  address_id: int  ):
         from apps.address.models import Address
-        import datetime
+        from django.utils import timezone
 
         address = Address.objects.get(id=address_id)
-        month_dict = {
-            '01': 'a',
-            '02': 'b',
-            '03': 'c',
-            '04': 'd',
-            '05': 'e',
-            '06': 'f',
-            '07': 'g',
-            '08': 'h',
-            '09': 'i',
-            '10': 'j',
-            '11': 'k',
-            '12': 'l'
+        MONTH_LETTERS = {
+            '01': 'A',
+            '02': 'B',
+            '03': 'C',
+            '04': 'D',
+            '05': 'E',
+            '06': 'F',
+            '07': 'G',
+            '08': 'H',
+            '09': 'I',
+            '10': 'J',
+            '11': 'K',
+            '12': 'L'
         }
 
         address_uid = address.uid
-        dd = datetime.datetime.now().strftime("%d")
-        m = month_dict[datetime.datetime.now().strftime("%m")]
-        orders = Order.objects.filter(address__title=address.title)
+        dd = timezone.now().strftime("%d")
+        m = MONTH_LETTERS[timezone.now().strftime("%m")]
+        orders = Order.objects.filter(address__pk=address.pk)
         if orders.count() > 0:
             order = OrderService.match_uid(last_order_uid=orders.first().uid) + 1
         else:
