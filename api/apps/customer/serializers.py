@@ -40,7 +40,7 @@ class CustomerBaseSr(ModelSerializer):
         instance = Customer.objects.create(**validated_data)
 
         customerGroup, _ = Group.objects.get_or_create(**{'name': 'Customer'})
-        contentTypes = ContentType.objects.filter(model='address')
+        contentTypes = ContentType.objects.filter(model__in=['address', 'order'])
         contentTypes = [item.pk for item in contentTypes]
         permissions = Permission.objects.filter(content_type_id__in=contentTypes)
         for permission in permissions:
