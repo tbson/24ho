@@ -5,6 +5,13 @@ from apps.staff.models import Staff
 from apps.address.models import Address
 from apps.order_fee.models import OrderFee
 
+class OrderService():
+    @staticmethod
+    def match_uid(last_order_uid: str) -> str:
+        import re
+        if last_order_uid:
+            last_order = re.split('[A-L]', last_order_uid)[-1]
+        return int(last_order)
 
 class Status:
     NEW = 1
@@ -20,11 +27,14 @@ class Status:
 
 
 class OrderManager(models.Manager):
-    def seeding(self, index: int, single: bool = False, save: bool = True) -> models.QuerySet:
+    def seeding(self, index: int, single: bool = False, save: bool = True, new_address: bool = True) -> models.QuerySet:
         from apps.address.models import Address
         from apps.order.serializers import OrderBaseSr
 
-        address = Address.objects.seeding(1, True)
+        if new_address is True:
+            address = Address.objects.seeding(1, True)
+        else:
+            address = Address.objects.last()
 
         if index == 0:
             raise Exception('Indext must be start with 1.')
@@ -36,7 +46,8 @@ class OrderManager(models.Manager):
                 'shop_nick': "shop_nick{}".format(i),
                 'site': "site{}".format(i),
                 'rate': 3400,
-                'real_rate': 3300
+                'real_rate': 3300,
+                'uid': Order.objects.generate_uid(address_id=address.id)
             }
             if save is False:
                 return data
@@ -147,8 +158,39 @@ class OrderManager(models.Manager):
         item.save()
         return item
 
-# Create your models here.
+    def generate_uid(self,  address_id: int  ):
+        from apps.address.models import Address
+        from django.utils import timezone
 
+        address = Address.objects.get(id=address_id)
+        MONTH_LETTERS = {
+            '01': 'A',
+            '02': 'B',
+            '03': 'C',
+            '04': 'D',
+            '05': 'E',
+            '06': 'F',
+            '07': 'G',
+            '08': 'H',
+            '09': 'I',
+            '10': 'J',
+            '11': 'K',
+            '12': 'L'
+        }
+
+        address_uid = address.uid
+        dd = timezone.now().strftime("%d")
+        m = MONTH_LETTERS[timezone.now().strftime("%m")]
+        orders = Order.objects.filter(address__pk=address.pk)
+        if orders.count() > 0:
+            order = OrderService.match_uid(last_order_uid=orders.first().uid) + 1
+        else:
+            order = 1
+        order_uid = address_uid + dd + m + str(order)
+
+        return order_uid
+
+# Create your models here.
 
 class Order(TimeStampedModel):
 
@@ -207,10 +249,18 @@ class Order(TimeStampedModel):
     note = models.TextField(blank=True)
     status = models.IntegerField(choices=STATUS_CHOICES, default=1)
 
+    uid = models.CharField(max_length=250, unique=True, blank=True)
+
     objects = OrderManager()
 
     def __str__(self):
         return self.address.title
+
+    def save(self, *args, **kwargs):
+        if self._state.adding:
+            self.uid = Order.objects.generate_uid(address_id=self.address.id)
+
+        super(Order, self).save(*args, **kwargs)
 
     class Meta:
         db_table = "orders"
