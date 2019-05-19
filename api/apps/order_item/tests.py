@@ -2,8 +2,9 @@ import logging
 from rest_framework.test import APIClient
 from django.test import TestCase
 from .models import OrderItem
+from .utils import OrderItemUtils
 from .serializers import OrderItemBaseSr
-from apps.order.models import Order
+from apps.order.utils import OrderUtils
 from utils.helpers.test_helpers import TestHelpers
 # Create your tests here.
 
@@ -17,7 +18,7 @@ class OrderItemTestCase(TestCase):
         self.client = APIClient()
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + self.token)
 
-        self.items = OrderItem.objects.seeding(3)
+        self.items = OrderItemUtils.seeding(3)
 
     def test_list(self):
         response = self.client.get(
@@ -41,7 +42,7 @@ class OrderItemTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_create(self):
-        item4 = OrderItem.objects.seeding(4, True, False)
+        item4 = OrderItemUtils.seeding(4, True, False)
 
         # Add success
         response = self.client.post(
@@ -53,7 +54,7 @@ class OrderItemTestCase(TestCase):
         self.assertEqual(OrderItem.objects.count(), 4)
 
     def test_edit(self):
-        item3 = OrderItem.objects.seeding(3, True, False)
+        item3 = OrderItemUtils.seeding(3, True, False)
 
         # Update not exist
         response = self.client.put(
@@ -96,7 +97,7 @@ class OrderItemTestCase(TestCase):
 
 class Serializer(TestCase):
     def test_normal_case(self):
-        order = Order.objects.seeding(1, True)
+        order = OrderUtils.seeding(1, True)
         data = {
             'order': order.id,
             'title': "title1",

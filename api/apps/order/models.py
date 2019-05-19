@@ -1,9 +1,8 @@
 from django.db import models
-from django.db.models import Sum, F
+from django.contrib.postgres.fields import JSONField
 from utils.models.model import TimeStampedModel
 from apps.staff.models import Staff
 from apps.address.models import Address
-from apps.order_fee.models import OrderFee
 
 
 class Status:
@@ -20,128 +19,23 @@ class Status:
 
 
 class OrderManager(models.Manager):
-    def seeding(self, index: int, single: bool = False, save: bool = True) -> models.QuerySet:
-        from apps.address.models import Address
-        from apps.order.serializers import OrderBaseSr
-
-        address = Address.objects.seeding(1, True)
-
-        if index == 0:
-            raise Exception('Indext must be start with 1.')
-
-        def get_data(i: int) -> dict:
-            data = {
-                'address': address.id,
-                'shop_link': "shop_link{}".format(i),
-                'shop_nick': "shop_nick{}".format(i),
-                'site': "site{}".format(i),
-                'rate': 3400,
-                'real_rate': 3300
-            }
-            if save is False:
-                return data
-
-            instance = OrderBaseSr(data=data)
-            instance.is_valid(raise_exception=True)
-            instance = instance.save()
-            return instance
-
-        def get_list_data(index):
-            return [get_data(i) for i in range(1, index + 1)]
-
-        return get_data(index) if single is True else get_list_data(index)
-
-    def sum_cny(self, order: dict) -> float:
-        cny_amount = order.get('cny_amount', 0)
-
-        cny_order_fee = order.get('cny_order_fee', 0)
-
-        cny_inland_delivery_fee = order.get('cny_inland_delivery_fee', 0)
-
-        cny_count_check_fee = order.get('cny_count_check_fee', 0)
-        cny_shockproof_fee = order.get('cny_shockproof_fee', 0)
-        cny_wooden_box_fee = order.get('cny_wooden_box_fee', 0)
-
-        series = [
-            cny_amount,
-            cny_order_fee,
-            cny_inland_delivery_fee,
-            cny_count_check_fee,  # VND
-            cny_shockproof_fee,  # CNY
-            cny_wooden_box_fee,  # CNY
-        ]
-
-        return sum(series)
-
-    def sum_vnd(self, order: dict) -> int:
-        vnd_delivery_fee = order.get('vnd_delivery_fee', 0)
-        vnd_sub_fee = order.get('vnd_sub_fee', 0)
-
-        series = [
-            vnd_delivery_fee,
-            vnd_sub_fee
-        ]
-
-        return sum(series)
-
-    def get_vnd_Total(self, order: dict) -> int:
-        rate = order['rate']
-        cny = self.sum_cny(order)
-        vnd = self.sum_vnd(order)
-        return int(rate * cny + vnd)
-
-    def cal_amount(self, item: models.QuerySet) -> float:
-        return item.order_items.aggregate(
-            amount=Sum(
-                F('quantity') * F('unit_price'),
-                output_field=models.FloatField()
-            )
-        )['amount']
-
-    def cal_order_fee(self, item: models.QuerySet) -> float:
-        amount = item.cny_amount
-        factor = OrderFee.objects.get_matched_factor(amount)
-        if item.order_fee_factor_fixed:
-            factor = item.order_fee_factor_fixed
-        return factor * amount / 100
-
-    def cal_delivery_fee(self, item: models.QuerySet) -> float:
-        from apps.bol.models import Bol
-        # sum of bols's delivery fee
-        return sum([Bol.objects.cal_delivery_fee(bol) for bol in item.order_bols.all()])
-
-    def cal_count_check_fee(self, item: models.QuerySet) -> float:
-        from apps.count_check.models import CountCheck
-        result = CountCheck.objects.get_matched_fee(item.order_items.count())
-        if item.count_check_fee_input:
-            result = item.count_check_fee_input
-        return result
-
-    def cal_shockproof_fee(self, item: models.QuerySet) -> float:
-        from apps.bol.models import Bol
-        # sum of bols's shockproof fee
-        return sum([Bol.objects.cal_shockproof_fee(bol) for bol in item.order_bols.all()])
-
-    def cal_wooden_box_fee(self, item: models.QuerySet) -> float:
-        from apps.bol.models import Bol
-        # sum of bols's wooden box fee
-        return sum([Bol.objects.cal_wooden_box_fee(bol) for bol in item.order_bols.all()])
 
     def re_cal(self, item: models.QuerySet) -> models.QuerySet:
+        from .utils import OrderUtils
         '''
         Frezee after confirm
         '''
-        item.cny_amount = self.cal_amount(item)
-        item.cny_order_fee = self.cal_order_fee(item)
+        item.cny_amount = OrderUtils.cal_amount(item)
+        item.cny_order_fee = OrderUtils.cal_order_fee(item)
         # item.cny_inland_delivery_fee
 
         '''
         Frezee after export
         '''
-        item.vnd_delivery_fee = self.cal_delivery_fee(item)
-        item.cny_count_check_fee = self.cal_count_check_fee(item)
-        item.cny_shockproof_fee = self.cal_shockproof_fee(item)
-        item.cny_wooden_box_fee = self.cal_wooden_box_fee(item)
+        item.vnd_delivery_fee = OrderUtils.cal_delivery_fee(item)
+        item.cny_count_check_fee = OrderUtils.cal_count_check_fee(item)
+        item.cny_shockproof_fee = OrderUtils.cal_shockproof_fee(item)
+        item.cny_wooden_box_fee = OrderUtils.cal_wooden_box_fee(item)
         # item.vnd_sub_fee
 
         item.save()
@@ -179,6 +73,7 @@ class Order(TimeStampedModel):
 
     count_check_fee_input = models.FloatField(default=0)
 
+    sale = models.ForeignKey(Staff, models.SET_NULL, related_name='sale_orders', null=True)
     cust_care = models.ForeignKey(Staff, models.SET_NULL, related_name='cust_care_orders', null=True)
     approver = models.ForeignKey(Staff, models.SET_NULL, related_name='approver_orders', null=True)
     approved_date = models.DateTimeField(null=True)
@@ -205,6 +100,7 @@ class Order(TimeStampedModel):
     packages = models.IntegerField(default=0)
     number_of_bol = models.IntegerField(default=0)
     note = models.TextField(blank=True)
+    statistics = JSONField(default=dict)
     status = models.IntegerField(choices=STATUS_CHOICES, default=1)
 
     objects = OrderManager()
