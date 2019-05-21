@@ -40,16 +40,10 @@ class CategoryTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_create(self):
-<<<<<<< HEAD
         item3 = CategoryUtils.seeding(3, True, False)
         item4 = CategoryUtils.seeding(4, True, False)
         item5 = CategoryUtils.seeding(5, True, False)
         item6 = CategoryUtils.seeding(6, True, False)
-=======
-        item4 = Category.objects.seeding(4, True, False)
-        item5 = Category.objects.seeding(5, True, False)
-        item6 = Category.objects.seeding(6, True, False)
->>>>>>> fix category create uid and fix test
 
         # Add success
         response = self.client.post(
