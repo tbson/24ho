@@ -3,6 +3,7 @@ from django.contrib.postgres.fields import JSONField
 from utils.models.model import TimeStampedModel
 from apps.staff.models import Staff
 from apps.address.models import Address
+from apps.customer.models import Customer
 
 
 class Status:
@@ -38,6 +39,8 @@ class OrderManager(models.Manager):
         item.cny_wooden_box_fee = OrderUtils.cal_wooden_box_fee(item)
         # item.vnd_sub_fee
 
+        item.statistics = OrderUtils.cal_statistics(item)
+
         item.save()
         return item
 
@@ -59,7 +62,8 @@ class Order(TimeStampedModel):
         (Status.DISCARD, 'Huỷ'),
     )
 
-    address = models.ForeignKey(Address, models.SET_NULL, related_name='order', null=True)
+    address = models.ForeignKey(Address, models.PROTECT, related_name='address_orders')
+    customer = models.ForeignKey(Customer, models.PROTECT, related_name='customer_orders')
 
     thumbnail = models.CharField(max_length=500, blank=True)
 

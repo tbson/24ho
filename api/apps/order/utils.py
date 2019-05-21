@@ -139,3 +139,18 @@ class OrderUtils:
         from apps.bol.utils import BolUtils
         # sum of bols's wooden box fee
         return sum([BolUtils.cal_wooden_box_fee(bol) for bol in item.order_bols.all()])
+
+    @staticmethod
+    def cal_statistics(item: models.QuerySet) -> dict:
+        order_items = item.order_items.all()
+        bols = item.order_bols.all()
+
+        links = len(list(dict.fromkeys([order_item.url for order_item in order_items])))
+        quantity = sum([order_item.quantity for order_item in order_items])
+        packages = sum([bol.packages for bol in bols])
+
+        return {
+            "links": links,
+            "quantity": quantity,
+            "packages": packages
+        }

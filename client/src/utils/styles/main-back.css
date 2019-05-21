@@ -170,6 +170,9 @@ input:invalid {
 .react-tabs__tab, .react-tabs__tab--selected {
     border-radius: 0 !important;
 }
+.react-tabs__tab-list {
+    margin-bottom: 0 !important;
+}
 
 .icon-margin {
     margin-right: 10px;

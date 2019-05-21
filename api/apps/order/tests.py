@@ -10,6 +10,8 @@ from apps.address.utils import AddressUtils
 from apps.order_item.models import OrderItem
 from apps.order_item.utils import OrderItemUtils
 from apps.order_fee.utils import OrderFeeUtils
+from apps.customer.utils import CustomerUtils
+from apps.staff.utils import StaffUtils
 from apps.bol.utils import BolUtils
 from apps.count_check.utils import CountCheckUtils
 from utils.helpers.test_helpers import TestHelpers
@@ -182,7 +184,7 @@ class OrderTestCase(TestCase):
         self.assertEqual(Order.objects.count(), 0)
 
 
-class ManagerSumCny(TestCase):
+class UtilsSumCny(TestCase):
     def test_normal_case(self):
         order = {
             'cny_amount': 100,
@@ -195,7 +197,7 @@ class ManagerSumCny(TestCase):
         self.assertEqual(OrderUtils.sum_cny(order), 119.5)
 
 
-class ManagerSumVnd(TestCase):
+class UtilsSumVnd(TestCase):
     def test_normal_case(self):
         order = {
             'vnd_delivery_fee': 100000,
@@ -204,7 +206,7 @@ class ManagerSumVnd(TestCase):
         self.assertEqual(OrderUtils.sum_vnd(order), 120000)
 
 
-class ManagerGetVndTotal(TestCase):
+class UtilsGetVndTotal(TestCase):
     def test_normal_case(self):
         order = {
             'rate': 3400,
@@ -220,14 +222,14 @@ class ManagerGetVndTotal(TestCase):
         self.assertEqual(OrderUtils.get_vnd_Total(order), 526300)
 
 
-class ManagerCalAmount(TestCase):
+class UtilsCalAmount(TestCase):
     def test_normal_case(self):
         order_items = OrderItemUtils.seeding(3)
         order = order_items[0].order
         self.assertEqual(OrderUtils.cal_amount(order), 77)
 
 
-class ManagerCalOrderFee(TestCase):
+class UtilsCalOrderFee(TestCase):
     def test_without_fixed(self):
         order = OrderUtils.seeding(1, True)
         order.cny_amount = 15
@@ -245,7 +247,7 @@ class ManagerCalOrderFee(TestCase):
 
 
 @patch('apps.bol.utils.BolUtils.cal_delivery_fee', MagicMock(return_value=2))
-class ManagerCalDeliveryFee(TestCase):
+class UtilsCalDeliveryFee(TestCase):
     def test_normal_case(self):
         bols = BolUtils.seeding(3)
         order = OrderUtils.seeding(1, True)
@@ -255,7 +257,7 @@ class ManagerCalDeliveryFee(TestCase):
         self.assertEqual(OrderUtils.cal_delivery_fee(order), 6)
 
 
-class ManagerCalCountCheckFee(TestCase):
+class UtilsCalCountCheckFee(TestCase):
     def test_no_manual_input_out_range(self):
         CountCheckUtils.seeding(5)
         orderItems = OrderItemUtils.seeding(5)
@@ -287,7 +289,7 @@ class ManagerCalCountCheckFee(TestCase):
         self.assertEqual(OrderUtils.cal_count_check_fee(item), 5)
 
 
-class ManagerCalShockproofFee(TestCase):
+class UtilsCalShockproofFee(TestCase):
     def test_without_register(self):
         bols = BolUtils.seeding(3)
         order = OrderUtils.seeding(1, True)
@@ -309,7 +311,7 @@ class ManagerCalShockproofFee(TestCase):
         self.assertEqual(OrderUtils.cal_shockproof_fee(order), 6)
 
 
-class ManagerCalWoodenBoxFee(TestCase):
+class UtilsCalWoodenBoxFee(TestCase):
     def test_without_register(self):
         bols = BolUtils.seeding(3)
         order = OrderUtils.seeding(1, True)
@@ -331,9 +333,37 @@ class ManagerCalWoodenBoxFee(TestCase):
         self.assertEqual(OrderUtils.cal_wooden_box_fee(order), 6)
 
 
+class UtilsCalStatistics(TestCase):
+    def test_normal_case(self):
+        order = OrderUtils.seeding(1, True)
+
+        bols = BolUtils.seeding(3)
+        for bol in bols:
+            bol.order = order
+            bol.packages = 1
+            bol.save()
+
+        order_items = OrderItemUtils.seeding(3)
+        for order_item in order_items:
+            order_item.order = order
+            order_item.save()
+
+        order_items[1].url = order_items[0].url
+        order_items[1].save()
+
+        eput = {
+            "links": 2,
+            "quantity": 6,
+            "packages": 3
+        }
+        output = OrderUtils.cal_statistics(order)
+        self.assertEqual(output, eput)
+
+
 class Serializer(TestCase):
     def test_normal_case(self):
         address = AddressUtils.seeding(1, True)
+        customer = CustomerUtils.seeding(2, True)
         data = {
             'address': address.id,
             'shop_link': 'link1',
@@ -352,5 +382,59 @@ class Serializer(TestCase):
         }
         order = OrderBaseSr(data=data)
         order.is_valid(raise_exception=True)
-        order.save()
+        orderObj = order.save()
+
         self.assertEqual(order.data['vnd_total'], 526300)
+        self.assertEqual(order.data['customer'], address.customer.pk)
+
+        # Update address -> update customer
+        address.customer = customer
+        address.save()
+        order = OrderBaseSr(orderObj, data={'address': address.pk}, partial=True)
+        order.is_valid(raise_exception=True)
+        order.save()
+        self.assertEqual(order.data['customer'], customer.pk)
+
+    def test_blank_names(self):
+        address = AddressUtils.seeding(1, True)
+
+        data = {
+            'address': address.id,
+            'shop_link': 'link1',
+            'site': 'TAOBAO',
+            'rate': 3400,
+            'real_rate': 3300,
+        }
+        order = OrderBaseSr(data=data)
+        order.is_valid(raise_exception=True)
+        order.save()
+
+        self.assertEqual(order.data['customer_name'], 'last1 first1')
+        self.assertEqual(order.data['sale_name'], '')
+        self.assertEqual(order.data['cust_care_name'], '')
+        self.assertEqual(order.data['approver_name'], '')
+
+    def test_not_blank_names(self):
+        address = AddressUtils.seeding(1, True)
+        sale = StaffUtils.seeding(2, True)
+        cust_care = StaffUtils.seeding(3, True)
+        approver = StaffUtils.seeding(4, True)
+
+        data = {
+            'address': address.id,
+            'sale': sale.id,
+            'cust_care': cust_care.id,
+            'approver': approver.id,
+            'shop_link': 'link1',
+            'site': 'TAOBAO',
+            'rate': 3400,
+            'real_rate': 3300,
+        }
+        order = OrderBaseSr(data=data)
+        order.is_valid(raise_exception=True)
+        order.save()
+
+        self.assertEqual(order.data['customer_name'], 'last1 first1')
+        self.assertEqual(order.data['sale_name'], 'last2 first2')
+        self.assertEqual(order.data['cust_care_name'], 'last3 first3')
+        self.assertEqual(order.data['approver_name'], 'last4 first4')

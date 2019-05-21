@@ -55,6 +55,8 @@ const App = ({history, location, children}: Props) => {
             case 'customer':
                 if (APP !== 'admin') return null;
                 return menuItem('customer', 'Customer', 'fas fa-user-ninja');
+            case 'order':
+                return menuItem('order', 'Order', 'fas fa-shipping-fast');
             case 'variable':
                 if (APP !== 'admin') return null;
                 return menuItem('variable', 'Variable', 'fas fa-cog');
@@ -90,6 +92,7 @@ const App = ({history, location, children}: Props) => {
                     {renderMenu('profile')}
                     {renderMenu('admin')}
                     {renderMenu('customer')}
+                    {renderMenu('order')}
                     {renderMenu('variable')}
                     {renderMenu('area')}
                     {renderMenu('address')}
