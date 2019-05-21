@@ -4,12 +4,14 @@ from unittest.mock import patch, MagicMock
 from rest_framework.test import APIClient
 from django.test import TestCase
 from .models import Order
+from .utils import OrderUtils
 from .serializers import OrderBaseSr
-from apps.address.models import Address
+from apps.address.utils import AddressUtils
 from apps.order_item.models import OrderItem
-from apps.order_fee.models import OrderFee
-from apps.bol.models import Bol
-from apps.count_check.models import CountCheck
+from apps.order_item.utils import OrderItemUtils
+from apps.order_fee.utils import OrderFeeUtils
+from apps.bol.utils import BolUtils
+from apps.count_check.utils import CountCheckUtils
 from utils.helpers.test_helpers import TestHelpers
 from django.conf import settings
 # Create your tests here.
@@ -24,7 +26,7 @@ class OrderTestCase(TestCase):
         self.client = APIClient()
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + self.token)
 
-        self.items = Order.objects.seeding(3)
+        self.items = OrderUtils.seeding(3)
 
     def test_list(self):
         response = self.client.get(
@@ -49,7 +51,7 @@ class OrderTestCase(TestCase):
 
     def test_create_fail(self):
         self.assertEqual(Order.objects.count(), 3)
-        order = Order.objects.seeding(4, True, False)
+        order = OrderUtils.seeding(4, True, False)
         items = [
             {
                 'title': "title1",
@@ -89,7 +91,7 @@ class OrderTestCase(TestCase):
 
     def test_create_success(self):
         self.assertEqual(Order.objects.count(), 3)
-        order = Order.objects.seeding(4, True, False)
+        order = OrderUtils.seeding(4, True, False)
         items = [
             {
                 'title': "title1",
@@ -131,7 +133,7 @@ class OrderTestCase(TestCase):
         self.assertEqual(OrderItem.objects.count(), len(items))
 
     def test_edit(self):
-        item3 = Order.objects.seeding(3, True, False)
+        item3 = OrderUtils.seeding(3, True, False)
 
         # Update not exist
         response = self.client.put(
@@ -190,7 +192,7 @@ class ManagerSumCny(TestCase):
             'cny_shockproof_fee': 3,
             'cny_wooden_box_fee': 3,
         }
-        self.assertEqual(Order.objects.sum_cny(order), 119.5)
+        self.assertEqual(OrderUtils.sum_cny(order), 119.5)
 
 
 class ManagerSumVnd(TestCase):
@@ -199,7 +201,7 @@ class ManagerSumVnd(TestCase):
             'vnd_delivery_fee': 100000,
             'vnd_sub_fee': 20000,
         }
-        self.assertEqual(Order.objects.sum_vnd(order), 120000)
+        self.assertEqual(OrderUtils.sum_vnd(order), 120000)
 
 
 class ManagerGetVndTotal(TestCase):
@@ -215,123 +217,123 @@ class ManagerGetVndTotal(TestCase):
             'vnd_delivery_fee': 100000,
             'vnd_sub_fee': 20000,
         }
-        self.assertEqual(Order.objects.get_vnd_Total(order), 526300)
+        self.assertEqual(OrderUtils.get_vnd_Total(order), 526300)
 
 
 class ManagerCalAmount(TestCase):
     def test_normal_case(self):
-        order_items = OrderItem.objects.seeding(3)
+        order_items = OrderItemUtils.seeding(3)
         order = order_items[0].order
-        self.assertEqual(Order.objects.cal_amount(order), 77)
+        self.assertEqual(OrderUtils.cal_amount(order), 77)
 
 
 class ManagerCalOrderFee(TestCase):
     def test_without_fixed(self):
-        order = Order.objects.seeding(1, True)
+        order = OrderUtils.seeding(1, True)
         order.cny_amount = 15
         order.save()
-        OrderFee.objects.seeding(3)
-        self.assertEqual(Order.objects.cal_order_fee(order), 3)
+        OrderFeeUtils.seeding(3)
+        self.assertEqual(OrderUtils.cal_order_fee(order), 3)
 
     def test_with_fixed(self):
-        order = Order.objects.seeding(1, True)
+        order = OrderUtils.seeding(1, True)
         order.cny_amount = 15
         order.order_fee_factor_fixed = 10
         order.save()
-        OrderFee.objects.seeding(3)
-        self.assertEqual(Order.objects.cal_order_fee(order), 1.5)
+        OrderFeeUtils.seeding(3)
+        self.assertEqual(OrderUtils.cal_order_fee(order), 1.5)
 
 
-@patch('apps.bol.models.Bol.objects.cal_delivery_fee', MagicMock(return_value=2))
+@patch('apps.bol.utils.BolUtils.cal_delivery_fee', MagicMock(return_value=2))
 class ManagerCalDeliveryFee(TestCase):
     def test_normal_case(self):
-        bols = Bol.objects.seeding(3)
-        order = Order.objects.seeding(1, True)
+        bols = BolUtils.seeding(3)
+        order = OrderUtils.seeding(1, True)
         for bol in bols:
             bol.order = order
             bol.save()
-        self.assertEqual(Order.objects.cal_delivery_fee(order), 6)
+        self.assertEqual(OrderUtils.cal_delivery_fee(order), 6)
 
 
 class ManagerCalCountCheckFee(TestCase):
     def test_no_manual_input_out_range(self):
-        CountCheck.objects.seeding(5)
-        orderItems = OrderItem.objects.seeding(5)
+        CountCheckUtils.seeding(5)
+        orderItems = OrderItemUtils.seeding(5)
 
         item = orderItems[0].order
         item.count_check_fee_input = 0
         item.save()
 
-        self.assertEqual(Order.objects.cal_count_check_fee(item), settings.DEFAULT_COUNT_CHECK_PRICE)
+        self.assertEqual(OrderUtils.cal_count_check_fee(item), settings.DEFAULT_COUNT_CHECK_PRICE)
 
     def test_no_manual_input_in_range(self):
-        CountCheck.objects.seeding(5)
-        orderItems = OrderItem.objects.seeding(15)
+        CountCheckUtils.seeding(5)
+        orderItems = OrderItemUtils.seeding(15)
 
         item = orderItems[0].order
         item.count_check_fee_input = 0
         item.save()
 
-        self.assertEqual(Order.objects.cal_count_check_fee(item), 21)
+        self.assertEqual(OrderUtils.cal_count_check_fee(item), 21)
 
     def test_manual_input(self):
-        CountCheck.objects.seeding(5)
-        orderItems = OrderItem.objects.seeding(5)
+        CountCheckUtils.seeding(5)
+        orderItems = OrderItemUtils.seeding(5)
 
         item = orderItems[0].order
         item.count_check_fee_input = 5
         item.save()
 
-        self.assertEqual(Order.objects.cal_count_check_fee(item), 5)
+        self.assertEqual(OrderUtils.cal_count_check_fee(item), 5)
 
 
 class ManagerCalShockproofFee(TestCase):
     def test_without_register(self):
-        bols = Bol.objects.seeding(3)
-        order = Order.objects.seeding(1, True)
+        bols = BolUtils.seeding(3)
+        order = OrderUtils.seeding(1, True)
         for bol in bols:
             bol.order = order
             bol.shockproof = False
             bol.cny_shockproof_fee = 2
             bol.save()
-        self.assertEqual(Order.objects.cal_shockproof_fee(order), 0)
+        self.assertEqual(OrderUtils.cal_shockproof_fee(order), 0)
 
     def test_with_register(self):
-        bols = Bol.objects.seeding(3)
-        order = Order.objects.seeding(1, True)
+        bols = BolUtils.seeding(3)
+        order = OrderUtils.seeding(1, True)
         for bol in bols:
             bol.order = order
             bol.shockproof = True
             bol.cny_shockproof_fee = 2
             bol.save()
-        self.assertEqual(Order.objects.cal_shockproof_fee(order), 6)
+        self.assertEqual(OrderUtils.cal_shockproof_fee(order), 6)
 
 
 class ManagerCalWoodenBoxFee(TestCase):
     def test_without_register(self):
-        bols = Bol.objects.seeding(3)
-        order = Order.objects.seeding(1, True)
+        bols = BolUtils.seeding(3)
+        order = OrderUtils.seeding(1, True)
         for bol in bols:
             bol.order = order
             bol.wooden_box = False
             bol.cny_wooden_box_fee = 2
             bol.save()
-        self.assertEqual(Order.objects.cal_wooden_box_fee(order), 0)
+        self.assertEqual(OrderUtils.cal_wooden_box_fee(order), 0)
 
     def test_with_register(self):
-        bols = Bol.objects.seeding(3)
-        order = Order.objects.seeding(1, True)
+        bols = BolUtils.seeding(3)
+        order = OrderUtils.seeding(1, True)
         for bol in bols:
             bol.order = order
             bol.wooden_box = True
             bol.cny_wooden_box_fee = 2
             bol.save()
-        self.assertEqual(Order.objects.cal_wooden_box_fee(order), 6)
+        self.assertEqual(OrderUtils.cal_wooden_box_fee(order), 6)
 
 
 class Serializer(TestCase):
     def test_normal_case(self):
-        address = Address.objects.seeding(1, True)
+        address = AddressUtils.seeding(1, True)
         data = {
             'address': address.id,
             'shop_link': 'link1',

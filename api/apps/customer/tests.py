@@ -3,6 +3,7 @@ import logging
 from rest_framework.test import APIClient
 from django.test import TestCase
 from .models import Customer
+from .utils import CustomerUtils
 from utils.helpers.test_helpers import TestHelpers
 from utils.serializers.user import UserSr
 # Create your tests here.
@@ -17,7 +18,7 @@ class CustomerTestCase(TestCase):
         self.client = APIClient()
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + self.token)
 
-        self.items = Customer.objects.seeding(3)
+        self.items = CustomerUtils.seeding(3)
 
     def test_list(self):
         resp = self.client.get(

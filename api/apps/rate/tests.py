@@ -3,6 +3,7 @@ from django.utils import timezone
 from rest_framework.test import APIClient
 from django.test import TestCase
 from .models import Rate
+from .utils import RateUtils
 from .serializers import RateBaseSr
 from apps.variable.models import Variable
 from utils.helpers.test_helpers import TestHelpers
@@ -19,7 +20,7 @@ class RateTestCase(TestCase):
         self.client = APIClient()
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + self.token)
 
-        self.items = Rate.objects.seeding(3)
+        self.items = RateUtils.seeding(3)
 
     def test_list(self):
         response = self.client.get(
@@ -43,7 +44,7 @@ class RateTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_create(self):
-        item4 = Rate.objects.seeding(4, True, False)
+        item4 = RateUtils.seeding(4, True, False)
 
         # Add success
         response = self.client.post(
@@ -55,7 +56,7 @@ class RateTestCase(TestCase):
         self.assertEqual(Rate.objects.count(), 4)
 
     def test_edit(self):
-        item3 = Rate.objects.seeding(3, True, False)
+        item3 = RateUtils.seeding(3, True, False)
 
         # Update not exist
         response = self.client.put(
@@ -99,20 +100,20 @@ class RateTestCase(TestCase):
         Rate.objects.all().delete()
 
         # Duplicate when there is no record
-        item = Rate.objects.duplicate()
+        item = RateUtils.duplicate(Rate)
         self.assertEqual(item, None)
 
         # Duplicate when there are some records
-        self.items = Rate.objects.seeding(1)
+        self.items = RateUtils.seeding(1)
         self.items[0].created_at = timezone.now() - timezone.timedelta(days=1)
         self.items[0].save()
 
-        item = Rate.objects.duplicate()
+        item = RateUtils.duplicate(Rate)
         self.assertIsInstance(item, Rate)
         self.assertTrue(item.created_at > self.items[0].created_at + timezone.timedelta(days=1))
 
         # Duplicate same date
-        item = Rate.objects.duplicate()
+        item = RateUtils.duplicate(Rate)
         self.assertEqual(item, None)
 
     def test_exposed(self):
@@ -134,7 +135,7 @@ class RateTestCase(TestCase):
         self.assertEqual(response.data['value'], 1234)
 
         # Get latest rate
-        latest_rate = Rate.objects.seeding(1, True)
+        latest_rate = RateUtils.seeding(1, True)
         response = self.client.get(
             "/api/v1/rate/latest"
         )

@@ -2,6 +2,7 @@ import logging
 from rest_framework.test import APIClient
 from django.test import TestCase
 from .models import Category
+from .utils import CategoryUtils
 from utils.helpers.test_helpers import TestHelpers
 # Create your tests here.
 
@@ -15,7 +16,7 @@ class CategoryTestCase(TestCase):
         self.client = APIClient()
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + self.token)
 
-        self.items = Category.objects.seeding(3)
+        self.items = CategoryUtils.seeding(3)
 
     def test_list(self):
         response = self.client.get(
@@ -39,10 +40,10 @@ class CategoryTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_create(self):
-        item3 = Category.objects.seeding(3, True, False)
-        item4 = Category.objects.seeding(4, True, False)
-        item5 = Category.objects.seeding(5, True, False)
-        item6 = Category.objects.seeding(6, True, False)
+        item3 = CategoryUtils.seeding(3, True, False)
+        item4 = CategoryUtils.seeding(4, True, False)
+        item5 = CategoryUtils.seeding(5, True, False)
+        item6 = CategoryUtils.seeding(6, True, False)
 
         # Add duplicate
         response = self.client.post(
@@ -81,7 +82,7 @@ class CategoryTestCase(TestCase):
         self.assertEqual(response_2['order'] - response_1['order'], 1)
 
     def test_edit(self):
-        item3 = Category.objects.seeding(3, True, False)
+        item3 = CategoryUtils.seeding(3, True, False)
 
         # Update not exist
         response = self.client.put(
@@ -133,7 +134,7 @@ class CategoryTestCase(TestCase):
         self.assertEqual(Category.objects.count(), 0)
 
     def test_add_after_delete(self):
-        item4 = Category.objects.seeding(4, True, False)
+        item4 = CategoryUtils.seeding(4, True, False)
 
         # Remove single success and create success
         removedOrder = self.items[-1].order

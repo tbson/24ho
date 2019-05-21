@@ -2,9 +2,7 @@ from django.db import models
 from utils.models.model import TimeStampedModel
 from apps.customer.models import Customer
 from apps.address.models import Address
-from apps.delivery_fee.models import DeliveryFee, DeliveryFeeUnitPriceType
 from apps.order.models import Order
-from django.conf import settings
 
 
 class LandingStatus:
@@ -25,130 +23,14 @@ class DeliveryFeeType:
 
 
 class BolManager(models.Manager):
-    def seeding(self, index: int, single: bool = False, save: bool = True) -> models.QuerySet:
-        from apps.bol.serializers import BolBaseSr
-        if index == 0:
-            raise Exception('Indext must be start with 1.')
-
-        address = Address.objects.seeding(1, True)
-
-        def get_data(i: int) -> dict:
-
-            data = {
-                'uid': "uid{}".format(i),
-                'address': address.pk
-            }
-            if save is False:
-                return data
-
-            instance = BolBaseSr(data=data)
-            instance.is_valid(raise_exception=True)
-            instance = instance.save()
-            return instance
-
-        def get_list_data(index):
-            return [get_data(i) for i in range(1, index + 1)]
-
-        return get_data(index) if single is True else get_list_data(index)
-
-    def get_mass(self, item: models.QuerySet) -> float:
-        return item.input_mass
-
-    def get_mass_convert(self, item: models.QuerySet) -> float:
-        return item.width * item.height * item.length / item.mass_convert_factor
-
-    def get_volume(self, item: models.QuerySet) -> float:
-        return item.width * item.height * item.length / 1000000
-
-    def cal_delivery_fee_range(self, item: models.QuerySet) -> dict:
-        mass = self.get_mass(item)
-        return {
-            'MASS': DeliveryFee.objects.get_matched_unit_price(
-                mass,
-                item.address.area_id,
-                DeliveryFeeUnitPriceType.MASS
-            ),
-            'VOLUME': DeliveryFee.objects.get_matched_unit_price(
-                mass,
-                item.address.area_id,
-                DeliveryFeeUnitPriceType.VOLUME
-            )
-        }
-
-    def cal_delivery_fee_mass_unit_price(self, item: models.QuerySet) -> dict:
-        range_unit_price = self.cal_delivery_fee_range(item)['MASS']
-        customer_unit_price = item.customer.delivery_fee_mass_unit_price
-        bol_unit_price = item.mass_unit_price
-
-        return {
-            'RANGE': range_unit_price,
-            'FIXED': bol_unit_price or customer_unit_price or 0
-        }
-
-    def cal_delivery_fee_volume_unit_price(self, item: models.QuerySet) -> dict:
-        range_unit_price = self.cal_delivery_fee_range(item)['VOLUME']
-        customer_unit_price = item.customer.delivery_fee_volume_unit_price
-        bol_unit_price = item.volume_unit_price
-
-        return {
-            'RANGE': range_unit_price,
-            'FIXED': bol_unit_price or customer_unit_price or 0
-        }
-
-    def cal_delivery_fee(self, item: models.QuerySet) -> dict:
-        mass = self.get_mass(item)
-        mass_convert = self.get_mass_convert(item)
-        volume = self.get_volume(item)
-
-        mass_unit_price = self.cal_delivery_fee_mass_unit_price(item)
-        volume_unit_price = self.cal_delivery_fee_volume_unit_price(item)
-
-        mass_range_price = mass * mass_unit_price['RANGE']
-        mass_price = mass * mass_unit_price['FIXED']
-        mass_convert_price = mass_convert * mass_unit_price['FIXED']
-        volume_range_price = volume * volume_unit_price['RANGE']
-        volume_price = volume * volume_unit_price['FIXED']
-
-        delivery_fee = max(mass_price, mass_convert_price, mass_range_price, volume_price, volume_range_price)
-
-        if item.delivery_fee_type == DeliveryFeeType.MASS_RANGE:
-            delivery_fee = mass_range_price
-        if item.delivery_fee_type == DeliveryFeeType.MASS:
-            delivery_fee = mass_price
-        if item.delivery_fee_type == DeliveryFeeType.MASS_CONVERT:
-            delivery_fee = mass_convert_price
-        if item.delivery_fee_type == DeliveryFeeType.VOLUME_RANGE:
-            delivery_fee = volume_range_price
-        if item.delivery_fee_type == DeliveryFeeType.VOLUME:
-            delivery_fee = volume_price
-
-        return {
-            'mass_range_unit_price': mass_unit_price['RANGE'],
-            'volume_range_unit_price': volume_unit_price['RANGE'],
-            'delivery_fee': delivery_fee
-        }
-
-    def cal_insurance_fee(self, item: models.QuerySet) -> float:
-        if not item.order and item.insurance_register:
-            return item.insurance_value * settings.DEFAULT_INSURANCE_FACTOR / 100
-        return 0
-
-    def cal_shockproof_fee(self, item: models.QuerySet) -> float:
-        if item.shockproof:
-            return item.cny_shockproof_fee
-        return 0
-
-    def cal_wooden_box_fee(self, item: models.QuerySet) -> float:
-        if item.wooden_box:
-            return item.cny_wooden_box_fee
-        return 0
 
     def re_cal(self, item: models.QuerySet) -> models.QuerySet:
+        from .utils import BolUtils
         '''
         Frezee after export
         '''
         if not item.exported_date:
-            data = self.cal_delivery_fee(item)
+            data = BolUtils.cal_delivery_fee(item)
             item.__dict__.update(data)
             item.save()
         return item

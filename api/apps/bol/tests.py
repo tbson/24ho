@@ -4,15 +4,16 @@ from rest_framework.test import APIClient
 from django.test import TestCase
 from django.utils import timezone
 from .models import Bol, DeliveryFeeType
+from .utils import BolUtils
 from utils.helpers.test_helpers import TestHelpers
-from apps.delivery_fee.models import DeliveryFee
-from apps.customer.models import Customer
-from apps.order.models import Order
+from apps.delivery_fee.utils import DeliveryFeeUtils
+from apps.customer.utils import CustomerUtils
+from apps.order.utils import OrderUtils
 from django.conf import settings
 # Create your tests here.
 
 
-model_prefix = 'apps.bol.models.Bol.objects.{}'
+model_prefix = 'apps.bol.utils.BolUtils.{}'
 
 
 class BolTestCase(TestCase):
@@ -24,7 +25,7 @@ class BolTestCase(TestCase):
         self.client = APIClient()
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + self.token)
 
-        self.items = Bol.objects.seeding(3)
+        self.items = BolUtils.seeding(3)
 
     def test_list(self):
         response = self.client.get(
@@ -48,8 +49,8 @@ class BolTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_create(self):
-        item3 = Bol.objects.seeding(3, True, False)
-        item4 = Bol.objects.seeding(4, True, False)
+        item3 = BolUtils.seeding(3, True, False)
+        item4 = BolUtils.seeding(4, True, False)
 
         # Add duplicate
         response = self.client.post(
@@ -69,7 +70,7 @@ class BolTestCase(TestCase):
         self.assertEqual(Bol.objects.count(), 4)
 
     def test_edit(self):
-        item3 = Bol.objects.seeding(3, True, False)
+        item3 = BolUtils.seeding(3, True, False)
 
         # Update not exist
         response = self.client.put(
@@ -120,49 +121,49 @@ class BolTestCase(TestCase):
 
 class ManagerGetVolume(TestCase):
     def test_normal_case(self):
-        item = Bol.objects.seeding(1, True)
+        item = BolUtils.seeding(1, True)
         item.length = 100
         item.width = 100
         item.height = 100
         item.save()
-        self.assertEqual(Bol.objects.get_volume(item), 1)
+        self.assertEqual(BolUtils.get_volume(item), 1)
 
 
 class ManagerGetMassConvert(TestCase):
     def test_default_convert_factor(self):
-        item = Bol.objects.seeding(1, True)
+        item = BolUtils.seeding(1, True)
         item.length = 20
         item.width = 30
         item.height = 10
         item.save()
-        self.assertEqual(Bol.objects.get_mass_convert(item), 1)
+        self.assertEqual(BolUtils.get_mass_convert(item), 1)
 
     def test_manual_convert_factor(self):
-        item = Bol.objects.seeding(1, True)
+        item = BolUtils.seeding(1, True)
         item.mass_convert_factor = 8000
         item.length = 20
         item.width = 20
         item.height = 20
         item.save()
-        self.assertEqual(Bol.objects.get_mass_convert(item), 1)
+        self.assertEqual(BolUtils.get_mass_convert(item), 1)
 
 
 class ManagerGetMass(TestCase):
 
     def test_normal_case(self):
-        item = Bol.objects.seeding(1, True)
+        item = BolUtils.seeding(1, True)
         item.input_mass = 1.5
         item.save()
-        self.assertEqual(Bol.objects.get_mass(item), 1.5)
+        self.assertEqual(BolUtils.get_mass(item), 1.5)
 
 
 class ManagerCalDeliveryFeeRange(TestCase):
     def test_normal_case(self):
-        DeliveryFee.objects.seeding(4)
-        item = Bol.objects.seeding(1, True)
+        DeliveryFeeUtils.seeding(4)
+        item = BolUtils.seeding(1, True)
         item.input_mass = 20
         item.save()
-        output = Bol.objects.cal_delivery_fee_range(item)
+        output = BolUtils.cal_delivery_fee_range(item)
         eput = {
             'MASS': 100000,
             'VOLUME': settings.DEFAULT_DELIVERY_VOLUME_UNIT_PRICE
@@ -173,15 +174,15 @@ class ManagerCalDeliveryFeeRange(TestCase):
 @patch(model_prefix.format('cal_delivery_fee_range'), MagicMock(return_value={'MASS': 1.5, 'VOLUME': 2.5}))
 class ManagerCalDeliveryFeeMassUnitPrice(TestCase):
     def test_only_set_in_customer(self):
-        customer = Customer.objects.seeding(1, True)
+        customer = CustomerUtils.seeding(1, True)
         customer.delivery_fee_mass_unit_price = 30000
         customer.save()
 
-        item = Bol.objects.seeding(1, True)
+        item = BolUtils.seeding(1, True)
         item.customer = customer
         item.save()
 
-        output = Bol.objects.cal_delivery_fee_mass_unit_price(item)
+        output = BolUtils.cal_delivery_fee_mass_unit_price(item)
         eput = {
             'RANGE': 1.5,
             'FIXED': 30000
@@ -189,16 +190,16 @@ class ManagerCalDeliveryFeeMassUnitPrice(TestCase):
         self.assertEqual(output, eput)
 
     def test_set_in_customer_and_bol(self):
-        customer = Customer.objects.seeding(1, True)
+        customer = CustomerUtils.seeding(1, True)
         customer.delivery_fee_mass_unit_price = 30000
         customer.save()
 
-        item = Bol.objects.seeding(1, True)
+        item = BolUtils.seeding(1, True)
         item.customer = customer
         item.mass_unit_price = 40000
         item.save()
 
-        output = Bol.objects.cal_delivery_fee_mass_unit_price(item)
+        output = BolUtils.cal_delivery_fee_mass_unit_price(item)
         eput = {
             'RANGE': 1.5,
             'FIXED': 40000
@@ -206,17 +207,17 @@ class ManagerCalDeliveryFeeMassUnitPrice(TestCase):
         self.assertEqual(output, eput)
 
     def test_fall_back_to_default_value(self):
-        customer = Customer.objects.seeding(1, True)
+        customer = CustomerUtils.seeding(1, True)
         customer.delivery_fee_mass_unit_price = 0
         customer.save()
 
-        item = Bol.objects.seeding(1, True)
+        item = BolUtils.seeding(1, True)
         item.customer = customer
         item.input_mass = 20
         item.mass_unit_price = 0
         item.save()
 
-        output = Bol.objects.cal_delivery_fee_mass_unit_price(item)
+        output = BolUtils.cal_delivery_fee_mass_unit_price(item)
         eput = {
             'RANGE': 1.5,
             'FIXED': 0
@@ -227,15 +228,15 @@ class ManagerCalDeliveryFeeMassUnitPrice(TestCase):
 @patch(model_prefix.format('cal_delivery_fee_range'), MagicMock(return_value={'MASS': 1.5, 'VOLUME': 2.5}))
 class ManagerCalDeliveryFeeVolumeUnitPrice(TestCase):
     def test_only_set_in_customer(self):
-        customer = Customer.objects.seeding(1, True)
+        customer = CustomerUtils.seeding(1, True)
         customer.delivery_fee_volume_unit_price = 30000
         customer.save()
 
-        item = Bol.objects.seeding(1, True)
+        item = BolUtils.seeding(1, True)
         item.customer = customer
         item.save()
 
-        output = Bol.objects.cal_delivery_fee_volume_unit_price(item)
+        output = BolUtils.cal_delivery_fee_volume_unit_price(item)
         eput = {
             'RANGE': 2.5,
             'FIXED': 30000
@@ -243,16 +244,16 @@ class ManagerCalDeliveryFeeVolumeUnitPrice(TestCase):
         self.assertEqual(output, eput)
 
     def test_set_in_customer_and_bol(self):
-        customer = Customer.objects.seeding(1, True)
+        customer = CustomerUtils.seeding(1, True)
         customer.delivery_fee_volume_unit_price = 30000
         customer.save()
 
-        item = Bol.objects.seeding(1, True)
+        item = BolUtils.seeding(1, True)
         item.customer = customer
         item.volume_unit_price = 40000
         item.save()
 
-        output = Bol.objects.cal_delivery_fee_volume_unit_price(item)
+        output = BolUtils.cal_delivery_fee_volume_unit_price(item)
         eput = {
             'RANGE': 2.5,
             'FIXED': 40000
@@ -260,17 +261,17 @@ class ManagerCalDeliveryFeeVolumeUnitPrice(TestCase):
         self.assertEqual(output, eput)
 
     def test_fall_back_to_default_value(self):
-        customer = Customer.objects.seeding(1, True)
+        customer = CustomerUtils.seeding(1, True)
         customer.delivery_fee_volume_unit_price = 0
         customer.save()
 
-        item = Bol.objects.seeding(1, True)
+        item = BolUtils.seeding(1, True)
         item.customer = customer
         item.input_volume = 20
         item.volume_unit_price = 0
         item.save()
 
-        output = Bol.objects.cal_delivery_fee_volume_unit_price(item)
+        output = BolUtils.cal_delivery_fee_volume_unit_price(item)
         eput = {
             'RANGE': 2.5,
             'FIXED': 0
@@ -285,12 +286,12 @@ class ManagerCalDeliveryFeeVolumeUnitPrice(TestCase):
 @patch(model_prefix.format('cal_delivery_fee_volume_unit_price'), MagicMock(return_value={'RANGE': 3.5, 'FIXED': 4.5}))
 class ManagerCalDeliveryFee(TestCase):
     def setUp(self):
-        self.item = Bol.objects.seeding(1, True)
+        self.item = BolUtils.seeding(1, True)
 
     def test_blank_type(self):
         self.item.delivery_fee_type = DeliveryFeeType.BLANK
         self.item.save()
-        output = Bol.objects.cal_delivery_fee(self.item)
+        output = BolUtils.cal_delivery_fee(self.item)
         eput = {
             'mass_range_unit_price': 1.5,
             'volume_range_unit_price': 3.5,
@@ -301,7 +302,7 @@ class ManagerCalDeliveryFee(TestCase):
     def test_max_type(self):
         self.item.delivery_fee_type = DeliveryFeeType.MAX
         self.item.save()
-        output = Bol.objects.cal_delivery_fee(self.item)
+        output = BolUtils.cal_delivery_fee(self.item)
         eput = {
             'mass_range_unit_price': 1.5,
             'volume_range_unit_price': 3.5,
@@ -312,7 +313,7 @@ class ManagerCalDeliveryFee(TestCase):
     def test_mass_range_type(self):
         self.item.delivery_fee_type = DeliveryFeeType.MASS_RANGE
         self.item.save()
-        output = Bol.objects.cal_delivery_fee(self.item)
+        output = BolUtils.cal_delivery_fee(self.item)
         eput = {
             'mass_range_unit_price': 1.5,
             'volume_range_unit_price': 3.5,
@@ -323,7 +324,7 @@ class ManagerCalDeliveryFee(TestCase):
     def test_mass_type(self):
         self.item.delivery_fee_type = DeliveryFeeType.MASS
         self.item.save()
-        output = Bol.objects.cal_delivery_fee(self.item)
+        output = BolUtils.cal_delivery_fee(self.item)
         eput = {
             'mass_range_unit_price': 1.5,
             'volume_range_unit_price': 3.5,
@@ -334,7 +335,7 @@ class ManagerCalDeliveryFee(TestCase):
     def test_mass_convert_type(self):
         self.item.delivery_fee_type = DeliveryFeeType.MASS_CONVERT
         self.item.save()
-        output = Bol.objects.cal_delivery_fee(self.item)
+        output = BolUtils.cal_delivery_fee(self.item)
         eput = {
             'mass_range_unit_price': 1.5,
             'volume_range_unit_price': 3.5,
@@ -345,7 +346,7 @@ class ManagerCalDeliveryFee(TestCase):
     def test_volume_range_type(self):
         self.item.delivery_fee_type = DeliveryFeeType.VOLUME_RANGE
         self.item.save()
-        output = Bol.objects.cal_delivery_fee(self.item)
+        output = BolUtils.cal_delivery_fee(self.item)
         eput = {
             'mass_range_unit_price': 1.5,
             'volume_range_unit_price': 3.5,
@@ -356,7 +357,7 @@ class ManagerCalDeliveryFee(TestCase):
     def test_volume_type(self):
         self.item.delivery_fee_type = DeliveryFeeType.VOLUME
         self.item.save()
-        output = Bol.objects.cal_delivery_fee(self.item)
+        output = BolUtils.cal_delivery_fee(self.item)
         eput = {
             'mass_range_unit_price': 1.5,
             'volume_range_unit_price': 3.5,
@@ -367,79 +368,79 @@ class ManagerCalDeliveryFee(TestCase):
 
 class ManagerCalInsuranceFee(TestCase):
     def test_transport_order_without_register(self):
-        item = Bol.objects.seeding(1, True)
+        item = BolUtils.seeding(1, True)
 
         item.insurance_register = False
         item.insurance_value = 50
         item.save()
-        self.assertEqual(Bol.objects.cal_insurance_fee(item), 0)
+        self.assertEqual(BolUtils.cal_insurance_fee(item), 0)
 
     def test_transport_order_with_register(self):
-        item = Bol.objects.seeding(1, True)
+        item = BolUtils.seeding(1, True)
 
         item.insurance_register = True
         item.insurance_value = 50
         item.save()
-        self.assertEqual(Bol.objects.cal_insurance_fee(item), 1.5)
+        self.assertEqual(BolUtils.cal_insurance_fee(item), 1.5)
 
     def test_normal_order_with_register(self):
-        item = Bol.objects.seeding(1, True)
-        order = Order.objects.seeding(1, True)
+        item = BolUtils.seeding(1, True)
+        order = OrderUtils.seeding(1, True)
 
         item.order = order
         item.insurance_register = True
         item.insurance_value = 50
         item.save()
-        self.assertEqual(Bol.objects.cal_insurance_fee(item), 0)
+        self.assertEqual(BolUtils.cal_insurance_fee(item), 0)
 
 
 class ManagerShockproofFee(TestCase):
     def test_without_register(self):
-        item = Bol.objects.seeding(1, True)
+        item = BolUtils.seeding(1, True)
 
         item.shockproof = False
         item.cny_shockproof_fee = 1000
         item.save()
-        self.assertEqual(Bol.objects.cal_shockproof_fee(item), 0)
+        self.assertEqual(BolUtils.cal_shockproof_fee(item), 0)
 
     def test_with_register(self):
-        item = Bol.objects.seeding(1, True)
+        item = BolUtils.seeding(1, True)
 
         item.shockproof = True
         item.cny_shockproof_fee = 1000
         item.save()
-        self.assertEqual(Bol.objects.cal_shockproof_fee(item), 1000)
+        self.assertEqual(BolUtils.cal_shockproof_fee(item), 1000)
 
 
 class ManagerWoodenBoxFee(TestCase):
     def test_without_register(self):
-        item = Bol.objects.seeding(1, True)
+        item = BolUtils.seeding(1, True)
 
         item.wooden_box = False
         item.cny_wooden_box_fee = 1000
         item.save()
-        self.assertEqual(Bol.objects.cal_wooden_box_fee(item), 0)
+        self.assertEqual(BolUtils.cal_wooden_box_fee(item), 0)
 
     def test_with_register(self):
-        item = Bol.objects.seeding(1, True)
+        item = BolUtils.seeding(1, True)
 
         item.wooden_box = True
         item.cny_wooden_box_fee = 1000
         item.save()
-        self.assertEqual(Bol.objects.cal_wooden_box_fee(item), 1000)
+        self.assertEqual(BolUtils.cal_wooden_box_fee(item), 1000)
 
 
 class ManagerReCal(TestCase):
     @patch(model_prefix.format('cal_delivery_fee'))
     def test_before_export(self, cal_delivery_fee):
-        item = Bol.objects.seeding(1, True)
+        item = BolUtils.seeding(1, True)
         item.save()
         Bol.objects.re_cal(item)
         cal_delivery_fee.assert_called_once()
 
     @patch(model_prefix.format('cal_delivery_fee'))
     def test_after_export(self, cal_delivery_fee):
-        item = Bol.objects.seeding(1, True)
+        item = BolUtils.seeding(1, True)
         item.exported_date = timezone.now()
         item.save()
         Bol.objects.re_cal(item)

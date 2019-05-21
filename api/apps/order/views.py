@@ -1,4 +1,3 @@
-import json
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import action
@@ -6,7 +5,8 @@ from rest_framework.viewsets import (GenericViewSet, )
 from rest_framework import status
 from .models import Order
 from .serializers import OrderBaseSr
-from apps.order_item.serializers import OrderItemBaseSr
+from .utils import OrderUtils
+from apps.order_item.utils import OrderItemUtils
 from utils.common_classes.custom_permission import CustomPermission
 from utils.helpers.res_tools import res
 
@@ -16,6 +16,7 @@ class OrderViewSet(GenericViewSet):
     serializer_class = OrderBaseSr
     permission_classes = (CustomPermission, )
     search_fields = ('uid', 'value')
+    filterset_fields = ('status', )
 
     def list(self, request):
         queryset = Order.objects.all()
@@ -32,23 +33,10 @@ class OrderViewSet(GenericViewSet):
     @transaction.atomic
     @action(methods=['post'], detail=True)
     def add(self, request):
-        payload = request.data
-        order = json.loads(payload['order'])
-        order_items = json.loads(payload['items'])
-        if len(order_items) and 'image' in order_items[0]:
-            order['thumbnail'] = order_items[0]['image']
-
-        order_sr = OrderBaseSr(data=order)
-        order_sr.is_valid(raise_exception=True)
-        order = order_sr.save()
-
-        for item in order_items:
-            item['order'] = order.id
-            order_item_sr = OrderItemBaseSr(data=item)
-            order_item_sr.is_valid(raise_exception=True)
-            order_item_sr.save()
-
-        return res(order_sr.data)
+        data, order_items = OrderUtils.prepare_data(request.data)
+        order = OrderUtils.validate_create(data)
+        OrderItemUtils.validate_bulk_create(order_items, order.id)
+        return res(OrderBaseSr(order).data)
 
     @action(methods=['put'], detail=True)
     def change(self, request, pk=None):

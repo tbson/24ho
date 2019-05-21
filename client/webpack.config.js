@@ -2,6 +2,7 @@ const webpack = require('webpack');
 const merge = require('webpack-merge');
 const ErrorOverlayPlugin = require('error-overlay-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
 
 const TARGET = process.env.npm_lifecycle_event;
 const path = require('path');
@@ -50,6 +51,7 @@ const common = {
         ]
     },
     plugins: [
+        new MomentLocalesPlugin(),
         new HtmlWebpackPlugin({
             inject: false,
             version: new Date().getTime(),
