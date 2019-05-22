@@ -12,6 +12,8 @@ import {toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 // $FlowFixMe: do not complain about importing node_modules
 import camelCase from 'lodash/camelCase';
+// $FlowFixMe: do not complain about importing node_modules
+const moment = require('moment');
 
 import {
     LOCAL_STORAGE_PREFIX,
@@ -455,6 +457,11 @@ export default class Tools {
     static numberFormat(number: number = 0) {
         var l10nDE = new Intl.NumberFormat('de-DE');
         return l10nDE.format(number);
+    }
+
+    static dateTimeFormat(dateStr: string): string {
+        const date = moment(dateStr);
+        return date.format('DD/MM/YY - HH:mm')
     }
 
     static dateFormat(date: any, format: string = 'dd/mm/yyyy'): string {

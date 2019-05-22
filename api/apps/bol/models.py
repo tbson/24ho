@@ -93,6 +93,8 @@ class Bol(TimeStampedModel):
     cny_shockproof_fee = models.FloatField(default=0)
     cny_wooden_box_fee = models.FloatField(default=0)
 
+    packages = models.IntegerField(default=1)
+
     insurance_register = models.BooleanField(default=False)
     insurance_value = models.FloatField(default=0)
     insurance_note = models.CharField(max_length=250, blank=True)

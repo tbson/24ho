@@ -208,3 +208,9 @@ class Tools:
             'user': user,
             'remain': data
         }
+
+    @staticmethod
+    def get_fullname(obj):
+        first_name = obj.user.first_name
+        last_name = obj.user.last_name
+        return "{} {}".format(last_name, first_name)
