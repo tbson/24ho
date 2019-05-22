@@ -60,4 +60,8 @@ urlpatterns = (
         'category/',
         include('apps.category.urls', namespace='category'),
     ),
+    path(
+        'article/',
+        include('apps.article.urls', namespace='article'),
+    ),
 )
