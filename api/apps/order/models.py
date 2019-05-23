@@ -18,7 +18,7 @@ class OrderManager(models.Manager):
         from apps.address.models import Address
         from apps.order.serializers import OrderBaseSr
 
-        if new_address is True:
+        if new_address is True or len(Address.objects.all()) is 0:
             address = Address.objects.seeding(1, True)
         else:
             address = Address.objects.last()
