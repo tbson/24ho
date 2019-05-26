@@ -1,1 +1,2 @@
 ./api_exec pip-review --local --interactive
+./api_exec pip freeze > ../api/requirements.txt
