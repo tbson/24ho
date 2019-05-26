@@ -33,10 +33,24 @@ export class Service {
             .then(resp => (resp.ok ? {ids} : Promise.reject(resp)))
             .catch(Tools.popMessageOrRedirect);
     }
+
+    static prepareOptions(options: Object): Object {
+        for (const key in options) {
+            options[key] = options[key].map(item => ({
+                value: item.id,
+                label: item.fullname
+            }));
+        }
+        return options;
+    }
 }
 
 export default ({status}: Props) => {
     const [list, setList] = useState([]);
+    const [options, setOptions] = useState({
+        sale: [],
+        cust_care: []
+    });
     const [formOpen, setFormOpen] = useState<FormOpenType>({
         main: false
     });
@@ -53,6 +67,7 @@ export default ({status}: Props) => {
         const data = await Service.handleGetList(url, _params);
         if (!data) return;
         setList(ListTools.prepare(data.items));
+        setOptions(Service.prepareOptions(data.extra.options));
         setLinks(data.links);
     };
 
@@ -121,6 +136,7 @@ export default ({status}: Props) => {
                     {list.map((data, key) => (
                         <Row
                             className="table-row"
+                            options={options}
                             data={data}
                             key={key}
                             onCheck={onCheck}

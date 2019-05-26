@@ -5,16 +5,16 @@ from .views import (
 )
 
 
-baseEndPoint = GroupViewSet.as_view({
+base_endpoint = GroupViewSet.as_view({
     'get': 'list',
 })
 
-pkEndpoint = GroupViewSet.as_view({
+pk_endpoint = GroupViewSet.as_view({
     'get': 'retrieve',
 })
 
 app_name = os.getcwd().split(os.sep)[-1]
 urlpatterns = [
-    path('', baseEndPoint),
-    path('<int:pk>', pkEndpoint),
+    path('', base_endpoint),
+    path('<int:pk>', pk_endpoint),
 ]

@@ -5,13 +5,13 @@ from .views import (
 )
 
 
-baseEndPoint = BolViewSet.as_view({
+base_endpoint = BolViewSet.as_view({
     'get': 'list',
     'post': 'add',
     'delete': 'delete_list'
 })
 
-pkEndpoint = BolViewSet.as_view({
+pk_endpoint = BolViewSet.as_view({
     'get': 'retrieve',
     'put': 'change',
     'delete': 'delete'
@@ -19,6 +19,6 @@ pkEndpoint = BolViewSet.as_view({
 
 app_name = os.getcwd().split(os.sep)[-1]
 urlpatterns = [
-    path('', baseEndPoint),
-    path('<int:pk>', pkEndpoint),
+    path('', base_endpoint),
+    path('<int:pk>', pk_endpoint),
 ]

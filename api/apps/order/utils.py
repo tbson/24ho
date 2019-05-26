@@ -55,6 +55,16 @@ class OrderUtils:
         return order_sr.save()
 
     @staticmethod
+    def partial_update(obj, key, value):
+        from .serializers import OrderBaseSr
+        data = {}
+        data[key] = value
+        serializer = OrderBaseSr(obj, data=data, partial=True)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+        return serializer
+
+    @staticmethod
     def sum_cny(order: dict) -> float:
         cny_amount = order.get('cny_amount', 0)
 

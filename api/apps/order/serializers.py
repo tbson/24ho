@@ -47,9 +47,14 @@ class OrderBaseSr(ModelSerializer):
         return Order.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
-        address = validated_data.get('address')
-        validated_data['customer_id'] = address.customer.pk
         instance.__dict__.update(validated_data)
+
+        instance.address = validated_data.get('address', instance.address)
+        instance.customer = instance.address.customer
+
+        instance.sale = validated_data.get('sale', instance.sale)
+        instance.cust_care = validated_data.get('cust_care', instance.cust_care)
+        instance.approver = validated_data.get('approver', instance.approver)
 
         instance.save()
         return instance

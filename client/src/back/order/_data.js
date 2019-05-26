@@ -7,7 +7,9 @@ const rawApiUrls = [
     {
         controller: 'order',
         endpoints: {
-            crud: ''
+            crud: '',
+            change_sale: 'pk/change-sale',
+            change_cust_care: 'pk/change-cust-care'
         }
     }
 ];
@@ -43,8 +45,11 @@ export type FormValues = {
     statistics: Object,
     customer_name: string,
     sale_name: string,
+    sale: number,
     cust_care_name: string,
-    approver_name: string
+    cust_care: number,
+    approver_name: string,
+    approver: number
 };
 
 export type DbRow = FormValues & {

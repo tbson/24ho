@@ -1,7 +1,12 @@
 // @flow
 import * as React from 'react';
+import {useState} from 'react';
+// $FlowFixMe: do not complain about importing node_modules
+import Popover from 'react-popover';
+import Editable from 'src/utils/components/Editable';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
+import type {SelectOptions} from 'src/utils/helpers/Tools';
 import {apiUrls, STATUS} from '../_data';
 import type {TRow} from '../_data';
 
@@ -16,6 +21,11 @@ export class Service {
             .catch(Tools.popMessageOrRedirect);
     }
 }
+
+type OptionsType = {
+    sale: SelectOptions,
+    cust_care: SelectOptions
+};
 
 type OrderInfoType = {
     data: TRow
@@ -70,19 +80,42 @@ const OrderInfo = ({data}: OrderInfoType) => {
 };
 
 type StaffsType = {
-    data: TRow
+    data: TRow,
+    options: OptionsType
 };
-const Staffs = ({data}: StaffsType) => {
+const Staffs = ({data: _data, options}: StaffsType) => {
+    const [data, setData] = useState(_data);
     return (
         <>
             <div>
-                <span>Đặt hàng: {data.sale_name || 'Chưa gán'}</span>
+                <span>Đặt hàng: </span>
+                <Editable
+                    onChange={setData}
+                    name="sale"
+                    value={data.sale}
+                    endPoint={apiUrls.change_sale.replace('/pk-', `/${data.id}/`)}
+                    type="select"
+                    options={options.sale || []}
+                    placeholder="NV đặt hàng">
+                    <span className="test">{data.sale_name || 'Chưa gán'}</span>
+                </Editable>
             </div>
             <div>
-                <span>Chăm sóc: {data.cust_care_name || 'Chưa gán'}</span>
+                <span>Chăm sóc: </span>
+                <Editable
+                    onChange={setData}
+                    name="cust_care"
+                    value={data.cust_care}
+                    endPoint={apiUrls.change_cust_care.replace('/pk-', `/${data.id}/`)}
+                    type="select"
+                    options={options.cust_care || []}
+                    placeholder="NV chăm sóc">
+                    <span>{data.cust_care_name || 'Chưa gán'}</span>
+                </Editable>
             </div>
             <div>
-                <span>Duyệt đơn: {data.approver_name || 'Chưa gán'}</span>
+                <span>Duyệt đơn: </span>
+                <span>{data.approver_name || 'Chưa gán'}</span>
             </div>
         </>
     );
@@ -116,11 +149,12 @@ const FinInfo = ({data}: FinInfoType) => {
 
 type RowPropTypes = {
     data: TRow,
+    options: OptionsType,
     showForm: Function,
     onCheck: Function,
     onRemove: Function
 };
-export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
+export default ({data, options = {}, showForm, onCheck, onRemove}: RowPropTypes) => {
     const id = parseInt(data.id);
 
     const _onRemove = id => {
@@ -137,7 +171,7 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
                 <OrderInfo data={data} />
             </td>
             <td>
-                <Staffs data={data} />
+                <Staffs data={data} options={options} />
             </td>
             <td>
                 <FinInfo data={data} />
