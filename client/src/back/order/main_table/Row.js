@@ -115,7 +115,7 @@ const Staffs = ({data: _data, options}: StaffsType) => {
             </div>
             <div>
                 <span>Duyệt đơn: </span>
-                <span>{data.approver_name || 'Chưa gán'}</span>
+                <span>{data.approver_name || 'Chưa duyệt'}</span>
             </div>
         </>
     );
