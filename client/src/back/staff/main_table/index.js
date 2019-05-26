@@ -76,6 +76,7 @@ export default ({}: Props) => {
 
     const onChange = (data: TRow, type: string, reOpenDialog: boolean) => {
         toggleForm(false);
+        data.group_names = Service.groupIdToName(data.groups, listGroup);
         setList(listAction(data)[type]());
         reOpenDialog && toggleForm(true);
     };
