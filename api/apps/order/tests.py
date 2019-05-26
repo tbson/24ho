@@ -218,8 +218,10 @@ class UtilsGetVndTotal(TestCase):
             'cny_wooden_box_fee': 3,
             'vnd_delivery_fee': 100000,
             'vnd_sub_fee': 20000,
+            'cny_discount': 4.5,
+            'vnd_discount': 20000
         }
-        self.assertEqual(OrderUtils.get_vnd_Total(order), 526300)
+        self.assertEqual(OrderUtils.get_vnd_total(order), 491000)
 
 
 class UtilsCalAmount(TestCase):

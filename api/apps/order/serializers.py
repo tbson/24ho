@@ -20,7 +20,7 @@ class OrderBaseSr(ModelSerializer):
 
     def get_vnd_total(self, obj):
         from .utils import OrderUtils
-        return OrderUtils.get_vnd_Total(obj.__dict__)
+        return OrderUtils.get_vnd_total(obj.__dict__)
 
     def get_customer_name(self, obj):
         return Tools.get_fullname(obj.customer)
