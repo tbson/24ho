@@ -3,8 +3,8 @@ import * as React from 'react';
 import {useState, useEffect} from 'react';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
-import {apiUrls} from '../_data';
-import type {TRow, DbRow, ListItem, FormOpenType, FormOpenKeyType} from '../_data';
+import {apiUrls} from 'src/back/order/_data';
+import type {TRow, DbRow, ListItem, FormOpenType, FormOpenKeyType} from 'src/back/order/_data';
 import {Pagination, SearchInput} from 'src/utils/components/TableUtils';
 import Row from './Row.js';
 

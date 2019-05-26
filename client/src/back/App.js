@@ -23,6 +23,7 @@ import Variable from './variable/';
 import Staff from './staff/';
 import Customer from './customer/';
 import Order from './order/';
+import OrderDetail from './order_detail/';
 import Area from './area/';
 import AreaDetail from './area/detail';
 import Address from './address/';
@@ -55,7 +56,8 @@ class App extends React.Component<Props> {
                     <PrivateRoute path="/variable" component={Variable} />
                     <PrivateRoute path="/staff" component={Staff} />
                     <PrivateRoute path="/customer" component={Customer} />
-                    <PrivateRoute path="/order" component={Order} />
+                    <PrivateRoute exact path="/order" component={Order} />
+                    <PrivateRoute exact path="/order/:id" component={OrderDetail} />
                     <PrivateRoute path="/area" exact component={Area} />
                     <PrivateRoute path="/area/:id" exact component={AreaDetail} />
                     <PrivateRoute path="/address" component={Address} />

@@ -96,8 +96,10 @@ class Order(TimeStampedModel):
     vnd_sub_fee = models.PositiveIntegerField(default=0)
 
     vnd_paid = models.PositiveIntegerField(default=0)
-    vnd_discount = models.PositiveIntegerField(default=0)
-    cny_discount = models.FloatField(default=0)
+
+    vnd_delivery_fee_discount = models.PositiveIntegerField(default=0)
+    cny_order_fee_discount = models.FloatField(default=0)
+    cny_count_check_fee_discount = models.FloatField(default=0)
 
     order_fee_factor = models.FloatField(default=0)
     order_fee_factor_fixed = models.FloatField(default=0)

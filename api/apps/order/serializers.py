@@ -10,6 +10,7 @@ class OrderBaseSr(ModelSerializer):
     sale_name = SerializerMethodField()
     cust_care_name = SerializerMethodField()
     approver_name = SerializerMethodField()
+    address_name = SerializerMethodField()
 
     class Meta:
         model = Order
@@ -44,6 +45,11 @@ class OrderBaseSr(ModelSerializer):
         if not obj.approver:
             return ''
         return Tools.get_fullname(obj.approver)
+
+    def get_address_name(self, obj):
+        if not obj.address:
+            return ''
+        return "{} - {}".format(obj.address.uid, obj.address.title)
 
     def create(self, validated_data):
         address = validated_data.get('address')

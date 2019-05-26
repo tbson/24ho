@@ -102,9 +102,11 @@ class OrderUtils:
     @staticmethod
     def get_vnd_total_discount(order: dict) -> int:
         rate = order['rate']
-        cny_discount = order['cny_discount']
-        vnd_discount = order['vnd_discount']
-        return int(rate * cny_discount + vnd_discount)
+
+        vnd_delivery_fee = order['vnd_delivery_fee_discount']
+        cny_count_check_fee = order['cny_count_check_fee_discount']
+        cny_order_fee = order['cny_order_fee_discount']
+        return int(rate * (cny_order_fee + cny_count_check_fee) + vnd_delivery_fee)
 
     @staticmethod
     def get_vnd_total(order: dict) -> int:
