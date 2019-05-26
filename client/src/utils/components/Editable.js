@@ -20,6 +20,7 @@ type Props = {
     onChange: Function,
     endPoint: string,
     options: SelectOptions,
+    disabled: boolean,
     isMulti: boolean,
     name: string,
     value: string | number,
@@ -44,6 +45,7 @@ export default class TextInput extends React.Component<Props, State> {
     static defaultProps = {
         options: [],
         isMulti: false,
+        disabled: false,
         placeholder: 'Chọn',
         type: 'text',
         value: ''
@@ -121,6 +123,7 @@ export default class TextInput extends React.Component<Props, State> {
     }
 
     render() {
+        const {disabled} = this.props;
         const options = {
             isOpen: this.state.isOpen,
             onOuterAction: () => {
@@ -131,9 +134,9 @@ export default class TextInput extends React.Component<Props, State> {
         };
         // $FlowFixMe: do not complain
         const children = React.cloneElement(this.props.children, {
-            onClick: () => this.setState({isOpen: true}),
+            onClick: () => disabled || this.setState({isOpen: true}),
             // $FlowFixMe: do not complain
-            className: (this.props.children.props.className || '') + ' editable'
+            className: (this.props.children.props.className || '') + (disabled ? '' : ' editable')
         });
         return <Popover {...options}>{children}</Popover>;
     }
