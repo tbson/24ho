@@ -206,6 +206,16 @@ class UtilsSumVnd(TestCase):
         self.assertEqual(OrderUtils.sum_vnd(order), 120000)
 
 
+class UtilsGetVndTotalDiscount(TestCase):
+    def test_normal_case(self):
+        order = {
+            'rate': 3400,
+            'cny_discount': 4.5,
+            'vnd_discount': 20000
+        }
+        self.assertEqual(OrderUtils.get_vnd_total_discount(order), 35300)
+
+
 class UtilsGetVndTotal(TestCase):
     def test_normal_case(self):
         order = {

@@ -49,7 +49,10 @@ export type FormValues = {
     cust_care_name: string,
     cust_care: number,
     approver_name: string,
-    approver: number
+    approver: number,
+    vnd_total: number,
+    vnd_paid: number,
+    vnd_total_discount: number,
 };
 
 export type DbRow = FormValues & {

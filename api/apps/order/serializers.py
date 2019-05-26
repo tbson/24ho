@@ -4,6 +4,7 @@ from utils.helpers.tools import Tools
 
 
 class OrderBaseSr(ModelSerializer):
+    vnd_total_discount = SerializerMethodField()
     vnd_total = SerializerMethodField()
     customer_name = SerializerMethodField()
     sale_name = SerializerMethodField()
@@ -17,6 +18,10 @@ class OrderBaseSr(ModelSerializer):
         extra_kwargs = {
             'customer': {'required': False}
         }
+
+    def get_vnd_total_discount(self, obj):
+        from .utils import OrderUtils
+        return OrderUtils.get_vnd_total_discount(obj.__dict__)
 
     def get_vnd_total(self, obj):
         from .utils import OrderUtils

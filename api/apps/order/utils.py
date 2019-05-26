@@ -100,13 +100,19 @@ class OrderUtils:
         return sum(series)
 
     @staticmethod
+    def get_vnd_total_discount(order: dict) -> int:
+        rate = order['rate']
+        cny_discount = order['cny_discount']
+        vnd_discount = order['vnd_discount']
+        return int(rate * cny_discount + vnd_discount)
+
+    @staticmethod
     def get_vnd_total(order: dict) -> int:
         rate = order['rate']
         cny = OrderUtils.sum_cny(order)
         vnd = OrderUtils.sum_vnd(order)
-        cny_discount = order['cny_discount']
-        vnd_discount = order['vnd_discount']
-        return int(rate * (cny - cny_discount) + vnd - vnd_discount)
+        vnd_total_discount = OrderUtils.get_vnd_total_discount(order)
+        return int(rate * cny + vnd) - vnd_total_discount
 
     @staticmethod
     def cal_amount(item: models.QuerySet) -> float:
