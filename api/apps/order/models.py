@@ -102,7 +102,6 @@ class Order(TimeStampedModel):
     cny_count_check_fee_discount = models.FloatField(default=0)
 
     order_fee_factor = models.FloatField(default=0)
-    order_fee_factor_fixed = models.FloatField(default=0)
 
     deposit_factor = models.FloatField(default=0)
 

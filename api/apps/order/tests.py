@@ -244,18 +244,39 @@ class UtilsCalAmount(TestCase):
 
 
 class UtilsCalOrderFee(TestCase):
-    def test_without_fixed(self):
+    def test_without_any_order_fee_factor(self):
         order = OrderUtils.seeding(1, True)
         order.cny_amount = 15
+        order.order_fee_factor = 0
         order.save()
+
+        order.customer.order_fee_factor = 0
+        order.customer.save()
+
         OrderFeeUtils.seeding(3)
         self.assertEqual(OrderUtils.cal_order_fee(order), 3)
 
-    def test_with_fixed(self):
+    def test_with_customer_order_fee_factor(self):
         order = OrderUtils.seeding(1, True)
         order.cny_amount = 15
-        order.order_fee_factor_fixed = 10
+        order.order_fee_factor = 0
         order.save()
+
+        order.customer.order_fee_factor = 20
+        order.customer.save()
+
+        OrderFeeUtils.seeding(3)
+        self.assertEqual(OrderUtils.cal_order_fee(order), 3)
+
+    def test_with_order_fee_factor(self):
+        order = OrderUtils.seeding(1, True)
+        order.cny_amount = 15
+        order.order_fee_factor = 10
+        order.save()
+
+        order.customer.order_fee_factor = 20
+        order.customer.save()
+
         OrderFeeUtils.seeding(3)
         self.assertEqual(OrderUtils.cal_order_fee(order), 1.5)
 

@@ -128,9 +128,14 @@ class OrderUtils:
     @staticmethod
     def cal_order_fee(item: models.QuerySet) -> float:
         amount = item.cny_amount
-        factor = OrderFeeUtils.get_matched_factor(amount)
-        if item.order_fee_factor_fixed:
-            factor = item.order_fee_factor_fixed
+
+        if item.order_fee_factor:
+            factor = item.order_fee_factor
+        elif item.customer.order_fee_factor:
+            factor = item.customer.order_fee_factor
+        else:
+            factor = OrderFeeUtils.get_matched_factor(amount)
+
         return factor * amount / 100
 
     @staticmethod

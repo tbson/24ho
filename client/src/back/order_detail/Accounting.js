@@ -1,6 +1,8 @@
 // @flow
 import * as React from 'react';
+import {apiUrls} from 'src/back/order/_data';
 import Tools from 'src/utils/helpers/Tools';
+import Editable from 'src/utils/components/Editable';
 
 type Props = {
     data: Object
@@ -18,7 +20,9 @@ export default ({data}: Props) => {
         cny_inland_delivery_fee,
         vnd_delivery_fee_discount,
         cny_order_fee_discount,
-        cny_count_check_fee_discount
+        cny_count_check_fee_discount,
+        count_check_fee_input,
+        order_fee_factor
     } = data;
     const total = {
         amount: data.cny_amount * rate,
@@ -50,11 +54,33 @@ export default ({data}: Props) => {
             <tbody>
                 <tr>
                     <td>Phí dịch vụ:</td>
-                    <td className="mono vnd">{Tools.numberFormat(cny_order_fee)}</td>
+                    <td className="mono vnd">
+                        <Editable
+                            onChange={() => {}}
+                            name="order_fee_factor"
+                            value={order_fee_factor}
+                            endPoint={apiUrls.change_order_fee_factor.replace('/pk-', `/${data.id}/`)}
+                            type="number"
+                            placeholder="Hệ số phí dịch vụ...">
+                            <span>{order_fee_factor} % cố định</span>
+                        </Editable>
+                        <span>&nbsp;&rarr;&nbsp;</span>
+                        <span>{Tools.numberFormat(cny_order_fee)}</span>
+                    </td>
                 </tr>
                 <tr>
                     <td>Kiểm đếm:</td>
-                    <td className="mono cny">{Tools.numberFormat(cny_count_check_fee)}</td>
+                    <td className="mono cny">
+                        <Editable
+                            onChange={() => {}}
+                            name="cny_count_check_fee"
+                            value={count_check_fee_input}
+                            endPoint={apiUrls.change_count_check_fee_input.replace('/pk-', `/${data.id}/`)}
+                            type="number"
+                            placeholder="Phí kiểm đếm...">
+                            <span>{Tools.numberFormat(cny_count_check_fee)}</span>
+                        </Editable>
+                    </td>
                 </tr>
                 <tr>
                     <td>Đóng gỗ:</td>
@@ -74,7 +100,17 @@ export default ({data}: Props) => {
             <tbody>
                 <tr>
                     <td>Nội địa TQ:</td>
-                    <td className="mono cny">{Tools.numberFormat(data.cny_inland_delivery_fee)}</td>
+                    <td className="mono cny">
+                        <Editable
+                            onChange={() => {}}
+                            name="cny_inland_delivery_fee"
+                            value={cny_inland_delivery_fee}
+                            endPoint={apiUrls.change_cny_inland_delivery_fee.replace('/pk-', `/${data.id}/`)}
+                            type="number"
+                            placeholder="Vận chuyển nội địa...">
+                            <span>{Tools.numberFormat(cny_inland_delivery_fee)}</span>
+                        </Editable>
+                    </td>
                 </tr>
                 <tr>
                     <td>Nội địa VN:</td>
@@ -90,15 +126,15 @@ export default ({data}: Props) => {
             <tbody>
                 <tr>
                     <td>Phí dịch vụ:</td>
-                    <td className="mono cny">{Tools.numberFormat(data.cny_order_fee_discount)}</td>
+                    <td className="mono cny">{Tools.numberFormat(cny_order_fee_discount)}</td>
                 </tr>
                 <tr>
                     <td>Phí vận chuyển VN:</td>
-                    <td className="mono vnd">{Tools.numberFormat(data.vnd_delivery_fee_discount)}</td>
+                    <td className="mono vnd">{Tools.numberFormat(vnd_delivery_fee_discount)}</td>
                 </tr>
                 <tr>
                     <td>Kiểm đếm:</td>
-                    <td className="mono cny">{Tools.numberFormat(data.cny_count_check_fee_discount)}</td>
+                    <td className="mono cny">{Tools.numberFormat(cny_count_check_fee_discount)}</td>
                 </tr>
             </tbody>
         </table>
