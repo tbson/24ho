@@ -5,8 +5,10 @@ from rest_framework.viewsets import (GenericViewSet, )
 from rest_framework import status
 from .models import Order
 from apps.staff.models import Staff
+from apps.address.models import Address
 from .serializers import OrderBaseSr
 from apps.staff.serializers import StaffCompactSr
+from apps.address.serializers import AddressBaseSr
 from .utils import OrderUtils
 from utils.helpers.tools import Tools
 from apps.order_item.utils import OrderItemUtils
@@ -42,7 +44,11 @@ class OrderViewSet(GenericViewSet):
     def retrieve(self, request, pk=None):
         obj = get_object_or_404(Order, pk=pk)
         serializer = OrderBaseSr(obj)
-        return res(serializer.data)
+        data = serializer.data
+        data['options'] = {
+            'addresses': AddressBaseSr(Address.objects.all(), many=True).data
+        }
+        return res(data)
 
     @transaction.atomic
     @action(methods=['post'], detail=True)

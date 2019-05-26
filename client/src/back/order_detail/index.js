@@ -18,6 +18,16 @@ export class Service {
     static retrieveRequest(id: number) {
         return Tools.apiCall(apiUrls.crud + id);
     }
+
+    static prepareOptions(options: Object): Object {
+        for (const key in options) {
+            options[key] = options[key].map(item => ({
+                value: item.id,
+                label: [item.uid, item.title].join(' - ')
+            }));
+        }
+        return options;
+    }
 }
 
 type Props = {
@@ -33,17 +43,21 @@ const Detail = ({match}) => {
             quantity: 0
         }
     });
+    const [options, setOptions] = useState({});
     useEffect(() => {
         document.title = 'Order detail';
         Service.retrieveRequest(id).then(resp => {
-            resp.ok && setData(resp.data);
+            if (resp.ok) {
+                setData(resp.data);
+                setOptions(Service.prepareOptions(resp.data.options))
+            }
         });
     }, []);
     return (
         <NavWrapper>
             <div className="row">
                 <div className="col-md-9">
-                    <Info data={data} />
+                    <Info data={data} addresses={options.addresses}/>
                     <Tabs>
                         <TabList>
                             <Tab>

@@ -179,6 +179,10 @@ input:invalid {
     margin-right: 10px;
 }
 
+.Popover-above {
+    z-index: 9999;
+}
+
 .Popover-body {
     display: inline-flex;
     flex-direction: column;

@@ -9,7 +9,10 @@ const rawApiUrls = [
         endpoints: {
             crud: '',
             change_sale: 'pk/change-sale',
-            change_cust_care: 'pk/change-cust-care'
+            change_cust_care: 'pk/change-cust-care',
+            change_rate: 'pk/change-rate',
+            change_address: 'pk/change-address',
+            change_voucher: 'pk/change-voucher'
         }
     }
 ];
@@ -52,7 +55,7 @@ export type FormValues = {
     approver: number,
     vnd_total: number,
     vnd_paid: number,
-    vnd_total_discount: number,
+    vnd_total_discount: number
 };
 
 export type DbRow = FormValues & {
