@@ -5,8 +5,9 @@ from django.db import models
 
 
 class Category(models.Model):
-    uid = models.CharField(max_length=60, unique=True)
-    title = models.CharField(max_length=250)
+    uid = models.CharField(max_length=60, unique=True,
+                           default='Uid will auto generate defend title')
+    title = models.CharField(max_length=250, unique=True,)
     type = models.CharField(max_length=60)
     single = models.BooleanField(default=False)
     order = models.IntegerField(default=1)
@@ -22,6 +23,8 @@ class Category(models.Model):
                 self.order = last_order + 1
             else:
                 self.order = 1
+
+        self.uid = self.title.replace(' ', '-')
 
         super(Category, self).save(*args, **kwargs)
 

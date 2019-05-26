@@ -16,3 +16,10 @@ class CategoryBaseSr(ModelSerializer):
             message="Duplicate variable",
         )]
     )
+
+    title = CharField(validators=[
+        UniqueValidator(
+            queryset=Category.objects.all(),
+            message="Duplicate variable",
+        )]
+    )

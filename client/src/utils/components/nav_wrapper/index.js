@@ -78,6 +78,9 @@ const App = ({history, location, children}: Props) => {
             case 'countCheck':
                 if (APP !== 'admin') return null;
                 return menuItem('count-check', 'Count check', 'fas fa-tasks');
+            case 'category':
+                if (APP !== 'admin') return null;
+                return menuItem('category', 'Category', 'fas fa-clipboard-list')
         }
     };
 
@@ -100,6 +103,7 @@ const App = ({history, location, children}: Props) => {
                     {renderMenu('rate')}
                     {renderMenu('orderFee')}
                     {renderMenu('countCheck')}
+                    {renderMenu('category')}
                 </ul>
             </div>
 

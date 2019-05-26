@@ -3,7 +3,7 @@ from .models import Category
 
 
 class CategoryAdmin(admin.ModelAdmin):
-    readonly_fields = ['order']
+    readonly_fields = ['uid', 'order', ]
 
 
 # Register your models here.
