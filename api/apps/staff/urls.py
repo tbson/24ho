@@ -12,13 +12,13 @@ from .views import (
     ChangePasswordView,
 )
 
-baseEndPoint = StaffViewSet.as_view({
+base_endpoint = StaffViewSet.as_view({
     'get': 'list',
     'post': 'add',
     'delete': 'delete_list'
 })
 
-pkEndpoint = StaffViewSet.as_view({
+pk_endpoint = StaffViewSet.as_view({
     'get': 'retrieve',
     'put': 'change',
     'delete': 'delete'
@@ -26,8 +26,8 @@ pkEndpoint = StaffViewSet.as_view({
 
 app_name = os.getcwd().split(os.sep)[-1]
 urlpatterns = [
-    path('', baseEndPoint),
-    path('<int:pk>', pkEndpoint),
+    path('', base_endpoint),
+    path('<int:pk>', pk_endpoint),
 
     path('auth/', LoginView.as_view(), name='login'),
     path('token-refresh/', refresh_jwt_token, name='refresh'),

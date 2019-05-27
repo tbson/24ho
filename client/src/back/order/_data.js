@@ -7,7 +7,15 @@ const rawApiUrls = [
     {
         controller: 'order',
         endpoints: {
-            crud: ''
+            crud: '',
+            change_sale: 'pk/change-sale',
+            change_cust_care: 'pk/change-cust-care',
+            change_rate: 'pk/change-rate',
+            change_address: 'pk/change-address',
+            change_voucher: 'pk/change-voucher',
+            change_count_check_fee_input: 'pk/change-count-check-fee-input',
+            change_cny_inland_delivery_fee: 'pk/change-cny-inland-delivery-fee',
+            change_order_fee_factor: 'pk/change-cny-order-fee'
         }
     }
 ];
@@ -43,8 +51,14 @@ export type FormValues = {
     statistics: Object,
     customer_name: string,
     sale_name: string,
+    sale: number,
     cust_care_name: string,
-    approver_name: string
+    cust_care: number,
+    approver_name: string,
+    approver: number,
+    vnd_total: number,
+    vnd_paid: number,
+    vnd_total_discount: number
 };
 
 export type DbRow = FormValues & {

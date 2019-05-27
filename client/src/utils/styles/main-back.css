@@ -167,7 +167,8 @@ input:invalid {
     content: ' ¥';
 }
 
-.react-tabs__tab, .react-tabs__tab--selected {
+.react-tabs__tab,
+.react-tabs__tab--selected {
     border-radius: 0 !important;
 }
 .react-tabs__tab-list {
@@ -176,4 +177,26 @@ input:invalid {
 
 .icon-margin {
     margin-right: 10px;
+}
+
+.Popover-above {
+    z-index: 9999;
+}
+
+.Popover-body {
+    display: inline-flex;
+    flex-direction: column;
+    padding: 10px;
+    background: hsl(0, 0%, 27%);
+    min-width: 250px;
+}
+
+.Popover-tipShape {
+    fill: hsl(0, 0%, 27%);
+}
+
+.editable {
+    cursor: pointer;
+    color: #346b89;
+    border-bottom: 1px dashed #346b89;
 }

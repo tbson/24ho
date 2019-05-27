@@ -206,6 +206,17 @@ class UtilsSumVnd(TestCase):
         self.assertEqual(OrderUtils.sum_vnd(order), 120000)
 
 
+class UtilsGetVndTotalDiscount(TestCase):
+    def test_normal_case(self):
+        order = {
+            'rate': 3400,
+            'cny_count_check_fee_discount': 2.5,
+            'cny_order_fee_discount': 2,
+            'vnd_delivery_fee_discount': 20000
+        }
+        self.assertEqual(OrderUtils.get_vnd_total_discount(order), 35300)
+
+
 class UtilsGetVndTotal(TestCase):
     def test_normal_case(self):
         order = {
@@ -218,8 +229,11 @@ class UtilsGetVndTotal(TestCase):
             'cny_wooden_box_fee': 3,
             'vnd_delivery_fee': 100000,
             'vnd_sub_fee': 20000,
+            'cny_count_check_fee_discount': 2.5,
+            'cny_order_fee_discount': 2,
+            'vnd_delivery_fee_discount': 20000
         }
-        self.assertEqual(OrderUtils.get_vnd_Total(order), 526300)
+        self.assertEqual(OrderUtils.get_vnd_total(order), 491000)
 
 
 class UtilsCalAmount(TestCase):
@@ -230,18 +244,39 @@ class UtilsCalAmount(TestCase):
 
 
 class UtilsCalOrderFee(TestCase):
-    def test_without_fixed(self):
+    def test_without_any_order_fee_factor(self):
         order = OrderUtils.seeding(1, True)
         order.cny_amount = 15
+        order.order_fee_factor = 0
         order.save()
+
+        order.customer.order_fee_factor = 0
+        order.customer.save()
+
         OrderFeeUtils.seeding(3)
         self.assertEqual(OrderUtils.cal_order_fee(order), 3)
 
-    def test_with_fixed(self):
+    def test_with_customer_order_fee_factor(self):
         order = OrderUtils.seeding(1, True)
         order.cny_amount = 15
-        order.order_fee_factor_fixed = 10
+        order.order_fee_factor = 0
         order.save()
+
+        order.customer.order_fee_factor = 20
+        order.customer.save()
+
+        OrderFeeUtils.seeding(3)
+        self.assertEqual(OrderUtils.cal_order_fee(order), 3)
+
+    def test_with_order_fee_factor(self):
+        order = OrderUtils.seeding(1, True)
+        order.cny_amount = 15
+        order.order_fee_factor = 10
+        order.save()
+
+        order.customer.order_fee_factor = 20
+        order.customer.save()
+
         OrderFeeUtils.seeding(3)
         self.assertEqual(OrderUtils.cal_order_fee(order), 1.5)
 

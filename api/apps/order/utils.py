@@ -55,6 +55,16 @@ class OrderUtils:
         return order_sr.save()
 
     @staticmethod
+    def partial_update(obj, key, value):
+        from .serializers import OrderBaseSr
+        data = {}
+        data[key] = value
+        serializer = OrderBaseSr(obj, data=data, partial=True)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+        return serializer
+
+    @staticmethod
     def sum_cny(order: dict) -> float:
         cny_amount = order.get('cny_amount', 0)
 
@@ -90,11 +100,21 @@ class OrderUtils:
         return sum(series)
 
     @staticmethod
-    def get_vnd_Total(order: dict) -> int:
+    def get_vnd_total_discount(order: dict) -> int:
+        rate = order['rate']
+
+        vnd_delivery_fee = order['vnd_delivery_fee_discount']
+        cny_count_check_fee = order['cny_count_check_fee_discount']
+        cny_order_fee = order['cny_order_fee_discount']
+        return int(rate * (cny_order_fee + cny_count_check_fee) + vnd_delivery_fee)
+
+    @staticmethod
+    def get_vnd_total(order: dict) -> int:
         rate = order['rate']
         cny = OrderUtils.sum_cny(order)
         vnd = OrderUtils.sum_vnd(order)
-        return int(rate * cny + vnd)
+        vnd_total_discount = OrderUtils.get_vnd_total_discount(order)
+        return int(rate * cny + vnd) - vnd_total_discount
 
     @staticmethod
     def cal_amount(item: models.QuerySet) -> float:
@@ -108,9 +128,14 @@ class OrderUtils:
     @staticmethod
     def cal_order_fee(item: models.QuerySet) -> float:
         amount = item.cny_amount
-        factor = OrderFeeUtils.get_matched_factor(amount)
-        if item.order_fee_factor_fixed:
-            factor = item.order_fee_factor_fixed
+
+        if item.order_fee_factor:
+            factor = item.order_fee_factor
+        elif item.customer.order_fee_factor:
+            factor = item.customer.order_fee_factor
+        else:
+            factor = OrderFeeUtils.get_matched_factor(amount)
+
         return factor * amount / 100
 
     @staticmethod

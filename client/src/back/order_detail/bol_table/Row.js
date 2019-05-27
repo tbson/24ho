@@ -3,14 +3,12 @@ import * as React from 'react';
 import {useState} from 'react';
 // $FlowFixMe: do not complain about importing node_modules
 import Popover from 'react-popover';
-// $FlowFixMe: do not complain about importing node_modules
-import {Link} from 'react-router-dom';
 import Editable from 'src/utils/components/Editable';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
 import type {SelectOptions} from 'src/utils/helpers/Tools';
-import {apiUrls, STATUS} from '../_data';
-import type {TRow} from '../_data';
+import {apiUrls, STATUS} from 'src/back/order/_data';
+import type {TRow} from 'src/back/order/_data';
 
 export class Service {
     static removeRequest(id: number): Promise<Object> {
@@ -180,9 +178,9 @@ export default ({data, options = {}, showForm, onCheck, onRemove}: RowPropTypes)
                 <FinInfo data={data} />
             </td>
             <td className="center">
-                <Link className="editBtn" to={`/order/${id}`}>
+                <a className="editBtn" onClick={() => showForm(data.id)}>
                     <span className="fas fa-eye text-info pointer" />
-                </Link>
+                </a>
                 <span>&nbsp;&nbsp;&nbsp;</span>
                 <a className="removeBtn" onClick={() => _onRemove(id)}>
                     <span className="fas fa-trash-alt text-danger pointer" />

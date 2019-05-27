@@ -82,8 +82,8 @@ class Order(TimeStampedModel):
     approver = models.ForeignKey(Staff, models.SET_NULL, related_name='approver_orders', null=True)
     approved_date = models.DateTimeField(null=True)
 
-    rate = models.IntegerField()
-    real_rate = models.IntegerField()
+    rate = models.PositiveIntegerField()
+    real_rate = models.PositiveIntegerField()
 
     cny_amount = models.FloatField(default=0)
     cny_order_fee = models.FloatField(default=0)
@@ -92,20 +92,25 @@ class Order(TimeStampedModel):
     cny_shockproof_fee = models.FloatField(default=0)
     cny_wooden_box_fee = models.FloatField(default=0)
 
-    vnd_delivery_fee = models.IntegerField(default=0)
-    vnd_sub_fee = models.IntegerField(default=0)
+    vnd_delivery_fee = models.PositiveIntegerField(default=0)
+    vnd_sub_fee = models.PositiveIntegerField(default=0)
+
+    vnd_paid = models.PositiveIntegerField(default=0)
+
+    vnd_delivery_fee_discount = models.PositiveIntegerField(default=0)
+    cny_order_fee_discount = models.FloatField(default=0)
+    cny_count_check_fee_discount = models.FloatField(default=0)
 
     order_fee_factor = models.FloatField(default=0)
-    order_fee_factor_fixed = models.FloatField(default=0)
 
     deposit_factor = models.FloatField(default=0)
 
     mass = models.FloatField(default=0)
-    packages = models.IntegerField(default=0)
-    number_of_bol = models.IntegerField(default=0)
+    packages = models.PositiveIntegerField(default=0)
+    number_of_bol = models.PositiveIntegerField(default=0)
     note = models.TextField(blank=True)
     statistics = JSONField(default=dict)
-    status = models.IntegerField(choices=STATUS_CHOICES, default=1)
+    status = models.PositiveIntegerField(choices=STATUS_CHOICES, default=1)
 
     objects = OrderManager()
 
@@ -115,3 +120,7 @@ class Order(TimeStampedModel):
     class Meta:
         db_table = "orders"
         ordering = ['-id']
+        permissions = [
+            ("change_sale_order", "Can change sale"),
+            ("change_cust_care_order", "Can change customer care"),
+        ]

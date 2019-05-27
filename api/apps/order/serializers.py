@@ -4,11 +4,13 @@ from utils.helpers.tools import Tools
 
 
 class OrderBaseSr(ModelSerializer):
+    vnd_total_discount = SerializerMethodField()
     vnd_total = SerializerMethodField()
     customer_name = SerializerMethodField()
     sale_name = SerializerMethodField()
     cust_care_name = SerializerMethodField()
     approver_name = SerializerMethodField()
+    address_name = SerializerMethodField()
 
     class Meta:
         model = Order
@@ -18,9 +20,13 @@ class OrderBaseSr(ModelSerializer):
             'customer': {'required': False}
         }
 
+    def get_vnd_total_discount(self, obj):
+        from .utils import OrderUtils
+        return OrderUtils.get_vnd_total_discount(obj.__dict__)
+
     def get_vnd_total(self, obj):
         from .utils import OrderUtils
-        return OrderUtils.get_vnd_Total(obj.__dict__)
+        return OrderUtils.get_vnd_total(obj.__dict__)
 
     def get_customer_name(self, obj):
         return Tools.get_fullname(obj.customer)
@@ -40,6 +46,11 @@ class OrderBaseSr(ModelSerializer):
             return ''
         return Tools.get_fullname(obj.approver)
 
+    def get_address_name(self, obj):
+        if not obj.address:
+            return ''
+        return "{} - {}".format(obj.address.uid, obj.address.title)
+
     def create(self, validated_data):
         address = validated_data.get('address')
         validated_data['customer'] = address.customer
@@ -47,9 +58,14 @@ class OrderBaseSr(ModelSerializer):
         return Order.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
-        address = validated_data.get('address')
-        validated_data['customer_id'] = address.customer.pk
         instance.__dict__.update(validated_data)
+
+        instance.address = validated_data.get('address', instance.address)
+        instance.customer = instance.address.customer
+
+        instance.sale = validated_data.get('sale', instance.sale)
+        instance.cust_care = validated_data.get('cust_care', instance.cust_care)
+        instance.approver = validated_data.get('approver', instance.approver)
 
         instance.save()
         return instance

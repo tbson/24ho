@@ -5,13 +5,13 @@ from .views import (
 )
 
 
-baseEndPoint = CountCheckViewSet.as_view({
+base_endpoint = CountCheckViewSet.as_view({
     'get': 'list',
     'post': 'add',
     'delete': 'delete_list'
 })
 
-pkEndpoint = CountCheckViewSet.as_view({
+pk_endpoint = CountCheckViewSet.as_view({
     'get': 'retrieve',
     'put': 'change',
     'delete': 'delete'
@@ -19,6 +19,6 @@ pkEndpoint = CountCheckViewSet.as_view({
 
 app_name = os.getcwd().split(os.sep)[-1]
 urlpatterns = [
-    path('', baseEndPoint),
-    path('<int:pk>', pkEndpoint),
+    path('', base_endpoint),
+    path('<int:pk>', pk_endpoint),
 ]

@@ -214,3 +214,12 @@ class Tools:
         first_name = obj.user.first_name
         last_name = obj.user.last_name
         return "{} {}".format(last_name, first_name)
+
+    @staticmethod
+    def obj_from_pk(model, pk):
+        pk = None if pk == '' else pk
+        try:
+            obj = model.objects.get(pk=pk)
+        except model.DoesNotExist:
+            obj = None
+        return obj
