@@ -134,25 +134,6 @@ class OrderTestCase(TestCase):
         self.assertEqual(Order.objects.count(), 4)
         self.assertEqual(OrderItem.objects.count(), len(items))
 
-    def test_edit(self):
-        item3 = OrderUtils.seeding(3, True, False)
-
-        # Update not exist
-        response = self.client.put(
-            "/api/v1/order/{}".format(0),
-            item3,
-            format='json'
-        )
-        self.assertEqual(response.status_code, 404)
-
-        # Update success
-        response = self.client.put(
-            "/api/v1/order/{}".format(self.items[2].pk),
-            item3,
-            format='json'
-        )
-        self.assertEqual(response.status_code, 200)
-
     def test_delete_fail(self):
         # Remove list fail
         response = self.client.delete(
@@ -182,6 +163,220 @@ class OrderTestCase(TestCase):
         )
         self.assertEqual(response.status_code, 204)
         self.assertEqual(Order.objects.count(), 0)
+
+
+class PartialUpdates(TestCase):
+    def setUp(self):
+        logging.disable(logging.CRITICAL)
+
+        self.token = TestHelpers.test_setup(self)
+        self.client = APIClient()
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + self.token)
+
+        self.item = OrderUtils.seeding(1, True)
+
+    def test_sale(self):
+        sale = StaffUtils.seeding(1, True)
+
+        # Update not exist
+        response = self.client.put(
+            "/api/v1/order/{}/change-sale/".format(0),
+            {},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 404)
+
+        # Update exist staff
+        response = self.client.put(
+            "/api/v1/order/{}/change-sale/".format(self.item.pk),
+            {"value": sale.pk},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['sale'], sale.pk)
+
+        # Update not exist staff -> do not change original value
+        response = self.client.put(
+            "/api/v1/order/{}/change-sale/".format(self.item.pk),
+            {"value": 9999},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['sale'], sale.pk)
+
+    def test_cust_care(self):
+        cust_care = StaffUtils.seeding(1, True)
+
+        # Update not exist
+        response = self.client.put(
+            "/api/v1/order/{}/change-cust-care/".format(0),
+            {},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 404)
+
+        # Update exist staff
+        response = self.client.put(
+            "/api/v1/order/{}/change-cust-care/".format(self.item.pk),
+            {"value": cust_care.pk},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['cust_care'], cust_care.pk)
+
+        # Update not exist staff -> do not change original value
+        response = self.client.put(
+            "/api/v1/order/{}/change-cust-care/".format(self.item.pk),
+            {"value": 9999},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['cust_care'], cust_care.pk)
+
+    def test_rate(self):
+        value = 3000
+
+        # Update not exist
+        response = self.client.put(
+            "/api/v1/order/{}/change-rate/".format(0),
+            {},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 404)
+
+        # Update normal value
+        response = self.client.put(
+            "/api/v1/order/{}/change-rate/".format(self.item.pk),
+            {"value": value},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['rate'], value)
+
+        # Update missing value -> do nothing
+        response = self.client.put(
+            "/api/v1/order/{}/change-rate/".format(self.item.pk),
+            {},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['rate'], value)
+
+    def test_address(self):
+        address = AddressUtils.seeding(1, True)
+
+        # Update not exist
+        response = self.client.put(
+            "/api/v1/order/{}/change-address/".format(0),
+            {},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 404)
+
+        # Update exist address
+        response = self.client.put(
+            "/api/v1/order/{}/change-address/".format(self.item.pk),
+            {"value": address.pk},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['address'], address.pk)
+
+        # Update not exist address -> do not change original value
+        response = self.client.put(
+            "/api/v1/order/{}/change-address/".format(self.item.pk),
+            {"value": 9999},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['address'], address.pk)
+
+    def test_count_check_fee_input(self):
+        value = 3000
+
+        # Update not exist
+        response = self.client.put(
+            "/api/v1/order/{}/change-count-check-fee-input/".format(0),
+            {},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 404)
+
+        # Update normal value
+        response = self.client.put(
+            "/api/v1/order/{}/change-count-check-fee-input/".format(self.item.pk),
+            {"value": value},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count_check_fee_input'], value)
+
+        # Update missing value -> do nothing
+        response = self.client.put(
+            "/api/v1/order/{}/change-count-check-fee-input/".format(self.item.pk),
+            {},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count_check_fee_input'], value)
+
+    def test_cny_inland_delivery_fee(self):
+        value = 3000
+
+        # Update not exist
+        response = self.client.put(
+            "/api/v1/order/{}/change-cny-inland-delivery-fee/".format(0),
+            {},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 404)
+
+        # Update normal value
+        response = self.client.put(
+            "/api/v1/order/{}/change-cny-inland-delivery-fee/".format(self.item.pk),
+            {"value": value},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['cny_inland_delivery_fee'], value)
+
+        # Update missing value -> do nothing
+        response = self.client.put(
+            "/api/v1/order/{}/change-cny-inland-delivery-fee/".format(self.item.pk),
+            {},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['cny_inland_delivery_fee'], value)
+
+    def test_order_fee_factor(self):
+        value = 30
+
+        # Update not exist
+        response = self.client.put(
+            "/api/v1/order/{}/change-order-fee-factor/".format(0),
+            {},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 404)
+
+        # Update normal value
+        response = self.client.put(
+            "/api/v1/order/{}/change-order-fee-factor/".format(self.item.pk),
+            {"value": value},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['order_fee_factor'], value)
+
+        # Update missing value -> do nothing
+        response = self.client.put(
+            "/api/v1/order/{}/change-order-fee-factor/".format(self.item.pk),
+            {},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['order_fee_factor'], value)
 
 
 class UtilsSumCny(TestCase):

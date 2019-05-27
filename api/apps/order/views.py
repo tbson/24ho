@@ -61,25 +61,64 @@ class OrderViewSet(GenericViewSet):
         return res(OrderBaseSr(order).data)
 
     @action(methods=['put'], detail=True)
-    def change(self, request, pk=None):
-        obj = get_object_or_404(Order, pk=pk)
-        serializer = OrderBaseSr(obj, data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-        return res(serializer.data)
-
-    @action(methods=['put'], detail=True)
     def change_sale(self, request, pk=None):
         obj = get_object_or_404(Order, pk=pk)
-        staff = Tools.obj_from_pk(Staff, request.data.get('value', None))
-        serializer = OrderUtils.partial_update(obj, 'sale', staff)
+        blank, staff = Tools.obj_from_pk(Staff, request.data.get('value', None))
+        if not blank and not staff:
+            # Staff not exist -> do nothing
+            serializer = OrderBaseSr(obj)
+        else:
+            serializer = OrderUtils.partial_update(obj, 'sale', staff.pk)
         return res(serializer.data)
 
     @action(methods=['put'], detail=True)
     def change_cust_care(self, request, pk=None):
         obj = get_object_or_404(Order, pk=pk)
-        staff = Tools.obj_from_pk(Staff, request.data.get('value', None))
-        serializer = OrderUtils.partial_update(obj, 'cust_care', staff)
+        blank, staff = Tools.obj_from_pk(Staff, request.data.get('value', None))
+        if not blank and not staff:
+            # Staff not exist -> do nothing
+            serializer = OrderBaseSr(obj)
+        else:
+            serializer = OrderUtils.partial_update(obj, 'cust_care', staff.pk)
+        return res(serializer.data)
+
+    @action(methods=['put'], detail=True)
+    def change_rate(self, request, pk=None):
+        obj = get_object_or_404(Order, pk=pk)
+        value = request.data.get('value', obj.rate)
+        serializer = OrderUtils.partial_update(obj, 'rate', value)
+        return res(serializer.data)
+
+    @action(methods=['put'], detail=True)
+    def change_address(self, request, pk=None):
+        obj = get_object_or_404(Order, pk=pk)
+        blank, address = Tools.obj_from_pk(Address, request.data.get('value', None))
+        if not blank and not address:
+            # Address not exist -> do nothing
+            serializer = OrderBaseSr(obj)
+        else:
+            serializer = OrderUtils.partial_update(obj, 'address', address.pk)
+        return res(serializer.data)
+
+    @action(methods=['put'], detail=True)
+    def change_count_check_fee_input(self, request, pk=None):
+        obj = get_object_or_404(Order, pk=pk)
+        value = request.data.get('value', obj.count_check_fee_input)
+        serializer = OrderUtils.partial_update(obj, 'count_check_fee_input', value)
+        return res(serializer.data)
+
+    @action(methods=['put'], detail=True)
+    def change_cny_inland_delivery_fee(self, request, pk=None):
+        obj = get_object_or_404(Order, pk=pk)
+        value = request.data.get('value', obj.cny_inland_delivery_fee)
+        serializer = OrderUtils.partial_update(obj, 'cny_inland_delivery_fee', value)
+        return res(serializer.data)
+
+    @action(methods=['put'], detail=True)
+    def change_order_fee_factor(self, request, pk=None):
+        obj = get_object_or_404(Order, pk=pk)
+        value = request.data.get('value', obj.order_fee_factor)
+        serializer = OrderUtils.partial_update(obj, 'order_fee_factor', value)
         return res(serializer.data)
 
     @action(methods=['delete'], detail=True)

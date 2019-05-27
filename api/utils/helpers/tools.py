@@ -217,9 +217,10 @@ class Tools:
 
     @staticmethod
     def obj_from_pk(model, pk):
-        pk = None if pk == '' else pk
+        pk = None if not pk else pk
+        blank = not pk
         try:
             obj = model.objects.get(pk=pk)
         except model.DoesNotExist:
             obj = None
-        return obj
+        return [blank, obj]

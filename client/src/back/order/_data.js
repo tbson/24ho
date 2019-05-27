@@ -15,7 +15,7 @@ const rawApiUrls = [
             change_voucher: 'pk/change-voucher',
             change_count_check_fee_input: 'pk/change-count-check-fee-input',
             change_cny_inland_delivery_fee: 'pk/change-cny-inland-delivery-fee',
-            change_order_fee_factor: 'pk/change-cny-order-fee'
+            change_order_fee_factor: 'pk/change-order-fee-factor'
         }
     }
 ];
