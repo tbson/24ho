@@ -612,7 +612,7 @@ class Serializer(TestCase):
         }
         order = OrderBaseSr(data=data)
         order.is_valid(raise_exception=True)
-        orderObj = order.save()
+        order_obj = order.save()
 
         self.assertEqual(order.data['vnd_total'], 526300)
         self.assertEqual(order.data['customer'], address.customer.pk)
@@ -620,7 +620,7 @@ class Serializer(TestCase):
         # Update address -> update customer
         address.customer = customer
         address.save()
-        order = OrderBaseSr(orderObj, data={'address': address.pk}, partial=True)
+        order = OrderBaseSr(order_obj, data={'address': address.pk}, partial=True)
         order.is_valid(raise_exception=True)
         order.save()
         self.assertEqual(order.data['customer'], customer.pk)

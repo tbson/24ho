@@ -4,6 +4,7 @@ from utils.models.model import TimeStampedModel
 from apps.staff.models import Staff
 from apps.address.models import Address
 from apps.customer.models import Customer
+from utils.helpers.tools import Tools
 
 
 class Status:
@@ -23,23 +24,8 @@ class OrderManager(models.Manager):
 
     def re_cal(self, item: models.QuerySet) -> models.QuerySet:
         from .utils import OrderUtils
-        '''
-        Frezee after confirm
-        '''
-        item.cny_amount = OrderUtils.cal_amount(item)
-        item.cny_order_fee = OrderUtils.cal_order_fee(item)
-        # item.cny_inland_delivery_fee
 
-        '''
-        Frezee after export
-        '''
-        item.vnd_delivery_fee = OrderUtils.cal_delivery_fee(item)
-        item.cny_count_check_fee = OrderUtils.cal_count_check_fee(item)
-        item.cny_shockproof_fee = OrderUtils.cal_shockproof_fee(item)
-        item.cny_wooden_box_fee = OrderUtils.cal_wooden_box_fee(item)
-        # item.vnd_sub_fee
-
-        item.statistics = OrderUtils.cal_statistics(item)
+        item.__dict__.update(OrderUtils.cal_all(item))
 
         item.save()
         return item
@@ -115,8 +101,12 @@ class Order(TimeStampedModel):
     objects = OrderManager()
 
     def save(instance, *args, **kwargs):
+        from .utils import OrderUtils
+
         address = instance.address
         instance.customer = address.customer
+        if not Tools.is_testing():
+            instance.__dict__.update(OrderUtils.cal_all(instance))
         super(Order, instance).save(*args, **kwargs)
 
     def __str__(self):

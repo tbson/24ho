@@ -224,3 +224,7 @@ class Tools:
         except model.DoesNotExist:
             obj = None
         return [blank, obj]
+
+    @staticmethod
+    def is_testing():
+        return len(sys.argv) > 1 and sys.argv[1] == 'test'
