@@ -43,21 +43,24 @@ const Detail = ({match}) => {
             quantity: 0
         }
     });
+
     const [options, setOptions] = useState({});
+
     useEffect(() => {
         document.title = 'Order detail';
         Service.retrieveRequest(id).then(resp => {
             if (resp.ok) {
                 setData(resp.data);
-                setOptions(Service.prepareOptions(resp.data.options))
+                setOptions(Service.prepareOptions(resp.data.options));
             }
         });
     }, []);
+
     return (
         <NavWrapper>
             <div className="row">
                 <div className="col-md-9">
-                    <Info data={data} addresses={options.addresses}/>
+                    <Info data={data} addresses={options.addresses} partialChange={setData}/>
                     <Tabs>
                         <TabList>
                             <Tab>
@@ -72,7 +75,7 @@ const Detail = ({match}) => {
                     </Tabs>
                 </div>
                 <div className="col-md-3">
-                    <Accounting data={data}/>
+                    <Accounting data={data} partialChange={setData}/>
                 </div>
             </div>
         </NavWrapper>

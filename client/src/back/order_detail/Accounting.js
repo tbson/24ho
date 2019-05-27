@@ -5,10 +5,11 @@ import Tools from 'src/utils/helpers/Tools';
 import Editable from 'src/utils/components/Editable';
 
 type Props = {
-    data: Object
+    data: Object,
+    partialChange: Function
 };
 
-export default ({data}: Props) => {
+export default ({data, partialChange}: Props) => {
     const {rate} = data;
     const {
         cny_amount,
@@ -56,8 +57,8 @@ export default ({data}: Props) => {
                     <td>Phí dịch vụ:</td>
                     <td className="mono vnd">
                         <Editable
-                            onChange={() => {}}
-                            name="order_fee_factor"
+                            onChange={partialChange}
+                            name="value"
                             value={order_fee_factor}
                             endPoint={apiUrls.change_order_fee_factor.replace('/pk-', `/${data.id}/`)}
                             type="number"
@@ -72,8 +73,8 @@ export default ({data}: Props) => {
                     <td>Kiểm đếm:</td>
                     <td className="mono cny">
                         <Editable
-                            onChange={() => {}}
-                            name="cny_count_check_fee"
+                            onChange={partialChange}
+                            name="value"
                             value={count_check_fee_input}
                             endPoint={apiUrls.change_count_check_fee_input.replace('/pk-', `/${data.id}/`)}
                             type="number"
@@ -102,8 +103,8 @@ export default ({data}: Props) => {
                     <td>Nội địa TQ:</td>
                     <td className="mono cny">
                         <Editable
-                            onChange={() => {}}
-                            name="cny_inland_delivery_fee"
+                            onChange={partialChange}
+                            name="value"
                             value={cny_inland_delivery_fee}
                             endPoint={apiUrls.change_cny_inland_delivery_fee.replace('/pk-', `/${data.id}/`)}
                             type="number"
