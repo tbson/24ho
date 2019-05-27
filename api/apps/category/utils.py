@@ -6,6 +6,7 @@ class CategoryUtils:
     @staticmethod
     def seeding(index: int, single: bool = False, save: bool = True) -> models.QuerySet:
         from apps.category.serializers import CategoryBaseSr
+        from .models import Category
         if index == 0:
             raise Exception('Indext must be start with 1.')
 
@@ -13,16 +14,16 @@ class CategoryUtils:
             data = {
                 'uid': "uid{}".format(i),
                 'title': "title{}".format(i),
-                'type': "type{}".format(i),
+                'type': "article" if i % 2 == 1 else "banner",
                 'single': i % 2 == 0,
             }
             if save is False:
                 return data
 
-            instance = CategoryBaseSr(data=data)
-            instance.is_valid(raise_exception=True)
-            instance = instance.save()
-            return instance
+            try:
+                return Category.objects.get(uid=data['uid'])
+            except Category.DoesNotExist:
+                return Category.objects.create(**data)
 
         def get_list_data(index):
             return [get_data(i) for i in range(1, index + 1)]

@@ -20,6 +20,6 @@ class ArticleBaseSr(ModelSerializer):
     title = CharField(validators=[
         UniqueValidator(
             queryset=Article.objects.all(),
-            message="Duplicate variable",
+            message="Duplicate variable 1111",
         )]
     )

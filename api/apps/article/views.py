@@ -3,10 +3,10 @@ from django.shortcuts import get_object_or_404
 from rest_framework.decorators import action
 from rest_framework.viewsets import (GenericViewSet, )
 from rest_framework import status
-from .models import Category
-from .serializers import (
-    ArticleBaseSr,
-)
+from .models import Article
+from apps.category.serializers import CategoryBaseSr
+from apps.category.models import Category
+from .serializers import ArticleBaseSr
 from utils.common_classes.custom_permission import CustomPermission
 from utils.helpers.res_tools import res
 
@@ -18,14 +18,14 @@ class ArticleViewSet(GenericViewSet):
     search_fields = ('title',)
 
     def list(self, request):
-        queryset = Category.objects.all()
+        queryset = Article.objects.all()
         queryset = self.filter_queryset(queryset)
         queryset = self.paginate_queryset(queryset)
         serializer = ArticleBaseSr(queryset, many=True)
         return self.get_paginated_response(serializer.data)
 
     def retrieve(self, request, pk=None):
-        obj = get_object_or_404(Category, pk=pk)
+        obj = get_object_or_404(Article, pk=pk)
         serializer = ArticleBaseSr(obj)
         return res(serializer.data)
 
@@ -38,7 +38,7 @@ class ArticleViewSet(GenericViewSet):
 
     @action(methods=['put'], detail=True)
     def change(self, request, pk=None):
-        obj = get_object_or_404(Category, pk=pk)
+        obj = get_object_or_404(Article, pk=pk)
         serializer = ArticleBaseSr(obj, data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
@@ -46,7 +46,7 @@ class ArticleViewSet(GenericViewSet):
 
     @action(methods=['delete'], detail=True)
     def delete(self, request, pk=None):
-        obj = get_object_or_404(Category, pk=pk)
+        obj = get_object_or_404(Article, pk=pk)
         obj.delete()
         return res(status=status.HTTP_204_NO_CONTENT)
 
@@ -55,7 +55,7 @@ class ArticleViewSet(GenericViewSet):
         pk = self.request.query_params.get('ids', '')
         pk = [int(pk)] if pk.isdigit() else map(
             lambda x: int(x), pk.split(','))
-        result = Category.objects.filter(pk__in=pk)
+        result = Article.objects.filter(pk__in=pk)
         if result.count() == 0:
             raise Http404
         result.delete()
