@@ -18,7 +18,7 @@ export class Service {
     }
 
     static bulkRemoveRequest(ids: Array<number>): Promise<Object> {
-        return Tools.apiCall(apiUrls.crud, {ids: ids.join(',')}, 'DELETE');
+        return Tools.apiCall(apiUrls.orderItemCrud, {ids: ids.join(',')}, 'DELETE');
     }
 
     static handleGetList(params: Object = {}): Promise<Object> {

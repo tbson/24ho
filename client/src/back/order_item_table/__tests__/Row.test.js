@@ -3,7 +3,7 @@ import Adapter from 'enzyme-adapter-react-16';
 import React from 'react';
 import {shallow, mount, render} from 'enzyme';
 import Tools from 'src/utils/helpers/Tools';
-import {Service} from '../main_table/Row';
+import {Service} from '../Row';
 
 Enzyme.configure({adapter: new Adapter()});
 
@@ -17,7 +17,7 @@ describe('Service.removeRequest', () => {
         const apiCall = jest.spyOn(Tools, 'apiCall').mockImplementation(() => {});
         Service.removeRequest(id);
         expect(apiCall).toHaveBeenCalled();
-        expect(apiCall.mock.calls[0][0]).toEqual(`http://localhost/api/v1/order/${id}`);
+        expect(apiCall.mock.calls[0][0]).toEqual(`http://localhost/api/v1/order-item/${id}`);
         expect(apiCall.mock.calls[0][1]).toEqual({});
         expect(apiCall.mock.calls[0][2]).toEqual('DELETE');
     });

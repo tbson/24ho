@@ -3,7 +3,7 @@ import Adapter from 'enzyme-adapter-react-16';
 import React from 'react';
 import {shallow, mount, render} from 'enzyme';
 import Tools from 'src/utils/helpers/Tools';
-import {Service} from '../main_table/';
+import {Service} from '../index';
 
 Enzyme.configure({adapter: new Adapter()});
 
@@ -16,26 +16,26 @@ describe('Service.listRequest', () => {
         const apiCall = jest.spyOn(Tools, 'apiCall').mockImplementation(async () => {});
         Service.listRequest();
         expect(apiCall).toHaveBeenCalled();
-        expect(apiCall.mock.calls[0][0]).toEqual('http://localhost/api/v1/order/');
-        expect(apiCall.mock.calls[0][1]).toBe(undefined);
+        expect(apiCall.mock.calls[0][0]).toEqual('http://localhost/api/v1/order-item/');
+        expect(apiCall.mock.calls[0][1]).toEqual({});
     });
 
     it('With params', () => {
         const apiCall = jest.spyOn(Tools, 'apiCall').mockImplementation(async () => {});
         const params = {search: 'keyword'};
 
-        Service.listRequest('', params);
+        Service.listRequest(params);
         expect(apiCall).toHaveBeenCalled();
-        expect(apiCall.mock.calls[0][0]).toEqual('http://localhost/api/v1/order/');
+        expect(apiCall.mock.calls[0][0]).toEqual('http://localhost/api/v1/order-item/');
         expect(apiCall.mock.calls[0][1]).toEqual(params);
     });
 
     it('With url', () => {
         const apiCall = jest.spyOn(Tools, 'apiCall').mockImplementation(async () => {});
         const params = {search: 'keyword'};
-        const url = 'sample_url';
+        const url = 'http://localhost/api/v1/order-item/';
 
-        Service.listRequest(url, params);
+        Service.listRequest(params);
         expect(apiCall).toHaveBeenCalled();
         expect(apiCall.mock.calls[0][0]).toEqual(url);
         expect(apiCall.mock.calls[0][1]).toEqual(params);
@@ -48,7 +48,7 @@ describe('Service.bulkRemoveRequest', () => {
         const ids = [1, 2];
         Service.bulkRemoveRequest(ids);
         expect(apiCall).toHaveBeenCalled();
-        expect(apiCall.mock.calls[0][0]).toEqual('http://localhost/api/v1/order/');
+        expect(apiCall.mock.calls[0][0]).toEqual('http://localhost/api/v1/order-item/');
         expect(apiCall.mock.calls[0][1]).toEqual({ids: '1,2'});
         expect(apiCall.mock.calls[0][2]).toEqual('DELETE');
     });
@@ -70,15 +70,14 @@ describe('Service.handleGetList', () => {
     it('On success', async () => {
         const listRequest = jest.spyOn(Service, 'listRequest').mockImplementation(async () => okResp);
         jest.spyOn(Tools, 'popMessageOrRedirect');
-        const url = 'sample_url';
+        const url = 'http://localhost/api/v1/order-item/';
         const params = {key: 'value'};
 
-        const result = await Service.handleGetList(url, params);
+        const result = await Service.handleGetList(params);
 
         expect(Tools.popMessageOrRedirect).not.toHaveBeenCalled();
         expect(listRequest).toHaveBeenCalled();
-        expect(listRequest.mock.calls[0][0]).toEqual(url);
-        expect(listRequest.mock.calls[0][1]).toEqual(params);
+        expect(listRequest.mock.calls[0][0]).toEqual(params);
         expect(result).toEqual(okResp.data);
     });
 
@@ -151,4 +150,3 @@ describe('Service.handleBulkRemove', () => {
         expect(Tools.popMessageOrRedirect.mock.calls[0][0]).toEqual(failResp);
     });
 });
-

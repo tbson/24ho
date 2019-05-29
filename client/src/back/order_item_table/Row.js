@@ -9,7 +9,7 @@ import type {OrderItemType} from 'src/back/order/_data';
 
 export class Service {
     static removeRequest(id: number): Promise<Object> {
-        return Tools.apiCall(apiUrls.crud + id, {}, 'DELETE');
+        return Tools.apiCall(apiUrls.orderItemCrud + id, {}, 'DELETE');
     }
 
     static handleRemove(id: number): Promise<Object> {
