@@ -9,12 +9,14 @@ from .serializers import (
 )
 from utils.common_classes.custom_permission import CustomPermission
 from utils.helpers.res_tools import res
+from utils.common_classes.custom_pagination import NoPagination
 
 
 class OrderItemViewSet(GenericViewSet):
     _name = 'order_item'
     serializer_class = OrderItemBaseSr
     permission_classes = (CustomPermission, )
+    pagination_class = NoPagination
     search_fields = ('title', 'color', 'size', 'unit_price', 'note', )
     filterset_fields = ('order_id', )
 
