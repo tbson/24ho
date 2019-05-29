@@ -6,10 +6,10 @@ import Editable from 'src/utils/components/Editable';
 
 type Props = {
     data: Object,
-    partialChange: Function
+    onPartialChange: Function
 };
 
-export default ({data, partialChange}: Props) => {
+export default ({data, onPartialChange}: Props) => {
     const {rate} = data;
     const {
         cny_amount,
@@ -57,7 +57,7 @@ export default ({data, partialChange}: Props) => {
                     <td>Phí dịch vụ:</td>
                     <td className="mono vnd">
                         <Editable
-                            onChange={partialChange}
+                            onChange={onPartialChange}
                             name="value"
                             value={order_fee_factor}
                             endPoint={apiUrls.change_order_fee_factor.replace('/pk-', `/${data.id}/`)}
@@ -73,7 +73,7 @@ export default ({data, partialChange}: Props) => {
                     <td>Kiểm đếm:</td>
                     <td className="mono cny">
                         <Editable
-                            onChange={partialChange}
+                            onChange={onPartialChange}
                             name="value"
                             value={count_check_fee_input}
                             endPoint={apiUrls.change_count_check_fee_input.replace('/pk-', `/${data.id}/`)}
@@ -103,7 +103,7 @@ export default ({data, partialChange}: Props) => {
                     <td>Nội địa TQ:</td>
                     <td className="mono cny">
                         <Editable
-                            onChange={partialChange}
+                            onChange={onPartialChange}
                             name="value"
                             value={cny_inland_delivery_fee}
                             endPoint={apiUrls.change_cny_inland_delivery_fee.replace('/pk-', `/${data.id}/`)}

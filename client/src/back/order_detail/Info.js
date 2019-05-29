@@ -8,10 +8,10 @@ import type {SelectOptions} from 'src/utils/helpers/Tools';
 type Props = {
     data: Object,
     addresses: SelectOptions,
-    partialChange: Function
+    onPartialChange: Function
 };
 
-export default ({data, addresses, partialChange}: Props) => {
+export default ({data, addresses, onPartialChange}: Props) => {
     return (
         <table className="table table-striped">
             <tbody>
@@ -32,7 +32,7 @@ export default ({data, addresses, partialChange}: Props) => {
                         <span className="cny mono">1</span>
                         <span> = </span>
                         <Editable
-                            onChange={partialChange}
+                            onChange={onPartialChange}
                             name="value"
                             value={data.rate}
                             endPoint={apiUrls.change_rate.replace('/pk-', `/${data.id}/`)}
@@ -64,7 +64,7 @@ export default ({data, addresses, partialChange}: Props) => {
                         <span>Địa chỉ:</span>
                         &nbsp;
                         <Editable
-                            onChange={partialChange}
+                            onChange={onPartialChange}
                             name="value"
                             value={data.address}
                             endPoint={apiUrls.change_address.replace('/pk-', `/${data.id}/`)}
@@ -78,7 +78,7 @@ export default ({data, addresses, partialChange}: Props) => {
                         <span>Mã giảm giá:</span>
                         &nbsp;
                         <Editable
-                            onChange={partialChange}
+                            onChange={onPartialChange}
                             name="value"
                             value={data.voucher}
                             endPoint={apiUrls.change_voucher.replace('/pk-', `/${data.id}/`)}

@@ -3,6 +3,7 @@ import * as React from 'react';
 import {vnd, cny} from 'src/constants';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
+import Editable from 'src/utils/components/Editable';
 import {apiUrls} from 'src/back/order/_data';
 import type {OrderItemType} from 'src/back/order/_data';
 
@@ -21,9 +22,10 @@ export class Service {
 type RowPropTypes = {
     data: OrderItemType,
     onCheck: Function,
-    onRemove: Function
+    onRemove: Function,
+    onPartialChange: Function
 };
-export default ({data, onCheck, onRemove}: RowPropTypes) => {
+export default ({data, onCheck, onRemove, onPartialChange}: RowPropTypes) => {
     const id = parseInt(data.id);
 
     const _onRemove = id => {
@@ -41,19 +43,46 @@ export default ({data, onCheck, onRemove}: RowPropTypes) => {
                 <input id={id} className="check" type="checkbox" checked={data.checked} onChange={() => onCheck(id)} />
             </th>
             <td>
-                <Description {...data} />
+                <Description data={data} onPartialChange={onPartialChange} />
             </td>
-            <td className="right mono">{data.quantity}</td>
+            <td className="right mono">
+                <Editable
+                    onChange={onPartialChange}
+                    name="value"
+                    value={data.quantity}
+                    endPoint={apiUrls.orderItemChange_quantity.replace('/pk-', `/${id}/`)}
+                    type="number"
+                    placeholder="Số lượng...">
+                    <span>{data.quantity}</span>
+                </Editable>
+            </td>
             <td>
+                <div className="cny mono">
+                    <Editable
+                        onChange={onPartialChange}
+                        name="value"
+                        value={data.unit_price}
+                        endPoint={apiUrls.orderItemChange_unit_price.replace('/pk-', `/${id}/`)}
+                        type="number"
+                        placeholder="Đơn giá...">
+                        <span>{Tools.numberFormat(unit_price)}</span>
+                    </Editable>
+                </div>
                 <div className="vnd mono">{Tools.numberFormat(vnd_unit_price)}</div>
-                <div className="cny mono">{Tools.numberFormat(unit_price)}</div>
             </td>
             <td>
-                <div className="vnd mono">{Tools.numberFormat(vnd_price)}</div>
                 <div className="cny mono">{Tools.numberFormat(cny_price)}</div>
+                <div className="vnd mono">{Tools.numberFormat(vnd_price)}</div>
             </td>
             <td>
-                <Note {...data} />
+                <Editable
+                    onChange={onPartialChange}
+                    name="value"
+                    value={data.note}
+                    endPoint={apiUrls.orderItemChange_note.replace('/pk-', `/${id}/`)}
+                    placeholder="Ghi chú...">
+                    <span>{data.note ? data.note : <em>Chưa có ghi chú...</em>}</span>
+                </Editable>
             </td>
             <td className="center">
                 <a className="removeBtn" onClick={() => _onRemove(id)}>
@@ -64,12 +93,11 @@ export default ({data, onCheck, onRemove}: RowPropTypes) => {
     );
 };
 
-export const Note = ({note}: OrderItemType) => {
-    if (!note) return <em>Chưa có ghi chú...</em>;
-    return note;
+type DescriptionType = {
+    data: OrderItemType,
+    onPartialChange: Function
 };
-
-export const Description = ({title, image, color, size, link}: OrderItemType) => {
+export const Description = ({data: {id, title, image, color, size, link}, onPartialChange}: DescriptionType) => {
     return (
         <table width="100%">
             <tbody>
@@ -86,13 +114,27 @@ export const Description = ({title, image, color, size, link}: OrderItemType) =>
                         {color && (
                             <div>
                                 <strong>Màu: </strong>
-                                <span>{color}</span>
+                                <Editable
+                                    onChange={onPartialChange}
+                                    name="value"
+                                    value={color}
+                                    endPoint={apiUrls.orderItemChange_color.replace('/pk-', `/${id}/`)}
+                                    placeholder="Màu sắc...">
+                                    <span>{color}</span>
+                                </Editable>
                             </div>
                         )}
                         {size && (
                             <div>
                                 <strong>Size: </strong>
-                                <span>{size}</span>
+                                <Editable
+                                    onChange={onPartialChange}
+                                    name="value"
+                                    value={size}
+                                    endPoint={apiUrls.orderItemChange_size.replace('/pk-', `/${id}/`)}
+                                    placeholder="Kích cỡ...">
+                                    <span>{size}</span>
+                                </Editable>
                             </div>
                         )}
                     </td>

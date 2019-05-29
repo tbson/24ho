@@ -66,6 +66,8 @@ export default ({order_id, rate}: Props) => {
 
     const searchList = (keyword: string) => getList(keyword ? {search: keyword} : {});
 
+    const partialChangeHandle = data => setList(listAction(data)['update']());
+
     useEffect(() => {
         getList();
     }, []);
@@ -97,7 +99,14 @@ export default ({order_id, rate}: Props) => {
 
                 <tbody>
                     {list.map((data, key) => (
-                        <Row className="table-row" data={data} key={key} onCheck={onCheck} onRemove={onRemove} />
+                        <Row
+                            className="table-row"
+                            data={data}
+                            key={key}
+                            onCheck={onCheck}
+                            onRemove={onRemove}
+                            onPartialChange={partialChangeHandle}
+                        />
                     ))}
                 </tbody>
 
