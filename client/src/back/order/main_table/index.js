@@ -4,7 +4,6 @@ import {useState, useEffect} from 'react';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
 import {apiUrls} from '../_data';
-import type {TRow, DbRow, ListItem, FormOpenType, FormOpenKeyType} from '../_data';
 import {Pagination, SearchInput} from 'src/utils/components/TableUtils';
 import Row from './Row.js';
 
@@ -50,13 +49,9 @@ export default ({status}: Props) => {
         sale: [],
         cust_care: []
     });
-    const [formOpen, setFormOpen] = useState<FormOpenType>({
-        main: false
-    });
+
     const [modalId, setModalId] = useState(0);
     const [links, setLinks] = useState({next: '', previous: ''});
-
-    const toggleForm = (value: boolean, key: FormOpenKeyType = 'main') => setFormOpen({...formOpen, [key]: value});
 
     const listAction = ListTools.actions(list);
 
@@ -68,12 +63,6 @@ export default ({status}: Props) => {
         setList(ListTools.prepare(data.items));
         setOptions(Service.prepareOptions(data.extra.options));
         setLinks(data.links);
-    };
-
-    const onChange = (data: TRow, type: string, reOpenDialog: boolean) => {
-        toggleForm(false);
-        setList(listAction(data)[type]());
-        reOpenDialog && toggleForm(true);
     };
 
     const onCheck = id => setList(ListTools.checkOne(id, list));
@@ -88,11 +77,6 @@ export default ({status}: Props) => {
 
         const r = confirm(ListTools.getDeleteMessage(ids.length));
         r && Service.handleBulkRemove(ids).then(data => setList(listAction(data).bulkRemove()));
-    };
-
-    const showForm = (id: number) => {
-        toggleForm(true);
-        setModalId(id);
     };
 
     const searchList = (keyword: string) => getList('', keyword ? {search: keyword} : {});
@@ -112,14 +96,7 @@ export default ({status}: Props) => {
                         <th scope="col">Thông tin đơn hàng</th>
                         <th scope="col">Nhân viên</th>
                         <th scope="col">Thông tin tài chính</th>
-                        <th scope="col" style={{padding: 8}} className="row80">
-                            {/* 
-                            <button className="btn btn-primary btn-sm btn-block add-button" onClick={() => showForm(0)}>
-                                <span className="fas fa-plus" />
-                                &nbsp; Add
-                            </button>
-                            */}
-                        </th>
+                        <th scope="col" style={{padding: 8}} className="row80" />
                     </tr>
                 </thead>
 
@@ -140,7 +117,6 @@ export default ({status}: Props) => {
                             key={key}
                             onCheck={onCheck}
                             onRemove={onRemove}
-                            showForm={showForm}
                         />
                     ))}
                 </tbody>

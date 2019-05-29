@@ -15,7 +15,8 @@ class OrderItemViewSet(GenericViewSet):
     _name = 'order_item'
     serializer_class = OrderItemBaseSr
     permission_classes = (CustomPermission, )
-    search_fields = ('uid', 'value')
+    search_fields = ('title', 'color', 'size', 'unit_price', 'note', )
+    filterset_fields = ('order_id', )
 
     def list(self, request):
         queryset = OrderItem.objects.all()

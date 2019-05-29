@@ -11,6 +11,7 @@ import {STATUS} from 'src/back/order/_data';
 import NavWrapper from 'src/utils/components/nav_wrapper/';
 import Info from './Info';
 import Accounting from './Accounting';
+import OrderItemTable from './item_table';
 import Tools from 'src/utils/helpers/Tools';
 import {apiUrls} from 'src/back/order/_data';
 
@@ -56,11 +57,11 @@ const Detail = ({match}) => {
         });
     }, []);
 
-    return (
+    return !data.rate ? null : (
         <NavWrapper>
             <div className="row">
-                <div className="col-md-9">
-                    <Info data={data} addresses={options.addresses} partialChange={setData}/>
+                <div className="col-md-9 no-padding-right">
+                    <Info data={data} addresses={options.addresses} partialChange={setData} />
                     <Tabs>
                         <TabList>
                             <Tab>
@@ -70,12 +71,14 @@ const Detail = ({match}) => {
                                 <span>Vận Đơn</span>
                             </Tab>
                         </TabList>
-                        <TabPanel>Sản phẩm</TabPanel>
+                        <TabPanel>
+                            <OrderItemTable order_id={id} rate={data.rate} />
+                        </TabPanel>
                         <TabPanel>Vận Đơn</TabPanel>
                     </Tabs>
                 </div>
-                <div className="col-md-3">
-                    <Accounting data={data} partialChange={setData}/>
+                <div className="col-md-3 no-padding-left">
+                    <Accounting data={data} partialChange={setData} />
                 </div>
             </div>
         </NavWrapper>
