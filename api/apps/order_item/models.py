@@ -24,3 +24,10 @@ class OrderItem(models.Model):
     class Meta:
         db_table = "order_items"
         ordering = ['-id']
+        permissions = (
+            ("change_color_orderitem", "Can change color"),
+            ("change_size_orderitem", "Can change size"),
+            ("change_quantity_orderitem", "Can change quantity"),
+            ("change_unit_price_orderitem", "Can change unit price"),
+            ("change_note_orderitem", "Can change note"),
+        )

@@ -21,7 +21,12 @@ const rawApiUrls = [
     {
         controller: 'orderItem',
         endpoints: {
-            crud: ''
+            crud: '',
+            change_color: 'pk/change-color',
+            change_size: 'pk/change-size',
+            change_quantity: 'pk/change-quantity',
+            change_unit_price: 'pk/change-unit-price',
+            change_note: 'pk/change-note'
         }
     }
 ];

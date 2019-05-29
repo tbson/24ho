@@ -115,7 +115,7 @@ class Order(TimeStampedModel):
     class Meta:
         db_table = "orders"
         ordering = ['-id']
-        permissions = [
+        permissions = (
             ("change_sale_order", "Can change sale"),
             ("change_cust_care_order", "Can change customer care"),
             ("change_rate_order", "Can change rate"),
@@ -124,4 +124,4 @@ class Order(TimeStampedModel):
             ("change_count_check_fee_input_order", "Can change count check fee"),
             ("change_cny_inland_delivery_fee_order", "Can change inland delivery fee"),
             ("change_order_fee_factor_order", "Can change order fee factor"),
-        ]
+        )
