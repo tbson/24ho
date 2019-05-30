@@ -100,14 +100,14 @@ class Order(TimeStampedModel):
 
     objects = OrderManager()
 
-    def save(instance, *args, **kwargs):
+    def save(self, *args, **kwargs):
         from .utils import OrderUtils
 
-        address = instance.address
-        instance.customer = address.customer
+        address = self.address
+        self.customer = address.customer
         if not Tools.is_testing():
-            instance.__dict__.update(OrderUtils.cal_all(instance))
-        super(Order, instance).save(*args, **kwargs)
+            self.__dict__.update(OrderUtils.cal_all(self))
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.address.title
