@@ -4,25 +4,25 @@ import {useState, useEffect} from 'react';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
 import {apiUrls} from 'src/back/order/_data';
-import type {TRow, DbRow, ListItem, FormOpenType, FormOpenKeyType} from 'src/back/order/_data';
-import {Pagination, SearchInput} from 'src/utils/components/TableUtils';
+import {SearchInput} from 'src/utils/components/TableUtils';
 import Row from './Row.js';
 
 type Props = {
-    status: number
+    order_id: number,
+    rate: number
 };
 
 export class Service {
-    static listRequest(url?: string, params?: Object): Promise<Object> {
-        return Tools.apiCall(url ? url : apiUrls.crud, params);
+    static listRequest(params: Object = {}): Promise<Object> {
+        return Tools.apiCall(apiUrls.orderItemCrud, params);
     }
 
     static bulkRemoveRequest(ids: Array<number>): Promise<Object> {
-        return Tools.apiCall(apiUrls.crud, {ids: ids.join(',')}, 'DELETE');
+        return Tools.apiCall(apiUrls.orderItemCrud, {ids: ids.join(',')}, 'DELETE');
     }
 
-    static handleGetList(url?: string, params?: Object = {}): Promise<Object> {
-        return Service.listRequest(url, params)
+    static handleGetList(params: Object = {}): Promise<Object> {
+        return Service.listRequest(params)
             .then(resp => (resp.ok ? resp.data || {} : Promise.reject(resp)))
             .catch(Tools.popMessageOrRedirect);
     }
@@ -32,48 +32,22 @@ export class Service {
             .then(resp => (resp.ok ? {ids} : Promise.reject(resp)))
             .catch(Tools.popMessageOrRedirect);
     }
-
-    static prepareOptions(options: Object): Object {
-        for (const key in options) {
-            options[key] = options[key].map(item => ({
-                value: item.id,
-                label: item.fullname
-            }));
-        }
-        return options;
-    }
 }
 
-export default ({status}: Props) => {
+export default ({order_id, rate}: Props) => {
     const [list, setList] = useState([]);
-    const [options, setOptions] = useState({
-        sale: [],
-        cust_care: []
-    });
-    const [formOpen, setFormOpen] = useState<FormOpenType>({
-        main: false
-    });
-    const [modalId, setModalId] = useState(0);
-    const [links, setLinks] = useState({next: '', previous: ''});
-
-    const toggleForm = (value: boolean, key: FormOpenKeyType = 'main') => setFormOpen({...formOpen, [key]: value});
 
     const listAction = ListTools.actions(list);
 
-    const getList = async (url?: string, params?: Object) => {
-        let _params = {...params};
-        if (status) _params = {...params, status};
-        const data = await Service.handleGetList(url, _params);
+    const getList = async (params?: Object) => {
+        const _params = {...params, order_id};
+        const data = await Service.handleGetList(_params);
         if (!data) return;
-        setList(ListTools.prepare(data.items));
-        setOptions(Service.prepareOptions(data.extra.options));
-        setLinks(data.links);
-    };
-
-    const onChange = (data: TRow, type: string, reOpenDialog: boolean) => {
-        toggleForm(false);
-        setList(listAction(data)[type]());
-        reOpenDialog && toggleForm(true);
+        const items = data.items.map(item => {
+            item.rate = rate;
+            return item;
+        });
+        setList(ListTools.prepare(items));
     };
 
     const onCheck = id => setList(ListTools.checkOne(id, list));
@@ -90,12 +64,9 @@ export default ({status}: Props) => {
         r && Service.handleBulkRemove(ids).then(data => setList(listAction(data).bulkRemove()));
     };
 
-    const showForm = (id: number) => {
-        toggleForm(true);
-        setModalId(id);
-    };
+    const searchList = (keyword: string) => getList(keyword ? {search: keyword} : {});
 
-    const searchList = (keyword: string) => getList('', keyword ? {search: keyword} : {});
+    const partialChangeHandle = data => setList(listAction(data)['update']());
 
     useEffect(() => {
         getList();
@@ -109,17 +80,12 @@ export default ({status}: Props) => {
                         <th className="row25">
                             <span className="fas fa-check text-info pointer check-all-button" onClick={onCheckAll} />
                         </th>
-                        <th scope="col">Thông tin đơn hàng</th>
-                        <th scope="col">Nhân viên</th>
-                        <th scope="col">Thông tin tài chính</th>
-                        <th scope="col" style={{padding: 8}} className="row80">
-                            {/* 
-                            <button className="btn btn-primary btn-sm btn-block add-button" onClick={() => showForm(0)}>
-                                <span className="fas fa-plus" />
-                                &nbsp; Add
-                            </button>
-                            */}
-                        </th>
+                        <th>Sản phẩm</th>
+                        <th className="right">Số lượng</th>
+                        <th className="right">Đơn giá</th>
+                        <th className="right">Tiền hàng</th>
+                        <th>Ghi chú</th>
+                        <th className="row80" />
                     </tr>
                 </thead>
 
@@ -135,12 +101,11 @@ export default ({status}: Props) => {
                     {list.map((data, key) => (
                         <Row
                             className="table-row"
-                            options={options}
                             data={data}
                             key={key}
                             onCheck={onCheck}
                             onRemove={onRemove}
-                            showForm={showForm}
+                            onPartialChange={partialChangeHandle}
                         />
                     ))}
                 </tbody>
@@ -153,9 +118,7 @@ export default ({status}: Props) => {
                                 onClick={onBulkRemove}
                             />
                         </th>
-                        <th className="row25 right" colSpan="99">
-                            <Pagination next={links.next} prev={links.previous} onNavigate={getList} />
-                        </th>
+                        <th className="row25 right" colSpan="99" />
                     </tr>
                 </tfoot>
             </table>

@@ -10,7 +10,7 @@ import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
 import type {SelectOptions} from 'src/utils/helpers/Tools';
 import {apiUrls, STATUS} from '../_data';
-import type {TRow} from '../_data';
+import type {OrderType} from '../_data';
 
 export class Service {
     static removeRequest(id: number): Promise<Object> {
@@ -30,7 +30,7 @@ type OptionsType = {
 };
 
 type OrderInfoType = {
-    data: TRow
+    data: OrderType
 };
 const OrderInfo = ({data}: OrderInfoType) => {
     return (
@@ -82,7 +82,7 @@ const OrderInfo = ({data}: OrderInfoType) => {
 };
 
 type StaffsType = {
-    data: TRow,
+    data: OrderType,
     options: OptionsType
 };
 const Staffs = ({data: _data, options}: StaffsType) => {
@@ -124,7 +124,7 @@ const Staffs = ({data: _data, options}: StaffsType) => {
 };
 
 type FinInfoType = {
-    data: TRow
+    data: OrderType
 };
 const FinInfo = ({data}: FinInfoType) => {
     const missing = data.vnd_total - data.vnd_total_discount - data.vnd_paid;
@@ -151,13 +151,12 @@ const FinInfo = ({data}: FinInfoType) => {
 };
 
 type RowPropTypes = {
-    data: TRow,
+    data: OrderType,
     options: OptionsType,
-    showForm: Function,
     onCheck: Function,
     onRemove: Function
 };
-export default ({data, options = {}, showForm, onCheck, onRemove}: RowPropTypes) => {
+export default ({data, options = {}, onCheck, onRemove}: RowPropTypes) => {
     const id = parseInt(data.id);
 
     const _onRemove = id => {

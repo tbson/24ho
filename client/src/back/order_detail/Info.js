@@ -7,10 +7,11 @@ import type {SelectOptions} from 'src/utils/helpers/Tools';
 
 type Props = {
     data: Object,
-    addresses: SelectOptions
+    addresses: SelectOptions,
+    onPartialChange: Function
 };
 
-export default ({data, addresses}: Props) => {
+export default ({data, addresses, onPartialChange}: Props) => {
     return (
         <table className="table table-striped">
             <tbody>
@@ -31,8 +32,8 @@ export default ({data, addresses}: Props) => {
                         <span className="cny mono">1</span>
                         <span> = </span>
                         <Editable
-                            onChange={() => {}}
-                            name="rate"
+                            onChange={onPartialChange}
+                            name="value"
                             value={data.rate}
                             endPoint={apiUrls.change_rate.replace('/pk-', `/${data.id}/`)}
                             type="number"
@@ -63,8 +64,8 @@ export default ({data, addresses}: Props) => {
                         <span>Địa chỉ:</span>
                         &nbsp;
                         <Editable
-                            onChange={() => {}}
-                            name="rate"
+                            onChange={onPartialChange}
+                            name="value"
                             value={data.address}
                             endPoint={apiUrls.change_address.replace('/pk-', `/${data.id}/`)}
                             type="select"
@@ -77,8 +78,8 @@ export default ({data, addresses}: Props) => {
                         <span>Mã giảm giá:</span>
                         &nbsp;
                         <Editable
-                            onChange={() => {}}
-                            name="voucher"
+                            onChange={onPartialChange}
+                            name="value"
                             value={data.voucher}
                             endPoint={apiUrls.change_voucher.replace('/pk-', `/${data.id}/`)}
                             placeholder="Voucher...">

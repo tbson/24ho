@@ -17,7 +17,7 @@ describe('Service.removeRequest', () => {
         const apiCall = jest.spyOn(Tools, 'apiCall').mockImplementation(() => {});
         Service.removeRequest(id);
         expect(apiCall).toHaveBeenCalled();
-        expect(apiCall.mock.calls[0][0]).toEqual(`http://localhost/api/v1/order/${id}`);
+        expect(apiCall.mock.calls[0][0]).toEqual(`http://localhost/api/v1/bol/${id}`);
         expect(apiCall.mock.calls[0][1]).toEqual({});
         expect(apiCall.mock.calls[0][2]).toEqual('DELETE');
     });

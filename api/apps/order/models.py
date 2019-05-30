@@ -4,6 +4,7 @@ from utils.models.model import TimeStampedModel
 from apps.staff.models import Staff
 from apps.address.models import Address
 from apps.customer.models import Customer
+from utils.helpers.tools import Tools
 
 
 class Status:
@@ -23,23 +24,8 @@ class OrderManager(models.Manager):
 
     def re_cal(self, item: models.QuerySet) -> models.QuerySet:
         from .utils import OrderUtils
-        '''
-        Frezee after confirm
-        '''
-        item.cny_amount = OrderUtils.cal_amount(item)
-        item.cny_order_fee = OrderUtils.cal_order_fee(item)
-        # item.cny_inland_delivery_fee
 
-        '''
-        Frezee after export
-        '''
-        item.vnd_delivery_fee = OrderUtils.cal_delivery_fee(item)
-        item.cny_count_check_fee = OrderUtils.cal_count_check_fee(item)
-        item.cny_shockproof_fee = OrderUtils.cal_shockproof_fee(item)
-        item.cny_wooden_box_fee = OrderUtils.cal_wooden_box_fee(item)
-        # item.vnd_sub_fee
-
-        item.statistics = OrderUtils.cal_statistics(item)
+        item.__dict__.update(OrderUtils.cal_all(item))
 
         item.save()
         return item
@@ -114,13 +100,28 @@ class Order(TimeStampedModel):
 
     objects = OrderManager()
 
+    def save(instance, *args, **kwargs):
+        from .utils import OrderUtils
+
+        address = instance.address
+        instance.customer = address.customer
+        if not Tools.is_testing():
+            instance.__dict__.update(OrderUtils.cal_all(instance))
+        super(Order, instance).save(*args, **kwargs)
+
     def __str__(self):
         return self.address.title
 
     class Meta:
         db_table = "orders"
         ordering = ['-id']
-        permissions = [
+        permissions = (
             ("change_sale_order", "Can change sale"),
             ("change_cust_care_order", "Can change customer care"),
-        ]
+            ("change_rate_order", "Can change rate"),
+            ("change_address_order", "Can change address"),
+            ("change_voucher_order", "Can change voucher"),
+            ("change_count_check_fee_input_order", "Can change count check fee"),
+            ("change_cny_inland_delivery_fee_order", "Can change inland delivery fee"),
+            ("change_order_fee_factor_order", "Can change order fee factor"),
+        )

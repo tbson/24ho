@@ -34,6 +34,15 @@ class OrderItemUtils:
         return get_data(index) if single is True else get_list_data(index)
 
     @staticmethod
+    def partial_update(obj, key, value):
+        data = {}
+        data[key] = value
+        serializer = OrderItemBaseSr(obj, data=data, partial=True)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+        return serializer
+
+    @staticmethod
     def validate_bulk_create(order_items, order_id):
         for item in order_items:
             item['order'] = order_id

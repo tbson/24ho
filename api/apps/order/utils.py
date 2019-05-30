@@ -118,6 +118,8 @@ class OrderUtils:
 
     @staticmethod
     def cal_amount(item: models.QuerySet) -> float:
+        if item.order_items.count() == 0:
+            return 0
         return item.order_items.aggregate(
             amount=Sum(
                 F('quantity') * F('unit_price'),
@@ -179,3 +181,26 @@ class OrderUtils:
             "quantity": quantity,
             "packages": packages
         }
+
+    @staticmethod
+    def cal_all(item: models.QuerySet) -> dict:
+        result = {}
+        '''
+        Frezee after confirm
+        '''
+        result['cny_amount'] = OrderUtils.cal_amount(item)
+        result['cny_order_fee'] = OrderUtils.cal_order_fee(item)
+        # item.cny_inland_delivery_fee
+
+        '''
+        Frezee after export
+        '''
+        result['vnd_delivery_fee'] = OrderUtils.cal_delivery_fee(item)
+        result['cny_count_check_fee'] = OrderUtils.cal_count_check_fee(item)
+        result['cny_shockproof_fee'] = OrderUtils.cal_shockproof_fee(item)
+        result['cny_wooden_box_fee'] = OrderUtils.cal_wooden_box_fee(item)
+        # item.vnd_sub_fee
+
+        result['statistics'] = OrderUtils.cal_statistics(item)
+
+        return result

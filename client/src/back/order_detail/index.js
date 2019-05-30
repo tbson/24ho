@@ -11,6 +11,7 @@ import {STATUS} from 'src/back/order/_data';
 import NavWrapper from 'src/utils/components/nav_wrapper/';
 import Info from './Info';
 import Accounting from './Accounting';
+import OrderItemTable from 'src/back/order_item_table';
 import Tools from 'src/utils/helpers/Tools';
 import {apiUrls} from 'src/back/order/_data';
 
@@ -43,21 +44,24 @@ const Detail = ({match}) => {
             quantity: 0
         }
     });
+
     const [options, setOptions] = useState({});
+
     useEffect(() => {
         document.title = 'Order detail';
         Service.retrieveRequest(id).then(resp => {
             if (resp.ok) {
                 setData(resp.data);
-                setOptions(Service.prepareOptions(resp.data.options))
+                setOptions(Service.prepareOptions(resp.data.options));
             }
         });
     }, []);
-    return (
+
+    return !data.rate ? null : (
         <NavWrapper>
             <div className="row">
-                <div className="col-md-9">
-                    <Info data={data} addresses={options.addresses}/>
+                <div className="col-md-9 no-padding-right">
+                    <Info data={data} addresses={options.addresses} onPartialChange={setData} />
                     <Tabs>
                         <TabList>
                             <Tab>
@@ -67,12 +71,14 @@ const Detail = ({match}) => {
                                 <span>Vận Đơn</span>
                             </Tab>
                         </TabList>
-                        <TabPanel>Sản phẩm</TabPanel>
+                        <TabPanel>
+                            <OrderItemTable order_id={id} rate={data.rate} />
+                        </TabPanel>
                         <TabPanel>Vận Đơn</TabPanel>
                     </Tabs>
                 </div>
-                <div className="col-md-3">
-                    <Accounting data={data}/>
+                <div className="col-md-3 no-padding-left">
+                    <Accounting data={data} onPartialChange={setData} />
                 </div>
             </div>
         </NavWrapper>

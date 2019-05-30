@@ -100,6 +100,7 @@ export default class TextInput extends React.Component<Props, State> {
             default:
                 return (
                     <input
+                        autoFocus={true}
                         name={name}
                         type={type}
                         placeholder={placeholder}

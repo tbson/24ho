@@ -4,18 +4,22 @@ from rest_framework.decorators import action
 from rest_framework.viewsets import (GenericViewSet, )
 from rest_framework import status
 from .models import OrderItem
+from .utils import OrderItemUtils
 from .serializers import (
     OrderItemBaseSr,
 )
 from utils.common_classes.custom_permission import CustomPermission
 from utils.helpers.res_tools import res
+from utils.common_classes.custom_pagination import NoPagination
 
 
 class OrderItemViewSet(GenericViewSet):
     _name = 'order_item'
     serializer_class = OrderItemBaseSr
     permission_classes = (CustomPermission, )
-    search_fields = ('uid', 'value')
+    pagination_class = NoPagination
+    search_fields = ('title', 'color', 'size', 'unit_price', 'note', )
+    filterset_fields = ('order_id', )
 
     def list(self, request):
         queryset = OrderItem.objects.all()
@@ -37,11 +41,38 @@ class OrderItemViewSet(GenericViewSet):
         return res(serializer.data)
 
     @action(methods=['put'], detail=True)
-    def change(self, request, pk=None):
+    def change_color(self, request, pk=None):
         obj = get_object_or_404(OrderItem, pk=pk)
-        serializer = OrderItemBaseSr(obj, data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
+        value = request.data.get('value', obj.color)
+        serializer = OrderItemUtils.partial_update(obj, 'color', value)
+        return res(serializer.data)
+
+    @action(methods=['put'], detail=True)
+    def change_size(self, request, pk=None):
+        obj = get_object_or_404(OrderItem, pk=pk)
+        value = request.data.get('value', obj.size)
+        serializer = OrderItemUtils.partial_update(obj, 'size', value)
+        return res(serializer.data)
+
+    @action(methods=['put'], detail=True)
+    def change_quantity(self, request, pk=None):
+        obj = get_object_or_404(OrderItem, pk=pk)
+        value = request.data.get('value', obj.quantity)
+        serializer = OrderItemUtils.partial_update(obj, 'quantity', value)
+        return res(serializer.data)
+
+    @action(methods=['put'], detail=True)
+    def change_unit_price(self, request, pk=None):
+        obj = get_object_or_404(OrderItem, pk=pk)
+        value = request.data.get('value', obj.unit_price)
+        serializer = OrderItemUtils.partial_update(obj, 'unit_price', value)
+        return res(serializer.data)
+
+    @action(methods=['put'], detail=True)
+    def change_note(self, request, pk=None):
+        obj = get_object_or_404(OrderItem, pk=pk)
+        value = request.data.get('value', obj.note)
+        serializer = OrderItemUtils.partial_update(obj, 'note', value)
         return res(serializer.data)
 
     @action(methods=['delete'], detail=True)

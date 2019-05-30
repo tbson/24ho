@@ -53,25 +53,6 @@ class OrderItemTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(OrderItem.objects.count(), 4)
 
-    def test_edit(self):
-        item3 = OrderItemUtils.seeding(3, True, False)
-
-        # Update not exist
-        response = self.client.put(
-            "/api/v1/order-item/{}".format(0),
-            item3,
-            format='json'
-        )
-        self.assertEqual(response.status_code, 404)
-
-        # Update success
-        response = self.client.put(
-            "/api/v1/order-item/{}".format(self.items[2].pk),
-            item3,
-            format='json'
-        )
-        self.assertEqual(response.status_code, 200)
-
     def test_delete(self):
         # Remove not exist
         response = self.client.delete(
@@ -93,6 +74,162 @@ class OrderItemTestCase(TestCase):
         )
         self.assertEqual(response.status_code, 204)
         self.assertEqual(OrderItem.objects.count(), 0)
+
+
+class PartialUpdates(TestCase):
+    def setUp(self):
+        logging.disable(logging.CRITICAL)
+
+        self.token = TestHelpers.test_setup(self)
+        self.client = APIClient()
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + self.token)
+
+        self.item = OrderItemUtils.seeding(1, True)
+
+    def test_color(self):
+        value = 'new color'
+
+        # Update not exist
+        response = self.client.put(
+            "/api/v1/order-item/{}/change-color/".format(0),
+            {},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 404)
+
+        # Update normal value
+        response = self.client.put(
+            "/api/v1/order-item/{}/change-color/".format(self.item.pk),
+            {"value": value},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['color'], value)
+
+        # Update missing value -> do nothing
+        response = self.client.put(
+            "/api/v1/order-item/{}/change-color/".format(self.item.pk),
+            {},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['color'], value)
+
+    def test_size(self):
+        value = 'new size'
+
+        # Update not exist
+        response = self.client.put(
+            "/api/v1/order-item/{}/change-size/".format(0),
+            {},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 404)
+
+        # Update normal value
+        response = self.client.put(
+            "/api/v1/order-item/{}/change-size/".format(self.item.pk),
+            {"value": value},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['size'], value)
+
+        # Update missing value -> do nothing
+        response = self.client.put(
+            "/api/v1/order-item/{}/change-size/".format(self.item.pk),
+            {},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['size'], value)
+
+    def test_quantity(self):
+        value = 99
+
+        # Update not exist
+        response = self.client.put(
+            "/api/v1/order-item/{}/change-quantity/".format(0),
+            {},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 404)
+
+        # Update normal value
+        response = self.client.put(
+            "/api/v1/order-item/{}/change-quantity/".format(self.item.pk),
+            {"value": value},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['quantity'], value)
+
+        # Update missing value -> do nothing
+        response = self.client.put(
+            "/api/v1/order-item/{}/change-quantity/".format(self.item.pk),
+            {},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['quantity'], value)
+
+    def test_unit_price(self):
+        value = 99.99
+
+        # Update not exist
+        response = self.client.put(
+            "/api/v1/order-item/{}/change-unit-price/".format(0),
+            {},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 404)
+
+        # Update normal value
+        response = self.client.put(
+            "/api/v1/order-item/{}/change-unit-price/".format(self.item.pk),
+            {"value": value},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['unit_price'], value)
+
+        # Update missing value -> do nothing
+        response = self.client.put(
+            "/api/v1/order-item/{}/change-unit-price/".format(self.item.pk),
+            {},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['unit_price'], value)
+
+    def test_note(self):
+        value = 'new note'
+
+        # Update not exist
+        response = self.client.put(
+            "/api/v1/order-item/{}/change-note/".format(0),
+            {},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 404)
+
+        # Update normal value
+        response = self.client.put(
+            "/api/v1/order-item/{}/change-note/".format(self.item.pk),
+            {"value": value},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['note'], value)
+
+        # Update missing value -> do nothing
+        response = self.client.put(
+            "/api/v1/order-item/{}/change-note/".format(self.item.pk),
+            {},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['note'], value)
 
 
 class Serializer(TestCase):
