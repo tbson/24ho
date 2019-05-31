@@ -101,6 +101,18 @@ class Bol(TimeStampedModel):
 
     objects = BolManager()
 
+    def save(self, *args, **kwargs):
+        if self.address:
+            self.address_code = self.address.uid
+        elif self.address_code:
+            try:
+                address = Address.objects.get(uid=self.address_code)
+                self.address = address
+            except Address.DoesNotExist:
+                pass
+
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return '{} - {}'.format(self.uid, self.value)
 

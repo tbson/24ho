@@ -9,6 +9,7 @@ from utils.helpers.test_helpers import TestHelpers
 from apps.delivery_fee.utils import DeliveryFeeUtils
 from apps.customer.utils import CustomerUtils
 from apps.order.utils import OrderUtils
+from apps.address.utils import AddressUtils
 from django.conf import settings
 # Create your tests here.
 
@@ -364,6 +365,39 @@ class ManagerCalDeliveryFee(TestCase):
             'delivery_fee': 15.75
         }
         self.assertEqual(output, eput)
+
+
+class ModelCreate(TestCase):
+    def setUp(self):
+        self.address = AddressUtils.seeding(1, True)
+        self.address_1 = AddressUtils.seeding(2, True)
+
+    """ update address_code """
+
+    def test_only_address(self):
+        item = Bol.objects.create(uid='test', address=self.address)
+
+        self.assertEqual(item.address_code, self.address.uid)
+
+    """ update address """
+
+    def test_only_address_code_match(self):
+        item = Bol.objects.create(uid='test', address_code=self.address.uid)
+        self.assertEqual(item.address, self.address)
+
+    """ do nothing """
+
+    def test_only_address_code_miss(self):
+        item = Bol.objects.create(uid='test', address_code='miss')
+        self.assertEqual(item.address_id, None)
+
+    """ take address """
+
+    def test_both(self):
+        item = Bol.objects.create(uid='test', address=self.address, address_code=self.address_1.uid)
+
+        self.assertEqual(item.address, self.address)
+        self.assertEqual(item.address_code, self.address.uid)
 
 
 class ManagerCalInsuranceFee(TestCase):
