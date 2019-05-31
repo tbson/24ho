@@ -11,13 +11,13 @@ class Article(TimeStampedModel):
     title = models.CharField(max_length=100, unique=True)
     content = models.TextField()
     uid = models.CharField(max_length=50, unique=True)
+    slug = models.CharField(max_length=50, blank=True)
 
     def save(self, *args, **kwargs):
         self.uid = self.title.replace(' ', '-')
+        if self.slug is not None:
+            self.slug = self.slug.replace(' ', '-')
 
-        super(Article, self).save(*args, **kwargs)
-
-    def clean(self):
         if self.category_id is not None:
             if(self.category.single == True):
                 if (Article.objects.filter(category__id=self.category_id).exists()):
@@ -27,7 +27,25 @@ class Article(TimeStampedModel):
                     else:
                         if(Article.objects.filter(category__id=self.category_id)[0].uid != self.uid):
                             raise ValidationError(
-                                "Can only create 1 instance of articles when category'single is true hahaahah.")
+                                "Can only create 1 instance of articles when category'single is true.")
+
+
+        super(Article, self).save(*args, **kwargs)
+        if not self.slug:
+            self.slug = self.title.replace(' ', '-') + '-' + str(self.pk)
+            super(Article, self).save(*args, **kwargs)
+
+    # def clean(self):
+    #     if self.category_id is not None:
+    #         if(self.category.single == True):
+    #             if (Article.objects.filter(category__id=self.category_id).exists()):
+    #                 if(self.uid is None):
+    #                     raise ValidationError(
+    #                         "Can only create 1 instance of articles when category'single is true.")
+    #                 else:
+    #                     if(Article.objects.filter(category__id=self.category_id)[0].uid != self.uid):
+    #                         raise ValidationError(
+    #                             "Can only create 1 instance of articles when category'single is true.")
 
     def __str__(self):
         return '{}'.format(self.title)

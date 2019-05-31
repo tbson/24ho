@@ -13,13 +13,13 @@ class ArticleBaseSr(ModelSerializer):
     uid = CharField(validators=[
         UniqueValidator(
             queryset=Article.objects.all(),
-            message="Duplicate variable",
+            message="Duplicate uid",
         )]
     )
 
     title = CharField(validators=[
         UniqueValidator(
             queryset=Article.objects.all(),
-            message="Duplicate variable 1111",
+            message="Duplicate title",
         )]
     )

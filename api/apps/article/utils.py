@@ -20,6 +20,7 @@ class ArticleUtils:
                 'uid': "uid{}".format(i),
                 'title': "title{}".format(i),
                 'content': "content{}".format(i),
+                'slug': "slug{}".format(i)
             }
 
             if save is False:
