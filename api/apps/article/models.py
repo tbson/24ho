@@ -2,6 +2,7 @@ from django.db import models
 from utils.models.model import TimeStampedModel
 from apps.category.models import Category
 from django.core.exceptions import ValidationError
+import re
 # Create your models here.
 
 
@@ -14,13 +15,15 @@ class Article(TimeStampedModel):
     slug = models.CharField(max_length=250, blank=True)
 
     def save(self, *args, **kwargs):
-        self.uid = self.title.replace(' ', '-')
+        no_space_title = self.title.replace(' ', '-')
+        self.uid = re.sub(r"[^a-zA-Z0-9\-]+",'',no_space_title)
         if self.slug is not None:
-            self.slug = self.slug.replace(' ', '-')
+            no_space_slug = self.slug.replace(' ', '-')
+            self.slug = re.sub(r"[^a-zA-Z0-9\-]+",'',no_space_slug)
 
         super(Article, self).save(*args, **kwargs)
         if not self.slug:
-            self.slug = self.title.replace(' ', '-') + '-' + str(self.pk)
+            self.slug = re.sub(r"[^a-zA-Z0-9\-]+",'',no_space_title) + '-' + str(self.pk)
             super().save(*args, **kwargs)
 
     def __str__(self):
