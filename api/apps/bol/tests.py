@@ -404,16 +404,16 @@ class ManagerCalInsuranceFee(TestCase):
     def test_transport_order_without_register(self):
         item = BolUtils.seeding(1, True)
 
-        item.insurance_register = False
-        item.insurance_value = 50
+        item.insurance = False
+        item.cny_insurance_value = 50
         item.save()
         self.assertEqual(BolUtils.cal_insurance_fee(item), 0)
 
     def test_transport_order_with_register(self):
         item = BolUtils.seeding(1, True)
 
-        item.insurance_register = True
-        item.insurance_value = 50
+        item.insurance = True
+        item.cny_insurance_value = 50
         item.save()
         self.assertEqual(BolUtils.cal_insurance_fee(item), 1.5)
 
@@ -422,8 +422,8 @@ class ManagerCalInsuranceFee(TestCase):
         order = OrderUtils.seeding(1, True)
 
         item.order = order
-        item.insurance_register = True
-        item.insurance_value = 50
+        item.insurance = True
+        item.cny_insurance_value = 50
         item.save()
         self.assertEqual(BolUtils.cal_insurance_fee(item), 0)
 

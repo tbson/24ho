@@ -62,8 +62,6 @@ class Bol(TimeStampedModel):
 
     uid = models.CharField(max_length=60, unique=True)
 
-    packages = models.IntegerField(default=0)
-
     purchase_code = models.CharField(max_length=60, blank=True)
     address_code = models.CharField(max_length=60, blank=True)
 
@@ -95,8 +93,8 @@ class Bol(TimeStampedModel):
 
     packages = models.IntegerField(default=1)
 
-    insurance_register = models.BooleanField(default=False)
-    insurance_value = models.FloatField(default=0)
+    insurance = models.BooleanField(default=False)
+    cny_insurance_value = models.FloatField(default=0)
     insurance_note = models.CharField(max_length=250, blank=True)
 
     objects = BolManager()

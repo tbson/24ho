@@ -9,14 +9,15 @@ type Props = {
     label?: string,
     type?: string,
     autoFocus?: boolean,
-    required?: boolean
+    required?: boolean,
+    disabled?: boolean
 };
 
-export default ({name, label, type = 'text', autoFocus = false, required = false}: Props) => {
+export default ({name, label, type = 'text', autoFocus = false, required = false, disabled = false}: Props) => {
     return (
         <div className={'form-group'}>
             <Label name={name} label={label} required={required} />
-            <Field id={name} name={name} type={type} autoFocus={autoFocus} className="form-control" />
+            <Field id={name} name={name} type={type} autoFocus={autoFocus} disabled={disabled} className="form-control" />
             <ErrorMessage name={name} className="red" component="div" />
         </div>
     );

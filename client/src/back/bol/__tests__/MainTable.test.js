@@ -17,26 +17,25 @@ describe('Service.listRequest', () => {
         Service.listRequest();
         expect(apiCall).toHaveBeenCalled();
         expect(apiCall.mock.calls[0][0]).toEqual('http://localhost/api/v1/bol/');
-        expect(apiCall.mock.calls[0][1]).toEqual({});
+        expect(apiCall.mock.calls[0][1]).toBe(undefined);
     });
 
     it('With params', () => {
         const apiCall = jest.spyOn(Tools, 'apiCall').mockImplementation(async () => {});
-        const url = 'http://localhost/api/v1/bol/';
         const params = {search: 'keyword'};
 
-        Service.listRequest(params);
+        Service.listRequest('', params);
         expect(apiCall).toHaveBeenCalled();
-        expect(apiCall.mock.calls[0][0]).toEqual(url);
+        expect(apiCall.mock.calls[0][0]).toEqual('http://localhost/api/v1/bol/');
         expect(apiCall.mock.calls[0][1]).toEqual(params);
     });
 
     it('With url', () => {
         const apiCall = jest.spyOn(Tools, 'apiCall').mockImplementation(async () => {});
         const params = {search: 'keyword'};
-        const url = 'http://localhost/api/v1/bol/';
+        const url = 'sample_url';
 
-        Service.listRequest(params);
+        Service.listRequest(url, params);
         expect(apiCall).toHaveBeenCalled();
         expect(apiCall.mock.calls[0][0]).toEqual(url);
         expect(apiCall.mock.calls[0][1]).toEqual(params);
@@ -71,14 +70,15 @@ describe('Service.handleGetList', () => {
     it('On success', async () => {
         const listRequest = jest.spyOn(Service, 'listRequest').mockImplementation(async () => okResp);
         jest.spyOn(Tools, 'popMessageOrRedirect');
-        const url = 'http://localhost/api/v1/bol/';
+        const url = 'sample_url';
         const params = {key: 'value'};
 
-        const result = await Service.handleGetList(params);
+        const result = await Service.handleGetList(url, params);
 
         expect(Tools.popMessageOrRedirect).not.toHaveBeenCalled();
         expect(listRequest).toHaveBeenCalled();
-        expect(listRequest.mock.calls[0][0]).toEqual(params);
+        expect(listRequest.mock.calls[0][0]).toEqual(url);
+        expect(listRequest.mock.calls[0][1]).toEqual(params);
         expect(result).toEqual(okResp.data);
     });
 

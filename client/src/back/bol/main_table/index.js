@@ -10,20 +10,20 @@ import MainForm from '../MainForm';
 import Row from './Row.js';
 
 type Props = {
-    order_id: number
+    type: number
 };
 
 export class Service {
-    static listRequest(params: Object = {}): Promise<Object> {
-        return Tools.apiCall(apiUrls.crud, params);
+    static listRequest(url?: string, params?: Object): Promise<Object> {
+        return Tools.apiCall(url ? url : apiUrls.crud, params);
     }
 
     static bulkRemoveRequest(ids: Array<number>): Promise<Object> {
         return Tools.apiCall(apiUrls.crud, {ids: ids.join(',')}, 'DELETE');
     }
 
-    static handleGetList(params: Object = {}): Promise<Object> {
-        return Service.listRequest(params)
+    static handleGetList(url?: string, params?: Object = {}): Promise<Object> {
+        return Service.listRequest(url, params)
             .then(resp => (resp.ok ? resp.data || {} : Promise.reject(resp)))
             .catch(Tools.popMessageOrRedirect);
     }
@@ -35,7 +35,7 @@ export class Service {
     }
 }
 
-export default ({order_id}: Props) => {
+export default ({}: Props) => {
     const [list, setList] = useState([]);
     const [formOpen, setFormOpen] = useState<FormOpenType>({
         main: false
@@ -47,8 +47,8 @@ export default ({order_id}: Props) => {
 
     const listAction = ListTools.actions(list);
 
-    const getList = async (params: Object = {}) => {
-        const data = await Service.handleGetList({...params, order_id});
+    const getList = async (url?: string, params?: Object) => {
+        const data = await Service.handleGetList(url, params);
         if (!data) return;
         setList(ListTools.prepare(data.items));
         setLinks(data.links);
@@ -79,7 +79,7 @@ export default ({order_id}: Props) => {
         setModalId(id);
     };
 
-    const searchList = (keyword: string) => getList(keyword ? {search: keyword} : {});
+    const searchList = (keyword: string) => getList('', keyword ? {search: keyword} : {});
 
     useEffect(() => {
         getList();
@@ -93,8 +93,15 @@ export default ({order_id}: Props) => {
                         <th className="row25">
                             <span className="fas fa-check text-info pointer check-all-button" onClick={onCheckAll} />
                         </th>
-                        <th scope="col">Key</th>
-                        <th scope="col">Value</th>
+                        <th scope="col">Ngày</th>
+                        <th scope="col">Mã vận đơn</th>
+                        <th scope="col" className="right">Khối lượng</th>
+                        <th scope="col" className="right">Dài</th>
+                        <th scope="col" className="right">Rộng</th>
+                        <th scope="col" className="right">Cao</th>
+                        <th scope="col" className="right">Số kiện</th>
+                        <th scope="col" className="right">Phụ phí CNY</th>
+                        <th scope="col">Ghi chú</th>
                         <th scope="col" style={{padding: 8}} className="row80">
                             <button className="btn btn-primary btn-sm btn-block add-button" onClick={() => showForm(0)}>
                                 <span className="fas fa-plus" />
@@ -133,7 +140,9 @@ export default ({order_id}: Props) => {
                                 onClick={onBulkRemove}
                             />
                         </th>
-                        <th className="row25 right" colSpan="99"/>
+                        <th className="row25 right" colSpan="99">
+                            <Pagination next={links.next} prev={links.previous} onNavigate={getList} />
+                        </th>
                     </tr>
                 </tfoot>
             </table>

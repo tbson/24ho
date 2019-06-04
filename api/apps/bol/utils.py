@@ -122,8 +122,8 @@ class BolUtils:
 
     @staticmethod
     def cal_insurance_fee(item: models.QuerySet) -> float:
-        if not item.order and item.insurance_register:
-            return item.insurance_value * settings.DEFAULT_INSURANCE_FACTOR / 100
+        if not item.order and item.insurance:
+            return item.cny_insurance_value * settings.DEFAULT_INSURANCE_FACTOR / 100
         return 0
 
     @staticmethod
