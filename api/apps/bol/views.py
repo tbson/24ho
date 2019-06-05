@@ -29,6 +29,12 @@ class BolViewSet(GenericViewSet):
         serializer = BolBaseSr(obj)
         return res(serializer.data)
 
+    def retrieve_uid(self, request, uid=''):
+        uid = uid.strip().upper()
+        obj = get_object_or_404(Bol, uid=uid)
+        serializer = BolBaseSr(obj)
+        return res(serializer.data)
+
     @action(methods=['post'], detail=True)
     def add(self, request):
         serializer = BolBaseSr(data=request.data)

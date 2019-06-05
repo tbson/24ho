@@ -37,7 +37,7 @@ class StaffTestCase(TestCase):
 
         # Item exist
         resp = self.client.get(
-            "/api/v1/staff/".format(self.items[0].pk)
+            "/api/v1/staff/{}".format(self.items[0].pk)
         )
         self.assertEqual(resp.status_code, 200)
 

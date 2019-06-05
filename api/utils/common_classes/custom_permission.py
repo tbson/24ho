@@ -5,7 +5,7 @@ class CustomPermission(permissions.BasePermission):
 
     def has_permission(self, request, view):
         action = view.action
-        action = action if action not in ['list', 'retrieve'] else 'view'
+        action = action if action not in ['list', 'retrieve', 'retrieve_uid'] else 'view'
         action = action if action not in ['delete', 'delete_list'] else 'delete'
 
         permission = action + '_' + view._name.replace('_', '')

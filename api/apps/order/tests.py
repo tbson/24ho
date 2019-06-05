@@ -47,7 +47,7 @@ class OrderTestCase(TestCase):
 
         # Item exist
         response = self.client.get(
-            "/api/v1/order/".format(self.items[0].pk)
+            "/api/v1/order/{}".format(self.items[0].pk)
         )
         self.assertEqual(response.status_code, 200)
 

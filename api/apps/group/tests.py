@@ -52,6 +52,6 @@ class GroupTestCase(TestCase):
 
         # View success
         response = self.client.get(
-            "/api/v1/group/".format(self.item1.data['id'])
+            "/api/v1/group/{}".format(self.item1.data['id'])
         )
         self.assertEqual(response.status_code, 200)
