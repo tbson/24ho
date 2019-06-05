@@ -1,6 +1,7 @@
 from django.db import models
 from apps.area.models import Area
 from apps.category.utils import CategoryUtils
+import re
 
 
 class ArticleUtils:
@@ -35,3 +36,9 @@ class ArticleUtils:
             return [get_data(i) for i in range(1, index + 1)]
 
         return get_data(index) if single is True else get_list_data(index)
+    
+    @staticmethod
+    def create_slug(title):
+        no_space_title = title.replace(' ', '-')
+        return re.sub(r"[^a-zA-Z0-9\-]+",'',no_space_title)
+
