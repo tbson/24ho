@@ -9,6 +9,7 @@ import {Tab, Tabs, TabList, TabPanel} from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import NavWrapper from 'src/utils/components/nav_wrapper/';
 import Table from './main_table/';
+import CNTable from './cn_table/';
 
 type Props = {
     match: Object
@@ -35,8 +36,8 @@ const Component = ({match}: Props) => {
                         <span>Vận đơn VN</span>
                     </Tab>
                 </TabList>
-                <TabPanel><Table type={type}/></TabPanel>
-                <TabPanel>TQ</TabPanel>
+                <TabPanel><Table type={0}/></TabPanel>
+                <TabPanel><CNTable type={1}/></TabPanel>
                 <TabPanel>VN</TabPanel>
             </Tabs>
         </NavWrapper>

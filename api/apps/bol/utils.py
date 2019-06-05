@@ -19,7 +19,7 @@ class BolUtils:
         def get_data(i: int) -> dict:
 
             data = {
-                'uid': "uid{}".format(i),
+                'uid': "UID{}".format(i),
                 'address': address.pk
             }
             if save is False:

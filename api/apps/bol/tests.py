@@ -45,7 +45,20 @@ class BolTestCase(TestCase):
 
         # Item exist
         response = self.client.get(
-            "/api/v1/bol/".format(self.items[0].pk)
+            "/api/v1/bol/{}".format(self.items[0].pk)
+        )
+        self.assertEqual(response.status_code, 200)
+
+    def test_detail_uid(self):
+        # Item not exist
+        response = self.client.get(
+            "/api/v1/bol/{}".format('aaa')
+        )
+        self.assertEqual(response.status_code, 404)
+
+        # Item exist
+        response = self.client.get(
+            "/api/v1/bol/{}".format(self.items[0].uid.lower())
         )
         self.assertEqual(response.status_code, 200)
 

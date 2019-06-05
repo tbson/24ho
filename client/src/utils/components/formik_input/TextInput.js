@@ -10,14 +10,31 @@ type Props = {
     type?: string,
     autoFocus?: boolean,
     required?: boolean,
-    disabled?: boolean
+    disabled?: boolean,
+    onBlur?: Function
 };
 
-export default ({name, label, type = 'text', autoFocus = false, required = false, disabled = false}: Props) => {
+export default ({
+    name,
+    label,
+    type = 'text',
+    autoFocus = false,
+    required = false,
+    disabled = false,
+    onBlur = () => {}
+}: Props) => {
     return (
         <div className={'form-group'}>
             <Label name={name} label={label} required={required} />
-            <Field id={name} name={name} type={type} autoFocus={autoFocus} disabled={disabled} className="form-control" />
+            <Field
+                id={name}
+                name={name}
+                type={type}
+                autoFocus={autoFocus}
+                disabled={disabled}
+                className="form-control"
+                onBlur={onBlur}
+            />
             <ErrorMessage name={name} className="red" component="div" />
         </div>
     );

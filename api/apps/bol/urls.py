@@ -17,8 +17,13 @@ pk_endpoint = BolViewSet.as_view({
     'delete': 'delete'
 })
 
+retrieve_uid = BolViewSet.as_view({
+    'get': 'retrieve_uid',
+})
+
 app_name = os.getcwd().split(os.sep)[-1]
 urlpatterns = [
     path('', base_endpoint),
     path('<int:pk>', pk_endpoint),
+    path('<str:uid>', retrieve_uid),
 ]
