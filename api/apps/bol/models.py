@@ -95,11 +95,14 @@ class Bol(TimeStampedModel):
 
     insurance = models.BooleanField(default=False)
     cny_insurance_value = models.FloatField(default=0)
-    insurance_note = models.CharField(max_length=250, blank=True)
+
+    note = models.CharField(max_length=250, blank=True)
 
     objects = BolManager()
 
     def save(self, *args, **kwargs):
+        if self.uid:
+            self.uid = self.uid.strip().upper()
         if self.address:
             self.address_code = self.address.uid
         elif self.address_code:

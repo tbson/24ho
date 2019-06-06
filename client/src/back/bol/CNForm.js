@@ -9,6 +9,7 @@ import Tools from 'src/utils/helpers/Tools';
 import ErrMsgs from 'src/utils/helpers/ErrMsgs';
 import {apiUrls} from './_data';
 import TextInput from 'src/utils/components/formik_input/TextInput';
+import HiddenInput from 'src/utils/components/formik_input/HiddenInput';
 import CheckInput from 'src/utils/components/formik_input/CheckInput';
 import DefaultModal from 'src/utils/components/modal/DefaultModal';
 import ButtonsBar from 'src/utils/components/form/ButtonsBar';
@@ -16,6 +17,7 @@ import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
 
 export class Service {
     static initialValues = {
+        id: 0,
         uid: '',
         mass: 0,
         length: 0,
@@ -26,21 +28,24 @@ export class Service {
         wooden_box: false,
         cny_shockproof_fee: 0,
         cny_wooden_box_fee: 0,
+        cn_date: undefined,
         note: ''
     };
 
     static validationSchema = Yup.object().shape({
+        id: Yup.number(),
         uid: Yup.string().required(ErrMsgs.REQUIRED),
         mass: Yup.number(),
         length: Yup.number(),
         width: Yup.number(),
         height: Yup.number(),
         packages: Yup.number(),
-        shockproof: Yup.number(),
-        wooden_box: Yup.number(),
+        shockproof: Yup.boolean(),
+        wooden_box: Yup.boolean(),
         cny_shockproof_fee: Yup.number(),
         cny_wooden_box_fee: Yup.number(),
-        note: Yup.string()
+        note: Yup.string(),
+        cn_date: Yup.date()
     });
 
     static changeRequest(params: Object) {
@@ -53,13 +58,16 @@ export class Service {
         return id ? Tools.apiCall(apiUrls.crud + id) : Promise.resolve({ok: true, data: Service.initialValues});
     }
 
-    static handleSubmit(id: number, onChange: Function, reOpenDialog: boolean) {
-        return (values: Object, {setErrors}: Object) =>
-            Service.changeRequest(id ? {...values, id} : values).then(({ok, data}) =>
+    static handleSubmit(onChange: Function, reOpenDialog: boolean) {
+        return (values: Object, {setErrors}: Object) => {
+            const id = values.id;
+            const cn_date = values.cn_date || new Date();
+            return Service.changeRequest(id ? {...values, cn_date, id} : values).then(({ok, data}) =>
                 ok
                     ? onChange({...data, checked: false}, id ? 'update' : 'add', reOpenDialog)
                     : setErrors(Tools.setFormErrors(data))
             );
+        };
     }
 }
 
@@ -104,15 +112,16 @@ export default ({id, open, close, onChange, children, submitTitle = 'Save'}: Pro
 
     const checkUID = (e: Object) => {
         const uid = e.target.value;
-        Service.retrieveRequest(uid).then(resp => resp.ok && setInitialValues(resp.data));
+        Service.retrieveRequest(uid).then(resp => resp.ok && setInitialValues(Tools.nullToUndefined(resp.data)));
     };
 
     return (
         <DefaultModal open={openModal} close={close} title="Bol manager">
             <Formik
+                enableReinitialize
                 initialValues={{...initialValues}}
                 validationSchema={validationSchema}
-                onSubmit={handleSubmit(id, onChange, reOpenDialog)}>
+                onSubmit={handleSubmit(onChange, reOpenDialog)}>
                 {({errors, values, handleSubmit}) => (
                     <Form>
                         <TextInput name="uid" label="Mã vận đơn" autoFocus={true} onBlur={checkUID} required={true} />
@@ -133,6 +142,8 @@ export default ({id, open, close, onChange, children, submitTitle = 'Save'}: Pro
                         <CheckInput name="wooden_box" label="Đóng gỗ" />
                         {values.wooden_box && <TextInput name="cny_wooden_box_fee" label="Phí đóng gỗ (CNY)" />}
                         <TextInput name="note" label="Ghi chú" />
+                        <HiddenInput name="cn_date" />
+                        <HiddenInput name="id" />
                         <FormLevelErrMsg errors={errors.detail} />
                         <ButtonsBar children={children} submitTitle={submitTitle} onClick={onClick(handleSubmit)} />
                     </Form>

@@ -1224,3 +1224,29 @@ describe('removeEmptyKey', () => {
         expect(eput).toEqual(output);
     });
 });
+
+describe('nullToUndefined', () => {
+    it('Normal case', () => {
+        const input = {
+            key1: 'value 1',
+            key2: '',
+            key3: null,
+            key4: undefined,
+            key5: 0,
+            key6: '0'
+        };
+
+        const eput = {
+            key1: 'value 1',
+            key2: '',
+            key3: undefined,
+            key4: undefined,
+            key5: 0,
+            key6: '0' 
+        };
+
+        const output = Tools.nullToUndefined(input);
+
+        expect(eput).toEqual(output);
+    });
+});

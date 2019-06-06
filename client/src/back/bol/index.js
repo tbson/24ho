@@ -20,8 +20,8 @@ const Component = ({match}: Props) => {
         document.title = 'Bill of landing manager';
     }, []);
 
-    const type = match.params.type ? parseInt(match.params.type) : 0;
-
+    // const type = match.params.type ? parseInt(match.params.type) : 0;
+    const type = 1;
     return (
         <NavWrapper>
             <Tabs defaultIndex={type}>
