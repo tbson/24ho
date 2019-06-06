@@ -110,21 +110,26 @@ export default ({id, open, close, onChange, children, submitTitle = 'Save'}: Pro
         handleSubmit();
     };
 
-    const checkUID = (e: Object) => {
+    const checkUID = (resetForm: Function) => (e: Object) => {
         const uid = e.target.value;
-        Service.retrieveRequest(uid).then(resp => resp.ok && setInitialValues(Tools.nullToUndefined(resp.data)));
+        Service.retrieveRequest(uid).then(resp => resp.ok && resetForm(Tools.nullToUndefined(resp.data)));
     };
 
     return (
         <DefaultModal open={openModal} close={close} title="Bol manager">
             <Formik
-                enableReinitialize
                 initialValues={{...initialValues}}
                 validationSchema={validationSchema}
                 onSubmit={handleSubmit(onChange, reOpenDialog)}>
-                {({errors, values, handleSubmit}) => (
+                {({errors, values, handleSubmit, resetForm}) => (
                     <Form>
-                        <TextInput name="uid" label="Mã vận đơn" autoFocus={true} onBlur={checkUID} required={true} />
+                        <TextInput
+                            name="uid"
+                            label="Mã vận đơn"
+                            autoFocus={true}
+                            onBlur={checkUID(resetForm)}
+                            required={true}
+                        />
                         <TextInput name="mass" label="Khối lượng (KG)" />
                         <div className="row">
                             <div className="col">
