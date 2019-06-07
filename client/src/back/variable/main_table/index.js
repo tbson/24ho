@@ -52,10 +52,9 @@ export default ({}: Props) => {
         setLinks(data.links);
     };
 
-    const onChange = (data: TRow, type: string, reOpenDialog: boolean) => {
+    const onChange = (data: TRow, type: string) => {
         toggleForm(false);
         setList(listAction(data)[type]());
-        reOpenDialog && toggleForm(true);
     };
 
     const onCheck = id => setList(ListTools.checkOne(id, list));
