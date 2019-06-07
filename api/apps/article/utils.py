@@ -39,6 +39,8 @@ class ArticleUtils:
     
     @staticmethod
     def create_slug(title):
-        no_space_title = title.replace(' ', '-')
-        return re.sub(r"[^a-zA-Z0-9\-]+",'',no_space_title)
+        title_no_special_character = re.sub(r"[^a-z0-9\- ]+",'',title.lower())
+        result_rm_space = ' '.join(title_no_special_character.split())
+        result = result_rm_space.replace(' ', '-')
+        return result
 

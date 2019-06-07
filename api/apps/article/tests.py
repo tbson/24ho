@@ -85,7 +85,14 @@ class ArticleTestCase(TestCase):
 
         # Remove list success
         response = self.client.delete(
-            "/api/v1/article/?ids={}".format(','.join([str(self.items[1].pk), str(self.items[2].pk)]))
+            "/api/v1/article/?ids={}".format(
+                ','.join([str(self.items[1].pk), str(self.items[2].pk)]))
         )
         self.assertEqual(response.status_code, 204)
         self.assertEqual(Article.objects.count(), 0)
+
+
+class UtilsCreateSlug(TestCase):
+    def test_normal_case(self):
+        title = "Awesome title # 1"
+        self.assertEqual(ArticleUtils.create_slug(title), "awesome-title-1")
