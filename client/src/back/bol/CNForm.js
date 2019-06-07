@@ -16,6 +16,13 @@ import ButtonsBar from 'src/utils/components/form/ButtonsBar';
 import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
 
 export class Service {
+    static firstInputSelector = "[name='uid']";
+
+    static focusFirstInput() {
+        const firstInput = document.querySelector(`form ${Service.firstInputSelector}`);
+        firstInput && firstInput.focus();
+    }
+
     static initialValues = {
         id: 0,
         uid: '',
@@ -65,13 +72,26 @@ export class Service {
     }
 
     static handleSubmit(onChange: Function) {
-        return (values: Object, {setErrors}: Object) => {
+        return (values: Object, {setErrors, resetForm}: Object) => {
             const params = Service.prepareParams(values);
-            return Service.changeRequest(params).then(({ok, data}) =>
-                ok
-                    ? onChange({...data, checked: false}, params.id ? 'update' : 'add')
-                    : setErrors(Tools.setFormErrors(data))
-            );
+            return Service.changeRequest(params).then(({ok, data}) => {
+                if (ok) {
+                    onChange({...data, checked: false}, params.id ? 'update' : 'add');
+                    resetForm(Service.initialValues);
+                    Service.focusFirstInput();
+                } else {
+                    setErrors(Tools.setFormErrors(data));
+                }
+            });
+        };
+    }
+
+    static checkUID(resetForm: Function) {
+        return (e: Object) => {
+            const uid = e.target.value;
+            Service.retrieveRequest(uid).then(resp => {
+                resp.ok && resetForm(Tools.nullToDefault(resp.data, Service.initialValues));
+            });
         };
     }
 }
@@ -84,8 +104,57 @@ type Props = {
     children?: React.Node,
     submitTitle?: string
 };
+
+type FormPartProps = {
+    onSubmit: Function,
+    children?: React.Node,
+    submitTitle?: string
+};
+
+export const FormPart = ({onSubmit, submitTitle = '', children}: FormPartProps) => (
+    <Formik initialValues={Service.initialValues} validationSchema={Service.validationSchema} onSubmit={onSubmit}>
+        {({errors, values, handleSubmit, resetForm}) => {
+            window.document.addEventListener('PREPARE_TO_EDIT', ({detail: uid}) => {
+                resetForm({...Service.initialValues, uid})
+                Service.focusFirstInput();
+            }, false);
+            return (
+                <Form>
+                    <TextInput
+                        name="uid"
+                        label="Mã vận đơn"
+                        autoFocus={true}
+                        onBlur={Service.checkUID(resetForm)}
+                        required={true}
+                    />
+                    <TextInput name="mass" label="Khối lượng (KG)" />
+                    <div className="row">
+                        <div className="col">
+                            <TextInput name="length" label="Dài (Cm)" />
+                        </div>
+                        <div className="col">
+                            <TextInput name="width" label="Rộng (Cm)" />
+                        </div>
+                        <div className="col">
+                            <TextInput name="height" label="Cao (Cm)" />
+                        </div>
+                    </div>
+                    <CheckInput name="shockproof" label="Chống sốc" />
+                    {values.shockproof && <TextInput name="cny_shockproof_fee" label="Phí chống sốc (CNY)" />}
+                    <CheckInput name="wooden_box" label="Đóng gỗ" />
+                    {values.wooden_box && <TextInput name="cny_wooden_box_fee" label="Phí đóng gỗ (CNY)" />}
+                    <TextInput name="note" label="Ghi chú" />
+                    <HiddenInput name="cn_date" />
+                    <HiddenInput name="id" />
+                    <FormLevelErrMsg errors={errors.detail} />
+                    <ButtonsBar children={children} submitTitle={submitTitle} />
+                </Form>
+            );
+        }}
+    </Formik>
+);
+
 export default ({id, open, close, onChange, children, submitTitle = 'Save'}: Props) => {
-    const firstInputSelector = "[name='uid']";
     const {validationSchema, handleSubmit} = Service;
 
     const [openModal, setOpenModal] = useState(false);
@@ -102,62 +171,14 @@ export default ({id, open, close, onChange, children, submitTitle = 'Save'}: Pro
         open ? retrieveThenOpen(id) : setOpenModal(false);
     }, [open]);
 
-    const focusFirstInput = () => {
-        const firstInput = document.querySelector(`form ${firstInputSelector}`);
-        firstInput && firstInput.focus();
-    };
-
     const onClick = (handleSubmit: Function) => () => {
-        focusFirstInput();
+        Service.focusFirstInput();
         handleSubmit();
-    };
-
-    const checkUID = (resetForm: Function) => (e: Object) => {
-        const uid = e.target.value;
-        Service.retrieveRequest(uid).then(resp => {
-            resp.ok && resetForm(Tools.nullToDefault(resp.data, Service.initialValues));
-        });
     };
 
     return (
         <DefaultModal open={openModal} close={close} title="Bol manager">
-            <Formik
-                initialValues={{...initialValues}}
-                validationSchema={validationSchema}
-                onSubmit={handleSubmit(onChange)}>
-                {({errors, values, handleSubmit, resetForm}) => (
-                    <Form>
-                        <TextInput
-                            name="uid"
-                            label="Mã vận đơn"
-                            autoFocus={true}
-                            onBlur={checkUID(resetForm)}
-                            required={true}
-                        />
-                        <TextInput name="mass" label="Khối lượng (KG)" />
-                        <div className="row">
-                            <div className="col">
-                                <TextInput name="length" label="Dài (Cm)" />
-                            </div>
-                            <div className="col">
-                                <TextInput name="width" label="Rộng (Cm)" />
-                            </div>
-                            <div className="col">
-                                <TextInput name="height" label="Cao (Cm)" />
-                            </div>
-                        </div>
-                        <CheckInput name="shockproof" label="Chống sốc" />
-                        {values.shockproof && <TextInput name="cny_shockproof_fee" label="Phí chống sốc (CNY)" />}
-                        <CheckInput name="wooden_box" label="Đóng gỗ" />
-                        {values.wooden_box && <TextInput name="cny_wooden_box_fee" label="Phí đóng gỗ (CNY)" />}
-                        <TextInput name="note" label="Ghi chú" />
-                        <HiddenInput name="cn_date" />
-                        <HiddenInput name="id" />
-                        <FormLevelErrMsg errors={errors.detail} />
-                        <ButtonsBar children={children} submitTitle={submitTitle} onClick={onClick(handleSubmit)} />
-                    </Form>
-                )}
-            </Formik>
+            <FormPart children={children} onSubmit={handleSubmit(onChange)} submitTitle={submitTitle} />
         </DefaultModal>
     );
 };

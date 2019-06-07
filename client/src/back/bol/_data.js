@@ -22,7 +22,13 @@ export type FormOpenKeyType = 'main';
 
 export type FormValues = {
     uid: string,
-    value: string
+    created_at: string,
+    mass: number,
+    length: number,
+    width: number,
+    height: number,
+    packages: number,
+    note: string
 };
 
 export type DbRow = FormValues & {

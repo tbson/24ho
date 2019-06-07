@@ -18,12 +18,15 @@ export class Service {
 }
 
 type RowPropTypes = {
+    total?: number,
+    index?: number,
+    preview?: boolean,
     data: TRow,
-    showForm: Function,
-    onCheck: Function,
+    onCheck?: Function,
+    onEdit: Function,
     onRemove: Function
 };
-export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
+export default ({preview = false, data, index=0, total=0, onEdit, onCheck, onRemove}: RowPropTypes) => {
     const id = parseInt(data.id);
 
     const _onRemove = id => {
@@ -34,7 +37,17 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
     return (
         <tr>
             <th className="row25">
-                <input id={id} className="check" type="checkbox" checked={data.checked} onChange={() => onCheck(id)} />
+                {preview ? (
+                    total - index
+                ) : (
+                    <input
+                        id={id}
+                        className="check"
+                        type="checkbox"
+                        checked={data.checked}
+                        onChange={() => onCheck && onCheck(id)}
+                    />
+                )}
             </th>
             <td>{Tools.dateTimeFormat(data.created_at)}</td>
             <td>{data.uid}</td>
@@ -45,7 +58,7 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
             <td className="mono right">{data.packages}</td>
             <td>{data.note}</td>
             <td className="center">
-                <a className="editBtn" onClick={() => showForm(data.id)}>
+                <a className="editBtn" onClick={() => onEdit(preview ? data.uid : data.id)}>
                     <span className="fas fa-edit text-info pointer" />
                 </a>
                 <span>&nbsp;&nbsp;&nbsp;</span>
