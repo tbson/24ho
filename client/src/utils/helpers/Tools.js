@@ -762,10 +762,14 @@ export default class Tools {
         return type === 1 ? 'Kg' : 'Khối';
     }
 
-    static nullToUndefined(input: Object): Object {
+    static nullToDefault(input: Object, defaultValues: Object): Object {
         const result = {...input};
         for (let key in result) {
-            if (result[key] === null) result[key] = undefined;
+            if (defaultValues[key] === undefined) {
+                delete result[key];
+            } else {
+                if (result[key] === null) result[key] = defaultValues[key];
+            }
         }
         return result;
     }

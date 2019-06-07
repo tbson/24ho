@@ -23,12 +23,12 @@ export class Service {
         length: 0,
         width: 0,
         height: 0,
-        packages: 0,
+        packages: 1,
         shockproof: false,
         wooden_box: false,
         cny_shockproof_fee: 0,
         cny_wooden_box_fee: 0,
-        cn_date: undefined,
+        cn_date: '',
         note: ''
     };
 
@@ -58,13 +58,18 @@ export class Service {
         return id ? Tools.apiCall(apiUrls.crud + id) : Promise.resolve({ok: true, data: Service.initialValues});
     }
 
-    static handleSubmit(onChange: Function, reOpenDialog: boolean) {
+    static prepareParams(values: Object): Object {
+        const id = values.id;
+        const cn_date = values.cn_date || new Date();
+        return id ? {...values, cn_date, id} : {...values, cn_date};
+    }
+
+    static handleSubmit(onChange: Function) {
         return (values: Object, {setErrors}: Object) => {
-            const id = values.id;
-            const cn_date = values.cn_date || new Date();
-            return Service.changeRequest(id ? {...values, cn_date, id} : values).then(({ok, data}) =>
+            const params = Service.prepareParams(values);
+            return Service.changeRequest(params).then(({ok, data}) =>
                 ok
-                    ? onChange({...data, checked: false}, id ? 'update' : 'add', reOpenDialog)
+                    ? onChange({...data, checked: false}, params.id ? 'update' : 'add')
                     : setErrors(Tools.setFormErrors(data))
             );
         };
@@ -84,7 +89,6 @@ export default ({id, open, close, onChange, children, submitTitle = 'Save'}: Pro
     const {validationSchema, handleSubmit} = Service;
 
     const [openModal, setOpenModal] = useState(false);
-    const [reOpenDialog, setReOpenDialog] = useState(true);
     const [initialValues, setInitialValues] = useState(Service.initialValues);
 
     const retrieveThenOpen = (id: number) =>
@@ -96,7 +100,6 @@ export default ({id, open, close, onChange, children, submitTitle = 'Save'}: Pro
 
     useEffect(() => {
         open ? retrieveThenOpen(id) : setOpenModal(false);
-        setReOpenDialog(id ? false : true);
     }, [open]);
 
     const focusFirstInput = () => {
@@ -105,14 +108,15 @@ export default ({id, open, close, onChange, children, submitTitle = 'Save'}: Pro
     };
 
     const onClick = (handleSubmit: Function) => () => {
-        setReOpenDialog(false);
         focusFirstInput();
         handleSubmit();
     };
 
     const checkUID = (resetForm: Function) => (e: Object) => {
         const uid = e.target.value;
-        Service.retrieveRequest(uid).then(resp => resp.ok && resetForm(Tools.nullToUndefined(resp.data)));
+        Service.retrieveRequest(uid).then(resp => {
+            resp.ok && resetForm(Tools.nullToDefault(resp.data, Service.initialValues));
+        });
     };
 
     return (
@@ -120,7 +124,7 @@ export default ({id, open, close, onChange, children, submitTitle = 'Save'}: Pro
             <Formik
                 initialValues={{...initialValues}}
                 validationSchema={validationSchema}
-                onSubmit={handleSubmit(onChange, reOpenDialog)}>
+                onSubmit={handleSubmit(onChange)}>
                 {({errors, values, handleSubmit, resetForm}) => (
                     <Form>
                         <TextInput

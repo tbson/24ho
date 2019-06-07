@@ -1,4 +1,5 @@
 from django.db import models
+from django_filters import rest_framework as filters
 from utils.models.model import TimeStampedModel
 from apps.customer.models import Customer
 from apps.address.models import Address
@@ -112,7 +113,7 @@ class Bol(TimeStampedModel):
             except Address.DoesNotExist:
                 pass
 
-        super().save(*args, **kwargs)
+        super(Bol, self).save(*args, **kwargs)
 
     def __str__(self):
         return '{} - {}'.format(self.uid, self.value)
@@ -120,3 +121,12 @@ class Bol(TimeStampedModel):
     class Meta:
         db_table = "bols"
         ordering = ['-id']
+
+
+class BolFilter(filters.FilterSet):
+    cn_date__isnull = filters.BooleanFilter(field_name="cn_date", lookup_expr='isnull')
+    vn_date__isnull = filters.BooleanFilter(field_name="vn_date", lookup_expr='isnull')
+
+    class Meta:
+        model = Bol
+        fields = ['cn_date__isnull', 'vn_date__isnull']

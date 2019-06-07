@@ -6,7 +6,7 @@ import ListTools from 'src/utils/helpers/ListTools';
 import {apiUrls} from '../_data';
 import type {TRow, DbRow, ListItem, FormOpenType, FormOpenKeyType} from '../_data';
 import {Pagination, SearchInput} from 'src/utils/components/TableUtils';
-import CNForm from '../CNForm';
+import VNForm from '../VNForm';
 import Row from './Row.js';
 
 type Props = {
@@ -48,15 +48,16 @@ export default ({}: Props) => {
     const listAction = ListTools.actions(list);
 
     const getList = async (url?: string, params?: Object) => {
-        const data = await Service.handleGetList(url, {...params, cn_date__isnull: false});
+        const data = await Service.handleGetList(url, {...params, vn_date__isnull: false});
         if (!data) return;
         setList(ListTools.prepare(data.items));
         setLinks(data.links);
     };
 
-    const onChange = (data: TRow, type: string) => {
+    const onChange = (data: TRow, type: string, reOpenDialog: boolean) => {
         toggleForm(false);
         setList(listAction(data)[type]());
+        reOpenDialog && toggleForm(true);
     };
 
     const onCheck = id => setList(ListTools.checkOne(id, list));
@@ -94,12 +95,7 @@ export default ({}: Props) => {
                         </th>
                         <th scope="col">Ngày</th>
                         <th scope="col">Mã vận đơn</th>
-                        <th scope="col" className="right">Khối lượng</th>
-                        <th scope="col" className="right">Dài</th>
-                        <th scope="col" className="right">Rộng</th>
-                        <th scope="col" className="right">Cao</th>
-                        <th scope="col" className="right">Số kiện</th>
-                        <th scope="col">Ghi chú</th>
+                        <th scope="col">Khớp</th>
                         <th scope="col" style={{padding: 8}} className="row80">
                             <button className="btn btn-primary btn-sm btn-block add-button" onClick={() => showForm(0)}>
                                 <span className="fas fa-plus" />
@@ -145,11 +141,11 @@ export default ({}: Props) => {
                 </tfoot>
             </table>
 
-            <CNForm id={modalId} open={formOpen.main} close={() => toggleForm(false)} onChange={onChange}>
+            <VNForm id={modalId} open={formOpen.main} close={() => toggleForm(false)} onChange={onChange}>
                 <button type="button" className="btn btn-light" action="close" onClick={() => toggleForm(false)}>
                     Cancel
                 </button>
-            </CNForm>
+            </VNForm>
         </div>
     );
 };

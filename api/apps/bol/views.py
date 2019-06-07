@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework.decorators import action
 from rest_framework.viewsets import (GenericViewSet, )
 from rest_framework import status
-from .models import Bol
+from .models import Bol, BolFilter
 from .serializers import (
     BolBaseSr,
 )
@@ -15,7 +15,8 @@ class BolViewSet(GenericViewSet):
     _name = 'bol'
     serializer_class = BolBaseSr
     permission_classes = (CustomPermission, )
-    search_fields = ('uid', 'value')
+    search_fields = ('uid', 'cn_date', 'vn_date', )
+    filterset_class = BolFilter
 
     def list(self, request):
         queryset = Bol.objects.all()
@@ -45,7 +46,7 @@ class BolViewSet(GenericViewSet):
     @action(methods=['put'], detail=True)
     def change(self, request, pk=None):
         obj = get_object_or_404(Bol, pk=pk)
-        serializer = BolBaseSr(obj, data=request.data)
+        serializer = BolBaseSr(obj, data=request.data, partial=True)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
         return res(serializer.data)
