@@ -6,10 +6,12 @@ import ListTools from 'src/utils/helpers/ListTools';
 import {apiUrls} from '../_data';
 import type {TRow, DbRow, ListItem, FormOpenType, FormOpenKeyType} from '../_data';
 import {Pagination, SearchInput} from 'src/utils/components/TableUtils';
-import MainForm from '../MainForm';
+import VNForm from '../VNForm';
 import Row from './Row.js';
 
-type Props = {};
+type Props = {
+    type: number
+};
 
 export class Service {
     static listRequest(url?: string, params?: Object): Promise<Object> {
@@ -46,15 +48,16 @@ export default ({}: Props) => {
     const listAction = ListTools.actions(list);
 
     const getList = async (url?: string, params?: Object) => {
-        const data = await Service.handleGetList(url, params);
+        const data = await Service.handleGetList(url, {...params, vn_date__isnull: false});
         if (!data) return;
         setList(ListTools.prepare(data.items));
         setLinks(data.links);
     };
 
-    const onChange = (data: TRow, type: string) => {
+    const onChange = (data: TRow, type: string, reOpenDialog: boolean) => {
         toggleForm(false);
         setList(listAction(data)[type]());
+        reOpenDialog && toggleForm(true);
     };
 
     const onCheck = id => setList(ListTools.checkOne(id, list));
@@ -90,8 +93,9 @@ export default ({}: Props) => {
                         <th className="row25">
                             <span className="fas fa-check text-info pointer check-all-button" onClick={onCheckAll} />
                         </th>
-                        <th scope="col">Key</th>
-                        <th scope="col">Value</th>
+                        <th scope="col">Ngày</th>
+                        <th scope="col">Mã vận đơn</th>
+                        <th scope="col">Khớp</th>
                         <th scope="col" style={{padding: 8}} className="row80">
                             <button className="btn btn-primary btn-sm btn-block add-button" onClick={() => showForm(0)}>
                                 <span className="fas fa-plus" />
@@ -137,11 +141,11 @@ export default ({}: Props) => {
                 </tfoot>
             </table>
 
-            <MainForm id={modalId} open={formOpen.main} close={() => toggleForm(false)} onChange={onChange}>
+            <VNForm id={modalId} open={formOpen.main} close={() => toggleForm(false)} onChange={onChange}>
                 <button type="button" className="btn btn-light" action="close" onClick={() => toggleForm(false)}>
                     Cancel
                 </button>
-            </MainForm>
+            </VNForm>
         </div>
     );
 };

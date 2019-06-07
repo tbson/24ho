@@ -1,6 +1,8 @@
 // @flow
 import * as React from 'react';
 import {useState, useEffect} from 'react';
+// $FlowFixMe: do not complain about importing node_modules
+import {Link} from 'react-router-dom';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
 import {apiUrls} from '../_data';
@@ -10,7 +12,6 @@ import CNForm from '../CNForm';
 import Row from './Row.js';
 
 type Props = {
-    type: number
 };
 
 export class Service {
@@ -48,16 +49,15 @@ export default ({}: Props) => {
     const listAction = ListTools.actions(list);
 
     const getList = async (url?: string, params?: Object) => {
-        const data = await Service.handleGetList(url, params);
+        const data = await Service.handleGetList(url, {...params, cn_date__isnull: false});
         if (!data) return;
         setList(ListTools.prepare(data.items));
         setLinks(data.links);
     };
 
-    const onChange = (data: TRow, type: string, reOpenDialog: boolean) => {
+    const onChange = (data: TRow, type: string) => {
         toggleForm(false);
         setList(listAction(data)[type]());
-        reOpenDialog && toggleForm(true);
     };
 
     const onCheck = id => setList(ListTools.checkOne(id, list));
@@ -74,7 +74,7 @@ export default ({}: Props) => {
         r && Service.handleBulkRemove(ids).then(data => setList(listAction(data).bulkRemove()));
     };
 
-    const showForm = (id: number) => {
+    const onEdit = (id: number) => {
         toggleForm(true);
         setModalId(id);
     };
@@ -100,13 +100,12 @@ export default ({}: Props) => {
                         <th scope="col" className="right">Rộng</th>
                         <th scope="col" className="right">Cao</th>
                         <th scope="col" className="right">Số kiện</th>
-                        <th scope="col" className="right">Phụ phí CNY</th>
                         <th scope="col">Ghi chú</th>
                         <th scope="col" style={{padding: 8}} className="row80">
-                            <button className="btn btn-primary btn-sm btn-block add-button" onClick={() => showForm(0)}>
+                            <Link className="btn btn-primary btn-sm btn-block add-button" to={`/bol-cn-adding`}>
                                 <span className="fas fa-plus" />
                                 &nbsp; Add
-                            </button>
+                            </Link>
                         </th>
                     </tr>
                 </thead>
@@ -127,7 +126,7 @@ export default ({}: Props) => {
                             key={key}
                             onCheck={onCheck}
                             onRemove={onRemove}
-                            showForm={showForm}
+                            onEdit={onEdit}
                         />
                     ))}
                 </tbody>

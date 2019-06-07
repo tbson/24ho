@@ -14,6 +14,13 @@ import ButtonsBar from 'src/utils/components/form/ButtonsBar';
 import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
 
 export class Service {
+    static firstInputSelector = "[name='uid']";
+
+    static focusFirstInput() {
+        const firstInput = document.querySelector(`form ${Service.firstInputSelector}`);
+        firstInput && firstInput.focus();
+    }
+
     static initialValues = {
         uid: '',
         value: ''
@@ -34,12 +41,10 @@ export class Service {
         return id ? Tools.apiCall(apiUrls.crud + id) : Promise.resolve({ok: true, data: Service.initialValues});
     }
 
-    static handleSubmit(id: number, onChange: Function, reOpenDialog: boolean) {
+    static handleSubmit(id: number, onChange: Function) {
         return (values: Object, {setErrors}: Object) =>
             Service.changeRequest(id ? {...values, id} : values).then(({ok, data}) =>
-                ok
-                    ? onChange({...data, checked: false}, id ? 'update' : 'add', reOpenDialog)
-                    : setErrors(Tools.setFormErrors(data))
+                ok ? onChange({...data, checked: false}, id ? 'update' : 'add') : setErrors(Tools.setFormErrors(data))
             );
     }
 }
@@ -53,11 +58,9 @@ type Props = {
     submitTitle?: string
 };
 export default ({id, open, close, onChange, children, submitTitle = 'Save'}: Props) => {
-    const firstInputSelector = "[name='uid']";
     const {validationSchema, handleSubmit} = Service;
 
     const [openModal, setOpenModal] = useState(false);
-    const [reOpenDialog, setReOpenDialog] = useState(true);
     const [initialValues, setInitialValues] = useState(Service.initialValues);
 
     const retrieveThenOpen = (id: number) =>
@@ -69,32 +72,20 @@ export default ({id, open, close, onChange, children, submitTitle = 'Save'}: Pro
 
     useEffect(() => {
         open ? retrieveThenOpen(id) : setOpenModal(false);
-        setReOpenDialog(id ? false : true);
     }, [open]);
-
-    const focusFirstInput = () => {
-        const firstInput = document.querySelector(`form ${firstInputSelector}`);
-        firstInput && firstInput.focus();
-    };
-
-    const onClick = (handleSubmit: Function) => () => {
-        setReOpenDialog(false);
-        focusFirstInput();
-        handleSubmit();
-    };
 
     return (
         <DefaultModal open={openModal} close={close} title="Variable manager">
             <Formik
                 initialValues={{...initialValues}}
                 validationSchema={validationSchema}
-                onSubmit={handleSubmit(id, onChange, reOpenDialog)}>
+                onSubmit={handleSubmit(id, onChange)}>
                 {({errors, handleSubmit}) => (
                     <Form>
                         <TextInput name="uid" label="Key" autoFocus={true} required={true} />
                         <TextInput name="value" label="Value" required={true} />
                         <FormLevelErrMsg errors={errors.detail} />
-                        <ButtonsBar children={children} submitTitle={submitTitle} onClick={onClick(handleSubmit)} />
+                        <ButtonsBar children={children} submitTitle={submitTitle} onClick={handleSubmit} />
                     </Form>
                 )}
             </Formik>

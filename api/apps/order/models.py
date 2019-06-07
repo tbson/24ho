@@ -107,7 +107,7 @@ class Order(TimeStampedModel):
         self.customer = address.customer
         if not Tools.is_testing():
             self.__dict__.update(OrderUtils.cal_all(self))
-        super().save(*args, **kwargs)
+        super(Order, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.address.title

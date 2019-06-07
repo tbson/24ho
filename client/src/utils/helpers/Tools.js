@@ -71,7 +71,6 @@ export type ObjResp = {
 export type SelectOptions = Array<{value: string | number, label: string}>;
 
 export default class Tools {
-
     static checkDevMode(): boolean {
         const domainArr = window.location.host.split('.');
         const suffix = domainArr[domainArr.length - 1];
@@ -461,7 +460,7 @@ export default class Tools {
 
     static dateTimeFormat(dateStr: string): string {
         const date = moment(dateStr);
-        return date.format('DD/MM/YY - HH:mm')
+        return date.format('DD/MM/YY - HH:mm');
     }
 
     static dateFormat(date: any, format: string = 'dd/mm/yyyy'): string {
@@ -761,5 +760,17 @@ export default class Tools {
 
     static deliveryFeeUnitLabel(type: number): string {
         return type === 1 ? 'Kg' : 'Khối';
+    }
+
+    static nullToDefault(input: Object, defaultValues: Object): Object {
+        const result = {...input};
+        for (let key in result) {
+            if (defaultValues[key] === undefined) {
+                delete result[key];
+            } else {
+                if (result[key] === null) result[key] = defaultValues[key];
+            }
+        }
+        return result;
     }
 }

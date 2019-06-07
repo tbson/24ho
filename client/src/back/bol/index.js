@@ -10,6 +10,7 @@ import 'react-tabs/style/react-tabs.css';
 import NavWrapper from 'src/utils/components/nav_wrapper/';
 import Table from './main_table/';
 import CNTable from './cn_table/';
+import VNTable from './vn_table/';
 
 type Props = {
     match: Object
@@ -21,7 +22,6 @@ const Component = ({match}: Props) => {
     }, []);
 
     const type = match.params.type ? parseInt(match.params.type) : 0;
-
     return (
         <NavWrapper>
             <Tabs defaultIndex={type}>
@@ -38,7 +38,7 @@ const Component = ({match}: Props) => {
                 </TabList>
                 <TabPanel><Table type={0}/></TabPanel>
                 <TabPanel><CNTable type={1}/></TabPanel>
-                <TabPanel>VN</TabPanel>
+                <TabPanel><VNTable type={2}/></TabPanel>
             </Tabs>
         </NavWrapper>
     );

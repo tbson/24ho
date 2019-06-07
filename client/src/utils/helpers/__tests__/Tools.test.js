@@ -1224,3 +1224,32 @@ describe('removeEmptyKey', () => {
         expect(eput).toEqual(output);
     });
 });
+
+describe('nullToDefault', () => {
+    it('Normal case', () => {
+        const defaultValues = {
+            key1: '',
+            key2: '',
+            key3: 0
+        };
+
+        const input = {
+            key1: 'value 1',
+            key2: '',
+            key3: null,
+            key4: undefined,
+            key5: 0,
+            key6: '0'
+        };
+
+        const eput = {
+            key1: 'value 1',
+            key2: '',
+            key3: 0
+        };
+
+        const output = Tools.nullToDefault(input, defaultValues);
+
+        expect(eput).toEqual(output);
+    });
+});

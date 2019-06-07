@@ -4,6 +4,7 @@ import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
 import {apiUrls} from '../_data';
 import type {TRow} from '../_data';
+import {BoolOutput} from 'src/utils/components/TableUtils';
 
 export class Service {
     static removeRequest(id: number): Promise<Object> {
@@ -36,8 +37,15 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
             <th className="row25">
                 <input id={id} className="check" type="checkbox" checked={data.checked} onChange={() => onCheck(id)} />
             </th>
-            <td className="uid">{data.uid}</td>
-            <td className="value">{data.value}</td>
+            <td>{Tools.dateTimeFormat(data.created_at)}</td>
+            <td>{data.uid}</td>
+            <td className="mono right">{data.mass}</td>
+            <td className="mono right">{data.length}</td>
+            <td className="mono right">{data.width}</td>
+            <td className="mono right">{data.height}</td>
+            <td className="mono right">{data.packages}</td>
+            <td className="mono right"><BoolOutput value={data.insurance}/></td>
+            <td>{data.note}</td>
             <td className="center">
                 <a className="editBtn" onClick={() => showForm(data.id)}>
                     <span className="fas fa-edit text-info pointer" />

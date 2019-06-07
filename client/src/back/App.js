@@ -33,6 +33,7 @@ import OrderFee from './order_fee/';
 import DeliveryFee from './delivery_fee/';
 import CountCheck from './count_check/';
 import Bol from './bol/';
+import BolCNAdding from './bol/CNAdding';
 
 import Trans from 'src/utils/helpers/Trans';
 import translations from 'src/utils/translations.json';
@@ -60,6 +61,7 @@ class App extends React.Component<Props> {
                     <PrivateRoute exact path="/order" component={Order} />
                     <PrivateRoute exact path="/order/:id" component={OrderDetail} />
                     <PrivateRoute path="/bol/:type?" component={Bol} />
+                    <PrivateRoute path="/bol-cn-adding" component={BolCNAdding} />
                     <PrivateRoute path="/area" exact component={Area} />
                     <PrivateRoute path="/area/:id" exact component={AreaDetail} />
                     <PrivateRoute path="/address" component={Address} />
