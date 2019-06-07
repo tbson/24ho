@@ -3,6 +3,8 @@ import * as React from 'react';
 import {useState, useEffect, useRef} from 'react';
 // $FlowFixMe: do not complain about formik
 import {Formik, Form} from 'formik';
+// $FlowFixMe: do not complain about formik
+import type { FormikProps } from 'formik';
 // $FlowFixMe: do not complain about Yup
 import * as Yup from 'yup';
 import Tools from 'src/utils/helpers/Tools';
@@ -62,7 +64,9 @@ export class Service {
     }
 
     static retrieveRequest(id: number) {
-        return id ? Tools.apiCall(apiUrls.crud + id, {}, 'GET', false) : Promise.resolve({ok: true, data: Service.initialValues});
+        return id
+            ? Tools.apiCall(apiUrls.crud + id, {}, 'GET', false)
+            : Promise.resolve({ok: true, data: Service.initialValues});
     }
 
     static prepareParams(values: Object): Object {
@@ -112,55 +116,62 @@ type FormPartProps = {
     submitTitle?: string
 };
 
-export const FormPart = ({onSubmit, initialValues, submitTitle = '', children}: FormPartProps) => (
-    <Formik
-        initialValues={initialValues || Service.initialValues}
-        validationSchema={Service.validationSchema}
-        onSubmit={onSubmit}>
-        {({errors, values, handleSubmit, resetForm}) => {
-            window.document.addEventListener(
-                'PREPARE_TO_EDIT',
-                ({detail: uid}) => {
-                    resetForm({...Service.initialValues, uid});
-                    Service.focusFirstInput();
-                },
-                false
-            );
-            return (
-                <Form>
-                    <TextInput
-                        name="uid"
-                        label="Mã vận đơn"
-                        autoFocus={true}
-                        onBlur={Service.checkUID(resetForm)}
-                        required={true}
-                    />
-                    <TextInput name="mass" label="Khối lượng (KG)" />
-                    <div className="row">
-                        <div className="col">
-                            <TextInput name="length" label="Dài (Cm)" />
+export const FormPart = ({onSubmit, initialValues, submitTitle = '', children}: FormPartProps) => { 
+    const formRef = useRef<FormikProps | null>(null);
+    const prepareToEdit = ({detail: uid}) => {
+        formRef.current && formRef.current.resetForm({...Service.initialValues, uid});
+        Service.focusFirstInput();
+    };
+    useEffect(() => {
+        window.document.addEventListener('PREPARE_TO_EDIT', prepareToEdit, false);
+        return () => {
+            window.document.removeEventListener('PREPARE_TO_EDIT', prepareToEdit, false);
+        };
+    }, []);
+
+    return (
+        <Formik
+            ref={formRef}
+            initialValues={initialValues || Service.initialValues}
+            validationSchema={Service.validationSchema}
+            onSubmit={onSubmit}>
+            {({errors, values, handleSubmit, resetForm}) => {
+                return (
+                    <Form>
+                        <TextInput
+                            name="uid"
+                            label="Mã vận đơn"
+                            autoFocus={true}
+                            onBlur={Service.checkUID(resetForm)}
+                            required={true}
+                        />
+                        <TextInput name="mass" label="Khối lượng (KG)" />
+                        <div className="row">
+                            <div className="col">
+                                <TextInput name="length" label="Dài (Cm)" />
+                            </div>
+                            <div className="col">
+                                <TextInput name="width" label="Rộng (Cm)" />
+                            </div>
+                            <div className="col">
+                                <TextInput name="height" label="Cao (Cm)" />
+                            </div>
                         </div>
-                        <div className="col">
-                            <TextInput name="width" label="Rộng (Cm)" />
-                        </div>
-                        <div className="col">
-                            <TextInput name="height" label="Cao (Cm)" />
-                        </div>
-                    </div>
-                    <CheckInput name="shockproof" label="Chống sốc" />
-                    {values.shockproof && <TextInput name="cny_shockproof_fee" label="Phí chống sốc (CNY)" />}
-                    <CheckInput name="wooden_box" label="Đóng gỗ" />
-                    {values.wooden_box && <TextInput name="cny_wooden_box_fee" label="Phí đóng gỗ (CNY)" />}
-                    <TextInput name="note" label="Ghi chú" />
-                    <HiddenInput name="cn_date" />
-                    <HiddenInput name="id" />
-                    <FormLevelErrMsg errors={errors.detail} />
-                    <ButtonsBar children={children} submitTitle={submitTitle} />
-                </Form>
-            );
-        }}
-    </Formik>
-);
+                        <CheckInput name="shockproof" label="Chống sốc" />
+                        {values.shockproof && <TextInput name="cny_shockproof_fee" label="Phí chống sốc (CNY)" />}
+                        <CheckInput name="wooden_box" label="Đóng gỗ" />
+                        {values.wooden_box && <TextInput name="cny_wooden_box_fee" label="Phí đóng gỗ (CNY)" />}
+                        <TextInput name="note" label="Ghi chú" />
+                        <HiddenInput name="cn_date" />
+                        <HiddenInput name="id" />
+                        <FormLevelErrMsg errors={errors.detail} />
+                        <ButtonsBar children={children} submitTitle={submitTitle} />
+                    </Form>
+                );
+            }}
+        </Formik>
+    );
+};
 
 export default ({id, open, close, onChange, children, submitTitle = 'Save'}: Props) => {
     const {validationSchema, handleSubmit} = Service;
