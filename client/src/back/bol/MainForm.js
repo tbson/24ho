@@ -28,7 +28,6 @@ export class Service {
         cny_shockproof_fee: 0,
         cny_wooden_box_fee: 0,
         cny_insurance_value: 0,
-        insurance_note: '',
         note: ''
     };
 
@@ -39,13 +38,12 @@ export class Service {
         width: Yup.number(),
         height: Yup.number(),
         packages: Yup.number(),
-        shockproof: Yup.number(),
-        wooden_box: Yup.number(),
-        insurance: Yup.number(),
+        shockproof: Yup.boolean(),
+        wooden_box: Yup.boolean(),
+        insurance: Yup.boolean(),
         cny_shockproof_fee: Yup.number(),
         cny_wooden_box_fee: Yup.number(),
         cny_insurance_value: Yup.number(),
-        insurance_note: Yup.string(),
         note: Yup.string()
     });
 

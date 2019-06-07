@@ -62,7 +62,7 @@ export class Service {
     }
 
     static retrieveRequest(id: number) {
-        return id ? Tools.apiCall(apiUrls.crud + id) : Promise.resolve({ok: true, data: Service.initialValues});
+        return id ? Tools.apiCall(apiUrls.crud + id, {}, 'GET', false) : Promise.resolve({ok: true, data: Service.initialValues});
     }
 
     static prepareParams(values: Object): Object {
@@ -106,18 +106,26 @@ type Props = {
 };
 
 type FormPartProps = {
+    initialValues?: Object,
     onSubmit: Function,
     children?: React.Node,
     submitTitle?: string
 };
 
-export const FormPart = ({onSubmit, submitTitle = '', children}: FormPartProps) => (
-    <Formik initialValues={Service.initialValues} validationSchema={Service.validationSchema} onSubmit={onSubmit}>
+export const FormPart = ({onSubmit, initialValues, submitTitle = '', children}: FormPartProps) => (
+    <Formik
+        initialValues={initialValues || Service.initialValues}
+        validationSchema={Service.validationSchema}
+        onSubmit={onSubmit}>
         {({errors, values, handleSubmit, resetForm}) => {
-            window.document.addEventListener('PREPARE_TO_EDIT', ({detail: uid}) => {
-                resetForm({...Service.initialValues, uid})
-                Service.focusFirstInput();
-            }, false);
+            window.document.addEventListener(
+                'PREPARE_TO_EDIT',
+                ({detail: uid}) => {
+                    resetForm({...Service.initialValues, uid});
+                    Service.focusFirstInput();
+                },
+                false
+            );
             return (
                 <Form>
                     <TextInput
@@ -178,7 +186,12 @@ export default ({id, open, close, onChange, children, submitTitle = 'Save'}: Pro
 
     return (
         <DefaultModal open={openModal} close={close} title="Bol manager">
-            <FormPart children={children} onSubmit={handleSubmit(onChange)} submitTitle={submitTitle} />
+            <FormPart
+                initialValues={initialValues}
+                children={children}
+                onSubmit={handleSubmit(onChange)}
+                submitTitle={submitTitle}
+            />
         </DefaultModal>
     );
 };

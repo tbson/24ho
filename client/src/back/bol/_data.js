@@ -28,6 +28,7 @@ export type FormValues = {
     width: number,
     height: number,
     packages: number,
+    insurance: boolean,
     note: string
 };
 
