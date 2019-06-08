@@ -12,7 +12,7 @@ class AreaUtils:
 
         def get_data(i: int) -> dict:
             data = {
-                'uid': "uid{}".format(i),
+                'uid': "UID{}".format(i),
                 'title': "title{}".format(i),
                 'unit_price': 1000 + i
             }

@@ -14,7 +14,6 @@ class LandingStatus:
 
 
 class DeliveryFeeType:
-    BLANK = 0
     MAX = 1
     MASS_RANGE = 2
     MASS = 3
@@ -48,13 +47,12 @@ class Bol(TimeStampedModel):
     )
 
     DELIVERY_FEE_TYPE_CHOICES = (
-        (DeliveryFeeType.BLANK, 'Chưa xác định'),
-        (DeliveryFeeType.MAX, 'Max lợi nhuận'),
-        (DeliveryFeeType.MASS_RANGE, 'Thang khối lượng'),
-        (DeliveryFeeType.MASS, 'Đơn giá khối lượng'),
-        (DeliveryFeeType.MASS_CONVERT, 'Khối lượng quy đổi'),
-        (DeliveryFeeType.VOLUME_RANGE, 'Thang mét khối'),
-        (DeliveryFeeType.VOLUME, 'Đơn giá mét khối'),
+        (DeliveryFeeType.MAX, '1. Max lợi nhuận'),
+        (DeliveryFeeType.MASS_RANGE, '2. Thang khối lượng'),
+        (DeliveryFeeType.MASS, '3. Đơn giá khối lượng'),
+        (DeliveryFeeType.MASS_CONVERT, '4. Khối lượng quy đổi'),
+        (DeliveryFeeType.VOLUME_RANGE, '5. Thang mét khối'),
+        (DeliveryFeeType.VOLUME, '6. Đơn giá mét khối'),
     )
 
     order = models.ForeignKey(Order, models.SET_NULL, related_name='order_bols', null=True)
@@ -82,7 +80,7 @@ class Bol(TimeStampedModel):
     mass_range_unit_price = models.IntegerField(default=0)
     volume_range_unit_price = models.IntegerField(default=0)
 
-    delivery_fee_type = models.IntegerField(choices=DELIVERY_FEE_TYPE_CHOICES, default=0)
+    delivery_fee_type = models.IntegerField(choices=DELIVERY_FEE_TYPE_CHOICES, default=1)
 
     delivery_fee = models.IntegerField(default=0)
 
@@ -107,11 +105,15 @@ class Bol(TimeStampedModel):
         if self.address:
             self.address_code = self.address.uid
         elif self.address_code:
+            self.address_code = self.address_code.strip().upper()
             try:
                 address = Address.objects.get(uid=self.address_code)
                 self.address = address
             except Address.DoesNotExist:
                 pass
+
+        if self.address:
+            self.customer = self.address.customer
 
         super(Bol, self).save(*args, **kwargs)
 

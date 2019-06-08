@@ -302,17 +302,6 @@ class ManagerCalDeliveryFee(TestCase):
     def setUp(self):
         self.item = BolUtils.seeding(1, True)
 
-    def test_blank_type(self):
-        self.item.delivery_fee_type = DeliveryFeeType.BLANK
-        self.item.save()
-        output = BolUtils.cal_delivery_fee(self.item)
-        eput = {
-            'mass_range_unit_price': 1.5,
-            'volume_range_unit_price': 3.5,
-            'delivery_fee': 15.75
-        }
-        self.assertEqual(output, eput)
-
     def test_max_type(self):
         self.item.delivery_fee_type = DeliveryFeeType.MAX
         self.item.save()
@@ -391,12 +380,14 @@ class ModelCreate(TestCase):
         item = Bol.objects.create(uid='test', address=self.address)
 
         self.assertEqual(item.address_code, self.address.uid)
+        self.assertEqual(item.customer, self.address.customer)
 
     """ update address """
 
     def test_only_address_code_match(self):
         item = Bol.objects.create(uid='test', address_code=self.address.uid)
         self.assertEqual(item.address, self.address)
+        self.assertEqual(item.customer, self.address.customer)
 
     """ do nothing """
 
