@@ -1,7 +1,6 @@
 from django.db import models
 from utils.models.model import TimeStampedModel
 from apps.category.models import Category
-from django.core.exceptions import ValidationError
 from .utils import ArticleUtils
 # Create your models here.
 
@@ -17,12 +16,12 @@ class Article(TimeStampedModel):
     def save(self, *args, **kwargs):
         self.uid = ArticleUtils.create_slug(self.title)
         if self.slug is not None:
-            self.slug = ArticleUtils.create_slug( self.slug)
+            self.slug = ArticleUtils.create_slug(self.slug)
 
         super(Article, self).save(*args, **kwargs)
         if not self.slug:
             self.slug = ArticleUtils.create_slug(self.title) + '-' + str(self.pk)
-            super().save(*args, **kwargs)
+            super(Article, self).save(*args, **kwargs)
 
     def __str__(self):
         return '{}'.format(self.title)

@@ -5,7 +5,6 @@ class CategoryUtils:
 
     @staticmethod
     def seeding(index: int, single: bool = False, save: bool = True) -> models.QuerySet:
-        from apps.category.serializers import CategoryBaseSr
         from .models import Category
         if index == 0:
             raise Exception('Indext must be start with 1.')
