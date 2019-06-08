@@ -15,6 +15,7 @@ import CheckInput from 'src/utils/components/formik_input/CheckInput';
 import DefaultModal from 'src/utils/components/modal/DefaultModal';
 import ButtonsBar from 'src/utils/components/form/ButtonsBar';
 import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
+import {FormContext} from 'src/utils/components/formik_input/Contexes';
 
 export class Service {
     static initialValues = {
@@ -41,11 +42,12 @@ export class Service {
 
     static handleSubmit(id: number, onChange: Function, reOpenDialog: boolean) {
         return async (values: Object, {setErrors}: Object) => {
+            const uid = values.uid.startsWith('@') ? values.uid.substring(1) : values.uid;
             let params = {
-                uid: values.uid
+                uid
             };
             if (!id) {
-                const resp = await Service.retrieveRequest(values.uid);
+                const resp = await Service.retrieveRequest(uid);
                 if (resp.ok) {
                     id = resp.data.id;
                     params = {...params, vn_date: resp.data.vn_date};
@@ -85,6 +87,7 @@ export default ({id, open, close, onChange, children, submitTitle = 'Save'}: Pro
             setInitialValues({...resp.data});
             setOpenModal(true);
         });
+    let inputTimeout;
 
     useEffect(() => {
         open ? retrieveThenOpen(id) : setOpenModal(false);
@@ -102,19 +105,32 @@ export default ({id, open, close, onChange, children, submitTitle = 'Save'}: Pro
         handleSubmit();
     };
 
+    const handleChange = handleSubmit => value => {
+        clearTimeout(inputTimeout);
+        inputTimeout = setTimeout(() => !value.startsWith('@') && handleSubmit(), 500);
+    };
+
     return (
         <DefaultModal open={openModal} close={close} title="Bol manager">
             <Formik
                 initialValues={{...initialValues}}
                 validationSchema={validationSchema}
                 onSubmit={handleSubmit(id, onChange, reOpenDialog)}>
-                {({errors, values, handleSubmit, resetForm}) => (
-                    <Form>
-                        <TextInput name="uid" label="Mã vận đơn" autoFocus={true} required={true} />
-                        <HiddenInput name="vn_date" />
-                        <FormLevelErrMsg errors={errors.detail} />
-                        <ButtonsBar children={children} submitTitle={submitTitle} onClick={onClick(handleSubmit)} />
-                    </Form>
+                {({errors, values, handleSubmit, resetForm, setFieldValue}) => (
+                    <FormContext.Provider value={{setFieldValue}}>
+                        <Form>
+                            <TextInput
+                                name="uid"
+                                label="Mã vận đơn"
+                                onChange={handleChange(handleSubmit)}
+                                autoFocus={true}
+                                required={true}
+                            />
+                            <HiddenInput name="vn_date" />
+                            <FormLevelErrMsg errors={errors.detail} />
+                            <ButtonsBar children={children} submitTitle={submitTitle} onClick={onClick(handleSubmit)} />
+                        </Form>
+                    </FormContext.Provider>
                 )}
             </Formik>
         </DefaultModal>

@@ -1,8 +1,10 @@
 // @flow
 import * as React from 'react';
+import {useContext} from 'react';
 // $FlowFixMe: do not complain about hooks
 import {Field, ErrorMessage} from 'formik';
 import Label from './Label';
+import {FormContext} from 'src/utils/components/formik_input/Contexes';
 
 type Props = {
     name: string,
@@ -11,7 +13,8 @@ type Props = {
     autoFocus?: boolean,
     required?: boolean,
     disabled?: boolean,
-    onBlur?: Function
+    onBlur?: Function,
+    onChange?: Function
 };
 
 export default ({
@@ -21,8 +24,19 @@ export default ({
     autoFocus = false,
     required = false,
     disabled = false,
-    onBlur = () => {}
+    onBlur,
+    onChange
 }: Props) => {
+    const {setFieldValue} = useContext(FormContext);
+    const events = {};
+    if (typeof onBlur === 'function') events.onBlur = onBlur;
+    if (typeof onChange === 'function' && typeof setFieldValue === 'function') {
+        events.onChange = e => {
+            const {value} = e.target;
+            setFieldValue(name, e.target.value);
+            onChange(value);
+        };
+    }
     return (
         <div className={'form-group'}>
             <Label name={name} label={label} required={required} />
@@ -33,7 +47,7 @@ export default ({
                 autoFocus={autoFocus}
                 disabled={disabled}
                 className="form-control"
-                onBlur={onBlur}
+                {...events}
             />
             <ErrorMessage name={name} className="red" component="div" />
         </div>
