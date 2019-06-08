@@ -49,6 +49,7 @@ export const STATUS = {
 
 export type OrderType = {
     id: number,
+    uid: string,
     created_at: string,
     status: number,
     thumbnail: string,
@@ -71,6 +72,7 @@ export type OrderType = {
 
 export type OrderItemType = {
     id: number,
+    uid: string,
     created_at: string,
     title: string,
     image: string,

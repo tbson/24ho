@@ -43,7 +43,7 @@ const OrderInfo = ({data}: OrderInfoType) => {
                         </td>
                         <td>
                             <div>
-                                <strong>__UID__</strong>
+                                <strong>{data.uid}</strong>
                                 &nbsp;/&nbsp;
                                 <span>{data.customer_name}</span>
                             </div>

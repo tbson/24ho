@@ -19,7 +19,7 @@ export default ({data, addresses, onPartialChange}: Props) => {
                     <td>
                         <span>Thông tin đơn hàng:</span>
                         &nbsp;
-                        <span>{data.uid || '__UID__'}</span>
+                        <span>{data.uid}</span>
                     </td>
                     <td>
                         <span>Tên shop:</span>
