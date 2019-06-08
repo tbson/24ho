@@ -4,8 +4,8 @@ from apps.customer.models import Customer
 
 
 class Address(models.Model):
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='customer')
-    area = models.ForeignKey(Area, on_delete=models.CASCADE, related_name='area')
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='addresses')
+    area = models.ForeignKey(Area, on_delete=models.CASCADE, related_name='addresses')
     uid = models.CharField(max_length=250, unique=True)
     title = models.CharField(max_length=250)
     phone = models.CharField(max_length=250, blank=True)
