@@ -1,8 +1,27 @@
+from typing import Tuple
+import uuid
 import json
+import re
+from django.utils import timezone
 from django.db import models
 from django.db.models import Sum, F
 from apps.address.utils import AddressUtils
 from apps.order_fee.utils import OrderFeeUtils
+
+MONTH_LETTERS = {
+    '01': 'A',
+    '02': 'B',
+    '03': 'C',
+    '04': 'D',
+    '05': 'E',
+    '06': 'F',
+    '07': 'G',
+    '08': 'H',
+    '09': 'I',
+    '10': 'J',
+    '11': 'K',
+    '12': 'L'
+}
 
 
 class OrderUtils:
@@ -18,6 +37,7 @@ class OrderUtils:
 
         def get_data(i: int) -> dict:
             data = {
+                'uid': str(uuid.uuid4()),
                 'address': address.id,
                 'shop_link': "shop_link{}".format(i),
                 'shop_nick': "shop_nick{}".format(i),
@@ -25,6 +45,7 @@ class OrderUtils:
                 'rate': 3400,
                 'real_rate': 3300
             }
+
             if save is False:
                 return data
 
@@ -204,3 +225,28 @@ class OrderUtils:
         result['statistics'] = OrderUtils.cal_statistics(item)
 
         return result
+
+    @staticmethod
+    def get_next_uid(address: models.QuerySet) -> str:
+        last_uid, address_code, date = OrderUtils.prepare_next_uid(address)
+        date_part = OrderUtils.get_str_day_month(date)
+        order_part = OrderUtils.get_next_uid_order(last_uid)
+        return "{}{}{}".format(address_code, date_part, order_part)
+
+    @staticmethod
+    def prepare_next_uid(address: models.QuerySet) -> Tuple[str, str, timezone.datetime]:
+        from .models import Order
+        last_item = Order.objects.filter(address=address).order_by('-id').first()
+        last_uid = last_item.uid if last_item is not None else ''
+        date = timezone.now()
+        return (last_uid, address.uid, date)
+
+    @staticmethod
+    def get_str_day_month(date: timezone.datetime = timezone.now()) -> str:
+        dd = date.strftime("%d")
+        m = MONTH_LETTERS[date.strftime("%m")]
+        return "{}{}".format(dd, m)
+
+    @staticmethod
+    def get_next_uid_order(uid: str) -> int:
+        return int(re.split('[A-L]', uid)[-1]) + 1 if uid else 1

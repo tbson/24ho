@@ -25,7 +25,7 @@ class AddressManagerTestCase(TestCase):
             format='json'
         )
         resp = resp.json()
-        self.assertEqual(resp['uid'], '1uid10')
+        self.assertEqual(resp['uid'], '1UID10')
 
         item2 = AddressUtils.seeding(2, True, False)
         resp = self.client.post(
@@ -34,7 +34,7 @@ class AddressManagerTestCase(TestCase):
             format='json'
         )
         resp = resp.json()
-        self.assertEqual(resp['uid'], '1uid11')
+        self.assertEqual(resp['uid'], '1UID11')
 
     def test_match_uid_first_order(self):
         customerId = 1

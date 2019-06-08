@@ -39,20 +39,20 @@ class AddressUtils:
         return get_data(index) if single is True else get_list_data(index)
 
     @staticmethod
-    def match_uid(customerId: int, areaCode: str, lastUid: str) -> str:
+    def match_uid(customer_id: int, area_code: str, last_uid: str) -> str:
         order = 0
-        if lastUid:
-            order = int(lastUid.split(areaCode)[1]) + 1
-        return "{}{}{}".format(customerId, areaCode, order)
+        if last_uid:
+            order = int(last_uid.split(area_code)[1]) + 1
+        return "{}{}{}".format(customer_id, area_code, order)
 
     @staticmethod
-    def generate_uid(customerId: int, areaId: int) -> str:
+    def generate_uid(customer_id: int, area_id: int) -> str:
         from .models import Address
 
-        area = Area.objects.get(pk=areaId)
-        areaCode = area.uid
-        lastAddress = Address.objects.filter(customer_id=customerId, area_id=area.pk).order_by('-id')
-        lastUid = ''
-        if lastAddress.count():
-            lastUid = lastAddress.first().uid
-        return AddressUtils.match_uid(customerId, areaCode, lastUid)
+        area = Area.objects.get(pk=area_id)
+        area_code = area.uid
+        last_address = Address.objects.filter(customer_id=customer_id, area_id=area.pk).order_by('-id')
+        last_uid = ''
+        if last_address.count():
+            last_uid = last_address.first().uid
+        return AddressUtils.match_uid(customer_id, area_code, last_uid)

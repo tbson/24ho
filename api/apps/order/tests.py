@@ -1,5 +1,7 @@
+import uuid
 import logging
 import json
+from django.utils import timezone
 from unittest.mock import patch, MagicMock
 from rest_framework.test import APIClient
 from django.test import TestCase
@@ -590,11 +592,66 @@ class UtilsCalStatistics(TestCase):
         self.assertEqual(output, eput)
 
 
+class UtilsGetNextUidOrder(TestCase):
+    def test_normal_case(self):
+        uid = '1HN001A5'
+        output = OrderUtils.get_next_uid_order(uid)
+        eput = 6
+        self.assertEqual(output, eput)
+
+    def test_missing_uid(self):
+        uid = ''
+        output = OrderUtils.get_next_uid_order(uid)
+        eput = 1
+        self.assertEqual(output, eput)
+
+
+class UtilsGetStrDayMonth(TestCase):
+    def test_normal_case(self):
+        date = timezone.datetime(2019, 9, 17)
+        output = OrderUtils.get_str_day_month(date)
+        eput = '17I'
+        self.assertEqual(output, eput)
+
+
+class UtilsPrepareNextUid(TestCase):
+    def test_normal_case(self):
+        address = AddressUtils.seeding(1, True)
+        address.uid = '1HN0'
+        address.save()
+
+        order = OrderUtils.seeding(1, True)
+        order.address = address
+        order.uid = '1HN001A5'
+        order.save()
+
+        date_now = timezone.now()
+        uid, address_code, date = OrderUtils.prepare_next_uid(address)
+
+        self.assertEqual(uid, order.uid)
+        self.assertEqual(address_code, address.uid)
+        self.assertEqual(date.day, date_now.day)
+        self.assertEqual(date.month, date_now.month)
+
+
+class UtilsGetNextUid(TestCase):
+    @patch(
+        'apps.order.utils.OrderUtils.prepare_next_uid',
+        MagicMock(return_value=('1HN001A5', '1HN0', timezone.datetime(2019, 9, 17)))
+    )
+    def test_normal_case(self):
+        address = AddressUtils.seeding(1, True)
+        output = OrderUtils.get_next_uid(address)
+        eput = '1HN017I6'
+        self.assertEqual(output, eput)
+
+
 class Serializer(TestCase):
     def test_normal_case(self):
         address = AddressUtils.seeding(1, True)
         customer = CustomerUtils.seeding(2, True)
         data = {
+            'uid': str(uuid.uuid4()),
             'address': address.id,
             'shop_link': 'link1',
             'site': 'TAOBAO',
@@ -629,6 +686,7 @@ class Serializer(TestCase):
         address = AddressUtils.seeding(1, True)
 
         data = {
+            'uid': str(uuid.uuid4()),
             'address': address.id,
             'shop_link': 'link1',
             'site': 'TAOBAO',
@@ -651,6 +709,7 @@ class Serializer(TestCase):
         approver = StaffUtils.seeding(4, True)
 
         data = {
+            'uid': str(uuid.uuid4()),
             'address': address.id,
             'sale': sale.id,
             'cust_care': cust_care.id,

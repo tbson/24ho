@@ -15,9 +15,10 @@ class OrderBaseSr(ModelSerializer):
     class Meta:
         model = Order
         exclude = ()
-        read_only_fields = ('id',)
+        read_only_fields = ('id', 'uid', )
         extra_kwargs = {
-            'customer': {'required': False}
+            'customer': {'required': False},
+            'uid': {'required': False}
         }
 
     def get_vnd_total_discount(self, obj):

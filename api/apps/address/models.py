@@ -11,6 +11,13 @@ class Address(models.Model):
     phone = models.CharField(max_length=250, blank=True)
     fullname = models.CharField(max_length=250, blank=True)
 
+    def save(self, *args, **kwargs):
+        from .utils import AddressUtils
+
+        self.uid = AddressUtils.generate_uid(self.customer.pk, self.area.pk)
+
+        super(Address, self).save(*args, **kwargs)
+
     def __str__(self):
         return '{} - {}'.format(self.area, self.title)
 

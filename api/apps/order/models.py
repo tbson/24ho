@@ -48,6 +48,8 @@ class Order(TimeStampedModel):
         (Status.DISCARD, 'Huỷ'),
     )
 
+    uid = models.CharField(max_length=50, unique=True)
+
     address = models.ForeignKey(Address, models.PROTECT, related_name='address_orders')
     customer = models.ForeignKey(Customer, models.PROTECT, related_name='customer_orders')
 
@@ -102,6 +104,8 @@ class Order(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         from .utils import OrderUtils
+        if self._state.adding and self.address and not self.uid:
+            self.uid = OrderUtils.get_next_uid(self.address)
 
         address = self.address
         self.customer = address.customer
