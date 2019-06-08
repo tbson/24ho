@@ -14,12 +14,8 @@ def imgDest(instance, filename):
 
 
 class Customer(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
-    user = models.OneToOneField(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        primary_key=True
-    )
     fingerprint = models.CharField(max_length=250, blank=True)
 
     reset_password_token = models.CharField(max_length=250, blank=True)
@@ -45,10 +41,6 @@ class Customer(models.Model):
     is_lock = models.BooleanField(default=False)
     avatar = models.ImageField(upload_to=imgDest, blank=True)
     shopping_cart = JSONField(default=dict)
-
-    @property
-    def id(self):
-        return self.user_id
 
     def save(self, *args, **kwargs):
 
