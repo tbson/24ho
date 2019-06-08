@@ -5,11 +5,13 @@ import {useState, useEffect, useRef} from 'react';
 import {Formik, Form} from 'formik';
 // $FlowFixMe: do not complain about Yup
 import * as Yup from 'yup';
+import {DeliveryFeeTypeOptions} from './_data';
 import Tools from 'src/utils/helpers/Tools';
 import ErrMsgs from 'src/utils/helpers/ErrMsgs';
 import {apiUrls} from './_data';
 import TextInput from 'src/utils/components/formik_input/TextInput';
 import CheckInput from 'src/utils/components/formik_input/CheckInput';
+import SelectInput from 'src/utils/components/formik_input/SelectInput';
 import DefaultModal from 'src/utils/components/modal/DefaultModal';
 import ButtonsBar from 'src/utils/components/form/ButtonsBar';
 import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
@@ -17,6 +19,7 @@ import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
 export class Service {
     static initialValues = {
         uid: '',
+        address_code: '',
         mass: 0,
         length: 0,
         width: 0,
@@ -28,11 +31,15 @@ export class Service {
         cny_shockproof_fee: 0,
         cny_wooden_box_fee: 0,
         cny_insurance_value: 0,
+        delivery_fee_type: 1,
+        mass_unit_price: 0,
+        volume_unit_price: 0,
         note: ''
     };
 
     static validationSchema = Yup.object().shape({
         uid: Yup.string().required(ErrMsgs.REQUIRED),
+        address_code: Yup.string(),
         mass: Yup.number(),
         length: Yup.number(),
         width: Yup.number(),
@@ -44,6 +51,9 @@ export class Service {
         cny_shockproof_fee: Yup.number(),
         cny_wooden_box_fee: Yup.number(),
         cny_insurance_value: Yup.number(),
+        delivery_fee_type: Yup.number(),
+        mass_unit_price: Yup.number(),
+        volume_unit_price: Yup.number(),
         note: Yup.string()
     });
 
@@ -114,25 +124,63 @@ export default ({id, open, close, onChange, children, submitTitle = 'Save'}: Pro
                 onSubmit={handleSubmit(id, onChange, reOpenDialog)}>
                 {({errors, values, handleSubmit}) => (
                     <Form>
-                        <TextInput name="uid" label="Mã vận đơn" autoFocus={true} required={true} />
-                        <TextInput name="mass" label="Khối lượng (KG)" />
                         <div className="row">
                             <div className="col">
-                                <TextInput name="length" label="Dài (Cm)" />
+                                <TextInput name="uid" label="Mã vận đơn" autoFocus={true} required={true} />
                             </div>
                             <div className="col">
-                                <TextInput name="width" label="Rộng (Cm)" />
-                            </div>
-                            <div className="col">
-                                <TextInput name="height" label="Cao (Cm)" />
+                                <TextInput name="address_code" label="Mã địa chỉ" />
                             </div>
                         </div>
-                        <CheckInput name="shockproof" label="Chống sốc" />
-                        {values.shockproof && <TextInput name="cny_shockproof_fee" label="Phí chống sốc (CNY)" />}
-                        <CheckInput name="wooden_box" label="Đóng gỗ" />
-                        {values.wooden_box && <TextInput name="cny_wooden_box_fee" label="Phí đóng gỗ (CNY)" />}
-                        <CheckInput name="insurance" label="Bảo hiểm" />
-                        {values.insurance && <TextInput name="cny_insurance_value" label="Giá trị bảo hiểm (CNY)" />}
+                        <TextInput name="mass" type="number" label="Khối lượng (KG)" />
+                        <div className="row">
+                            <div className="col">
+                                <TextInput name="length" type="number" label="Dài (Cm)" />
+                            </div>
+                            <div className="col">
+                                <TextInput name="width" type="number" label="Rộng (Cm)" />
+                            </div>
+                            <div className="col">
+                                <TextInput name="height" type="number" label="Cao (Cm)" />
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="col">
+                                <TextInput name="mass_unit_price" type="number" label="Đơn giá theo Kg (CNY)" />
+                            </div>
+                            <div className="col">
+                                <TextInput name="volume_unit_price" type="number" label="Đơn giá theo Khối (CNY)" />
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="col">
+                                <CheckInput name="shockproof" label="Chống sốc" />
+                                {values.shockproof && (
+                                    <TextInput name="cny_shockproof_fee" type="number" label="Phí chống sốc (CNY)" />
+                                )}
+                            </div>
+                            <div className="col">
+                                <CheckInput name="wooden_box" label="Đóng gỗ" />
+                                {values.wooden_box && (
+                                    <TextInput name="cny_wooden_box_fee" type="number" label="Phí đóng gỗ (CNY)" />
+                                )}
+                            </div>
+                            <div className="col">
+                                <CheckInput name="insurance" label="Bảo hiểm" />
+                                {values.insurance && (
+                                    <TextInput
+                                        name="cny_insurance_value"
+                                        type="number"
+                                        label="Giá trị bảo hiểm (CNY)"
+                                    />
+                                )}
+                            </div>
+                        </div>
+                        <SelectInput
+                            name="delivery_fee_type"
+                            options={DeliveryFeeTypeOptions}
+                            label="Cách tính phí vận chuyển"
+                        />
                         <TextInput name="note" label="Ghi chú" />
                         <FormLevelErrMsg errors={errors.detail} />
                         <ButtonsBar children={children} submitTitle={submitTitle} onClick={onClick(handleSubmit)} />

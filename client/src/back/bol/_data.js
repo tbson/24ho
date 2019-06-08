@@ -14,6 +14,15 @@ const rawApiUrls = [
 
 export const apiUrls = Tools.getApiUrls(rawApiUrls);
 
+export const DeliveryFeeTypeOptions = [
+    {value: 1, label: '1. Max lợi nhuận'},
+    {value: 2, label: '2. Thang khối lượng'},
+    {value: 3, label: '3. Đơn giá khối lượng'},
+    {value: 4, label: '4. Khối lượng quy đổi'},
+    {value: 5, label: '5. Thang mét khối'},
+    {value: 6, label: '6. Đơn giá mét khối'}
+];
+
 export type FormOpenType = {
     main: boolean
 };
