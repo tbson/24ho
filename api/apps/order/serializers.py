@@ -1,4 +1,5 @@
-from rest_framework.serializers import ModelSerializer, SerializerMethodField
+from rest_framework.serializers import ModelSerializer, CharField, SerializerMethodField
+from rest_framework.validators import UniqueValidator
 from .models import Order
 from utils.helpers.tools import Tools
 
@@ -20,6 +21,13 @@ class OrderBaseSr(ModelSerializer):
             'customer': {'required': False},
             'uid': {'required': False}
         }
+
+    purchase_code = CharField(validators=[
+        UniqueValidator(
+            queryset=Order.objects.all(),
+            message="Duplicate purchase code",
+        )]
+    )
 
     def get_vnd_total_discount(self, obj):
         from .utils import OrderUtils

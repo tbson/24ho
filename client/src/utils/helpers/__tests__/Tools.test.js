@@ -282,12 +282,12 @@ test('errorMessageProcessing', () => {
     eput = 'hello<br/>world';
     expect(output).toEqual(eput);
 
-    input = {detail: 'hello'};
+    input = {random1: 'hello'};
     output = Tools.errorMessageProcessing(input);
     eput = 'hello';
     expect(output).toEqual(eput);
 
-    input = {detail: ['hello', 'world']};
+    input = {random2: ['hello', 'world']};
     output = Tools.errorMessageProcessing(input);
     eput = 'hello<br/>world';
     expect(output).toEqual(eput);

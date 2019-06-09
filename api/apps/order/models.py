@@ -54,6 +54,7 @@ class Order(TimeStampedModel):
     customer = models.ForeignKey(Customer, models.PROTECT, related_name='customer_orders')
 
     thumbnail = models.CharField(max_length=500, blank=True)
+    purchase_code = models.CharField(max_length=250, blank=True)
 
     shop_link = models.CharField(max_length=250)
     shop_nick = models.CharField(max_length=250, blank=True)
@@ -128,4 +129,5 @@ class Order(TimeStampedModel):
             ("change_count_check_fee_input_order", "Can change count check fee"),
             ("change_cny_inland_delivery_fee_order", "Can change inland delivery fee"),
             ("change_order_fee_factor_order", "Can change order fee factor"),
+            ("change_purchase_code_order", "Can change purchase code"),
         )

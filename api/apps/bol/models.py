@@ -128,7 +128,8 @@ class Bol(TimeStampedModel):
 class BolFilter(filters.FilterSet):
     cn_date__isnull = filters.BooleanFilter(field_name="cn_date", lookup_expr='isnull')
     vn_date__isnull = filters.BooleanFilter(field_name="vn_date", lookup_expr='isnull')
+    order_id = filters.NumberFilter(field_name="order_id", lookup_expr='exact')
 
     class Meta:
         model = Bol
-        fields = ['cn_date__isnull', 'vn_date__isnull']
+        fields = ['order_id', 'cn_date__isnull', 'vn_date__isnull']

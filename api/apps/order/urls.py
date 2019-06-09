@@ -44,6 +44,10 @@ change_order_fee_factor = OrderViewSet.as_view({
     'put': 'change_order_fee_factor',
 })
 
+change_purchase_code = OrderViewSet.as_view({
+    'put': 'change_purchase_code',
+})
+
 app_name = os.getcwd().split(os.sep)[-1]
 urlpatterns = (
     path('', base),
@@ -55,4 +59,5 @@ urlpatterns = (
     path('<int:pk>/change-count-check-fee-input/', change_count_check_fee_input),
     path('<int:pk>/change-cny-inland-delivery-fee/', change_cny_inland_delivery_fee),
     path('<int:pk>/change-order-fee-factor/', change_order_fee_factor),
+    path('<int:pk>/change-purchase-code/', change_purchase_code),
 )

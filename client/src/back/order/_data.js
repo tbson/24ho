@@ -15,7 +15,8 @@ const rawApiUrls = [
             change_voucher: 'pk/change-voucher',
             change_count_check_fee_input: 'pk/change-count-check-fee-input',
             change_cny_inland_delivery_fee: 'pk/change-cny-inland-delivery-fee',
-            change_order_fee_factor: 'pk/change-order-fee-factor'
+            change_order_fee_factor: 'pk/change-order-fee-factor',
+            change_purchase_code: 'pk/change-purchase-code'
         }
     },
     {
@@ -50,6 +51,7 @@ export const STATUS = {
 export type OrderType = {
     id: number,
     uid: string,
+    purchase_code: string,
     created_at: string,
     status: number,
     thumbnail: string,
@@ -73,6 +75,7 @@ export type OrderType = {
 export type OrderItemType = {
     id: number,
     uid: string,
+    purchase_code: string,
     created_at: string,
     title: string,
     image: string,

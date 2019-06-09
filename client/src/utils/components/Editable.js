@@ -61,11 +61,11 @@ export default class TextInput extends React.Component<Props, State> {
         const params = Tools.formDataToObj(new FormData(e.target));
         Tools.apiCall(endPoint, params, 'PUT')
             .then(resp => {
+                if (!resp.ok) return Promise.reject(resp.data);
                 onChange(resp.data);
             })
             .catch(err => {
-                // Popup error here
-                console.log(err);
+                Tools.popMessage(err, 'error');
             })
             .finally(() => {
                 this.setState({isOpen: false});

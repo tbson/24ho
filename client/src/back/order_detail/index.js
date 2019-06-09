@@ -14,6 +14,7 @@ import Accounting from './Accounting';
 import OrderItemTable from 'src/back/order_item_table';
 import Tools from 'src/utils/helpers/Tools';
 import {apiUrls} from 'src/back/order/_data';
+import BolTable from 'src/back/bol/main_table/';
 
 export class Service {
     static retrieveRequest(id: number) {
@@ -74,7 +75,9 @@ const Detail = ({match}) => {
                         <TabPanel>
                             <OrderItemTable order_id={id} rate={data.rate} />
                         </TabPanel>
-                        <TabPanel>Vận Đơn</TabPanel>
+                        <TabPanel>
+                            <BolTable order_id={id || 0}/>
+                        </TabPanel>
                     </Tabs>
                 </div>
                 <div className="col-md-3 no-padding-left">

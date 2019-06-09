@@ -32,46 +32,67 @@ type OptionsType = {
 type OrderInfoType = {
     data: OrderType
 };
-const OrderInfo = ({data}: OrderInfoType) => {
+const OrderInfo = ({data: _data}: OrderInfoType) => {
+    const [data, setData] = useState(_data);
     return (
         <>
             <table style={{width: '100%'}}>
                 <tbody>
                     <tr>
-                        <td style={{width: 100}}>
-                            <img src={data.thumbnail} style={{width: 100}} />
+                        <td style={{width: 83}}>
+                            <img src={data.thumbnail} style={{width: 83}} />
                         </td>
                         <td>
-                            <div>
-                                <strong>{data.uid}</strong>
-                                &nbsp;/&nbsp;
-                                <span>{data.customer_name}</span>
-                            </div>
-                            <div>
-                                <span>Ngày tạo:</span>
-                                &nbsp;
-                                <span>{Tools.dateTimeFormat(data.created_at)}</span>
-                            </div>
-                            <div>
-                                <span>Shop:</span>
-                                &nbsp;
-                                <a href={data.shop_link}>{data.shop_nick}</a>
-                            </div>
-                            <div>
-                                <button type="button" className="btn btn-primary btn-sm">
-                                    <strong>{data.statistics.links || 0}</strong> <span>Link</span>
-                                </button>
-                                &nbsp;
-                                <button type="button" className="btn btn-danger btn-sm">
-                                    <strong>{data.statistics.quantity || 0}</strong> <span>SP</span>
-                                </button>
-                                &nbsp;
-                                <button type="button" className="btn btn-warning btn-sm">
-                                    <strong>{data.statistics.packages || 0}</strong> <span>Kiện</span>
-                                </button>
-                            </div>
-                            <div>
-                                <strong>{STATUS[data.status]}</strong>
+                            <div className="row">
+                                <div className="col">
+                                    <div>
+                                        <Link className="editBtn" to={`/order/${data.id}`}>
+                                            <strong>{data.uid}</strong>
+                                        </Link>
+                                        &nbsp;&rarr;&nbsp;
+                                        <span>{data.customer_name}</span>
+                                    </div>
+                                    <div>
+                                        <span>Ngày tạo:</span>
+                                        &nbsp;
+                                        <span>{Tools.dateTimeFormat(data.created_at)}</span>
+                                    </div>
+                                    <div>
+                                        <span>Shop:</span>
+                                        &nbsp;
+                                        <a href={data.shop_link}>{data.shop_nick}</a>
+                                    </div>
+                                    <div>
+                                        <button type="button" className="btn btn-primary btn-sm">
+                                            <strong>{data.statistics.links || 0}</strong> <span>Link</span>
+                                        </button>
+                                        &nbsp;
+                                        <button type="button" className="btn btn-danger btn-sm">
+                                            <strong>{data.statistics.quantity || 0}</strong> <span>SP</span>
+                                        </button>
+                                        &nbsp;
+                                        <button type="button" className="btn btn-warning btn-sm">
+                                            <strong>{data.statistics.packages || 0}</strong> <span>Kiện</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div className="col">
+                                    <div>
+                                        <span>Trạng thái: </span>
+                                        <strong>{STATUS[data.status]}</strong>
+                                    </div>
+                                    <div>
+                                        <span>Mã giao dịch: </span>
+                                        <Editable
+                                            onChange={setData}
+                                            name="value"
+                                            value={data.purchase_code}
+                                            endPoint={apiUrls.change_purchase_code.replace('/pk-', `/${data.id}/`)}
+                                            placeholder="Mã giao dịch">
+                                            <span>{data.purchase_code || 'Chưa có'}</span>
+                                        </Editable>
+                                    </div>
+                                </div>
                             </div>
                         </td>
                     </tr>

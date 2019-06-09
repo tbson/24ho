@@ -380,6 +380,35 @@ class PartialUpdates(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['order_fee_factor'], value)
 
+    def test_purchase_code(self):
+        value = 'abcdef'
+
+        # Update not exist
+        response = self.client.put(
+            "/api/v1/order/{}/change-purchase-code/".format(0),
+            {},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 404)
+
+        # Update normal value
+        response = self.client.put(
+            "/api/v1/order/{}/change-purchase-code/".format(self.item.pk),
+            {"value": value},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['purchase_code'], value)
+
+        # Update missing value -> do nothing
+        response = self.client.put(
+            "/api/v1/order/{}/change-purchase-code/".format(self.item.pk),
+            {},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['purchase_code'], value)
+
 
 class UtilsSumCny(TestCase):
     def test_normal_case(self):

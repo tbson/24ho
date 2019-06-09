@@ -7,6 +7,8 @@ import kebabCase from 'lodash/kebabCase';
 // $FlowFixMe: do not complain about importing node_modules
 import isPlainObject from 'lodash/isPlainObject';
 // $FlowFixMe: do not complain about importing node_modules
+import flattenDeep from 'lodash/flattenDeep';
+// $FlowFixMe: do not complain about importing node_modules
 import {toast} from 'react-toastify';
 // $FlowFixMe: do not complain about importing node_modules
 import 'react-toastify/dist/ReactToastify.css';
@@ -282,15 +284,9 @@ export default class Tools {
             // If message is ARRAY
             return String(input.join('<br/>'));
         } else if (typeof input === 'object') {
-            // If detail key exist with string style
-            if (typeof input.detail === 'string') {
-                return input.detail;
-            }
-            // If detail key exist with list style
-            if (Array.isArray(input.detail)) {
-                return String(input.detail.join('<br/>'));
-            }
-            return '';
+            return flattenDeep(Object.values(input).filter(item => Array.isArray(item) || typeof item === 'string')).join(
+                '<br/>'
+            );
         } else {
             return '';
         }
