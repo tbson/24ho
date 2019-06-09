@@ -20,6 +20,20 @@ class Status:
     DISCARD = 10
 
 
+STATUS_CHOICES = (
+    (Status.NEW, 'Chờ duyệt'),
+    (Status.APPROVED, 'Đã duyệt'),
+    (Status.DEBT, 'Chờ thanh toán'),
+    (Status.PAID, 'Đã thanh toán'),
+    (Status.DISPATCHED, 'Đã phát hàng'),
+    (Status.CN_STORE, 'Về kho TQ'),
+    (Status.VN_STORE, 'Về kho VN'),
+    (Status.EXPORTED, 'Đã xuất hàng'),
+    (Status.DONE, 'Hoàn thành'),
+    (Status.DISCARD, 'Huỷ'),
+)
+
+
 class OrderManager(models.Manager):
 
     def re_cal(self, item: models.QuerySet) -> models.QuerySet:
@@ -34,19 +48,6 @@ class OrderManager(models.Manager):
 
 
 class Order(TimeStampedModel):
-
-    STATUS_CHOICES = (
-        (Status.NEW, 'Chờ duyệt'),
-        (Status.APPROVED, 'Đã duyệt'),
-        (Status.DEBT, 'Chờ thanh toán'),
-        (Status.PAID, 'Đã thanh toán'),
-        (Status.DISPATCHED, 'Đã phát hàng'),
-        (Status.CN_STORE, 'Về kho TQ'),
-        (Status.VN_STORE, 'Về kho VN'),
-        (Status.EXPORTED, 'Đã xuất hàng'),
-        (Status.DONE, 'Hoàn thành'),
-        (Status.DISCARD, 'Huỷ'),
-    )
 
     uid = models.CharField(max_length=50, unique=True)
 

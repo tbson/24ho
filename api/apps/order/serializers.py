@@ -1,6 +1,6 @@
 from rest_framework.serializers import ModelSerializer, CharField, SerializerMethodField
 from rest_framework.validators import UniqueValidator
-from .models import Order
+from .models import Order, STATUS_CHOICES
 from utils.helpers.tools import Tools
 
 
@@ -12,6 +12,7 @@ class OrderBaseSr(ModelSerializer):
     cust_care_name = SerializerMethodField()
     approver_name = SerializerMethodField()
     address_name = SerializerMethodField()
+    status_name = SerializerMethodField()
 
     class Meta:
         model = Order
@@ -59,3 +60,6 @@ class OrderBaseSr(ModelSerializer):
         if not obj.address:
             return ''
         return "{} - {}".format(obj.address.uid, obj.address.title)
+
+    def get_status_name(self, obj):
+        return dict(STATUS_CHOICES).get(obj.status, '')

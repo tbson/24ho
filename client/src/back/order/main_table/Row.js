@@ -79,7 +79,7 @@ const OrderInfo = ({data: _data}: OrderInfoType) => {
                                 <div className="col">
                                     <div>
                                         <span>Trạng thái: </span>
-                                        <strong>{STATUS[data.status]}</strong>
+                                        <strong>{data.status_name}</strong>
                                     </div>
                                     <div>
                                         <span>Mã giao dịch: </span>
