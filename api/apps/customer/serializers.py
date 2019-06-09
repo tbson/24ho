@@ -1,8 +1,5 @@
 from rest_framework.serializers import ModelSerializer
 from rest_framework.serializers import SerializerMethodField
-from django.contrib.auth.models import Group
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.auth.models import Permission
 from .models import Customer
 from apps.staff.utils import StaffUtils
 from utils.serializers.user import UserRetrieveSr
@@ -35,20 +32,6 @@ class CustomerBaseSr(ModelSerializer):
 
     def get_user_data(self, obj):
         return UserRetrieveSr(obj.user).data
-
-    def create(self, validated_data):
-        instance = Customer.objects.create(**validated_data)
-
-        customerGroup, _ = Group.objects.get_or_create(**{'name': 'Customer'})
-        contentTypes = ContentType.objects.filter(model__in=['address', 'order'])
-        contentTypes = [item.pk for item in contentTypes]
-        permissions = Permission.objects.filter(content_type_id__in=contentTypes)
-        for permission in permissions:
-            customerGroup.permissions.add(permission)
-
-        instance.user.groups.add(customerGroup)
-
-        return instance
 
 
 class CustomerRetrieveSr(CustomerBaseSr):

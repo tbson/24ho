@@ -242,6 +242,22 @@ DEFAULT_DELIVERY_VOLUME_UNIT_PRICE = 50000
 DEFAULT_INSURANCE_FACTOR = 3
 DEFAULT_COUNT_CHECK_PRICE = 20
 
+USER_PERMISSIONS = (
+    'add_address',
+    'change_address',
+    'delete_address',
+    'view_address',
+
+    'add_order',
+    'change_address_order',
+    'view_order',
+
+    'view_orderitem',
+    'change_color_orderitem',
+    'change_size_orderitem',
+    'change_note_orderitem',
+)
+
 DEFAULT_META = {
     'title': APP_TITLE,
     'description': APP_DESCRTIPTION,

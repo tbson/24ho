@@ -1,5 +1,8 @@
+from django.contrib.auth.models import Group
+from django.contrib.auth.models import Permission
 from django.db import models
 from utils.helpers.test_helpers import TestHelpers
+from django.conf import settings
 
 
 class CustomerUtils:
@@ -34,3 +37,13 @@ class CustomerUtils:
             return [get_data(i) for i in range(1, index + 1)]
 
         return get_data(index) if single is True else get_list_data(index)
+
+    @staticmethod
+    def ensure_roles(instance: models.QuerySet):
+        customerGroup, _ = Group.objects.get_or_create(**{'name': 'Customer'})
+
+        permissions = Permission.objects.filter(codename__in=settings.USER_PERMISSIONS)
+        for permission in permissions:
+            customerGroup.permissions.add(permission)
+
+        instance.user.groups.add(customerGroup)

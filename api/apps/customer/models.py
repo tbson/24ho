@@ -43,6 +43,7 @@ class Customer(models.Model):
     shopping_cart = JSONField(default=dict)
 
     def save(self, *args, **kwargs):
+        from .utils import CustomerUtils
 
         if not self._state.adding:
             item = Customer.objects.get(pk=self.pk)
@@ -50,6 +51,8 @@ class Customer(models.Model):
                 if self.avatar and item.avatar != self.avatar:
                     Tools.remove_file(item.avatar.path, True)
         super(Customer, self).save(*args, **kwargs)
+
+        CustomerUtils.ensure_roles(self)
 
         if self.avatar and hasattr(self.avatar, 'url'):
             Tools.scale_image(1, self.avatar.path)
