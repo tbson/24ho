@@ -115,6 +115,13 @@ class Bol(TimeStampedModel):
         if self.address:
             self.customer = self.address.customer
 
+        if self.purchase_code:
+            try:
+                order = Order.objects.get(purchase_code=self.purchase_code)
+                self.order = order
+            except Order.DoesNotExist:
+                pass
+
         super(Bol, self).save(*args, **kwargs)
 
     def __str__(self):

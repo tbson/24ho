@@ -369,7 +369,7 @@ class ManagerCalDeliveryFee(TestCase):
         self.assertEqual(output, eput)
 
 
-class ModelCreate(TestCase):
+class ModelCreateWithAddress(TestCase):
     def setUp(self):
         self.address = AddressUtils.seeding(1, True)
         self.address_1 = AddressUtils.seeding(2, True)
@@ -402,6 +402,24 @@ class ModelCreate(TestCase):
 
         self.assertEqual(item.address, self.address)
         self.assertEqual(item.address_code, self.address.uid)
+
+
+class ModelCreateWithPurchaseCode(TestCase):
+
+    def test_match(self):
+        purchase_code = '123456'
+        order = OrderUtils.seeding(1, True)
+        order.purchase_code = purchase_code
+        order.save()
+
+        item = Bol.objects.create(uid='test', purchase_code=purchase_code)
+
+        self.assertEqual(item.order, order)
+
+    def test_not_match(self):
+        purchase_code = '123456'
+        item = Bol.objects.create(uid='test', purchase_code=purchase_code)
+        self.assertEqual(item.order, None)
 
 
 class ManagerCalInsuranceFee(TestCase):

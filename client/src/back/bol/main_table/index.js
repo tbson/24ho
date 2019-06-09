@@ -48,7 +48,6 @@ export default ({order_id = 0}: Props) => {
     const listAction = ListTools.actions(list);
 
     const getList = async (url?: string, params?: Object = {}) => {
-        console.log(order_id);
         const data = await Service.handleGetList(url, order_id ? {...params, order_id} : params);
         if (!data) return;
         setList(ListTools.prepare(data.items));

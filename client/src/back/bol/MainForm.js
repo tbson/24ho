@@ -20,6 +20,7 @@ export class Service {
     static initialValues = {
         uid: '',
         address_code: '',
+        purchase_code: '',
         mass: 0,
         length: 0,
         width: 0,
@@ -40,6 +41,7 @@ export class Service {
     static validationSchema = Yup.object().shape({
         uid: Yup.string().required(ErrMsgs.REQUIRED),
         address_code: Yup.string(),
+        purchase_code: Yup.string(),
         mass: Yup.number(),
         length: Yup.number(),
         width: Yup.number(),
@@ -130,6 +132,9 @@ export default ({id, open, close, onChange, children, submitTitle = 'Save'}: Pro
                             </div>
                             <div className="col">
                                 <TextInput name="address_code" label="Mã địa chỉ" />
+                            </div>
+                            <div className="col">
+                                <TextInput name="purchase_code" label="Mã giao dịch" />
                             </div>
                         </div>
                         <TextInput name="mass" type="number" label="Khối lượng (KG)" />

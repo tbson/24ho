@@ -22,7 +22,7 @@ class OrderBaseSr(ModelSerializer):
             'uid': {'required': False}
         }
 
-    purchase_code = CharField(validators=[
+    purchase_code = CharField(required=False, validators=[
         UniqueValidator(
             queryset=Order.objects.all(),
             message="Duplicate purchase code",
