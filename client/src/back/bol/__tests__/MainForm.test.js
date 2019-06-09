@@ -176,7 +176,8 @@ describe('Service.validationSchema', () => {
     test('Success', () => {
         const values = {
             uid: 'uid1',
-            value: 'value1'
+            address_code: 'address_code_1',
+            purchase_code: 'purchase_code_1'
         };
         const output = Service.validationSchema.isValidSync(values);
         expect(output).toEqual(true);
@@ -184,11 +185,12 @@ describe('Service.validationSchema', () => {
 
     test('Fail', () => {
         const values = {
-            uid: 'uid1',
-            value: ''
+            uid: '',
+            address_code: 'address_code_1',
+            purchase_code: 'purchase_code_1'
         };
         const eput = {
-            value: [ErrMsgs.REQUIRED]
+            uid: [ErrMsgs.REQUIRED]
         };
         let output = {};
         try {

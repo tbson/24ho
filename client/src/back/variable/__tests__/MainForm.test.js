@@ -75,7 +75,6 @@ describe('Service.handleSubmit', () => {
         it('Success', async () => {
             const id = 0;
             const onChange = jest.fn();
-            const reOpenDialog = true;
             const values = {key: 'value'};
             const checkedValue = {key: 'value', checked: false};
             const form = {
@@ -84,7 +83,7 @@ describe('Service.handleSubmit', () => {
 
             const changeRequest = jest.spyOn(Service, 'changeRequest').mockImplementation(async () => okResp);
 
-            await Service.handleSubmit(id, onChange, reOpenDialog)(values, form);
+            await Service.handleSubmit(id, onChange)(values, form);
 
             expect(changeRequest).toHaveBeenCalled();
             expect(changeRequest.mock.calls[0][0]).toEqual(values);
@@ -92,7 +91,6 @@ describe('Service.handleSubmit', () => {
             expect(onChange).toHaveBeenCalled();
             expect(onChange.mock.calls[0][0]).toEqual(checkedValue);
             expect(onChange.mock.calls[0][1]).toEqual('add');
-            expect(onChange.mock.calls[0][2]).toEqual(reOpenDialog);
 
             expect(form.setErrors).not.toHaveBeenCalled();
         });
@@ -100,7 +98,6 @@ describe('Service.handleSubmit', () => {
         it('Fail', async () => {
             const id = 0;
             const onChange = jest.fn();
-            const reOpenDialog = true;
             const values = {key: 'value'};
             const checkedValue = {key: 'value', checked: false};
             const form = {
@@ -109,7 +106,7 @@ describe('Service.handleSubmit', () => {
 
             const changeRequest = jest.spyOn(Service, 'changeRequest').mockImplementation(async () => failResp);
 
-            await Service.handleSubmit(id, onChange, reOpenDialog)(values, form);
+            await Service.handleSubmit(id, onChange)(values, form);
 
             expect(changeRequest).toHaveBeenCalled();
             expect(changeRequest.mock.calls[0][0]).toEqual(values);
@@ -125,7 +122,6 @@ describe('Service.handleSubmit', () => {
         it('Success', async () => {
             const id = 1;
             const onChange = jest.fn();
-            const reOpenDialog = true;
             const values = {key: 'value'};
             const checkedValue = {key: 'value', checked: false};
             const form = {
@@ -134,7 +130,7 @@ describe('Service.handleSubmit', () => {
 
             const changeRequest = jest.spyOn(Service, 'changeRequest').mockImplementation(async () => okResp);
 
-            await Service.handleSubmit(id, onChange, reOpenDialog)(values, form);
+            await Service.handleSubmit(id, onChange)(values, form);
 
             expect(changeRequest).toHaveBeenCalled();
             expect(changeRequest.mock.calls[0][0]).toEqual({...values, id});
@@ -142,7 +138,6 @@ describe('Service.handleSubmit', () => {
             expect(onChange).toHaveBeenCalled();
             expect(onChange.mock.calls[0][0]).toEqual(checkedValue);
             expect(onChange.mock.calls[0][1]).toEqual('update');
-            expect(onChange.mock.calls[0][2]).toEqual(reOpenDialog);
 
             expect(form.setErrors).not.toHaveBeenCalled();
         });
@@ -150,7 +145,6 @@ describe('Service.handleSubmit', () => {
         it('Fail', async () => {
             const id = 1;
             const onChange = jest.fn();
-            const reOpenDialog = true;
             const values = {key: 'value'};
             const checkedValue = {key: 'value', checked: false};
             const form = {
@@ -159,7 +153,7 @@ describe('Service.handleSubmit', () => {
 
             const changeRequest = jest.spyOn(Service, 'changeRequest').mockImplementation(async () => failResp);
 
-            await Service.handleSubmit(id, onChange, reOpenDialog)(values, form);
+            await Service.handleSubmit(id, onChange)(values, form);
 
             expect(changeRequest).toHaveBeenCalled();
             expect(changeRequest.mock.calls[0][0]).toEqual({...values, id});
