@@ -3,8 +3,9 @@ import * as React from 'react';
 import {apiUrls} from 'src/back/order/_data';
 import Tools from 'src/utils/helpers/Tools';
 import Editable from 'src/utils/components/Editable';
-import {Service as OrderService} from 'src/back/order/'
+import {Service as OrderService} from 'src/back/order/';
 import type {SelectOptions} from 'src/utils/helpers/Tools';
+import {STATUS} from 'src/back/order/_data';
 
 type Props = {
     data: Object,
@@ -100,7 +101,7 @@ export default ({data, addresses, onPartialChange}: Props) => {
                         <Editable
                             onChange={onPartialChange}
                             name="value"
-                            value={data.status}
+                            value={String(data.status)}
                             endPoint={apiUrls.change_status.replace('/pk-', `/${data.id}/`)}
                             type="select"
                             options={OrderService.getStatusOptions()}
