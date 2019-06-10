@@ -37,7 +37,7 @@ class BolUtils:
 
     @staticmethod
     def get_mass(item: models.QuerySet) -> float:
-        return item.input_mass
+        return item.mass
 
     @staticmethod
     def get_mass_convert(item: models.QuerySet) -> float:
@@ -49,6 +49,11 @@ class BolUtils:
 
     @staticmethod
     def cal_delivery_fee_range(item: models.QuerySet) -> dict:
+        if not item.address:
+            return {
+                'MASS': 0,
+                'VOLUME': 0
+            }
         mass = BolUtils.get_mass(item)
         return {
             'MASS': DeliveryFeeUtils.get_matched_unit_price(
@@ -66,7 +71,7 @@ class BolUtils:
     @staticmethod
     def cal_delivery_fee_mass_unit_price(item: models.QuerySet) -> dict:
         range_unit_price = BolUtils.cal_delivery_fee_range(item)['MASS']
-        customer_unit_price = item.customer.delivery_fee_mass_unit_price
+        customer_unit_price = item.customer.delivery_fee_mass_unit_price if item.customer else 0
         bol_unit_price = item.mass_unit_price
 
         return {
@@ -77,7 +82,7 @@ class BolUtils:
     @staticmethod
     def cal_delivery_fee_volume_unit_price(item: models.QuerySet) -> dict:
         range_unit_price = BolUtils.cal_delivery_fee_range(item)['VOLUME']
-        customer_unit_price = item.customer.delivery_fee_volume_unit_price
+        customer_unit_price = item.customer.delivery_fee_volume_unit_price if item.customer else 0
         bol_unit_price = item.volume_unit_price
 
         return {

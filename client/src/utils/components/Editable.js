@@ -55,6 +55,10 @@ export default class TextInput extends React.Component<Props, State> {
         hiddenValue: this.props.value
     };
 
+    componentDidMount() {
+        this.setState({hiddenValue: this.props.value});
+    }
+
     onSubmit(e: Object) {
         e.preventDefault();
         const {name, endPoint, onChange} = this.props;
@@ -83,7 +87,7 @@ export default class TextInput extends React.Component<Props, State> {
     ) {
         switch (type) {
             case 'select':
-                let _value = options.find(item => item.value === this.state.hiddenValue);
+                let _value = options.find(item => item.value === value);
                 return (
                     <>
                         <input name="value" defaultValue={this.state.hiddenValue} type="hidden" />

@@ -165,7 +165,7 @@ class OrderUtils:
     def cal_delivery_fee(item: models.QuerySet) -> float:
         from apps.bol.utils import BolUtils
         # sum of bols's delivery fee
-        return sum([BolUtils.cal_delivery_fee(bol) for bol in item.order_bols.all()])
+        return sum([BolUtils.cal_delivery_fee(bol)['delivery_fee'] for bol in item.order_bols.all()])
 
     @staticmethod
     def cal_count_check_fee(item: models.QuerySet) -> float:

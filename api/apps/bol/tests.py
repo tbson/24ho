@@ -166,7 +166,7 @@ class ManagerGetMass(TestCase):
 
     def test_normal_case(self):
         item = BolUtils.seeding(1, True)
-        item.input_mass = 1.5
+        item.mass = 1.5
         item.save()
         self.assertEqual(BolUtils.get_mass(item), 1.5)
 
@@ -175,7 +175,7 @@ class ManagerCalDeliveryFeeRange(TestCase):
     def test_normal_case(self):
         DeliveryFeeUtils.seeding(4)
         item = BolUtils.seeding(1, True)
-        item.input_mass = 20
+        item.mass = 20
         item.save()
         output = BolUtils.cal_delivery_fee_range(item)
         eput = {

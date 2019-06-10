@@ -409,6 +409,35 @@ class PartialUpdates(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['purchase_code'], value)
 
+    def test_status(self):
+        value = 2
+
+        # Update not exist
+        response = self.client.put(
+            "/api/v1/order/{}/change-status/".format(0),
+            {},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 404)
+
+        # Update normal value
+        response = self.client.put(
+            "/api/v1/order/{}/change-status/".format(self.item.pk),
+            {"value": value},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['status'], value)
+
+        # Update missing value -> do nothing
+        response = self.client.put(
+            "/api/v1/order/{}/change-status/".format(self.item.pk),
+            {},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['status'], value)
+
 
 class UtilsSumCny(TestCase):
     def test_normal_case(self):
@@ -507,7 +536,12 @@ class UtilsCalOrderFee(TestCase):
         self.assertEqual(OrderUtils.cal_order_fee(order), 1.5)
 
 
-@patch('apps.bol.utils.BolUtils.cal_delivery_fee', MagicMock(return_value=2))
+cal_delivery_fee = {
+    'mass_range_unit_price': 1.5,
+    'volume_range_unit_price': 3.5,
+    'delivery_fee': 2
+}
+@patch('apps.bol.utils.BolUtils.cal_delivery_fee', MagicMock(return_value=cal_delivery_fee))
 class UtilsCalDeliveryFee(TestCase):
     def test_normal_case(self):
         bols = BolUtils.seeding(3)

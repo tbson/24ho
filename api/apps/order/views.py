@@ -128,6 +128,13 @@ class OrderViewSet(GenericViewSet):
         serializer = OrderUtils.partial_update(obj, 'purchase_code', value)
         return res(serializer.data)
 
+    @action(methods=['put'], detail=True)
+    def change_status(self, request, pk=None):
+        obj = get_object_or_404(Order, pk=pk)
+        value = request.data.get('value', obj.status)
+        serializer = OrderUtils.partial_update(obj, 'status', value)
+        return res(serializer.data)
+
     @action(methods=['delete'], detail=True)
     def delete(self, request, pk=None):
         obj = get_object_or_404(Order, pk=pk)
