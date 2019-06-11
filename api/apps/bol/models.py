@@ -99,13 +99,16 @@ class Bol(TimeStampedModel):
 
     objects = BolManager()
 
-    def save(self, *args, **kwargs):
+    def clean(self):
         if self.uid:
             self.uid = self.uid.strip().upper()
+        if self.address_code:
+            self.address_code = self.address_code.strip().upper()
+
+    def save(self, *args, **kwargs):
         if self.address:
             self.address_code = self.address.uid
         elif self.address_code:
-            self.address_code = self.address_code.strip().upper()
             try:
                 address = Address.objects.get(uid=self.address_code)
                 self.address = address
