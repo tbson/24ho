@@ -37,6 +37,24 @@ type InputProps = {
     placeholder: string
 };
 
+const SelectInput = ({options, isMulti, name, value, type, placeholder}: InputProps) => {
+    const [hiddenValue, setHiddenValue] = useState(value);
+    const selectedValue = options.find(item => item.value === hiddenValue);
+    return (
+        <>
+            <input name="value" defaultValue={hiddenValue} type="hidden" />
+            <Select
+                value={selectedValue}
+                onChange={data => setHiddenValue(data.value)}
+                isMulti={isMulti}
+                isSearchable={true}
+                placeholder={placeholder + '...'}
+                options={options}
+            />
+        </>
+    );
+};
+
 type State = {
     isOpen: boolean,
     hiddenValue: string | number
@@ -54,10 +72,6 @@ export default class TextInput extends React.Component<Props, State> {
         isOpen: false,
         hiddenValue: this.props.value
     };
-
-    componentDidMount() {
-        this.setState({hiddenValue: this.props.value});
-    }
 
     onSubmit(e: Object) {
         e.preventDefault();
@@ -87,20 +101,7 @@ export default class TextInput extends React.Component<Props, State> {
     ) {
         switch (type) {
             case 'select':
-                let _value = options.find(item => item.value === value);
-                return (
-                    <>
-                        <input name="value" defaultValue={this.state.hiddenValue} type="hidden" />
-                        <Select
-                            value={_value}
-                            onChange={data => this.setState({hiddenValue: data.value})}
-                            isMulti={isMulti}
-                            isSearchable={true}
-                            placeholder={placeholder + '...'}
-                            options={options}
-                        />
-                    </>
-                );
+                return <SelectInput {...this.props} />;
             default:
                 return (
                     <input
