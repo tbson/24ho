@@ -4,7 +4,7 @@ from apps.order.models import Order
 
 # Create your models here.
 class OrderItem(models.Model):
-    order = models.ForeignKey(Order, models.SET_NULL, related_name='order_items', null=True)
+    order = models.ForeignKey(Order, models.CASCADE, related_name='order_items', null=True)
 
     title = models.CharField(max_length=500)
     url = models.CharField(max_length=500)
