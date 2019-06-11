@@ -132,4 +132,5 @@ class Order(TimeStampedModel):
             ("change_order_fee_factor_order", "Can change order fee factor"),
             ("change_purchase_code_order", "Can change purchase code"),
             ("change_status_order", "Can change status"),
+            ("bulk_approve_order", "Can bulk approve"),
         )

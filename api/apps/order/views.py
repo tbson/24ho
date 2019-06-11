@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework.decorators import action
 from rest_framework.viewsets import (GenericViewSet, )
 from rest_framework import status
-from .models import Order
+from .models import Order, Status
 from apps.staff.models import Staff
 from apps.address.models import Address
 from .serializers import OrderBaseSr
@@ -134,6 +134,17 @@ class OrderViewSet(GenericViewSet):
         value = request.data.get('value', obj.status)
         serializer = OrderUtils.partial_update(obj, 'status', value)
         return res(serializer.data)
+
+    @transaction.atomic
+    @action(methods=['put'], detail=False)
+    def bulk_approve(self, request):
+        pks = self.request.data.get('ids', [])
+        for pk in pks:
+            obj = get_object_or_404(Order, pk=pk)
+            if obj.status == Status.NEW:
+                obj.status = Status.APPROVED
+                obj.save()
+        return res({'approved': pks})
 
     @action(methods=['delete'], detail=True)
     def delete(self, request, pk=None):

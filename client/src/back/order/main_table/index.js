@@ -20,6 +20,10 @@ export class Service {
         return Tools.apiCall(apiUrls.crud, {ids: ids.join(',')}, 'DELETE');
     }
 
+    static bulkApproveRequest(ids: Array<number>): Promise<Object> {
+        return Tools.apiCall(apiUrls.bulk_approve, {ids}, 'PUT');
+    }
+
     static handleGetList(url?: string, params?: Object = {}): Promise<Object> {
         return Service.listRequest(url, params)
             .then(resp => (resp.ok ? resp.data || {} : Promise.reject(resp)))
@@ -28,6 +32,12 @@ export class Service {
 
     static handleBulkRemove(ids: Array<number>): Promise<Object> {
         return Service.bulkRemoveRequest(ids)
+            .then(resp => (resp.ok ? {ids} : Promise.reject(resp)))
+            .catch(Tools.popMessageOrRedirect);
+    }
+
+    static handleBulkApprove(ids: Array<number>): Promise<Object> {
+        return Service.bulkApproveRequest(ids)
             .then(resp => (resp.ok ? {ids} : Promise.reject(resp)))
             .catch(Tools.popMessageOrRedirect);
     }
@@ -81,12 +91,27 @@ export default ({status}: Props) => {
 
     const searchList = (keyword: string) => getList('', keyword ? {search: keyword} : {});
 
+    const onApprove = () => {
+        const ids = ListTools.getChecked(list);
+        if (!ids.length) return;
+        const message = 'Bạn có muốn duyệt các đơn này?';
+        const r = confirm(message);
+        r &&
+            Service.handleBulkApprove(ids)
+                .then(data => {
+                    Tools.popMessage(`Duyệt ${data.ids.length} đơn thành công.`);
+                    return data;
+                })
+                .then(data => setList(listAction(data).bulkRemove()));
+    };
+
     useEffect(() => {
         getList();
     }, []);
 
     return (
         <div>
+            <BulkApprove status={status} onApprove={onApprove} />
             <table className="table table-striped">
                 <thead className="thead-light">
                     <tr>
@@ -138,3 +163,18 @@ export default ({status}: Props) => {
         </div>
     );
 };
+
+type BulkApproveType = {
+    status: number,
+    onApprove: Function
+};
+const BulkApprove = ({status, onApprove}: BulkApproveType) =>
+    status === 1 ? (
+        <div>
+            <button type="button" className="btn btn-success" onClick={onApprove}>
+                <i className="fas fa-check" />
+                &nbsp;&nbsp;
+                <span>Duyệt đơn</span>
+            </button>
+        </div>
+    ) : null;

@@ -17,7 +17,8 @@ const rawApiUrls = [
             change_cny_inland_delivery_fee: 'pk/change-cny-inland-delivery-fee',
             change_order_fee_factor: 'pk/change-order-fee-factor',
             change_purchase_code: 'pk/change-purchase-code',
-            change_status: 'pk/change-status'
+            change_status: 'pk/change-status',
+            bulk_approve: 'bulk-approve'
         }
     },
     {
@@ -74,10 +75,10 @@ export type OrderType = {
     checked: boolean
 };
 
+export type ListOrderType = Array<OrderType>;
+
 export type OrderItemType = {
     id: number,
-    uid: string,
-    purchase_code: string,
     created_at: string,
     title: string,
     image: string,

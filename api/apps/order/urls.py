@@ -52,6 +52,10 @@ change_status = OrderViewSet.as_view({
     'put': 'change_status',
 })
 
+bulk_approve = OrderViewSet.as_view({
+    'put': 'bulk_approve',
+})
+
 app_name = os.getcwd().split(os.sep)[-1]
 urlpatterns = (
     path('', base),
@@ -65,4 +69,5 @@ urlpatterns = (
     path('<int:pk>/change-order-fee-factor/', change_order_fee_factor),
     path('<int:pk>/change-purchase-code/', change_purchase_code),
     path('<int:pk>/change-status/', change_status),
+    path('bulk-approve/', bulk_approve),
 )

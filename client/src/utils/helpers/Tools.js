@@ -313,12 +313,13 @@ export default class Tools {
         }
     }
 
-    static popMessageOrRedirect(resp: Object) {
+    static popMessageOrRedirect(resp: Object): Promise<Error> {
         if ([401].includes(resp.status)) {
             Tools.removeStorage('auth');
             window.location = BASE_URL + 'login';
         }
         Tools.popMessage(resp.data, 'error');
+        return Promise.reject(resp);
     }
 
     static toggleGlobalLoading(spinning: boolean = true): void {

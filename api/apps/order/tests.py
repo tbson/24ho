@@ -5,7 +5,7 @@ from django.utils import timezone
 from unittest.mock import patch, MagicMock
 from rest_framework.test import APIClient
 from django.test import TestCase
-from .models import Order
+from .models import Order, Status
 from .utils import OrderUtils
 from .serializers import OrderBaseSr
 from apps.address.utils import AddressUtils
@@ -52,6 +52,32 @@ class OrderTestCase(TestCase):
             "/api/v1/order/{}".format(self.items[0].pk)
         )
         self.assertEqual(response.status_code, 200)
+
+    def test_approve_fail(self):
+        # Remove list fail
+        payload = {
+            "ids": [self.items[1].pk, self.items[2].pk, 99]
+        }
+        response = self.client.put(
+            "/api/v1/order/bulk-approve/",
+            payload,
+            format='json'
+        )
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(Order.objects.filter(status=Status.NEW).count(), 3)
+
+    def test_approve_success(self):
+        # Remove list success
+        payload = {
+            "ids": [self.items[1].pk, self.items[2].pk]
+        }
+        response = self.client.put(
+            "/api/v1/order/bulk-approve/",
+            payload,
+            format='json'
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Order.objects.filter(status=Status.APPROVED).count(), 2)
 
     def test_create_fail(self):
         self.assertEqual(Order.objects.count(), 3)
