@@ -56,8 +56,6 @@ class OrderViewSet(GenericViewSet):
         data, order_items = OrderUtils.prepare_data(request.data)
         order = OrderUtils.validate_create(data)
         OrderItemUtils.validate_bulk_create(order_items, order.id)
-
-        order = Order.objects.re_cal(order)
         return res(OrderBaseSr(order).data)
 
     @action(methods=['put'], detail=True)
