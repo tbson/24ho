@@ -48,14 +48,18 @@ const Detail = ({match}) => {
 
     const [options, setOptions] = useState({});
 
-    useEffect(() => {
-        document.title = 'Order detail';
+    const retrieve = () => {
         Service.retrieveRequest(id).then(resp => {
             if (resp.ok) {
                 setData(resp.data);
                 setOptions(Service.prepareOptions(resp.data.options));
             }
         });
+    };
+
+    useEffect(() => {
+        document.title = 'Order detail';
+        retrieve();
     }, []);
 
     return !data.rate ? null : (
@@ -73,10 +77,10 @@ const Detail = ({match}) => {
                             </Tab>
                         </TabList>
                         <TabPanel>
-                            <OrderItemTable order_id={id} rate={data.rate} />
+                            <OrderItemTable order_id={id} rate={data.rate} onChange={retrieve} />
                         </TabPanel>
                         <TabPanel>
-                            <BolTable order_id={id || 0}/>
+                            <BolTable order_id={id || 0} />
                         </TabPanel>
                     </Tabs>
                 </div>

@@ -126,6 +126,14 @@ class Bol(TimeStampedModel):
                 pass
 
         super(Bol, self).save(*args, **kwargs)
+        if self.order:
+            Order.objects.re_cal(self.order)
+
+    def delete(self, *args, **kwargs):
+        order = self.order
+        super(Bol, self).delete(*args, **kwargs)
+        if order:
+            Order.objects.re_cal(order)
 
     def __str__(self):
         return '{} - {}'.format(self.uid, self.value)

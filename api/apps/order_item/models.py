@@ -18,6 +18,15 @@ class OrderItem(models.Model):
 
     note = models.TextField(blank=True)
 
+    def save(self, *args, **kwargs):
+        super(OrderItem, self).save(*args, **kwargs)
+        Order.objects.re_cal(self.order)
+
+    def delete(self, *args, **kwargs):
+        order = self.order
+        super(OrderItem, self).delete(*args, **kwargs)
+        Order.objects.re_cal(order)
+
     def __str__(self):
         return self.title
 

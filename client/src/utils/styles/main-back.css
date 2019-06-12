@@ -137,6 +137,7 @@ input:invalid {
 }
 .vnd::after {
     content: ' ₫';
+    color: blue;
 }
 
 .percent {
@@ -173,6 +174,7 @@ input:invalid {
 }
 .cny::after {
     content: ' ¥';
+    color: green;
 }
 
 .react-tabs__tab,

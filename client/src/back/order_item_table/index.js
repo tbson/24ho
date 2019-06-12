@@ -9,7 +9,8 @@ import Row from './Row.js';
 
 type Props = {
     order_id: number,
-    rate: number
+    rate: number,
+    onChange: Function
 };
 
 export class Service {
@@ -34,7 +35,7 @@ export class Service {
     }
 }
 
-export default ({order_id, rate}: Props) => {
+export default ({order_id, rate, onChange}: Props) => {
     const [list, setList] = useState([]);
 
     const listAction = ListTools.actions(list);
@@ -66,7 +67,10 @@ export default ({order_id, rate}: Props) => {
 
     const searchList = (keyword: string) => getList(keyword ? {search: keyword} : {});
 
-    const partialChangeHandle = data => setList(listAction(data)['update']());
+    const partialChangeHandle = data => {
+        setList(listAction(data)['update']());
+        onChange();
+    };
 
     useEffect(() => {
         getList();

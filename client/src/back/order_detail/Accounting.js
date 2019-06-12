@@ -55,7 +55,7 @@ export default ({data, onPartialChange}: Props) => {
             <tbody>
                 <tr>
                     <td>Phí dịch vụ:</td>
-                    <td className="mono vnd">
+                    <td className="mono cny">
                         <Editable
                             onChange={onPartialChange}
                             name="value"
