@@ -151,10 +151,10 @@ export default ({id, open, close, onChange, children, submitTitle = 'Save'}: Pro
                         </div>
                         <div className="row">
                             <div className="col">
-                                <TextInput name="mass_unit_price" type="number" label="Đơn giá theo Kg (CNY)" />
+                                <TextInput name="mass_unit_price" type="number" label="Đơn giá theo Kg (VND)" />
                             </div>
                             <div className="col">
-                                <TextInput name="volume_unit_price" type="number" label="Đơn giá theo Khối (CNY)" />
+                                <TextInput name="volume_unit_price" type="number" label="Đơn giá theo Khối (VND)" />
                             </div>
                         </div>
                         <div className="row">
