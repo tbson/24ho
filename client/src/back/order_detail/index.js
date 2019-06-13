@@ -77,10 +77,10 @@ const Detail = ({match}) => {
                             </Tab>
                         </TabList>
                         <TabPanel>
-                            <OrderItemTable order_id={id} rate={data.rate} onChange={retrieve} />
+                            <OrderItemTable order_id={id} rate={data.rate} notifyChange={retrieve} />
                         </TabPanel>
                         <TabPanel>
-                            <BolTable order_id={id || 0} />
+                            <BolTable order_id={id || 0} notifyChange={retrieve}/>
                         </TabPanel>
                     </Tabs>
                 </div>

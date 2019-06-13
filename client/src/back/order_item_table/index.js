@@ -10,7 +10,7 @@ import Row from './Row.js';
 type Props = {
     order_id: number,
     rate: number,
-    onChange: Function
+    notifyChange: Function
 };
 
 export class Service {
@@ -35,7 +35,7 @@ export class Service {
     }
 }
 
-export default ({order_id, rate, onChange}: Props) => {
+export default ({order_id, rate, notifyChange}: Props) => {
     const [list, setList] = useState([]);
 
     const listAction = ListTools.actions(list);
@@ -69,7 +69,7 @@ export default ({order_id, rate, onChange}: Props) => {
 
     const partialChangeHandle = data => {
         setList(listAction(data)['update']());
-        onChange();
+        notifyChange();
     };
 
     useEffect(() => {

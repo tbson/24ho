@@ -10,7 +10,8 @@ import MainForm from '../MainForm';
 import Row from './Row.js';
 
 type Props = {
-    order_id?: number
+    order_id?: number,
+    notifyChange?: Function
 };
 
 export class Service {
@@ -35,7 +36,7 @@ export class Service {
     }
 }
 
-export default ({order_id = 0}: Props) => {
+export default ({order_id = 0, notifyChange}: Props) => {
     const [list, setList] = useState([]);
     const [formOpen, setFormOpen] = useState<FormOpenType>({
         main: false
@@ -58,6 +59,7 @@ export default ({order_id = 0}: Props) => {
         toggleForm(false);
         setList(listAction(data)[type]());
         reOpenDialog && toggleForm(true);
+        notifyChange && notifyChange();
     };
 
     const onCheck = id => setList(ListTools.checkOne(id, list));
