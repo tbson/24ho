@@ -13,7 +13,7 @@ beforeEach(() => {
 
 describe('Service.removeRequest', () => {
     const id = 1;
-    it('Normal case', () => {
+    test('Normal case', () => {
         const apiCall = jest.spyOn(Tools, 'apiCall').mockImplementation(() => {});
         Service.removeRequest(id);
         expect(apiCall).toHaveBeenCalled();
@@ -37,7 +37,7 @@ describe('Service.handleRemove', () => {
         }
     };
     const id = 1;
-    it('On success', async () => {
+    test('On success', async () => {
         const removeRequest = jest.spyOn(Service, 'removeRequest').mockImplementation(async () => okResp);
         jest.spyOn(Tools, 'popMessageOrRedirect');
 
@@ -49,23 +49,29 @@ describe('Service.handleRemove', () => {
         expect(result).toEqual({id});
     });
 
-    it('On error', async () => {
-        const removeRequest = jest.spyOn(Service, 'removeRequest').mockImplementation(async () => failResp);
-        jest.spyOn(Tools, 'popMessageOrRedirect');
+    test('On error', async () => {
+        try {
+            const removeRequest = jest.spyOn(Service, 'removeRequest').mockImplementation(async () => failResp);
+            jest.spyOn(Tools, 'popMessageOrRedirect');
 
-        const result = await Service.handleRemove(id);
+            const result = await Service.handleRemove(id);
 
-        expect(Tools.popMessageOrRedirect).toHaveBeenCalled();
-        expect(Tools.popMessageOrRedirect.mock.calls[0][0]).toEqual(failResp);
+            expect(Tools.popMessageOrRedirect).toHaveBeenCalled();
+            expect(Tools.popMessageOrRedirect.mock.calls[0][0]).toEqual(failResp);
+        } catch (err) {}
     });
 
-    it('On exception', async () => {
-        const removeRequest = jest.spyOn(Service, 'removeRequest').mockImplementation(async () => Promise.reject(failResp));
-        jest.spyOn(Tools, 'popMessageOrRedirect');
+    test('On exception', async () => {
+        try {
+            const removeRequest = jest
+                .spyOn(Service, 'removeRequest')
+                .mockImplementation(async () => Promise.reject(failResp));
+            jest.spyOn(Tools, 'popMessageOrRedirect');
 
-        const result = await Service.handleRemove(id);
+            const result = await Service.handleRemove(id);
 
-        expect(Tools.popMessageOrRedirect).toHaveBeenCalled();
-        expect(Tools.popMessageOrRedirect.mock.calls[0][0]).toEqual(failResp);
+            expect(Tools.popMessageOrRedirect).toHaveBeenCalled();
+            expect(Tools.popMessageOrRedirect.mock.calls[0][0]).toEqual(failResp);
+        } catch (err) {}
     });
 });

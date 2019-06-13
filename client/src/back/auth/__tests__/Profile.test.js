@@ -28,7 +28,7 @@ describe('Service.handleProfileRequest', () => {
         }
     };
 
-    it('On success', async () => {
+    test('On success', async () => {
         const profileRequest = jest.spyOn(Service, 'profileRequest').mockImplementation(async () => okResp);
         jest.spyOn(Tools, 'popMessageOrRedirect');
 
@@ -39,23 +39,29 @@ describe('Service.handleProfileRequest', () => {
         expect(result).toEqual(okResp.data);
     });
 
-    it('On error', async () => {
-        const profileRequest = jest.spyOn(Service, 'profileRequest').mockImplementation(async () => failResp);
-        jest.spyOn(Tools, 'popMessageOrRedirect');
+    test('On error', async () => {
+        try {
+            const profileRequest = jest.spyOn(Service, 'profileRequest').mockImplementation(async () => failResp);
+            jest.spyOn(Tools, 'popMessageOrRedirect');
 
-        const result = await Service.handleProfileRequest();
+            const result = await Service.handleProfileRequest();
 
-        expect(Tools.popMessageOrRedirect).toHaveBeenCalled();
-        expect(Tools.popMessageOrRedirect.mock.calls[0][0]).toEqual(failResp);
+            expect(Tools.popMessageOrRedirect).toHaveBeenCalled();
+            expect(Tools.popMessageOrRedirect.mock.calls[0][0]).toEqual(failResp);
+        } catch (err) {}
     });
 
-    it('On exception', async () => {
-        const profileRequest = jest.spyOn(Service, 'profileRequest').mockImplementation(async () => Promise.reject(failResp));
-        jest.spyOn(Tools, 'popMessageOrRedirect');
+    test('On exception', async () => {
+        try {
+            const profileRequest = jest
+                .spyOn(Service, 'profileRequest')
+                .mockImplementation(async () => Promise.reject(failResp));
+            jest.spyOn(Tools, 'popMessageOrRedirect');
 
-        const result = await Service.handleProfileRequest();
+            const result = await Service.handleProfileRequest();
 
-        expect(Tools.popMessageOrRedirect).toHaveBeenCalled();
-        expect(Tools.popMessageOrRedirect.mock.calls[0][0]).toEqual(failResp);
+            expect(Tools.popMessageOrRedirect).toHaveBeenCalled();
+            expect(Tools.popMessageOrRedirect.mock.calls[0][0]).toEqual(failResp);
+        } catch (err) {}
     });
 });

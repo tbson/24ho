@@ -12,7 +12,7 @@ beforeEach(() => {
 });
 
 describe('Service.listRequest', () => {
-    it('No params', () => {
+    test('No params', () => {
         const apiCall = jest.spyOn(Tools, 'apiCall').mockImplementation(async () => {});
         Service.listRequest();
         expect(apiCall).toHaveBeenCalled();
@@ -20,7 +20,7 @@ describe('Service.listRequest', () => {
         expect(apiCall.mock.calls[0][1]).toBe(undefined);
     });
 
-    it('With params', () => {
+    test('With params', () => {
         const apiCall = jest.spyOn(Tools, 'apiCall').mockImplementation(async () => {});
         const params = {search: 'keyword'};
 
@@ -30,7 +30,7 @@ describe('Service.listRequest', () => {
         expect(apiCall.mock.calls[0][1]).toEqual(params);
     });
 
-    it('With url', () => {
+    test('With url', () => {
         const apiCall = jest.spyOn(Tools, 'apiCall').mockImplementation(async () => {});
         const params = {search: 'keyword'};
         const url = 'sample_url';
@@ -43,7 +43,7 @@ describe('Service.listRequest', () => {
 });
 
 describe('Service.bulkRemoveRequest', () => {
-    it('Normal case', () => {
+    test('Normal case', () => {
         const apiCall = jest.spyOn(Tools, 'apiCall').mockImplementation(async () => {});
         const ids = [1, 2];
         Service.bulkRemoveRequest(ids);
@@ -67,7 +67,7 @@ describe('Service.handleGetList', () => {
             key: 'value'
         }
     };
-    it('On success', async () => {
+    test('On success', async () => {
         const listRequest = jest.spyOn(Service, 'listRequest').mockImplementation(async () => okResp);
         jest.spyOn(Tools, 'popMessageOrRedirect');
         const url = 'sample_url';
@@ -82,24 +82,30 @@ describe('Service.handleGetList', () => {
         expect(result).toEqual(okResp.data);
     });
 
-    it('On error', async () => {
-        const listRequest = jest.spyOn(Service, 'listRequest').mockImplementation(async () => failResp);
-        jest.spyOn(Tools, 'popMessageOrRedirect');
+    test('On error', async () => {
+        try {
+            const listRequest = jest.spyOn(Service, 'listRequest').mockImplementation(async () => failResp);
+            jest.spyOn(Tools, 'popMessageOrRedirect');
 
-        const result = await Service.handleGetList();
+            const result = await Service.handleGetList();
 
-        expect(Tools.popMessageOrRedirect).toHaveBeenCalled();
-        expect(Tools.popMessageOrRedirect.mock.calls[0][0]).toEqual(failResp);
+            expect(Tools.popMessageOrRedirect).toHaveBeenCalled();
+            expect(Tools.popMessageOrRedirect.mock.calls[0][0]).toEqual(failResp);
+        } catch (err) {}
     });
 
-    it('On exception', async () => {
-        const listRequest = jest.spyOn(Service, 'listRequest').mockImplementation(async () => Promise.reject(failResp));
-        jest.spyOn(Tools, 'popMessageOrRedirect');
+    test('On exception', async () => {
+        try {
+            const listRequest = jest
+                .spyOn(Service, 'listRequest')
+                .mockImplementation(async () => Promise.reject(failResp));
+            jest.spyOn(Tools, 'popMessageOrRedirect');
 
-        const result = await Service.handleGetList();
+            const result = await Service.handleGetList();
 
-        expect(Tools.popMessageOrRedirect).toHaveBeenCalled();
-        expect(Tools.popMessageOrRedirect.mock.calls[0][0]).toEqual(failResp);
+            expect(Tools.popMessageOrRedirect).toHaveBeenCalled();
+            expect(Tools.popMessageOrRedirect.mock.calls[0][0]).toEqual(failResp);
+        } catch (err) {}
     });
 });
 
@@ -117,7 +123,7 @@ describe('Service.handleBulkRemove', () => {
         }
     };
 
-    it('On success', async () => {
+    test('On success', async () => {
         const bulkRemoveRequest = jest.spyOn(Service, 'bulkRemoveRequest').mockImplementation(async () => okResp);
         jest.spyOn(Tools, 'popMessageOrRedirect');
         const ids = [1, 2];
@@ -129,31 +135,35 @@ describe('Service.handleBulkRemove', () => {
         expect(result).toEqual({ids});
     });
 
-    it('On error', async () => {
-        const bulkRemoveRequest = jest.spyOn(Service, 'bulkRemoveRequest').mockImplementation(async () => failResp);
-        jest.spyOn(Tools, 'popMessageOrRedirect');
-        const ids = [1, 2];
-        const result = await Service.handleBulkRemove(ids);
+    test('On error', async () => {
+        try {
+            const bulkRemoveRequest = jest.spyOn(Service, 'bulkRemoveRequest').mockImplementation(async () => failResp);
+            jest.spyOn(Tools, 'popMessageOrRedirect');
+            const ids = [1, 2];
+            const result = await Service.handleBulkRemove(ids);
 
-        expect(Tools.popMessageOrRedirect).toHaveBeenCalled();
-        expect(Tools.popMessageOrRedirect.mock.calls[0][0]).toEqual(failResp);
+            expect(Tools.popMessageOrRedirect).toHaveBeenCalled();
+            expect(Tools.popMessageOrRedirect.mock.calls[0][0]).toEqual(failResp);
+        } catch (err) {}
     });
 
-    it('On error', async () => {
-        const bulkRemoveRequest = jest
-            .spyOn(Service, 'bulkRemoveRequest')
-            .mockImplementation(async () => Promise.reject(failResp));
-        jest.spyOn(Tools, 'popMessageOrRedirect');
-        const ids = [1, 2];
-        const result = await Service.handleBulkRemove(ids);
+    test('On exception', async () => {
+        try {
+            const bulkRemoveRequest = jest
+                .spyOn(Service, 'bulkRemoveRequest')
+                .mockImplementation(async () => Promise.reject(failResp));
+            jest.spyOn(Tools, 'popMessageOrRedirect');
+            const ids = [1, 2];
+            const result = await Service.handleBulkRemove(ids);
 
-        expect(Tools.popMessageOrRedirect).toHaveBeenCalled();
-        expect(Tools.popMessageOrRedirect.mock.calls[0][0]).toEqual(failResp);
+            expect(Tools.popMessageOrRedirect).toHaveBeenCalled();
+            expect(Tools.popMessageOrRedirect.mock.calls[0][0]).toEqual(failResp);
+        } catch (err) {}
     });
 });
 
 describe('Service.areaToOptions', () => {
-    it('Normal case', () => {
+    test('Normal case', () => {
         const input = [
             {
                 id: 1,
@@ -182,7 +192,7 @@ describe('Service.areaToOptions', () => {
 });
 
 describe('Service.addNameToList', () => {
-    it('area case', () => {
+    test('area case', () => {
         const list = [
             {
                 area: 1
@@ -223,7 +233,7 @@ describe('Service.addNameToList', () => {
 });
 
 describe('Service.addNameToItem', () => {
-    it('area case', () => {
+    test('area case', () => {
         const item = {
             area: 1
         };
@@ -247,7 +257,7 @@ describe('Service.addNameToItem', () => {
 });
 
 describe('Service.prepareList', () => {
-    it('Normal case', () => {
+    test('Normal case', () => {
         const list = [
             {
                 area: 1
@@ -292,7 +302,7 @@ describe('Service.prepareList', () => {
 });
 
 describe('Service.prepareItem', () => {
-    it('Normal case', () => {
+    test('Normal case', () => {
         const item = {
             area: 1
         };
