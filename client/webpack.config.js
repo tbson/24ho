@@ -27,13 +27,27 @@ const common = {
     module: {
         rules: [
             {
-                test: /\.css$/,
+                test: /\.css$/i,
                 use: ['style-loader', 'css-loader']
             },
             {
                 test: /\.styl$/,
-                loader:
-                    'style-loader!css-loader?modules&importLoaders=true&localIdentName=[name]__[local]___[hash:base64:5]'
+                use: [
+                    {
+                        loader: 'style-loader' // creates style nodes from JS strings
+                    },
+                    {
+                        loader: 'css-loader', // translates CSS into CommonJS
+                        options: {
+                            modules: {
+                                localIdentName: '[name]__[local]___[hash:base64:5]'
+                            }
+                        }
+                    },
+                    {
+                        loader: 'stylus-loader' // compiles Stylus to CSS
+                    }
+                ]
             },
             {
                 test: /\.png($|\?)|\.jpg($|\?)|\.gif($|\?)/,
