@@ -32,6 +32,8 @@ export type FormOpenKeyType = 'main';
 export type FormValues = {
     uid: string,
     created_at: string,
+    cn_date: string,
+    vn_date: string,
     mass: number,
     length: number,
     width: number,

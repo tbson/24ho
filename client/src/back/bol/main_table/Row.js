@@ -39,12 +39,14 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
             </th>
             <td>{Tools.dateTimeFormat(data.created_at)}</td>
             <td>{data.uid}</td>
+            <td><BoolOutput value={!!data.cn_date}/></td>
+            <td><BoolOutput value={!!data.vn_date}/></td>
             <td className="mono right">{data.mass}</td>
             <td className="mono right">{data.length}</td>
             <td className="mono right">{data.width}</td>
             <td className="mono right">{data.height}</td>
             <td className="mono right">{data.packages}</td>
-            <td className="mono right"><BoolOutput value={data.insurance}/></td>
+            <td><BoolOutput value={data.insurance}/></td>
             <td>{data.note}</td>
             <td className="center">
                 <a className="editBtn" onClick={() => showForm(data.id)}>

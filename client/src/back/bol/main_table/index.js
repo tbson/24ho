@@ -97,6 +97,8 @@ export default ({order_id = 0, notifyChange}: Props) => {
                         </th>
                         <th scope="col">Ngày</th>
                         <th scope="col">Mã vận đơn</th>
+                        <th scope="col">TQ</th>
+                        <th scope="col">VN</th>
                         <th scope="col" className="right">
                             Khối lượng
                         </th>
@@ -112,7 +114,7 @@ export default ({order_id = 0, notifyChange}: Props) => {
                         <th scope="col" className="right">
                             Số kiện
                         </th>
-                        <th scope="col" className="right">
+                        <th scope="col">
                             Bảo hiểm
                         </th>
                         <th scope="col">Ghi chú</th>
