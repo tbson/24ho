@@ -10,9 +10,9 @@ class CustomPermission(permissions.BasePermission):
 
         permission = action + '_' + view._name.replace('_', '')
 
-        isAllow = False
+        is_allow = False
         if request.user.user_permissions.filter(codename=permission).count():
-            isAllow = True
+            is_allow = True
         if request.user.groups.filter(permissions__codename=permission).count():
-            isAllow = True
-        return isAllow
+            is_allow = True
+        return is_allow

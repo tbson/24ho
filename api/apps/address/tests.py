@@ -16,7 +16,7 @@ class AddressManagerTestCase(TestCase):
     def test_create_new_uid(self):
         # Add success
         CustomerUtils.seeding(1, True)
-        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + TestHelpers.get_customer_token(self))
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + TestHelpers.get_customer_token())
 
         item1 = AddressUtils.seeding(1, True, False)
         resp = self.client.post(
@@ -57,7 +57,7 @@ class AddressTestCase(TestCase):
     def setUp(self):
         logging.disable(logging.CRITICAL)
 
-        self.token = TestHelpers.test_setup(self)
+        self.token = TestHelpers.test_setup()
         self.client = APIClient()
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + self.token)
 

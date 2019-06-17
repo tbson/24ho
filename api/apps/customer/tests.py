@@ -14,7 +14,7 @@ class CustomerTestCase(TestCase):
     def setUp(self):
         logging.disable(logging.CRITICAL)
 
-        self.token = TestHelpers.test_setup(self)
+        self.token = TestHelpers.test_setup()
         self.client = APIClient()
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + self.token)
 
@@ -116,7 +116,7 @@ class CustomerTestCase(TestCase):
         self.assertEqual(Customer.objects.count(), 0)
 
     def test_profile(self):
-        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + TestHelpers.get_customer_token(self))
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + TestHelpers.get_customer_token())
 
         resp = self.client.get(
             "/api/v1/customer/profile/",
@@ -125,7 +125,7 @@ class CustomerTestCase(TestCase):
         self.assertEqual(resp.status_code, 200)
 
     def test_updateProfile(self):
-        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + TestHelpers.get_customer_token(self))
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + TestHelpers.get_customer_token())
 
         data = TestHelpers.user_seeding(4, True, False)
         data['phone'] = '111'
@@ -146,7 +146,7 @@ class CustomerTestCase(TestCase):
         self.assertEqual(result["user_data"]["last_name"], data["last_name"])
 
     def test_changePassword(self):
-        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + TestHelpers.get_customer_token(self))
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + TestHelpers.get_customer_token())
         user = TestHelpers.user_seeding(1, True, False)
         data = {
             "oldPassword": user['password'],
@@ -214,7 +214,7 @@ class CustomerTestCase(TestCase):
         self.assertEqual(resp.status_code, 200)
 
     def test_get_shopping_cart(self):
-        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + TestHelpers.get_customer_token(self))
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + TestHelpers.get_customer_token())
 
         resp = self.client.get(
             "/api/v1/customer/shopping-cart/",
@@ -224,7 +224,7 @@ class CustomerTestCase(TestCase):
         self.assertEqual(resp.data, {})
 
     def test_post_shopping_cart(self):
-        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + TestHelpers.get_customer_token(self))
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + TestHelpers.get_customer_token())
         payload = {
             'items': [
                 {

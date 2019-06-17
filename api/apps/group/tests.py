@@ -11,7 +11,7 @@ class GroupTestCase(TestCase):
     def setUp(self):
         logging.disable(logging.CRITICAL)
 
-        self.token = TestHelpers.test_setup(self)
+        self.token = TestHelpers.test_setup()
         self.client = APIClient()
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + self.token)
 

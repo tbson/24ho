@@ -1,4 +1,5 @@
 from django.urls import reverse
+from rest_framework.test import APIClient
 from django.db.models import Q
 from django.db.models import QuerySet
 from django.contrib.auth.models import Permission
@@ -20,7 +21,7 @@ class TestHelpers():
     TEST_FINGERPRINT = 'test-fingerprint'
 
     @staticmethod
-    def test_setup(self):
+    def test_setup():
         from apps.staff.models import Staff
         # Add original user
         user = User.objects.create_superuser(
@@ -37,7 +38,8 @@ class TestHelpers():
         Staff.objects.create(user=user, fingerprint=fingerprint)
 
         # Test user login and get token
-        resp = self.client.post(
+        client = APIClient()
+        resp = client.post(
             reverse('api_v1:staff:login'),
             {
                 'username': TestHelpers.TEST_ADMIN['username'],
@@ -48,9 +50,10 @@ class TestHelpers():
         return token
 
     @staticmethod
-    def get_customer_token(self):
+    def get_customer_token():
         user = TestHelpers.user_seeding(1, True, False)
-        resp = self.client.post(
+        client = APIClient()
+        resp = client.post(
             "/api/v1/customer/auth/",
             {
                 'username': user['username'],

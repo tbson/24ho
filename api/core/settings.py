@@ -248,6 +248,11 @@ USER_PERMISSIONS = (
     'delete_address',
     'view_address',
 
+    'add_bol',
+    'change_bol',
+    'delete_bol',
+    'view_bol',
+
     'add_order',
     'change_address_order',
     'view_order',
