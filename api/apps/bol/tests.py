@@ -22,7 +22,7 @@ class BolTestCase(TestCase):
     def setUp(self):
         logging.disable(logging.CRITICAL)
 
-        self.token = TestHelpers.test_setup(self)
+        self.token = TestHelpers.test_setup()
         self.client = APIClient()
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + self.token)
 
@@ -131,6 +131,77 @@ class BolTestCase(TestCase):
         )
         self.assertEqual(response.status_code, 204)
         self.assertEqual(Bol.objects.count(), 0)
+
+
+class BolSelfItemsTestCase(TestCase):
+
+    def setUp(self):
+        CustomerUtils.seeding(1, True)
+
+        self.client = APIClient()
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + TestHelpers.get_customer_token())
+
+        self.items = BolUtils.seeding(3)
+
+    def test_update_other_record(self):
+        response = self.client.put(
+            "/api/v1/bol/{}".format(self.items[0].pk),
+            {},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 200)
+
+    def test_delete_other_record(self):
+        response = self.client.delete(
+            "/api/v1/bol/{}".format(self.items[0].pk)
+        )
+        self.assertEqual(response.status_code, 204)
+
+    def test_bulk_delete_order_record(self):
+        response = self.client.delete(
+            "/api/v1/bol/?ids={}".format(','.join([str(self.items[1].pk), str(self.items[2].pk)]))
+        )
+        self.assertEqual(response.status_code, 204)
+
+
+class BolOtherItemsTestCase(TestCase):
+
+    def setUp(self):
+        CustomerUtils.seeding(1, True)
+        customer2 = CustomerUtils.seeding(2, True)
+        user2 = TestHelpers.user_seeding(2, True)
+        customer2.user_id = user2.pk
+        customer2.save()
+
+        self.client = APIClient()
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + TestHelpers.get_customer_token())
+
+        self.items = BolUtils.seeding(3)
+        for item in self.items:
+            item.address = None
+            item.address_code = ''
+            item.customer = customer2
+            item.save()
+
+    def test_update_other_record(self):
+        response = self.client.put(
+            "/api/v1/bol/{}".format(self.items[0].pk),
+            {},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 403)
+
+    def test_delete_other_record(self):
+        response = self.client.delete(
+            "/api/v1/bol/{}".format(self.items[0].pk)
+        )
+        self.assertEqual(response.status_code, 403)
+
+    def test_bulk_delete_order_record(self):
+        response = self.client.delete(
+            "/api/v1/bol/?ids={}".format(','.join([str(self.items[1].pk), str(self.items[2].pk)]))
+        )
+        self.assertEqual(response.status_code, 403)
 
 
 class ManagerGetVolume(TestCase):

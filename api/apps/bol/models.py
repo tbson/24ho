@@ -136,7 +136,7 @@ class Bol(TimeStampedModel):
             Order.objects.re_cal(order)
 
     def __str__(self):
-        return '{} - {}'.format(self.uid, self.value)
+        return self.uid
 
     class Meta:
         db_table = "bols"
