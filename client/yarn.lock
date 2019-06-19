@@ -1843,9 +1843,9 @@ babel-loader@8.0.6:
     mkdirp "^0.5.1"
     pify "^4.0.1"
 
-babel-plugin-dynamic-import-node@2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/babel-plugin-dynamic-import-node/-/babel-plugin-dynamic-import-node-2.2.0.tgz#c0adfb07d95f4a4495e9aaac6ec386c4d7c2524e"
+babel-plugin-dynamic-import-node@2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/babel-plugin-dynamic-import-node/-/babel-plugin-dynamic-import-node-2.3.0.tgz#f00f507bdaa3c3e3ff6e7e5e98d90a7acab96f7f"
   dependencies:
     object.assign "^4.1.0"
 
@@ -3881,9 +3881,9 @@ flatted@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/flatted/-/flatted-2.0.0.tgz#55122b6536ea496b4b44893ee2608141d10d9916"
 
-flow-bin@^0.101.0:
-  version "0.101.0"
-  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.101.0.tgz#c56fa0afb9c151eeba7954136e9066d408691063"
+flow-bin@^0.102.0-rc:
+  version "0.102.0-rc"
+  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.102.0-rc.tgz#51618cc4bfee7148846c986030c79aecfa848dc4"
 
 flush-write-stream@^1.0.0:
   version "1.0.3"
@@ -7171,9 +7171,9 @@ react-test-renderer@^16.0.0-0:
     prop-types "^15.6.0"
     react-is "^16.3.0"
 
-react-toastify@^5.2.1:
-  version "5.2.1"
-  resolved "https://registry.yarnpkg.com/react-toastify/-/react-toastify-5.2.1.tgz#faa05bc4cd5066ee50bf56c7f8b8fd1492e71aca"
+react-toastify@^5.3.0:
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/react-toastify/-/react-toastify-5.3.0.tgz#d1829678e31a9edbe2b2269ff64c9a88824145d6"
   dependencies:
     "@babel/runtime" "^7.4.2"
     classnames "^2.2.6"
