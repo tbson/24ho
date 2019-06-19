@@ -25,6 +25,8 @@ class OrderViewSet(GenericViewSet):
 
     def list(self, request):
         queryset = Order.objects.all()
+        if hasattr(request.user, 'customer'):
+            queryset = queryset.filter(customer=request.user.customer)
         queryset = self.filter_queryset(queryset)
         queryset = self.paginate_queryset(queryset)
         serializer = OrderBaseSr(queryset, many=True)

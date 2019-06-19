@@ -113,8 +113,7 @@ class Order(TimeStampedModel):
         if self._state.adding and self.address and not self.uid:
             self.uid = OrderUtils.get_next_uid(self.address)
 
-        address = self.address
-        self.customer = address.customer
+        self.customer = self.address.customer
         if not Tools.is_testing():
             self.__dict__.update(OrderUtils.cal_all(self))
         super(Order, self).save(*args, **kwargs)
