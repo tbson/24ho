@@ -204,6 +204,35 @@ class BolOtherItemsTestCase(TestCase):
         self.assertEqual(response.status_code, 403)
 
 
+class BolUserGetItemsTestCase(TestCase):
+
+    def setUp(self):
+        CustomerUtils.seeding(1, True)
+        customer2 = CustomerUtils.seeding(2, True)
+        user2 = TestHelpers.user_seeding(2, True)
+        customer2.user_id = user2.pk
+        customer2.save()
+
+        self.client = APIClient()
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + TestHelpers.get_customer_token())
+
+        self.items = BolUtils.seeding(3)
+        self.items[2].address = None
+        self.items[2].address_code = ''
+        self.items[2].customer = customer2
+        self.items[2].save()
+
+    def test_normal_case(self):
+        response = self.client.get(
+            "/api/v1/bol/",
+            {},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 200)
+        response = response.json()
+        self.assertEqual(response['count'], 2)
+
+
 class ManagerGetVolume(TestCase):
     def test_normal_case(self):
         item = BolUtils.seeding(1, True)

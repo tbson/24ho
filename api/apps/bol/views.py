@@ -34,6 +34,8 @@ class BolViewSet(GenericViewSet):
 
     def list(self, request):
         queryset = Bol.objects.all()
+        if hasattr(request.user, 'customer'):
+            queryset = queryset.filter(customer=request.user.customer)
         queryset = self.filter_queryset(queryset)
         queryset = self.paginate_queryset(queryset)
         serializer = BolBaseSr(queryset, many=True)
