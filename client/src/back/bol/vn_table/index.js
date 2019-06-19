@@ -9,9 +9,7 @@ import {Pagination, SearchInput} from 'src/utils/components/TableUtils';
 import VNForm from '../VNForm';
 import Row from './Row.js';
 
-type Props = {
-    type: number
-};
+type Props = {};
 
 export class Service {
     static listRequest(url?: string, params?: Object): Promise<Object> {

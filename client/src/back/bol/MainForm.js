@@ -5,6 +5,8 @@ import {useState, useEffect, useRef} from 'react';
 import {Formik, Form} from 'formik';
 // $FlowFixMe: do not complain about Yup
 import * as Yup from 'yup';
+import {APP} from 'src/constants';
+import OnlyAdmin from 'src/utils/components/OnlyAdmin';
 import {DeliveryFeeTypeOptions} from './_data';
 import Tools from 'src/utils/helpers/Tools';
 import ErrMsgs from 'src/utils/helpers/ErrMsgs';
@@ -133,9 +135,11 @@ export default ({id, open, close, onChange, children, submitTitle = 'Save'}: Pro
                             <div className="col">
                                 <TextInput name="address_code" label="Mã địa chỉ" />
                             </div>
-                            <div className="col">
-                                <TextInput name="purchase_code" label="Mã giao dịch" />
-                            </div>
+                            <OnlyAdmin>
+                                <div className="col">
+                                    <TextInput name="purchase_code" label="Mã giao dịch" />
+                                </div>
+                            </OnlyAdmin>
                         </div>
                         <TextInput name="mass" type="number" label="Khối lượng (KG)" />
                         <div className="row">
@@ -149,14 +153,16 @@ export default ({id, open, close, onChange, children, submitTitle = 'Save'}: Pro
                                 <TextInput name="height" type="number" label="Cao (Cm)" />
                             </div>
                         </div>
-                        <div className="row">
-                            <div className="col">
-                                <TextInput name="mass_unit_price" type="number" label="Đơn giá theo Kg (VND)" />
+                        <OnlyAdmin>
+                            <div className="row">
+                                <div className="col">
+                                    <TextInput name="mass_unit_price" type="number" label="Đơn giá theo Kg (VND)" />
+                                </div>
+                                <div className="col">
+                                    <TextInput name="volume_unit_price" type="number" label="Đơn giá theo Khối (VND)" />
+                                </div>
                             </div>
-                            <div className="col">
-                                <TextInput name="volume_unit_price" type="number" label="Đơn giá theo Khối (VND)" />
-                            </div>
-                        </div>
+                        </OnlyAdmin>
                         <div className="row">
                             <div className="col">
                                 <CheckInput name="shockproof" label="Chống sốc" />
@@ -181,11 +187,14 @@ export default ({id, open, close, onChange, children, submitTitle = 'Save'}: Pro
                                 )}
                             </div>
                         </div>
-                        <SelectInput
-                            name="delivery_fee_type"
-                            options={DeliveryFeeTypeOptions}
-                            label="Cách tính phí vận chuyển"
-                        />
+
+                        <OnlyAdmin>
+                            <SelectInput
+                                name="delivery_fee_type"
+                                options={DeliveryFeeTypeOptions}
+                                label="Cách tính phí vận chuyển"
+                            />
+                        </OnlyAdmin>
                         <TextInput name="note" label="Ghi chú" />
                         <FormLevelErrMsg errors={errors.detail} />
                         <ButtonsBar children={children} submitTitle={submitTitle} onClick={onClick(handleSubmit)} />

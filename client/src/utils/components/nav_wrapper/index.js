@@ -58,7 +58,6 @@ const App = ({history, location, children}: Props) => {
             case 'order':
                 return menuItem('order', 'Order', 'fas fa-shipping-fast');
             case 'bol':
-                if (APP !== 'admin') return null;
                 return menuItem('bol', 'Vận đơn', 'fas fa-box');
             case 'variable':
                 if (APP !== 'admin') return null;

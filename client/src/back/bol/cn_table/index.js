@@ -11,8 +11,7 @@ import {Pagination, SearchInput} from 'src/utils/components/TableUtils';
 import CNForm from '../CNForm';
 import Row from './Row.js';
 
-type Props = {
-};
+type Props = {};
 
 export class Service {
     static listRequest(url?: string, params?: Object): Promise<Object> {
@@ -95,11 +94,21 @@ export default ({}: Props) => {
                         </th>
                         <th scope="col">Ngày</th>
                         <th scope="col">Mã vận đơn</th>
-                        <th scope="col" className="right">Khối lượng</th>
-                        <th scope="col" className="right">Dài</th>
-                        <th scope="col" className="right">Rộng</th>
-                        <th scope="col" className="right">Cao</th>
-                        <th scope="col" className="right">Số kiện</th>
+                        <th scope="col" className="right">
+                            Khối lượng
+                        </th>
+                        <th scope="col" className="right">
+                            Dài
+                        </th>
+                        <th scope="col" className="right">
+                            Rộng
+                        </th>
+                        <th scope="col" className="right">
+                            Cao
+                        </th>
+                        <th scope="col" className="right">
+                            Số kiện
+                        </th>
                         <th scope="col">Ghi chú</th>
                         <th scope="col" style={{padding: 8}} className="row80">
                             <Link className="btn btn-primary btn-sm btn-block add-button" to={`/bol-cn-adding`}>

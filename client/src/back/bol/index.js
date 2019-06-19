@@ -36,9 +36,9 @@ const Component = ({match}: Props) => {
                         <span>Vận đơn VN</span>
                     </Tab>
                 </TabList>
-                <TabPanel><Table type={0}/></TabPanel>
-                <TabPanel><CNTable type={1}/></TabPanel>
-                <TabPanel><VNTable type={2}/></TabPanel>
+                <TabPanel><Table/></TabPanel>
+                <TabPanel><CNTable/></TabPanel>
+                <TabPanel><VNTable/></TabPanel>
             </Tabs>
         </NavWrapper>
     );
