@@ -84,6 +84,7 @@ const OrderInfo = ({data: _data}: OrderInfoType) => {
                                     <div>
                                         <span>Mã giao dịch: </span>
                                         <Editable
+                                            disabled={!Tools.isAdmin()}
                                             onChange={setData}
                                             name="value"
                                             value={data.purchase_code}
@@ -113,6 +114,7 @@ const Staffs = ({data: _data, options}: StaffsType) => {
             <div>
                 <span>Đặt hàng: </span>
                 <Editable
+                    disabled={!Tools.isAdmin()}
                     onChange={setData}
                     name="sale"
                     value={data.sale}
@@ -126,6 +128,7 @@ const Staffs = ({data: _data, options}: StaffsType) => {
             <div>
                 <span>Chăm sóc: </span>
                 <Editable
+                    disabled={!Tools.isAdmin()}
                     onChange={setData}
                     name="cust_care"
                     value={data.cust_care}

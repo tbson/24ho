@@ -16,6 +16,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import camelCase from 'lodash/camelCase';
 // $FlowFixMe: do not complain about importing node_modules
 const moment = require('moment');
+import {APP} from 'src/constants';
 
 import {
     LOCAL_STORAGE_PREFIX,
@@ -73,6 +74,10 @@ export type ObjResp = {
 export type SelectOptions = Array<{value: string | number, label: string}>;
 
 export default class Tools {
+    static isAdmin(): boolean {
+        return APP === 'admin';
+    }
+
     static checkDevMode(): boolean {
         const domainArr = window.location.host.split('.');
         const suffix = domainArr[domainArr.length - 1];
@@ -284,9 +289,9 @@ export default class Tools {
             // If message is ARRAY
             return String(input.join('<br/>'));
         } else if (typeof input === 'object') {
-            return flattenDeep(Object.values(input).filter(item => Array.isArray(item) || typeof item === 'string')).join(
-                '<br/>'
-            );
+            return flattenDeep(
+                Object.values(input).filter(item => Array.isArray(item) || typeof item === 'string')
+            ).join('<br/>');
         } else {
             return '';
         }

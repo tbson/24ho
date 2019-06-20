@@ -34,6 +34,7 @@ export default ({data, addresses, onPartialChange}: Props) => {
                         <span className="cny mono">1</span>
                         <span> = </span>
                         <Editable
+                            disabled={!Tools.isAdmin()}
                             onChange={onPartialChange}
                             name="value"
                             value={data.rate}
@@ -66,6 +67,7 @@ export default ({data, addresses, onPartialChange}: Props) => {
                         <span>Địa chỉ:</span>
                         &nbsp;
                         <Editable
+                            disabled={!Tools.isAdmin()}
                             onChange={onPartialChange}
                             name="value"
                             value={data.address}
@@ -80,6 +82,7 @@ export default ({data, addresses, onPartialChange}: Props) => {
                         <span>Mã giảm giá:</span>
                         &nbsp;
                         <Editable
+                            disabled={!Tools.isAdmin()}
                             onChange={onPartialChange}
                             name="value"
                             value={data.voucher}
@@ -99,6 +102,7 @@ export default ({data, addresses, onPartialChange}: Props) => {
                         <span>Trạng thái:</span>
                         &nbsp;
                         <Editable
+                            disabled={!Tools.isAdmin()}
                             onChange={onPartialChange}
                             name="value"
                             value={String(data.status)}
@@ -113,6 +117,7 @@ export default ({data, addresses, onPartialChange}: Props) => {
                         <span>Mã giao dịch:</span>
                         &nbsp;
                         <Editable
+                            disabled={!Tools.isAdmin()}
                             onChange={onPartialChange}
                             name="value"
                             value={data.purchase_code}

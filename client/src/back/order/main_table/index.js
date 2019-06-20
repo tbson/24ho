@@ -5,6 +5,7 @@ import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
 import {apiUrls} from '../_data';
 import {Pagination, SearchInput} from 'src/utils/components/TableUtils';
+import OnlyAdmin from 'src/utils/components/OnlyAdmin';
 import Row from './Row.js';
 
 type Props = {
@@ -111,7 +112,9 @@ export default ({status}: Props) => {
 
     return (
         <div>
-            <BulkApprove status={status} onApprove={onApprove} />
+            <OnlyAdmin>
+                <BulkApprove status={status} onApprove={onApprove} />
+            </OnlyAdmin>
             <table className="table table-striped">
                 <thead className="thead-light">
                     <tr>

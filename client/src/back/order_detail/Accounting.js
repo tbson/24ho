@@ -3,6 +3,7 @@ import * as React from 'react';
 import {apiUrls} from 'src/back/order/_data';
 import Tools from 'src/utils/helpers/Tools';
 import Editable from 'src/utils/components/Editable';
+import OnlyAdmin from 'src/utils/components/OnlyAdmin';
 
 type Props = {
     data: Object,
@@ -56,16 +57,18 @@ export default ({data, onPartialChange}: Props) => {
                 <tr>
                     <td>Phí dịch vụ:</td>
                     <td className="mono cny">
-                        <Editable
-                            onChange={onPartialChange}
-                            name="value"
-                            value={order_fee_factor}
-                            endPoint={apiUrls.change_order_fee_factor.replace('/pk-', `/${data.id}/`)}
-                            type="number"
-                            placeholder="Hệ số phí dịch vụ...">
-                            <span>{order_fee_factor} % cố định</span>
-                        </Editable>
-                        <span>&nbsp;&rarr;&nbsp;</span>
+                        <OnlyAdmin>
+                            <Editable
+                                onChange={onPartialChange}
+                                name="value"
+                                value={order_fee_factor}
+                                endPoint={apiUrls.change_order_fee_factor.replace('/pk-', `/${data.id}/`)}
+                                type="number"
+                                placeholder="Hệ số phí dịch vụ...">
+                                <span>{order_fee_factor} % cố định</span>
+                            </Editable>
+                            <span>&nbsp;&rarr;&nbsp;</span>
+                        </OnlyAdmin>
                         <span>{Tools.numberFormat(cny_order_fee)}</span>
                     </td>
                 </tr>
@@ -73,6 +76,7 @@ export default ({data, onPartialChange}: Props) => {
                     <td>Kiểm đếm:</td>
                     <td className="mono cny">
                         <Editable
+                            disabled={!Tools.isAdmin()}
                             onChange={onPartialChange}
                             name="value"
                             value={count_check_fee_input}
@@ -103,6 +107,7 @@ export default ({data, onPartialChange}: Props) => {
                     <td>Nội địa TQ:</td>
                     <td className="mono cny">
                         <Editable
+                            disabled={!Tools.isAdmin()}
                             onChange={onPartialChange}
                             name="value"
                             value={cny_inland_delivery_fee}

@@ -47,6 +47,7 @@ export default ({data, onCheck, onRemove, onPartialChange}: RowPropTypes) => {
             </td>
             <td className="right mono">
                 <Editable
+                    disabled={!Tools.isAdmin()}
                     onChange={onPartialChange}
                     name="value"
                     value={data.quantity}
@@ -59,6 +60,7 @@ export default ({data, onCheck, onRemove, onPartialChange}: RowPropTypes) => {
             <td>
                 <div className="cny mono">
                     <Editable
+                        disabled={!Tools.isAdmin()}
                         onChange={onPartialChange}
                         name="value"
                         value={data.unit_price}
@@ -76,6 +78,7 @@ export default ({data, onCheck, onRemove, onPartialChange}: RowPropTypes) => {
             </td>
             <td>
                 <Editable
+                    disabled={!Tools.isAdmin()}
                     onChange={onPartialChange}
                     name="value"
                     value={data.note}
@@ -115,6 +118,7 @@ export const Description = ({data: {id, title, image, color, size, link}, onPart
                             <div>
                                 <strong>Màu: </strong>
                                 <Editable
+                                    disabled={!Tools.isAdmin()}
                                     onChange={onPartialChange}
                                     name="value"
                                     value={color}
@@ -128,6 +132,7 @@ export const Description = ({data: {id, title, image, color, size, link}, onPart
                             <div>
                                 <strong>Size: </strong>
                                 <Editable
+                                    disabled={!Tools.isAdmin()}
                                     onChange={onPartialChange}
                                     name="value"
                                     value={size}
