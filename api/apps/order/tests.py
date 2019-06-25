@@ -640,7 +640,6 @@ class UtilsCalCountCheckFee(TestCase):
         order.save()
 
         self.assertEqual(OrderUtils.cal_count_check_fee(order), 5)
-        self.assertEqual(order.cny_count_check_fee, 5)
 
 
 class UtilsCalShockproofFee(TestCase):
@@ -805,12 +804,13 @@ class Serializer(TestCase):
             'cny_wooden_box_fee': 3,
             'vnd_delivery_fee': 100000,
             'vnd_sub_fee': 20000,
+            'cny_sub_fee': 12,
         }
         order = OrderBaseSr(data=data)
         order.is_valid(raise_exception=True)
         order_obj = order.save()
 
-        self.assertEqual(order.data['vnd_total'], 526300)
+        self.assertEqual(order.data['vnd_total'], 567100)
         self.assertEqual(order.data['customer'], address.customer.pk)
 
         # Update address -> update customer

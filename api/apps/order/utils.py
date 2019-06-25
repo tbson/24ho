@@ -96,14 +96,16 @@ class OrderUtils:
         cny_count_check_fee = order.get('cny_count_check_fee', 0)
         cny_shockproof_fee = order.get('cny_shockproof_fee', 0)
         cny_wooden_box_fee = order.get('cny_wooden_box_fee', 0)
+        cny_sub_fee = order.get('cny_sub_fee', 0)
 
         series = [
             cny_amount,
             cny_order_fee,
             cny_inland_delivery_fee,
-            cny_count_check_fee,  # VND
-            cny_shockproof_fee,  # CNY
-            cny_wooden_box_fee,  # CNY
+            cny_count_check_fee,
+            cny_shockproof_fee,
+            cny_wooden_box_fee,
+            cny_sub_fee
         ]
 
         return sum(series)
