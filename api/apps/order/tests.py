@@ -635,11 +635,12 @@ class UtilsCalCountCheckFee(TestCase):
         CountCheckUtils.seeding(5)
         orderItems = OrderItemUtils.seeding(5)
 
-        item = orderItems[0].order
-        item.count_check_fee_input = 5
-        item.save()
+        order = orderItems[0].order
+        order.count_check_fee_input = 5
+        order.save()
 
-        self.assertEqual(OrderUtils.cal_count_check_fee(item), 5)
+        self.assertEqual(OrderUtils.cal_count_check_fee(order), 5)
+        self.assertEqual(order.cny_count_check_fee, 5)
 
 
 class UtilsCalShockproofFee(TestCase):
@@ -651,6 +652,7 @@ class UtilsCalShockproofFee(TestCase):
             bol.shockproof = False
             bol.cny_shockproof_fee = 2
             bol.save()
+        self.assertEqual(order.cny_shockproof_fee, 0)
         self.assertEqual(OrderUtils.cal_shockproof_fee(order), 0)
 
     def test_with_register(self):
@@ -661,6 +663,7 @@ class UtilsCalShockproofFee(TestCase):
             bol.shockproof = True
             bol.cny_shockproof_fee = 2
             bol.save()
+        self.assertEqual(order.cny_shockproof_fee, 6)
         self.assertEqual(OrderUtils.cal_shockproof_fee(order), 6)
 
 
@@ -673,6 +676,7 @@ class UtilsCalWoodenBoxFee(TestCase):
             bol.wooden_box = False
             bol.cny_wooden_box_fee = 2
             bol.save()
+        self.assertEqual(order.cny_wooden_box_fee, 0)
         self.assertEqual(OrderUtils.cal_wooden_box_fee(order), 0)
 
     def test_with_register(self):
@@ -683,7 +687,20 @@ class UtilsCalWoodenBoxFee(TestCase):
             bol.wooden_box = True
             bol.cny_wooden_box_fee = 2
             bol.save()
+        self.assertEqual(order.cny_wooden_box_fee, 6)
         self.assertEqual(OrderUtils.cal_wooden_box_fee(order), 6)
+
+
+class UtilsCalSubFee(TestCase):
+    def test_normal_case(self):
+        bols = BolUtils.seeding(3)
+        order = OrderUtils.seeding(1, True)
+        for bol in bols:
+            bol.order = order
+            bol.cny_sub_fee = 2
+            bol.save()
+        self.assertEqual(order.cny_sub_fee, 6)
+        self.assertEqual(OrderUtils.cal_sub_fee(order), 6)
 
 
 class UtilsCalStatistics(TestCase):
@@ -710,6 +727,7 @@ class UtilsCalStatistics(TestCase):
             "packages": 3
         }
         output = OrderUtils.cal_statistics(order)
+        self.assertEqual(order.statistics, eput)
         self.assertEqual(output, eput)
 
 

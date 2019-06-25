@@ -39,7 +39,9 @@ class OrderManager(models.Manager):
     def re_cal(self, item: models.QuerySet) -> models.QuerySet:
         from .utils import OrderUtils
 
-        item.__dict__.update(OrderUtils.cal_all(item))
+        statistics = OrderUtils.cal_statistics(item)
+
+        item.__dict__.update(OrderUtils.cal_all(item), statistics=statistics)
 
         item.save()
         return item
@@ -81,6 +83,7 @@ class Order(TimeStampedModel):
     cny_count_check_fee = models.FloatField(default=0)
     cny_shockproof_fee = models.FloatField(default=0)
     cny_wooden_box_fee = models.FloatField(default=0)
+    cny_sub_fee = models.FloatField(default=0)
 
     vnd_delivery_fee = models.PositiveIntegerField(default=0)
     vnd_sub_fee = models.PositiveIntegerField(default=0)

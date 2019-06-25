@@ -189,6 +189,11 @@ class OrderUtils:
         return sum([BolUtils.cal_wooden_box_fee(bol) for bol in item.order_bols.all()])
 
     @staticmethod
+    def cal_sub_fee(item: models.QuerySet) -> float:
+        # sum of bols's sub fee
+        return sum([bol.cny_sub_fee for bol in item.order_bols.all()])
+
+    @staticmethod
     def cal_statistics(item: models.QuerySet) -> dict:
         order_items = item.order_items.all()
         bols = item.order_bols.all()
@@ -220,9 +225,7 @@ class OrderUtils:
         result['cny_count_check_fee'] = OrderUtils.cal_count_check_fee(item)
         result['cny_shockproof_fee'] = OrderUtils.cal_shockproof_fee(item)
         result['cny_wooden_box_fee'] = OrderUtils.cal_wooden_box_fee(item)
-        # item.vnd_sub_fee
-
-        result['statistics'] = OrderUtils.cal_statistics(item)
+        result['cny_sub_fee'] = OrderUtils.cal_sub_fee(item)
 
         return result
 

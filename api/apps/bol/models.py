@@ -87,6 +87,7 @@ class Bol(TimeStampedModel):
     shockproof = models.BooleanField(default=False)
     wooden_box = models.BooleanField(default=False)
 
+    cny_sub_fee = models.FloatField(default=0)
     cny_shockproof_fee = models.FloatField(default=0)
     cny_wooden_box_fee = models.FloatField(default=0)
 
