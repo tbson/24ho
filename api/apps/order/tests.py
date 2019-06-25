@@ -6,7 +6,7 @@ from unittest.mock import patch, MagicMock
 from rest_framework.test import APIClient
 from django.test import TestCase
 from .models import Order, Status
-from .utils import OrderUtils
+from .utils import OrderUtils, PushOrderStatusUtils, PullOrderStatusUtils
 from .serializers import OrderBaseSr
 from apps.address.utils import AddressUtils
 from apps.order_item.models import OrderItem
@@ -866,3 +866,21 @@ class Serializer(TestCase):
         self.assertEqual(order.data['sale_name'], 'last2 first2')
         self.assertEqual(order.data['cust_care_name'], 'last3 first3')
         self.assertEqual(order.data['approver_name'], 'last4 first4')
+
+
+class StatusFlow(TestCase):
+    def setUp(self):
+        self.order = OrderUtils.seeding(1, True)
+        self.order.status = Status.NEW
+        self.order.save()
+
+    def test_normal_flow(self):
+        list_push_status = [Status.APPROVED, Status.DEBT, Status.PAID, Status.DISPATCHED,
+                            Status.CN_STORE, Status.VN_STORE, Status.EXPORTED, Status.DONE, Status.DISCARD]
+        for status in list_push_status:
+            PushOrderStatusUtils.move(self.order, status)
+
+        list_pull_status = [Status.DONE, Status.EXPORTED, Status.VN_STORE, Status.CN_STORE,
+                            Status.DISPATCHED, Status.PAID, Status.DEBT, Status.APPROVED, Status.NEW]
+        for status in list_pull_status:
+            PullOrderStatusUtils.move(self.order, status)

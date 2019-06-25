@@ -5,8 +5,10 @@ import re
 from django.utils import timezone
 from django.db import models
 from django.db.models import Sum, F
+from rest_framework.serializers import ValidationError
 from apps.address.utils import AddressUtils
 from apps.order_fee.utils import OrderFeeUtils
+from .models import Status, STATUS_CHOICES
 
 MONTH_LETTERS = {
     '01': 'A',
@@ -255,3 +257,261 @@ class OrderUtils:
     @staticmethod
     def get_next_uid_order(uid: str) -> int:
         return int(re.split('[A-L]', uid)[-1]) + 1 if uid else 1
+
+
+class PushOrderStatusUtils:
+    @staticmethod
+    def error_message(status: Status):
+        raise ValidationError("Đơn hàng chỉ có thể chuyển đi từ trạng thái {}.".format(
+            dict(STATUS_CHOICES).get(status, 'không xác định')))
+
+    @staticmethod
+    def move(item: models.QuerySet, status: Status):
+        if status == Status.APPROVED:
+            PushOrderStatusUtils._approved(item)
+        elif status == Status.DEBT:
+            PushOrderStatusUtils._debt(item)
+        elif status == Status.PAID:
+            PushOrderStatusUtils._paid(item)
+        elif status == Status.DISPATCHED:
+            PushOrderStatusUtils._dispatched(item)
+        elif status == Status.CN_STORE:
+            PushOrderStatusUtils._cn_store(item)
+        elif status == Status.VN_STORE:
+            PushOrderStatusUtils._vn_store(item)
+        elif status == Status.EXPORTED:
+            PushOrderStatusUtils._exported(item)
+        elif status == Status.DONE:
+            PushOrderStatusUtils._done(item)
+        elif status == Status.DISCARD:
+            PushOrderStatusUtils._discard(item)
+        else:
+            raise Exception('Invalid status')
+
+    @staticmethod
+    def _approved(item: models.QuerySet):
+        new_status = Status.APPROVED
+        old_status = Status.NEW
+
+        if item.status != old_status:
+            PushOrderStatusUtils.error_message(old_status)
+
+        item.status = new_status
+        item.save()
+
+    @staticmethod
+    def _debt(item: models.QuerySet):
+        new_status = Status.DEBT
+        old_status = Status.APPROVED
+
+        if item.status != old_status:
+            PushOrderStatusUtils.error_message(old_status)
+
+        item.status = new_status
+        item.save()
+
+    @staticmethod
+    def _paid(item: models.QuerySet):
+        new_status = Status.PAID
+        old_status = Status.DEBT
+
+        if item.status != old_status:
+            PushOrderStatusUtils.error_message(old_status)
+
+        item.status = new_status
+        item.save()
+
+    @staticmethod
+    def _dispatched(item: models.QuerySet):
+        new_status = Status.DISPATCHED
+        old_status = Status.PAID
+
+        if item.status != old_status:
+            PushOrderStatusUtils.error_message(old_status)
+
+        item.status = new_status
+        item.save()
+
+    @staticmethod
+    def _cn_store(item: models.QuerySet):
+        new_status = Status.CN_STORE
+        old_status = Status.DISPATCHED
+
+        if item.status != old_status:
+            PushOrderStatusUtils.error_message(old_status)
+
+        item.status = new_status
+        item.save()
+
+    @staticmethod
+    def _vn_store(item: models.QuerySet):
+        new_status = Status.VN_STORE
+        old_status = Status.CN_STORE
+
+        if item.status != old_status:
+            PushOrderStatusUtils.error_message(old_status)
+
+        item.status = new_status
+        item.save()
+
+    @staticmethod
+    def _exported(item: models.QuerySet):
+        new_status = Status.EXPORTED
+        old_status = Status.VN_STORE
+
+        if item.status != old_status:
+            PushOrderStatusUtils.error_message(old_status)
+
+        item.status = new_status
+        item.save()
+
+    @staticmethod
+    def _done(item: models.QuerySet):
+        new_status = Status.DONE
+        old_status = Status.EXPORTED
+
+        if item.status != old_status:
+            PushOrderStatusUtils.error_message(old_status)
+
+        item.status = new_status
+        item.save()
+
+    @staticmethod
+    def _discard(item: models.QuerySet):
+        new_status = Status.DISCARD
+        old_status = Status.DONE
+
+        if item.status != old_status:
+            PushOrderStatusUtils.error_message(old_status)
+
+        item.status = new_status
+        item.save()
+
+
+class PullOrderStatusUtils:
+    @staticmethod
+    def error_message(status: Status):
+        raise ValidationError("Đơn hàng chỉ có thể chuyển về từ trạng thái {}.".format(
+            dict(STATUS_CHOICES).get(status, 'không xác định')))
+
+    @staticmethod
+    def move(item: models.QuerySet, status: Status):
+        if status == Status.NEW:
+            PullOrderStatusUtils._new(item)
+        elif status == Status.APPROVED:
+            PullOrderStatusUtils._approved(item)
+        elif status == Status.DEBT:
+            PullOrderStatusUtils._debt(item)
+        elif status == Status.PAID:
+            PullOrderStatusUtils._paid(item)
+        elif status == Status.DISPATCHED:
+            PullOrderStatusUtils._dispatched(item)
+        elif status == Status.CN_STORE:
+            PullOrderStatusUtils._cn_store(item)
+        elif status == Status.VN_STORE:
+            PullOrderStatusUtils._vn_store(item)
+        elif status == Status.EXPORTED:
+            PullOrderStatusUtils._exported(item)
+        elif status == Status.DONE:
+            PullOrderStatusUtils._done(item)
+        else:
+            raise Exception('Invalid status')
+
+    @staticmethod
+    def _new(item: models.QuerySet):
+        new_status = Status.NEW
+        old_status = Status.APPROVED
+
+        if item.status != old_status:
+            PullOrderStatusUtils.error_message(old_status)
+
+        item.status = new_status
+        item.save()
+
+    @staticmethod
+    def _approved(item: models.QuerySet):
+        new_status = Status.APPROVED
+        old_status = Status.DEBT
+
+        if item.status != old_status:
+            PullOrderStatusUtils.error_message(old_status)
+
+        item.status = new_status
+        item.save()
+
+    @staticmethod
+    def _debt(item: models.QuerySet):
+        new_status = Status.DEBT
+        old_status = Status.PAID
+
+        if item.status != old_status:
+            PullOrderStatusUtils.error_message(old_status)
+
+        item.status = new_status
+        item.save()
+
+    @staticmethod
+    def _paid(item: models.QuerySet):
+        new_status = Status.PAID
+        old_status = Status.DISPATCHED
+
+        if item.status != old_status:
+            PullOrderStatusUtils.error_message(old_status)
+
+        item.status = new_status
+        item.save()
+
+    @staticmethod
+    def _dispatched(item: models.QuerySet):
+        new_status = Status.DISPATCHED
+        old_status = Status.CN_STORE
+
+        if item.status != old_status:
+            PullOrderStatusUtils.error_message(old_status)
+
+        item.status = new_status
+        item.save()
+
+    @staticmethod
+    def _cn_store(item: models.QuerySet):
+        new_status = Status.CN_STORE
+        old_status = Status.VN_STORE
+
+        if item.status != old_status:
+            PullOrderStatusUtils.error_message(old_status)
+
+        item.status = new_status
+        item.save()
+
+    @staticmethod
+    def _vn_store(item: models.QuerySet):
+        new_status = Status.VN_STORE
+        old_status = Status.EXPORTED
+
+        if item.status != old_status:
+            PullOrderStatusUtils.error_message(old_status)
+
+        item.status = new_status
+        item.save()
+
+    @staticmethod
+    def _exported(item: models.QuerySet):
+        new_status = Status.EXPORTED
+        old_status = Status.DONE
+
+        if item.status != old_status:
+            PullOrderStatusUtils.error_message(old_status)
+
+        item.status = new_status
+        item.save()
+
+    @staticmethod
+    def _done(item: models.QuerySet):
+        new_status = Status.DONE
+        old_status = Status.DISCARD
+
+        if item.status != old_status:
+            PullOrderStatusUtils.error_message(old_status)
+
+        item.status = new_status
+        item.save()
