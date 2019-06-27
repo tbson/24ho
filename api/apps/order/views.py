@@ -9,7 +9,7 @@ from apps.address.models import Address
 from .serializers import OrderBaseSr
 from apps.staff.serializers import StaffCompactSr
 from apps.address.serializers import AddressBaseSr
-from .utils import OrderUtils
+from .utils import OrderUtils, MoveOrderStatusUtils
 from utils.helpers.tools import Tools
 from apps.order_item.utils import OrderItemUtils
 from utils.common_classes.custom_permission import CustomPermission
@@ -128,11 +128,13 @@ class OrderViewSet(GenericViewSet):
         serializer = OrderUtils.partial_update(obj, 'purchase_code', value)
         return res(serializer.data)
 
+    @transaction.atomic
     @action(methods=['put'], detail=True)
     def change_status(self, request, pk=None):
         obj = get_object_or_404(Order, pk=pk)
-        value = request.data.get('value', obj.status)
-        serializer = OrderUtils.partial_update(obj, 'status', value)
+        status = request.data.get('value', obj.status)
+        obj = MoveOrderStatusUtils.move(obj, status)
+        serializer = OrderBaseSr(obj)
         return res(serializer.data)
 
     @transaction.atomic
@@ -142,8 +144,7 @@ class OrderViewSet(GenericViewSet):
         for pk in pks:
             obj = get_object_or_404(Order, pk=pk)
             if obj.status == Status.NEW:
-                obj.status = Status.APPROVED
-                obj.save()
+                MoveOrderStatusUtils.move(obj, Status.APPROVED)
         return res({'approved': pks})
 
     @action(methods=['delete'], detail=True)
