@@ -133,7 +133,7 @@ class OrderViewSet(GenericViewSet):
     def change_status(self, request, pk=None):
         obj = get_object_or_404(Order, pk=pk)
         status = request.data.get('value', obj.status)
-        obj = MoveOrderStatusUtils.move(obj, status)
+        obj = MoveOrderStatusUtils.move(obj, int(status))
         serializer = OrderBaseSr(obj)
         return res(serializer.data)
 
