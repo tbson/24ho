@@ -63,7 +63,7 @@
         "eslint-plugin-react": "^7.14.2",
         "eslint-plugin-react-hooks": "^1.6.1",
         "file-loader": "4.0.0",
-        "flow-bin": "^0.102.0-rc",
+        "flow-bin": "^0.102.0",
         "html-webpack-plugin": "^3.2.0",
         "identity-obj-proxy": "^3.0.0",
         "jest": "^24.8.0",
