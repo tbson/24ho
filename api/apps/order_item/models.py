@@ -14,11 +14,15 @@ class OrderItem(models.Model):
     image = models.CharField(max_length=500, blank=True)
 
     quantity = models.IntegerField(default=0)
+    checked_quantity = models.IntegerField(default=0)
     unit_price = models.FloatField(default=0)
 
     note = models.TextField(blank=True)
 
     def save(self, *args, **kwargs):
+        if self._state.adding:
+            self.checked_quantity = self.quantity
+
         super(OrderItem, self).save(*args, **kwargs)
         Order.objects.re_cal(self.order)
 

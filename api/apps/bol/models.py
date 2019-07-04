@@ -98,6 +98,8 @@ class Bol(TimeStampedModel):
 
     note = models.CharField(max_length=250, blank=True)
 
+    checked = models.BooleanField(default=False)
+
     objects = BolManager()
 
     def clean(self):

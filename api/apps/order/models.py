@@ -72,7 +72,9 @@ class Order(TimeStampedModel):
     sale = models.ForeignKey(Staff, models.SET_NULL, related_name='sale_orders', null=True)
     cust_care = models.ForeignKey(Staff, models.SET_NULL, related_name='cust_care_orders', null=True)
     approver = models.ForeignKey(Staff, models.SET_NULL, related_name='approver_orders', null=True)
+    checker = models.ForeignKey(Staff, models.SET_NULL, related_name='checker_orders', null=True)
     approved_date = models.DateTimeField(null=True)
+    checked_date = models.DateTimeField(null=True)
 
     rate = models.PositiveIntegerField()
     real_rate = models.PositiveIntegerField()
