@@ -3,6 +3,7 @@ argon2-cffi==19.1.0
 certifi==2019.6.16
 cffi==1.12.3
 chardet==3.0.4
+contextlib2==0.5.5
 coreapi==2.3.3
 coreschema==0.0.4
 coverage==4.5.3
@@ -30,6 +31,7 @@ pyparsing==2.4.0
 python-magic==0.4.15
 pytz==2019.1
 requests==2.22.0
+schema==0.7.0
 simplejson==3.16.0
 six==1.12.0
 sqlparse==0.3.0

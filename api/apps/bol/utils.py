@@ -1,14 +1,21 @@
+from schema import Schema
 from django.db import models
 from rest_framework.serializers import ValidationError
 from apps.address.utils import AddressUtils
 from apps.delivery_fee.models import DeliveryFeeUnitPriceType
 from apps.delivery_fee.utils import DeliveryFeeUtils
+from apps.order_item.models import OrderItem
 from django.conf import settings
-
+from typing import Dict
 
 error_messages = {
-    'ORDER_NOT_FOUND': 'Vận đơn này chưa được gắn với order nào.',
+    'BOL_ORDER_NOT_FOUND': 'Vận đơn này chưa được gắn với order nào.',
+    'ORDER_MISSING_IN_ORDER_ITEM': 'Một trong những sản phẩm không nằm trong đơn hàng.',
+    'ORDER_ITEM_MISSING': 'Số lượng sản phẩm không khớp.',
+    'ITEM_ORDER_NOT_FOUND': 'Một trong những sản phẩm không nằm trong đơn hàng.',
     'ORDER_ITEM_NOT_FOUND': 'Vận đơn này không có mặt hàng nào.',
+    'CHECKED_QUANTITY_LARGER_THAN_ORIGINAL_QUANTITY': 'Khối lượng kiểm lớn hơn khối lượng thực.',
+    'INT_CHECKED_QUANTITY': 'Số lượng kiểm phải là số nguyên >= 0.'
 }
 
 
@@ -156,7 +163,7 @@ class BolUtils:
 
         bol = Bol.objects.filter(uid=uid).first()
         if not bol.order_id:
-            raise ValidationError(error_messages['ORDER_NOT_FOUND'])
+            raise ValidationError(error_messages['BOL_ORDER_NOT_FOUND'])
 
         order = bol.order
         result = order.order_items.filter(quantity__gt=0)
@@ -164,3 +171,31 @@ class BolUtils:
             raise ValidationError(error_messages['ORDER_ITEM_NOT_FOUND'])
 
         return result
+
+    @staticmethod
+    def checking(order: models.QuerySet, checked_items: Dict[int, int]) -> Dict[int, int]:
+        if not Schema({int: lambda n: n >= 0}).is_valid(checked_items):
+            raise ValidationError(error_messages['INT_CHECKED_QUANTITY'])
+
+        items = OrderItem.objects.filter(pk__in=checked_items.keys())
+
+        if items.count() != len(checked_items.keys()):
+            raise ValidationError(error_messages['ORDER_ITEM_MISSING'])
+
+        if items.filter(order_id=order.pk).count() != items.count():
+            raise ValidationError(error_messages['ORDER_MISSING_IN_ORDER_ITEM'])
+
+        remain = {}
+        for item in items:
+            if item.quantity < checked_items[item.pk]:
+                raise ValidationError(error_messages['CHECKED_QUANTITY_LARGER_THAN_ORIGINAL_QUANTITY'])
+            if item.quantity > checked_items[item.pk]:
+                remain[item.pk] = item.quantity - checked_items[item.pk]
+                item.checked_quantity = checked_items[item.pk]
+                item.save()
+
+        if len(remain.keys()):
+            order.pending = True
+            order.save()
+
+        return remain

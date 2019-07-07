@@ -7,6 +7,7 @@ from django.utils import timezone
 from .models import Bol, DeliveryFeeType
 from .utils import BolUtils, error_messages
 from utils.helpers.test_helpers import TestHelpers
+from apps.order_item.models import OrderItem
 from apps.delivery_fee.utils import DeliveryFeeUtils
 from apps.customer.utils import CustomerUtils
 from apps.order.utils import OrderUtils
@@ -652,7 +653,7 @@ class UtilsGetItemsForChecking(TestCase):
         bol = BolUtils.seeding(1, True)
         with self.assertRaises(ValidationError) as context:
             BolUtils.get_items_for_checking(bol.uid)
-        self.assertTrue(error_messages['ORDER_NOT_FOUND'] in str(context.exception))
+        self.assertTrue(error_messages['BOL_ORDER_NOT_FOUND'] in str(context.exception))
 
     def test_no_items(self):
         bol = BolUtils.seeding(1, True)
@@ -681,3 +682,139 @@ class UtilsGetItemsForChecking(TestCase):
         with self.assertRaises(ValidationError) as context:
             BolUtils.get_items_for_checking(bol.uid)
         self.assertTrue(error_messages['ORDER_ITEM_NOT_FOUND'] in str(context.exception))
+
+
+class UtilsChecking(TestCase):
+    def test_normal_case(self):
+        order = OrderUtils.seeding(1, True)
+        order_items = OrderItemUtils.seeding(3)
+
+        checked_input = {}
+        checked_input[order_items[0].pk] = 1
+        checked_input[order_items[1].pk] = 2
+        checked_input[order_items[2].pk] = 3
+
+        for order_item in order_items:
+            order_item.order = order
+            order_item.save()
+
+        result = BolUtils.checking(order, checked_input)
+
+        checked = OrderItem.objects.filter(order_id=order.pk)
+        for checked_item in checked:
+            self.assertEqual(checked_item.checked_quantity, checked_input[checked_item.pk])
+        self.assertEqual(result, {})
+        self.assertEqual(order.pending, False)
+
+    def test_invalid_input(self):
+        order = OrderUtils.seeding(1, True)
+        checked_input = {
+            1: 'a'
+        }
+        with self.assertRaises(ValidationError) as context:
+            BolUtils.checking(order, checked_input)
+        self.assertTrue(error_messages['INT_CHECKED_QUANTITY'] in str(context.exception))
+
+    def test_item_order_not_found(self):
+        order = OrderUtils.seeding(1, True)
+        order_items = OrderItemUtils.seeding(3)
+        order_item_4 = OrderItemUtils.seeding(4, True)
+
+        for order_item in order_items:
+            order_item.order = order
+            order_item.save()
+
+        checked_input = {}
+        checked_input[order_items[0].pk] = 1
+        checked_input[order_items[1].pk] = 2
+        checked_input[order_items[2].pk] = 3
+        checked_input[order_item_4.pk] = 4
+
+        with self.assertRaises(ValidationError) as context:
+            BolUtils.checking(order, checked_input)
+        self.assertTrue(error_messages['ITEM_ORDER_NOT_FOUND'] in str(context.exception))
+
+    def test_order_item_missing(self):
+        order = OrderUtils.seeding(1, True)
+        order_items = OrderItemUtils.seeding(3)
+
+        for order_item in order_items:
+            order_item.order = order
+            order_item.save()
+
+        checked_input = {}
+        checked_input[order_items[0].pk] = 1
+        checked_input[order_items[1].pk] = 2
+        checked_input[99] = 2
+
+        with self.assertRaises(ValidationError) as context:
+            BolUtils.checking(order, checked_input)
+        self.assertTrue(error_messages['ORDER_ITEM_MISSING'] in str(context.exception))
+
+    def test_wrong_order(self):
+        order = OrderUtils.seeding(1, True)
+        order2 = OrderUtils.seeding(2, True)
+        order_items = OrderItemUtils.seeding(3)
+
+        checked_input = {}
+        checked_input[order_items[0].pk] = 1
+        checked_input[order_items[1].pk] = 2
+        checked_input[order_items[2].pk] = 3
+
+        for order_item in order_items:
+            order_item.order = order
+            order_item.save()
+
+        order_items[0].order = order2
+        order_items[0].save()
+
+        with self.assertRaises(ValidationError) as context:
+            BolUtils.checking(order, checked_input)
+        self.assertTrue(error_messages['ORDER_MISSING_IN_ORDER_ITEM'] in str(context.exception))
+
+    def test_missing(self):
+        order = OrderUtils.seeding(1, True)
+        order_items = OrderItemUtils.seeding(3)
+
+        checked_input = {}
+        checked_input[order_items[0].pk] = 1
+        checked_input[order_items[1].pk] = 2
+        checked_input[order_items[2].pk] = 1
+
+        for order_item in order_items:
+            order_item.order = order
+            order_item.save()
+
+        result = BolUtils.checking(order, checked_input)
+
+        checked = OrderItem.objects.filter(order_id=order.pk)
+
+        missing = {}
+        missing[order_items[2].pk] = 2
+
+        for checked_item in checked:
+            self.assertEqual(checked_item.checked_quantity, checked_input[checked_item.pk])
+        self.assertEqual(result, missing)
+        self.assertEqual(order.pending, True)
+
+    def test_extra(self):
+        order = OrderUtils.seeding(1, True)
+        order_items = OrderItemUtils.seeding(3)
+
+        checked_input = {}
+        checked_input[order_items[0].pk] = 4
+        checked_input[order_items[1].pk] = 2
+        checked_input[order_items[2].pk] = 3
+
+        for order_item in order_items:
+            order_item.order = order
+            order_item.save()
+
+        with self.assertRaises(ValidationError) as context:
+            BolUtils.checking(order, checked_input)
+        self.assertTrue(error_messages['CHECKED_QUANTITY_LARGER_THAN_ORIGINAL_QUANTITY'] in str(context.exception))
+
+    '''
+    def test_pending(self):
+        pass
+    '''
