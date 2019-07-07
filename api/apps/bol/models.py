@@ -144,6 +144,9 @@ class Bol(TimeStampedModel):
     class Meta:
         db_table = "bols"
         ordering = ['-id']
+        permissions = (
+            ("get_order_items_for_checking_bol", "Can get order items for checking from bol"),
+        )
 
 
 class BolFilter(filters.FilterSet):

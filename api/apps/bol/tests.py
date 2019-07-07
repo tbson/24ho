@@ -1,14 +1,16 @@
 import logging
 from unittest.mock import patch, MagicMock
+from rest_framework.serializers import ValidationError
 from rest_framework.test import APIClient
 from django.test import TestCase
 from django.utils import timezone
 from .models import Bol, DeliveryFeeType
-from .utils import BolUtils
+from .utils import BolUtils, error_messages
 from utils.helpers.test_helpers import TestHelpers
 from apps.delivery_fee.utils import DeliveryFeeUtils
 from apps.customer.utils import CustomerUtils
 from apps.order.utils import OrderUtils
+from apps.order_item.utils import OrderItemUtils
 from apps.address.utils import AddressUtils
 from django.conf import settings
 # Create your tests here.
@@ -504,6 +506,23 @@ class ModelCreateWithAddress(TestCase):
         self.assertEqual(item.address_code, self.address.uid)
 
 
+class ManagerReCal(TestCase):
+    @patch(model_prefix.format('cal_delivery_fee'))
+    def test_before_export(self, cal_delivery_fee):
+        item = BolUtils.seeding(1, True)
+        item.save()
+        Bol.objects.re_cal(item)
+        cal_delivery_fee.assert_called_once()
+
+    @patch(model_prefix.format('cal_delivery_fee'))
+    def test_after_export(self, cal_delivery_fee):
+        item = BolUtils.seeding(1, True)
+        item.exported_date = timezone.now()
+        item.save()
+        Bol.objects.re_cal(item)
+        cal_delivery_fee.assert_not_called()
+
+
 class ModelCreateWithPurchaseCode(TestCase):
 
     def test_match(self):
@@ -522,7 +541,7 @@ class ModelCreateWithPurchaseCode(TestCase):
         self.assertEqual(item.order, None)
 
 
-class ManagerCalInsuranceFee(TestCase):
+class UtilsCalInsuranceFee(TestCase):
     def test_transport_order_without_register(self):
         item = BolUtils.seeding(1, True)
 
@@ -550,7 +569,7 @@ class ManagerCalInsuranceFee(TestCase):
         self.assertEqual(BolUtils.cal_insurance_fee(item), 0)
 
 
-class ManagerShockproofFee(TestCase):
+class UtilsShockproofFee(TestCase):
     def test_without_register(self):
         item = BolUtils.seeding(1, True)
 
@@ -568,7 +587,7 @@ class ManagerShockproofFee(TestCase):
         self.assertEqual(BolUtils.cal_shockproof_fee(item), 1000)
 
 
-class ManagerWoodenBoxFee(TestCase):
+class UtilsWoodenBoxFee(TestCase):
     def test_without_register(self):
         item = BolUtils.seeding(1, True)
 
@@ -586,18 +605,79 @@ class ManagerWoodenBoxFee(TestCase):
         self.assertEqual(BolUtils.cal_wooden_box_fee(item), 1000)
 
 
-class ManagerReCal(TestCase):
-    @patch(model_prefix.format('cal_delivery_fee'))
-    def test_before_export(self, cal_delivery_fee):
-        item = BolUtils.seeding(1, True)
-        item.save()
-        Bol.objects.re_cal(item)
-        cal_delivery_fee.assert_called_once()
+class UtilsGetItemsForChecking(TestCase):
+    def test_integration(self):
+        token = TestHelpers.test_setup()
+        client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
 
-    @patch(model_prefix.format('cal_delivery_fee'))
-    def test_after_export(self, cal_delivery_fee):
-        item = BolUtils.seeding(1, True)
-        item.exported_date = timezone.now()
-        item.save()
-        Bol.objects.re_cal(item)
-        cal_delivery_fee.assert_not_called()
+        bol = BolUtils.seeding(1, True)
+        order = OrderUtils.seeding(1, True)
+
+        order_items = OrderItemUtils.seeding(3)
+        for order_item in order_items:
+            order_item.order = order
+            order_item.save()
+
+        bol.order = order
+        bol.save()
+
+        response = client.get(
+            "/api/v1/bol/get-order-items-for-checking/{}".format(bol.uid)
+        )
+        self.assertEqual(response.status_code, 200)
+        response = response.json()
+        self.assertEqual(response['count'], len(order_items))
+
+    def test_normal_case(self):
+        bol = BolUtils.seeding(1, True)
+        order = OrderUtils.seeding(1, True)
+
+        order_items = OrderItemUtils.seeding(3)
+        for order_item in order_items:
+            order_item.order = order
+            order_item.save()
+
+        order_items[0].quantity = 0
+        order_items[0].save()
+
+        bol.order = order
+        bol.save()
+
+        result = BolUtils.get_items_for_checking(bol.uid)
+
+        self.assertEqual(result.count(), len(order_items) - 1)
+
+    def test_no_order(self):
+        bol = BolUtils.seeding(1, True)
+        with self.assertRaises(ValidationError) as context:
+            BolUtils.get_items_for_checking(bol.uid)
+        self.assertTrue(error_messages['ORDER_NOT_FOUND'] in str(context.exception))
+
+    def test_no_items(self):
+        bol = BolUtils.seeding(1, True)
+        order = OrderUtils.seeding(1, True)
+
+        bol.order = order
+        bol.save()
+
+        with self.assertRaises(ValidationError) as context:
+            BolUtils.get_items_for_checking(bol.uid)
+        self.assertTrue(error_messages['ORDER_ITEM_NOT_FOUND'] in str(context.exception))
+
+    def test_have_items_but_all_zero(self):
+        bol = BolUtils.seeding(1, True)
+        order = OrderUtils.seeding(1, True)
+
+        order_items = OrderItemUtils.seeding(3)
+        for order_item in order_items:
+            order_item.order = order
+            order_item.quantity = 0
+            order_item.save()
+
+        bol.order = order
+        bol.save()
+
+        with self.assertRaises(ValidationError) as context:
+            BolUtils.get_items_for_checking(bol.uid)
+        self.assertTrue(error_messages['ORDER_ITEM_NOT_FOUND'] in str(context.exception))

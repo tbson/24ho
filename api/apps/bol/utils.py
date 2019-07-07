@@ -1,8 +1,15 @@
 from django.db import models
+from rest_framework.serializers import ValidationError
 from apps.address.utils import AddressUtils
 from apps.delivery_fee.models import DeliveryFeeUnitPriceType
 from apps.delivery_fee.utils import DeliveryFeeUtils
 from django.conf import settings
+
+
+error_messages = {
+    'ORDER_NOT_FOUND': 'Vận đơn này chưa được gắn với order nào.',
+    'ORDER_ITEM_NOT_FOUND': 'Vận đơn này không có mặt hàng nào.',
+}
 
 
 class BolUtils:
@@ -142,3 +149,18 @@ class BolUtils:
         if item.wooden_box:
             return item.cny_wooden_box_fee
         return 0
+
+    @staticmethod
+    def get_items_for_checking(uid: str) -> models.QuerySet:
+        from .models import Bol
+
+        bol = Bol.objects.filter(uid=uid).first()
+        if not bol.order_id:
+            raise ValidationError(error_messages['ORDER_NOT_FOUND'])
+
+        order = bol.order
+        result = order.order_items.filter(quantity__gt=0)
+        if result.count() == 0:
+            raise ValidationError(error_messages['ORDER_ITEM_NOT_FOUND'])
+
+        return result

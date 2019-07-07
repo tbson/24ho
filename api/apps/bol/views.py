@@ -2,7 +2,11 @@ from django.shortcuts import get_object_or_404
 from rest_framework.decorators import action
 from rest_framework.viewsets import (GenericViewSet, )
 from rest_framework import status
+from utils.common_classes.custom_pagination import NoPaginationStatic
 from .models import Bol, BolFilter
+from .utils import BolUtils
+from apps.order_item.serializers import OrderItemBaseSr
+from apps.order.serializers import OrderBaseSr
 from .serializers import (
     BolBaseSr,
 )
@@ -66,6 +70,22 @@ class BolViewSet(GenericViewSet):
         if serializer.is_valid(raise_exception=True):
             serializer.save()
         return res(serializer.data)
+
+    @action(methods=['get'], detail=False)
+    def get_order_items_for_checking(self, request, uid=''):
+        order_items = BolUtils.get_items_for_checking(uid)
+        order = order_items[0].order
+        bols = Bol.objects.filter(order_id=order.pk)
+
+        result = {
+            'items': OrderItemBaseSr(order_items, many=True).data,
+            'extra': {
+                'order': OrderBaseSr(order).data,
+                'bols': BolBaseSr(bols, many=True).data
+            }
+        }
+
+        return NoPaginationStatic.get_paginated_response(result)
 
     @action(methods=['delete'], detail=True)
     def delete(self, request, pk=None):

@@ -36,9 +36,10 @@ class CustomPagination(pagination.PageNumberPagination):
         })
 
 
-class NoPagination(pagination.PageNumberPagination):
+class NoPaginationStatic:
 
-    def get_paginated_response(self, data):
+    @staticmethod
+    def get_paginated_response(data):
         extra = {}
         items = []
         if type(data) is dict:
@@ -59,6 +60,12 @@ class NoPagination(pagination.PageNumberPagination):
             'extra': extra,
             'items': items
         })
+
+
+class NoPagination(pagination.PageNumberPagination):
+
+    def get_paginated_response(self, data):
+        return NoPaginationStatic.get_paginated_response(data)
 
 
 class CustomLimitOffsetPagination(pagination.LimitOffsetPagination):
