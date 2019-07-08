@@ -37,6 +37,19 @@ class BolManager(models.Manager):
 
 
 # Create your models here.
+'''
+class BolDate(models.Model):
+    date = models.DateTimeField()
+
+    def __str__(self):
+        return self.date
+
+    class Meta:
+        db_table = "bol_dates"
+        ordering = ['-date']
+'''
+
+
 class Bol(TimeStampedModel):
 
     STATUS_CHOICES = (
