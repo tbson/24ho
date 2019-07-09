@@ -68,6 +68,8 @@ import RateIcon from '@material-ui/icons/MonetizationOn';
 import CountCheckIcon from '@material-ui/icons/PlaylistAddCheck';
 // $FlowFixMe: do not complain about importing node_modules
 import ServiceFeeIcon from '@material-ui/icons/LocalShipping';
+// $FlowFixMe: do not complain about importing node_modules
+import LogoutIcon from '@material-ui/icons/ExitToApp';
 
 const drawerWidth = 240;
 
@@ -134,8 +136,10 @@ const useStyles = makeStyles(theme => ({
         flexGrow: 1
     },
     content: {
-        flexGrow: 1,
-        padding: theme.spacing(3)
+        flexGrow: 1
+    },
+    list: {
+        paddingTop: 0
     }
 }));
 
@@ -269,8 +273,22 @@ const App = ({history, location, children}: Props) => {
                             }}
                             open={openDropdownMenu}
                             onClose={handleClose}>
-                            <MenuItem onClick={() => navigateTo()}>Tài khoản</MenuItem>
-                            <MenuItem onClick={logout}>Logout</MenuItem>
+                            <MenuItem onClick={() => navigateTo()}>
+                                <ListItemIcon>
+                                    <PersonIcon />
+                                </ListItemIcon>
+                                <Typography>
+                                    Tài khoản
+                                </Typography>
+                            </MenuItem>
+                            <MenuItem onClick={logout}>
+                                <ListItemIcon>
+                                    <LogoutIcon />
+                                </ListItemIcon>
+                                <Typography>
+                                    Logout
+                                </Typography>
+                            </MenuItem>
                         </Menu>
                     </div>
                 </Toolbar>
@@ -293,7 +311,7 @@ const App = ({history, location, children}: Props) => {
                         {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
                     </IconButton>
                 </div>
-                <List>
+                <List className={classes.list}>
                     {renderMenu('profile')}
                     {renderMenu('admin')}
                     {renderMenu('customer')}

@@ -10,6 +10,18 @@ import Tools from 'src/utils/helpers/Tools';
 import NavWrapperMaterial from 'src/utils/components/NavWrapperMaterial';
 import ProfileForm from './Form';
 import ChangePwdForm from '../PwdForm';
+// $FlowFixMe: do not complain about importing node_modules
+import {makeStyles} from '@material-ui/core/styles';
+// $FlowFixMe: do not complain about importing node_modules
+import Table from '@material-ui/core/Table';
+// $FlowFixMe: do not complain about importing node_modules
+import TableBody from '@material-ui/core/TableBody';
+// $FlowFixMe: do not complain about importing node_modules
+import TableCell from '@material-ui/core/TableCell';
+// $FlowFixMe: do not complain about importing node_modules
+import TableRow from '@material-ui/core/TableRow';
+// $FlowFixMe: do not complain about importing node_modules
+import Button from '@material-ui/core/Button';
 
 export class Service {
     static async profileRequest() {
@@ -25,6 +37,12 @@ export class Service {
 }
 
 export const Profile = () => {
+    const useStyles = makeStyles(theme => ({
+        button: {
+            margin: theme.spacing(1)
+        }
+    }));
+
     const [profile, setProfile] = useState({});
 
     const [formOpen, setFormOpen] = useState<FormOpenType>({
@@ -32,6 +50,7 @@ export const Profile = () => {
         changePwd: false,
         profile: false
     });
+    const classes = useStyles();
 
     const toggleForm = (value: boolean, key: FormOpenKeyType = 'profile') => setFormOpen({...formOpen, [key]: value});
 
@@ -53,30 +72,35 @@ export const Profile = () => {
 
     return (
         <NavWrapperMaterial>
-            <table className="table table-striped">
-                <tbody>
-                    <tr>
-                        <td>Email</td>
-                        <td>{profile.email}</td>
-                    </tr>
-                    <tr>
-                        <td>Username</td>
-                        <td>{profile.username}</td>
-                    </tr>
-                    <tr>
-                        <td>Fullname</td>
-                        <td>{profile.fullname}</td>
-                    </tr>
-                </tbody>
-            </table>
-            <div className="btn-group">
-                <button type="button" onClick={() => toggleForm(true)} className="btn btn-success">
-                    Update profile
-                </button>
-                <button type="button" onClick={() => toggleForm(true, 'changePwd')} className="btn btn-primary">
-                    Change password
-                </button>
-            </div>
+            <Table>
+                <TableBody>
+                    <TableRow>
+                        <TableCell>Email</TableCell>
+                        <TableCell>{profile.email}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableCell>Tên đăng nhập</TableCell>
+                        <TableCell>{profile.username}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableCell>Họ và tên</TableCell>
+                        <TableCell>{profile.fullname}</TableCell>
+                    </TableRow>
+                </TableBody>
+            </Table>
+
+            <br />
+
+            <Button variant="contained" className={classes.button} color="primary" onClick={() => toggleForm(true)}>
+                Update profile
+            </Button>
+            <Button
+                variant="contained"
+                className={classes.button}
+                color="secondary"
+                onClick={() => toggleForm(true, 'changePwd')}>
+                Change password
+            </Button>
 
             <ProfileForm open={formOpen.profile} close={() => toggleForm(false)} onChange={onChangeProfile}>
                 <button type="button" className="btn btn-light" action="close" onClick={() => toggleForm(false)}>
