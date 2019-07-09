@@ -7,7 +7,7 @@ import {withRouter} from 'react-router-dom';
 import {APP} from 'src/constants';
 import type {FormOpenType, FormOpenKeyType} from '../_data';
 import Tools from 'src/utils/helpers/Tools';
-import NavWrapper from 'src/utils/components/nav_wrapper';
+import NavWrapperMaterial from 'src/utils/components/NavWrapperMaterial';
 import ProfileForm from './Form';
 import ChangePwdForm from '../PwdForm';
 
@@ -52,7 +52,7 @@ export const Profile = () => {
     };
 
     return (
-        <NavWrapper>
+        <NavWrapperMaterial>
             <table className="table table-striped">
                 <tbody>
                     <tr>
@@ -97,7 +97,7 @@ export const Profile = () => {
                     Cancel
                 </button>
             </ChangePwdForm>
-        </NavWrapper>
+        </NavWrapperMaterial>
     );
 };
 

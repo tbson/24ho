@@ -7,7 +7,7 @@ import {withRouter} from 'react-router-dom';
 import {Tab, Tabs, TabList, TabPanel} from 'react-tabs';
 // $FlowFixMe: do not complain about importing node_modules
 import 'react-tabs/style/react-tabs.css';
-import NavWrapper from 'src/utils/components/nav_wrapper/';
+import NavWrapperMaterial from 'src/utils/components/NavWrapperMaterial';
 import Table from './main_table/';
 import CNTable from './cn_table/';
 import VNTable from './vn_table/';
@@ -23,7 +23,7 @@ const Component = ({match}: Props) => {
 
     const type = match.params.type ? parseInt(match.params.type) : 0;
     return (
-        <NavWrapper>
+        <NavWrapperMaterial>
             <Tabs defaultIndex={type}>
                 <TabList>
                     <Tab>
@@ -40,7 +40,7 @@ const Component = ({match}: Props) => {
                 <TabPanel><CNTable/></TabPanel>
                 <TabPanel><VNTable/></TabPanel>
             </Tabs>
-        </NavWrapper>
+        </NavWrapperMaterial>
     );
 };
 

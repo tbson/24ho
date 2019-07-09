@@ -7,7 +7,7 @@ import {Tab, Tabs, TabList, TabPanel} from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import type {SelectOptions} from 'src/utils/helpers/Tools';
 import {STATUS} from './_data';
-import NavWrapper from 'src/utils/components/nav_wrapper/';
+import NavWrapperMaterial from 'src/utils/components/NavWrapperMaterial';
 import Table from './main_table/';
 
 export class Service {
@@ -23,7 +23,7 @@ export default () => {
         document.title = 'Order manager';
     }, []);
     return (
-        <NavWrapper>
+        <NavWrapperMaterial>
             <Tabs>
                 <TabList>
                     {Object.entries(STATUS).map(([key, value]) => (
@@ -39,6 +39,6 @@ export default () => {
                     </TabPanel>
                 ))}
             </Tabs>
-        </NavWrapper>
+        </NavWrapperMaterial>
     );
 };

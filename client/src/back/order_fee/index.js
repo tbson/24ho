@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import {useEffect} from 'react';
-import NavWrapper from 'src/utils/components/nav_wrapper/';
+import NavWrapperMaterial from 'src/utils/components/NavWrapperMaterial';
 import Table from './main_table/';
 
 export default () => {
@@ -10,8 +10,8 @@ export default () => {
     }, []);
 
     return (
-        <NavWrapper>
+        <NavWrapperMaterial>
             <Table />
-        </NavWrapper>
+        </NavWrapperMaterial>
     );
 };

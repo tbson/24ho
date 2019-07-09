@@ -83,6 +83,7 @@
         "@material-ui/core": "^4.2.0",
         "@material-ui/icons": "^4.2.1",
         "bootstrap": "4.3.1",
+        "clsx": "^1.0.4",
         "fingerprintjs2": "^2.1.0",
         "formdata-polyfill": "3.0.18",
         "formik": "^1.5.7",
