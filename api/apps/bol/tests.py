@@ -476,10 +476,14 @@ class ModelCreateCheckDate(TestCase):
     def setUp(self):
         self.address = AddressUtils.seeding(1, True)
 
+    def test_get_or_create(self):
+        item = BolDate.objects.get_or_create(timezone.now())
+        self.assertIsInstance(item, BolDate)
+        self.assertNotEqual(item.date_str, '')
+
     def test_date_must_be_created(self):
         item = Bol.objects.create(uid='test', address=self.address)
         self.assertIsInstance(item.date, BolDate)
-        self.assertNotEqual(item.date.date_str, '')
 
 
 class ModelCreateWithAddress(TestCase):
