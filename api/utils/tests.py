@@ -1,13 +1,15 @@
 from django.test import TestCase
-from utils.helpers.res_tools import get_token
+from django.utils import timezone
+import utils.helpers.res_tools as ResTools
+from utils.helpers.tools import Tools
 # Create your tests here.
 
 
-class UtilsTestCase(TestCase):
+class ResToolsTestCase(TestCase):
 
     def test_get_token(self):
         input = {
-            'HTTP_COOKIE': ' sessionid=3eilw4un5izyfat3rd6lf6tga28apy9q; Domain=None; expires=None; Max-Age=None; Path=/',
+            'HTTP_COOKIE': ' sessionid=3eilw4un5izyfat3rd6lf6tga28apy9q; Domain=None; Max-Age=None; Path=/',
             'PATH_INFO': '/api/v1/admin/profile/',
             'REMOTE_ADDR': '127.0.0.1',
             'REQUEST_METHOD': 'GET',
@@ -16,13 +18,19 @@ class UtilsTestCase(TestCase):
             'SERVER_PORT': '80',
             'SERVER_PROTOCOL': 'HTTP/1.1',
             'QUERY_STRING': '',
-            'Authorization': 'JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoyOCwidXNlcm5hbWUiOiJ0YnNvbiIsImV4cCI6MTUwMDI3ODQ2OCwiZW1haWwiOiJ0YnNvbjg3QGdtYWlsLmNvbSIsIm9yaWdfaWF0IjoxNTAwMDE5MjY4fQ.P__R3CdRRdPFI6IkpMFeFKdEoK6pkqxieKdMqJ3It7I'
+            'Authorization': 'JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoyOCwidXNlcm5hbWUiOiJ0YnNvbiIsImV'
         }
-        self.assertEqual(
-            get_token(input),
-            'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoyOCwidXNlcm5hbWUiOiJ0YnNvbiIsImV4cCI6MTUwMDI3ODQ2OCwiZW1haWwiOiJ0YnNvbjg3QGdtYWlsLmNvbSIsIm9yaWdfaWF0IjoxNTAwMDE5MjY4fQ.P__R3CdRRdPFI6IkpMFeFKdEoK6pkqxieKdMqJ3It7I'
-        )
-        self.assertEqual(
-            get_token({}),
-            ''
-        )
+        output = ResTools.get_token(input)
+        eput = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoyOCwidXNlcm5hbWUiOiJ0YnNvbiIsImV'
+        self.assertEqual(output, eput)
+        self.assertEqual(ResTools.get_token({}), '')
+
+
+class ToolsTestCase(TestCase):
+    def test_date_to_str(self):
+        input = timezone.now()
+        output = Tools.date_to_str(input).split('/')
+
+        self.assertEqual(len(output[0]), 2)
+        self.assertEqual(len(output[1]), 2)
+        self.assertEqual(len(output[2]), 4)

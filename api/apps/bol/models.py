@@ -1,9 +1,11 @@
 from django.db import models
+from django.utils import timezone
 from django_filters import rest_framework as filters
 from utils.models.model import TimeStampedModel
 from apps.customer.models import Customer
 from apps.address.models import Address
 from apps.order.models import Order
+from utils.helpers.tools import Tools
 
 
 class LandingStatus:
@@ -36,18 +38,33 @@ class BolManager(models.Manager):
         return item
 
 
+class BolDateManager(models.Manager):
+    def get_or_create(self, date: timezone) -> models.QuerySet:
+        try:
+            date_str = Tools.date_to_str(date)
+            bol_date = self.get(date_str=date_str)
+        except BolDate.DoesNotExist:
+            bol_date = self.create(date=date)
+        return bol_date
 # Create your models here.
-'''
+
+
 class BolDate(models.Model):
-    date = models.DateTimeField()
+    date = models.DateField(editable=False)
+    date_str = models.CharField(max_length=32)
+
+    objects = BolDateManager()
 
     def __str__(self):
-        return self.date
+        return self.date_str
+
+    def save(self, *args, **kwargs):
+        self.date_str = Tools.date_to_str(self.date)
+        super(BolDate, self).save(*args, **kwargs)
 
     class Meta:
         db_table = "bol_dates"
         ordering = ['-date']
-'''
 
 
 class Bol(TimeStampedModel):
@@ -68,6 +85,7 @@ class Bol(TimeStampedModel):
         (DeliveryFeeType.VOLUME, '6. Đơn giá mét khối'),
     )
 
+    bol_date = models.ForeignKey(BolDate, models.SET_NULL, related_name='date_bols', null=True)
     order = models.ForeignKey(Order, models.SET_NULL, related_name='order_bols', null=True)
     customer = models.ForeignKey(Customer, models.SET_NULL, related_name='customer_bols', null=True)
     address = models.ForeignKey(Address, models.SET_NULL, related_name='address_bols', null=True)
@@ -122,6 +140,10 @@ class Bol(TimeStampedModel):
             self.address_code = self.address_code.strip().upper()
 
     def save(self, *args, **kwargs):
+        if self._state.adding:
+            date = BolDate.objects.get_or_create(timezone.now())
+            self.date = date
+
         if self.address:
             self.address_code = self.address.uid
         elif self.address_code:

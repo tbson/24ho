@@ -4,7 +4,7 @@ from rest_framework.serializers import ValidationError
 from rest_framework.test import APIClient
 from django.test import TestCase
 from django.utils import timezone
-from .models import Bol, DeliveryFeeType
+from .models import Bol, BolDate, DeliveryFeeType
 from .utils import BolUtils, error_messages
 from utils.helpers.test_helpers import TestHelpers
 from apps.order_item.models import OrderItem
@@ -470,6 +470,16 @@ class ManagerCalDeliveryFee(TestCase):
             'delivery_fee': 15.75
         }
         self.assertEqual(output, eput)
+
+
+class ModelCreateCheckDate(TestCase):
+    def setUp(self):
+        self.address = AddressUtils.seeding(1, True)
+
+    def test_date_must_be_created(self):
+        item = Bol.objects.create(uid='test', address=self.address)
+        self.assertIsInstance(item.date, BolDate)
+        self.assertNotEqual(item.date.date_str, '')
 
 
 class ModelCreateWithAddress(TestCase):

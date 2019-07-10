@@ -3,6 +3,7 @@ import sys
 import uuid
 import magic
 import asyncio
+from django.utils import timezone
 from PIL import Image
 from rest_framework_jwt.serializers import VerifyJSONWebTokenSerializer
 from django.core.mail import EmailMultiAlternatives
@@ -228,3 +229,7 @@ class Tools:
     @staticmethod
     def is_testing():
         return len(sys.argv) > 1 and sys.argv[1] == 'test'
+
+    @staticmethod
+    def date_to_str(input: timezone) -> str:
+        return input.strftime("%m/%d/%Y")
