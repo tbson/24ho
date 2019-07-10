@@ -3,6 +3,9 @@ import * as React from 'react';
 import {useState, useEffect} from 'react';
 // $FlowFixMe: do not complain about hooks
 import {Formik, Form} from 'formik';
+// $FlowFixMe: do not complain about Yup
+import * as Yup from 'yup';
+import ErrMsgs from 'src/utils/helpers/ErrMsgs';
 import {APP} from 'src/constants';
 import {apiUrls} from '../_data';
 import Tools from 'src/utils/helpers/Tools';
@@ -36,16 +39,16 @@ export class Service {
             });
     }
 
-    static validate({username, email, first_name, last_name, phone}: Object): Object {
-        const errors = {
-            username: !username && 'Required',
-            email: !email && 'Required',
-            first_name: !first_name && 'Required',
-            last_name: !last_name && 'Required',
-            phone: !phone && 'Required'
-        };
-        return Tools.removeEmptyKey(errors);
-    }
+    static validationSchema = Yup.object().shape({
+        username: Yup.string().required(ErrMsgs.REQUIRED),
+        email: Yup.string()
+            .email(ErrMsgs.EMAIL)
+            .required(ErrMsgs.REQUIRED),
+        first_name: Yup.string().required(ErrMsgs.REQUIRED),
+        last_name: Yup.string(),
+        phone: Yup.string(),
+        company: Yup.string()
+    });
 
     static prepareUserData(data: Object): Object {
         data = Tools.prepareUserData(data);
@@ -62,7 +65,7 @@ type Props = {
     submitTitle?: string
 };
 export default ({open, close, onChange, children, submitTitle = 'Update'}: Props) => {
-    const {validate, handleSubmit, prepareUserData} = Service;
+    const {validationSchema, handleSubmit, prepareUserData} = Service;
 
     const [initialValues, setInitialValues] = useState(Service.initialValues);
     const [openModal, setOpenModal] = useState(false);
@@ -79,8 +82,11 @@ export default ({open, close, onChange, children, submitTitle = 'Update'}: Props
 
     return (
         <DefaultModal open={openModal} close={close} title="Update profile">
-            <Formik initialValues={{...initialValues}} validate={validate} onSubmit={handleSubmit(onChange)}>
-                {({errors}) => (
+            <Formik
+                initialValues={{...initialValues}}
+                validationSchema={validationSchema}
+                onSubmit={handleSubmit(onChange)}>
+                {({errors, handleSubmit}) => (
                     <Form>
                         <div className="row">
                             {APP !== 'admin' && (

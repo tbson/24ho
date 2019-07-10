@@ -11,8 +11,8 @@ export default ({children, submitTitle, onClick}: Props) => {
         <div className="row">
             <div className="col">{children}</div>
             <div className="col right">
-                <button type="submit" style={{display: 'none'}}/>
-                <button type="button" className="btn btn-primary" onClick={onClick}>
+                <button type="submit" style={{display: 'none'}} />
+                <button type={onClick ? 'button' : 'submit'} className="btn btn-primary" onClick={onClick}>
                     <span className="fas fa-check" />
                     &nbsp;
                     {submitTitle}
