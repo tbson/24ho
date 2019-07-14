@@ -24,6 +24,14 @@ docker-compose build
 
 # Start webpack dev server:
 ./yarn start
+
+# Seeding users:
+# Staff: admin/password
+# Customer: user/password
+./manage user_seeding
+
+# Running test:
+./test
 ```
 
 ### Step 4
