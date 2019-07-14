@@ -1,4 +1,3 @@
-from typing import Optional
 from django.db import models
 from django.utils import timezone
 from django_filters import rest_framework as filters
@@ -6,7 +5,7 @@ from utils.models.model import TimeStampedModel
 from apps.customer.models import Customer
 from apps.address.models import Address
 from apps.order.models import Order
-from apps.area.models import Area
+from apps.bag.models import Bag
 from utils.helpers.tools import Tools
 
 
@@ -49,36 +48,6 @@ class BolDateManager(models.Manager):
             bol_date = self.create(date=date)
         return bol_date
 # Create your models here.
-
-
-class BagManager(models.Manager):
-    def get_or_create(self, title: str) -> Optional[models.QuerySet]:
-        if not title:
-            return None
-        try:
-            bag = self.get(title=title)
-        except Bag.DoesNotExist:
-            bag = self.create(title=title)
-        return bag
-
-
-class Bag(TimeStampedModel):
-    area = models.ForeignKey(Area, models.SET_NULL, related_name='area_bags', null=True)
-    uid = models.CharField(max_length=128, unique=True)
-    objects = BagManager()
-
-    def __str__(self):
-        return self.uid
-
-    def save(self, *args, **kwargs):
-        from .utils import BagUtils
-        if self._state.adding:
-            self.uid = BagUtils.get_next_uid(self.area)
-        super(Bag, self).save(*args, **kwargs)
-
-    class Meta:
-        db_table = "bags"
-        ordering = ['-id']
 
 
 class BolDate(models.Model):

@@ -4,8 +4,8 @@ from rest_framework.serializers import ValidationError
 from rest_framework.test import APIClient
 from django.test import TestCase
 from django.utils import timezone
-from .models import Bol, Bag, BolDate, DeliveryFeeType
-from .utils import BolUtils, BagUtils, error_messages
+from .models import Bol, BolDate, DeliveryFeeType
+from .utils import BolUtils, error_messages
 from utils.helpers.test_helpers import TestHelpers
 from apps.order_item.models import OrderItem
 from apps.delivery_fee.utils import DeliveryFeeUtils
@@ -13,9 +13,7 @@ from apps.customer.utils import CustomerUtils
 from apps.order.utils import OrderUtils
 from apps.order_item.utils import OrderItemUtils
 from apps.address.utils import AddressUtils
-from apps.area.utils import AreaUtils
 from django.conf import settings
-from utils.helpers.tools import Tools
 # Create your tests here.
 
 
@@ -834,25 +832,3 @@ class UtilsChecking(TestCase):
     def test_pending(self):
         pass
     '''
-
-
-class UtilsGetNextUid(TestCase):
-    def setUp(self):
-        self.first_part = Tools.get_str_day_month(timezone.now())
-
-    def test_normal_case(self):
-        area = AreaUtils.seeding(1, True)
-        output = BagUtils.get_next_uid(area)
-        eput = "{}{}1".format(area.uid, self.first_part)
-        self.assertEqual(output, eput)
-        Bag.objects.create(area=area)
-
-        output = BagUtils.get_next_uid(area)
-        eput = "{}{}2".format(area.uid, self.first_part)
-        self.assertEqual(output, eput)
-        Bag.objects.create(area=area)
-
-        area = AreaUtils.seeding(2, True)
-        output = BagUtils.get_next_uid(area)
-        eput = "{}{}1".format(area.uid, self.first_part)
-        self.assertEqual(output, eput)

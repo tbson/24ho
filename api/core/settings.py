@@ -69,6 +69,7 @@ PROJECT_APPS = [
     'apps.delivery_fee',
     'apps.count_check',
     'apps.bol',
+    'apps.bag',
     'apps.sr',
 ]
 

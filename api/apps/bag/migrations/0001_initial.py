@@ -14,17 +14,16 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Address',
+            name='Bag',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('uid', models.CharField(max_length=250, unique=True)),
-                ('title', models.CharField(max_length=250)),
-                ('phone', models.CharField(blank=True, max_length=250)),
-                ('fullname', models.CharField(blank=True, max_length=250)),
-                ('area', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='addresses', to='area.Area')),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('updated_at', models.DateTimeField(auto_now=True)),
+                ('uid', models.CharField(max_length=128, unique=True)),
+                ('area', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='area_bags', to='area.Area')),
             ],
             options={
-                'db_table': 'addresses',
+                'db_table': 'bags',
                 'ordering': ['-id'],
             },
         ),
