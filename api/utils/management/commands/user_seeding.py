@@ -1,4 +1,5 @@
 from django.core.management.base import BaseCommand
+from django.contrib.auth.models import Permission
 from django.contrib.auth.models import User
 from apps.staff.models import Staff
 from apps.customer.models import Customer
@@ -17,6 +18,9 @@ class Command(BaseCommand):
             email='admin@localhost',
             password='password'
         )
+        # Grand all permission to this user
+        permissions = Permission.objects.all()
+        admin.user_permissions.set(permissions)
         Staff.objects.create(user=admin)
 
         user = User.objects.create_user(
