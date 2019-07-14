@@ -52,15 +52,14 @@ export default ({}: Props) => {
         if (!data) return;
         const _listArea = AreaService.areaToOptions(data.extra.list_area);
         setListArea(_listArea);
-        setList(AreaService.prepareList(data.items, _listArea));
+        setList(ListTools.prepare(data.items));
         setLinks(data.links);
     };
 
-    const onChange = (data: TRow, type: string, reOpenDialog: boolean) => {
-        toggleForm(false);
+    const onChange = (data: TRow, type: string) => {
         data = AreaService.prepareItem(data, listArea);
+        toggleForm(false);
         setList(listAction(data)[type]());
-        reOpenDialog && toggleForm(true);
     };
 
     const onCheck = id => setList(ListTools.checkOne(id, list));
@@ -97,10 +96,7 @@ export default ({}: Props) => {
                             <span className="fas fa-check text-info pointer check-all-button" onClick={onCheckAll} />
                         </th>
                         <th scope="col">Area</th>
-                        <th scope="col">Code</th>
-                        <th scope="col">Address</th>
-                        <th scope="col">Phone</th>
-                        <th scope="col">Fullname</th>
+                        <th scope="col">UID</th>
                         <th scope="col" style={{padding: 8}} className="row80">
                             <button className="btn btn-primary btn-sm btn-block add-button" onClick={() => showForm(0)}>
                                 <span className="fas fa-plus" />
@@ -145,12 +141,8 @@ export default ({}: Props) => {
                     </tr>
                 </tfoot>
             </table>
-            <MainForm
-                id={modalId}
-                listArea={listArea}
-                open={formOpen.main}
-                close={() => toggleForm(false)}
-                onChange={onChange}>
+
+            <MainForm id={modalId} listArea={listArea} open={formOpen.main} close={() => toggleForm(false)} onChange={onChange}>
                 <button type="button" className="btn btn-light" action="close" onClick={() => toggleForm(false)}>
                     Cancel
                 </button>

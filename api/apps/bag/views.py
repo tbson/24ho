@@ -3,9 +3,11 @@ from rest_framework.decorators import action
 from rest_framework.viewsets import (GenericViewSet, )
 from rest_framework import status
 from .models import Bag
+from apps.area.models import Area
 from .serializers import (
     BagBaseSr,
 )
+from apps.area.serializers import AreaBaseSr
 from utils.common_classes.custom_permission import CustomPermission
 from utils.helpers.res_tools import res
 
@@ -26,7 +28,14 @@ class BagViewSet(GenericViewSet):
         queryset = self.filter_queryset(queryset)
         queryset = self.paginate_queryset(queryset)
         serializer = BagBaseSr(queryset, many=True)
-        return self.get_paginated_response(serializer.data)
+
+        result = {
+            'items': serializer.data,
+            'extra': {
+                'list_area': AreaBaseSr(Area.objects.all(), many=True).data
+            }
+        }
+        return self.get_paginated_response(result)
 
     def retrieve(self, request, pk=None):
         obj = get_object_or_404(Bag, pk=pk)
