@@ -232,4 +232,6 @@ class Tools:
 
     @staticmethod
     def date_to_str(input: timezone) -> str:
+        if input != 0 and not input:
+            return ''
         return input.strftime("%m/%d/%Y")

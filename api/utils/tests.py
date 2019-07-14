@@ -31,6 +31,9 @@ class ToolsTestCase(TestCase):
         input = timezone.now()
         output = Tools.date_to_str(input).split('/')
 
+        self.assertEqual(Tools.date_to_str(''), '')
+        self.assertEqual(Tools.date_to_str(None), '')
+
         self.assertEqual(len(output[0]), 2)
         self.assertEqual(len(output[1]), 2)
         self.assertEqual(len(output[2]), 4)

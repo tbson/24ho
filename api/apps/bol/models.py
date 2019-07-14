@@ -1,3 +1,4 @@
+from typing import Optional
 from django.db import models
 from django.utils import timezone
 from django_filters import rest_framework as filters
@@ -49,6 +50,29 @@ class BolDateManager(models.Manager):
 # Create your models here.
 
 
+class BagManager(models.Manager):
+    def get_or_create(self, title: str) -> Optional[models.QuerySet]:
+        if not title:
+            return None
+        try:
+            bag = self.get(title=title)
+        except Bag.DoesNotExist:
+            bag = self.create(title=title)
+        return bag
+
+
+class Bag(models.Model):
+    title = models.CharField(max_length=128, unique=True)
+    objects = BagManager()
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        db_table = "bags"
+        ordering = ['-id']
+
+
 class BolDate(models.Model):
     date = models.DateField(editable=False)
     date_str = models.CharField(max_length=32)
@@ -85,6 +109,7 @@ class Bol(TimeStampedModel):
         (DeliveryFeeType.VOLUME, '6. Đơn giá mét khối'),
     )
 
+    bag = models.ForeignKey(Bag, models.SET_NULL, related_name='bag_bols', null=True)
     bol_date = models.ForeignKey(BolDate, models.SET_NULL, related_name='date_bols', null=True)
     order = models.ForeignKey(Order, models.SET_NULL, related_name='order_bols', null=True)
     customer = models.ForeignKey(Customer, models.SET_NULL, related_name='customer_bols', null=True)
