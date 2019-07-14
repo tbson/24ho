@@ -17,7 +17,10 @@ Add `- ../../web/24ho/api/public/:/resource/public/24ho` to `volumes` of `nginx`
 ```
 ./setup app_name domain.test dev
 docker-compose build
-./up
+./restart
+
+# Migrate tables:
+./manage migrate
 
 # Start django dev server:
 ./devserver
@@ -38,8 +41,7 @@ docker-compose build
 
 Prepare accounts for logging
 ```
-./exec_api python manage.py collectstatic
-./exec_api python manage.py createsuperuser
+./manage collectstatic
 ```
 
 Then go to django admin interface: [https://24ho.test/dadmin/](https://24ho.test/dadmin/)
