@@ -730,28 +730,6 @@ class UtilsCalStatistics(TestCase):
         self.assertEqual(output, eput)
 
 
-class UtilsGetNextUidOrder(TestCase):
-    def test_normal_case(self):
-        uid = '1HN001A5'
-        output = OrderUtils.get_next_uid_order(uid)
-        eput = 6
-        self.assertEqual(output, eput)
-
-    def test_missing_uid(self):
-        uid = ''
-        output = OrderUtils.get_next_uid_order(uid)
-        eput = 1
-        self.assertEqual(output, eput)
-
-
-class UtilsGetStrDayMonth(TestCase):
-    def test_normal_case(self):
-        date = timezone.datetime(2019, 9, 17)
-        output = OrderUtils.get_str_day_month(date)
-        eput = '17I'
-        self.assertEqual(output, eput)
-
-
 class UtilsPrepareNextUid(TestCase):
     def test_normal_case(self):
         address = AddressUtils.seeding(1, True)

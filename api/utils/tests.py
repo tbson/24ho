@@ -37,3 +37,23 @@ class ToolsTestCase(TestCase):
         self.assertEqual(len(output[0]), 2)
         self.assertEqual(len(output[1]), 2)
         self.assertEqual(len(output[2]), 4)
+
+    def test_get_str_day_month(self):
+        date = timezone.datetime(2019, 9, 17)
+        output = Tools.get_str_day_month(date)
+        eput = '17I'
+        self.assertEqual(output, eput)
+
+
+class ToolsGetNextUidOrder(TestCase):
+    def test_normal_case(self):
+        uid = '1HN001A5'
+        output = Tools.get_next_uid_index(uid)
+        eput = 6
+        self.assertEqual(output, eput)
+
+    def test_missing_uid(self):
+        uid = ''
+        output = Tools.get_next_uid_index(uid)
+        eput = 1
+        self.assertEqual(output, eput)

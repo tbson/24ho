@@ -6,6 +6,7 @@ from utils.models.model import TimeStampedModel
 from apps.customer.models import Customer
 from apps.address.models import Address
 from apps.order.models import Order
+from apps.area.models import Area
 from utils.helpers.tools import Tools
 
 
@@ -61,12 +62,19 @@ class BagManager(models.Manager):
         return bag
 
 
-class Bag(models.Model):
-    title = models.CharField(max_length=128, unique=True)
+class Bag(TimeStampedModel):
+    area = models.ForeignKey(Area, models.SET_NULL, related_name='area_bags', null=True)
+    uid = models.CharField(max_length=128, unique=True)
     objects = BagManager()
 
     def __str__(self):
-        return self.title
+        return self.uid
+
+    def save(self, *args, **kwargs):
+        from .utils import BagUtils
+        if self._state.adding:
+            self.uid = BagUtils.get_next_uid(self.area)
+        super(Bag, self).save(*args, **kwargs)
 
     class Meta:
         db_table = "bags"

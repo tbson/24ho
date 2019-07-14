@@ -1,3 +1,4 @@
+import re
 import os
 import sys
 import uuid
@@ -235,3 +236,36 @@ class Tools:
         if input != 0 and not input:
             return ''
         return input.strftime("%m/%d/%Y")
+
+    @staticmethod
+    def get_str_day(date: timezone) -> str:
+        return date.strftime("%d")
+
+    @staticmethod
+    def get_str_month(date: timezone) -> str:
+        month_str = date.strftime("%m")
+        MONTH_STR_MAP = {
+            '01': 'A',
+            '02': 'B',
+            '03': 'C',
+            '04': 'D',
+            '05': 'E',
+            '06': 'F',
+            '07': 'G',
+            '08': 'H',
+            '09': 'I',
+            '10': 'J',
+            '11': 'K',
+            '12': 'L'
+        }
+        return MONTH_STR_MAP[month_str]
+
+    @staticmethod
+    def get_str_day_month(date: timezone) -> str:
+        dd = Tools.get_str_day(date)
+        m = Tools.get_str_month(date)
+        return "{}{}".format(dd, m)
+
+    @staticmethod
+    def get_next_uid_index(uid: str) -> int:
+        return int(re.split('[A-L]', uid)[-1]) + 1 if uid else 1

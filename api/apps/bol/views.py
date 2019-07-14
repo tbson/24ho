@@ -3,7 +3,7 @@ from rest_framework.decorators import action
 from rest_framework.viewsets import (GenericViewSet, )
 from rest_framework import status
 from utils.common_classes.custom_pagination import NoPaginationStatic
-from .models import Bol, Bag, BolFilter
+from .models import Bol, BolFilter
 from .utils import BolUtils
 from apps.order_item.serializers import OrderItemBaseSr
 from apps.order.serializers import OrderBaseSr
@@ -59,7 +59,6 @@ class BolViewSet(GenericViewSet):
     @action(methods=['post'], detail=True)
     def add(self, request):
         data = request.data
-        data['bag'] = Bag.objects.get_or_create(data.get('bag', None))
         serializer = BolBaseSr(data=data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
