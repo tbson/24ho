@@ -75,7 +75,13 @@ export default ({
     };
     if (heading) {
         return (
-            <Modal style={customStyles} isOpen={open} contentLabel="Modal" onRequestClose={close} ariaHideApp={false}>
+            <Modal
+                style={customStyles}
+                isOpen={open}
+                contentLabel="Modal"
+                onRequestClose={close}
+                ariaHideApp={false}
+                shouldCloseOnOverlayClick={false}>
                 <span style={closeButtonStyle} className="fas fa-times non-printable" onClick={close} />
                 <h4 className="non-printable" style={headingStyle}>
                     {title}

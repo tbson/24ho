@@ -61,7 +61,7 @@ const App = ({history, location, children}: Props) => {
                 return menuItem('bol', 'Vận đơn', 'fas fa-box');
             case 'bag':
                 if (APP !== 'admin') return null;
-                return menuItem('bag', 'Bao vận đơn', 'fas fa-box-open');
+                return menuItem('bag', 'Bao hàng', 'fas fa-box-open');
             case 'variable':
                 if (APP !== 'admin') return null;
                 return menuItem('variable', 'Variable', 'fas fa-cog');

@@ -328,8 +328,7 @@ export default class Tools {
     }
 
     static toggleGlobalLoading(spinning: boolean = true): void {
-        const event = new CustomEvent('TOGGLE_SPINNER', {detail: spinning});
-        window.document.dispatchEvent(event);
+        Tools.event.dispatch('TOGGLE_SPINNER', spinning);
     }
 
     static defaultRequestConfig(method: string): Object {
@@ -775,4 +774,15 @@ export default class Tools {
         }
         return result;
     }
+
+    static event = {
+        listen: (eventName: string, callback: Function) => {
+            window.document.addEventListener(eventName, ({detail}) => callback(detail), false);
+        },
+
+        dispatch: (eventName: string, detail: any) => {
+            const event = new CustomEvent(eventName, {detail});
+            window.document.dispatchEvent(event);
+        }
+    };
 }

@@ -2,16 +2,20 @@
 import * as React from 'react';
 import {useState, useEffect} from 'react';
 // $FlowFixMe: do not complain about importing node_modules
-import {Link} from 'react-router-dom';
+import {withRouter} from 'react-router-dom';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
 import {apiUrls} from '../_data';
 import type {TRow, DbRow, ListItem, FormOpenType, FormOpenKeyType} from '../_data';
 import {Pagination, SearchInput} from 'src/utils/components/TableUtils';
 import CNForm from '../CNForm';
+import GetOrCreateForm from 'src/back/bag/GetOrCreateForm';
+import {Service as GetOrCreateService} from 'src/back/bag/GetOrCreateForm';
 import Row from './Row.js';
 
-type Props = {};
+type Props = {
+    history: Object
+};
 
 export class Service {
     static listRequest(url?: string, params?: Object): Promise<Object> {
@@ -35,7 +39,7 @@ export class Service {
     }
 }
 
-export default ({}: Props) => {
+const Component = ({history}: Props) => {
     const [list, setList] = useState([]);
     const [formOpen, setFormOpen] = useState<FormOpenType>({
         main: false
@@ -80,9 +84,21 @@ export default ({}: Props) => {
 
     const searchList = (keyword: string) => getList('', keyword ? {search: keyword} : {});
 
+    const bagSelectHandle = ({bag}) => {
+        if (!bag) return;
+        GetOrCreateService.toggleForm(false);
+        setTimeout(() => {
+            Tools.navigateTo(history)(`/bol-cn-adding/${bag}`);
+        }, 200);
+    };
+
     useEffect(() => {
         getList();
     }, []);
+
+    function toggleSelectBagModal() {
+        GetOrCreateService.toggleForm(true);
+    }
 
     return (
         <div>
@@ -111,10 +127,12 @@ export default ({}: Props) => {
                         </th>
                         <th scope="col">Ghi chú</th>
                         <th scope="col" style={{padding: 8}} className="row80">
-                            <Link className="btn btn-primary btn-sm btn-block add-button" to={`/bol-cn-adding`}>
+                            <button
+                                className="btn btn-primary btn-sm btn-block add-button"
+                                onClick={toggleSelectBagModal}>
                                 <span className="fas fa-plus" />
                                 &nbsp; Add
-                            </Link>
+                            </button>
                         </th>
                     </tr>
                 </thead>
@@ -160,6 +178,17 @@ export default ({}: Props) => {
                     Cancel
                 </button>
             </CNForm>
+            <GetOrCreateForm onChange={bagSelectHandle}>
+                <button
+                    type="button"
+                    className="btn btn-light"
+                    action="close"
+                    onClick={() => GetOrCreateService.toggleForm(false)}>
+                    Cancel
+                </button>
+            </GetOrCreateForm>
         </div>
     );
 };
+
+export default withRouter(Component);

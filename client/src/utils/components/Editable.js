@@ -25,6 +25,8 @@ type Props = {
     name: string,
     value: string | number,
     type: string,
+    formater: Function,
+    adding: boolean,
     placeholder: string
 };
 
@@ -63,10 +65,12 @@ export default class TextInput extends React.Component<Props, State> {
     static defaultProps = {
         options: [],
         isMulti: false,
+        adding: false,
         disabled: false,
         placeholder: 'Chọn',
         type: 'text',
-        value: ''
+        value: '',
+        formater: (input: any) => input
     };
     state: State = {
         isOpen: false,
@@ -75,9 +79,10 @@ export default class TextInput extends React.Component<Props, State> {
 
     onSubmit(e: Object) {
         e.preventDefault();
-        const {name, endPoint, onChange} = this.props;
+        const {name, formater, endPoint, onChange, adding} = this.props;
         const params = Tools.formDataToObj(new FormData(e.target));
-        Tools.apiCall(endPoint, params, 'PUT')
+        params[name] = formater(params.value);
+        Tools.apiCall(endPoint, params, adding ? 'POST' : 'PUT')
             .then(resp => {
                 if (!resp.ok) return Promise.reject(resp.data);
                 onChange(resp.data);

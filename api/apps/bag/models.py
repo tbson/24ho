@@ -16,18 +16,18 @@ class BagManager(models.Manager):
 
 
 class Bag(TimeStampedModel):
-    area = models.ForeignKey(Area, models.SET_NULL, related_name='area_bags', null=True)
+    area = models.ForeignKey(Area, models.PROTECT, related_name='area_bags')
     uid = models.CharField(max_length=128, unique=True)
     objects = BagManager()
-
-    def __str__(self):
-        return self.uid
 
     def save(self, *args, **kwargs):
         from .utils import BagUtils
         if self._state.adding:
             self.uid = BagUtils.get_next_uid(self.area)
         super(Bag, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return self.uid
 
     class Meta:
         db_table = "bags"
