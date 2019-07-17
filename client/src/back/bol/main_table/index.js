@@ -97,6 +97,7 @@ export default ({order_id = 0, notifyChange}: Props) => {
                         </th>
                         <th scope="col">Ngày</th>
                         <th scope="col">Mã vận đơn</th>
+                        <th scope="col">Bao</th>
                         <th scope="col">TQ</th>
                         <th scope="col">VN</th>
                         <th scope="col" className="right">

@@ -135,16 +135,13 @@ class Bol(TimeStampedModel):
 
     objects = BolManager()
 
-    def clean(self):
-        if self.uid:
-            self.uid = self.uid.strip().upper()
-        if self.address_code:
-            self.address_code = self.address_code.strip().upper()
-
     def save(self, *args, **kwargs):
         if self._state.adding:
             date = BolDate.objects.get_or_create(timezone.now())
             self.bol_date = date
+
+        if self.uid:
+            self.uid = self.uid.strip().upper()
 
         if self.address:
             self.address_code = self.address.uid

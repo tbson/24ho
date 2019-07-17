@@ -110,14 +110,13 @@ class Order(TimeStampedModel):
 
     objects = OrderManager()
 
-    def clean(self):
-        if self.purchase_code:
-            self.purchase_code = self.uid.strip()
-
     def save(self, *args, **kwargs):
         from .utils import OrderUtils
         if self._state.adding and self.address and not self.uid:
             self.uid = OrderUtils.get_next_uid(self.address)
+
+        if self.purchase_code:
+            self.purchase_code = self.uid.strip()
 
         self.customer = self.address.customer
         if not Tools.is_testing():

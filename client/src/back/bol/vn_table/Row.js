@@ -39,7 +39,8 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
             </th>
             <td>{Tools.dateTimeFormat(data.created_at)}</td>
             <td>{data.uid}</td>
-            <td><BoolOutput value={data.cn_date} /></td>
+            <td>{data.bag_uid}</td>
+            <td><BoolOutput value={!!data.cn_date} /></td>
             <td className="center">
                 <a className="editBtn" onClick={() => showForm(data.id)}>
                     <span className="fas fa-edit text-info pointer" />
