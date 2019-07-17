@@ -7,7 +7,7 @@ import ListTools from 'src/utils/helpers/ListTools';
 import type {TRow} from './_data';
 import NavWrapper from 'src/utils/components/nav_wrapper/';
 import Preview from './cn_table/Preview';
-import {FormPart, Service as CNFormService} from './CNForm';
+import {FormPart, BagPart, Service as CNFormService} from './CNForm';
 
 type Props = {};
 
@@ -39,6 +39,8 @@ export default ({}: Props) => {
             <div className="row">
                 <div className="col-md-4">
                     <div style={{padding: '15px'}}>
+                        <BagPart/>
+                        <hr/>
                         <FormPart submitTitle="OK" onSubmit={CNFormService.handleSubmit(onChange)}>
                             <Link className="btn btn-light" action="close" to={`/bol/1`}>
                                 <span className="fas fa-chevron-left"/>

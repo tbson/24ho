@@ -4,12 +4,13 @@ import {useState, useEffect, useRef} from 'react';
 // $FlowFixMe: do not complain about formik
 import {Formik, Form} from 'formik';
 // $FlowFixMe: do not complain about formik
-import type { FormikProps } from 'formik';
+import type {FormikProps} from 'formik';
 // $FlowFixMe: do not complain about Yup
 import * as Yup from 'yup';
 import Tools from 'src/utils/helpers/Tools';
 import ErrMsgs from 'src/utils/helpers/ErrMsgs';
 import {apiUrls} from './_data';
+import {apiUrls as bagApiUrl} from 'src/back/bag/_data';
 import TextInput from 'src/utils/components/formik_input/TextInput';
 import HiddenInput from 'src/utils/components/formik_input/HiddenInput';
 import CheckInput from 'src/utils/components/formik_input/CheckInput';
@@ -78,6 +79,7 @@ export class Service {
     static handleSubmit(onChange: Function) {
         return (values: Object, {setErrors, resetForm}: Object) => {
             const params = Service.prepareParams(values);
+            params.bag = parseInt(Service.getBagId());
             return Service.changeRequest(params).then(({ok, data}) => {
                 if (ok) {
                     onChange({...data, checked: false}, params.id ? 'update' : 'add');
@@ -98,6 +100,10 @@ export class Service {
             });
         };
     }
+
+    static getBagId(): string {
+        return window.location.pathname.split('/').pop();
+    }
 }
 
 type Props = {
@@ -116,7 +122,23 @@ type FormPartProps = {
     submitTitle?: string
 };
 
-export const FormPart = ({onSubmit, initialValues, submitTitle = '', children}: FormPartProps) => { 
+export const BagPart = () => {
+    const [bagName, setBagName] = useState('');
+    const bagId = Service.getBagId();
+
+    useEffect(() => {
+        Tools.apiCall(bagApiUrl.crud + bagId, {}, 'GET', false).then(resp => resp.ok && setBagName(resp.data.uid));
+    }, []);
+
+    return (
+        <div>
+            <strong>Bao hàng: </strong>
+            <span className="red">{bagName}</span>
+        </div>
+    );
+};
+
+export const FormPart = ({onSubmit, initialValues, submitTitle = '', children}: FormPartProps) => {
     const formRef = useRef<FormikProps | null>(null);
     const prepareToEdit = ({detail: uid}) => {
         formRef.current && formRef.current.resetForm({...Service.initialValues, uid});
@@ -189,11 +211,6 @@ export default ({id, open, close, onChange, children, submitTitle = 'Save'}: Pro
     useEffect(() => {
         open ? retrieveThenOpen(id) : setOpenModal(false);
     }, [open]);
-
-    const onClick = (handleSubmit: Function) => () => {
-        Service.focusFirstInput();
-        handleSubmit();
-    };
 
     return (
         <DefaultModal open={openModal} close={close} title="Bol manager">

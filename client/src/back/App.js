@@ -64,7 +64,7 @@ class App extends React.Component<Props> {
                     <PrivateRoute exact path="/order" component={Order} />
                     <PrivateRoute exact path="/order/:id" component={OrderDetail} />
                     <PrivateRoute path="/bol" component={APP === 'admin' ? Bol : CustomerBol} />
-                    <PrivateRoute path="/bol-cn-adding" component={BolCNAdding} />
+                    <PrivateRoute path="/bol-cn-adding/:bagId" component={BolCNAdding} />
                     <PrivateRoute path="/bag" component={Bag} />
                     <PrivateRoute path="/area" exact component={Area} />
                     <PrivateRoute path="/area/:id" exact component={AreaDetail} />

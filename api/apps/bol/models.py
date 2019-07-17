@@ -144,7 +144,7 @@ class Bol(TimeStampedModel):
     def save(self, *args, **kwargs):
         if self._state.adding:
             date = BolDate.objects.get_or_create(timezone.now())
-            self.date = date
+            self.bol_date = date
 
         if self.address:
             self.address_code = self.address.uid
