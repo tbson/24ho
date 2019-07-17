@@ -51,6 +51,7 @@ export default ({preview = false, data, index=0, total=0, onEdit, onCheck, onRem
             </th>
             <td>{Tools.dateTimeFormat(data.created_at)}</td>
             <td>{data.uid}</td>
+            <td>{data.bag_uid}</td>
             <td className="mono right">{data.mass}</td>
             <td className="mono right">{data.length}</td>
             <td className="mono right">{data.width}</td>

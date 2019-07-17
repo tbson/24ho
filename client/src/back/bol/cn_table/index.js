@@ -110,6 +110,7 @@ const Component = ({history}: Props) => {
                         </th>
                         <th scope="col">Ngày</th>
                         <th scope="col">Mã vận đơn</th>
+                        <th scope="col">Bao</th>
                         <th scope="col" className="right">
                             Khối lượng
                         </th>

@@ -1,9 +1,11 @@
-from rest_framework.serializers import ModelSerializer, CharField
+from rest_framework.serializers import ModelSerializer, CharField, SerializerMethodField
 from rest_framework.validators import UniqueValidator
 from .models import Bol, BolDate, Bag
 
 
 class BolBaseSr(ModelSerializer):
+
+    bag_uid = SerializerMethodField()
 
     class Meta:
         model = Bol
@@ -16,6 +18,11 @@ class BolBaseSr(ModelSerializer):
             message="Duplicate bill of landing code",
         )]
     )
+
+    def get_bag_uid(self, obj):
+        if obj.bag:
+            return obj.bag.uid
+        return ''
 
 
 class BolDateSr(ModelSerializer):
