@@ -209,6 +209,7 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+TIME_ZONE = 'Asia/Saigon'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
@@ -229,7 +230,7 @@ MAX_UPLOAD_SIZE = 3145728
 MAX_IMAGE_SIZE = 1680
 GOLDEN_RATIO = 1.618
 
-TIME_ZONE = 'Asia/Saigon'
+
 IMAGE_MAX_WIDTH = 1200
 IMAGE_THUMBNAIL_WIDTH = 300
 IMAGE_RATIO = 1.618

@@ -116,7 +116,7 @@ class Order(TimeStampedModel):
             self.uid = OrderUtils.get_next_uid(self.address)
 
         if self.purchase_code:
-            self.purchase_code = self.uid.strip()
+            self.purchase_code = self.purchase_code.strip()
 
         self.customer = self.address.customer
         if not Tools.is_testing():

@@ -483,7 +483,7 @@ class ModelCreateCheckDate(TestCase):
 
     def test_date_must_be_created(self):
         item = Bol.objects.create(uid='test', address=self.address)
-        self.assertIsInstance(item.date, BolDate)
+        self.assertIsInstance(item.bol_date, BolDate)
 
 
 class ModelCreateWithAddress(TestCase):

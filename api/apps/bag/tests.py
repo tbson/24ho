@@ -111,15 +111,16 @@ class UtilsGetNextUid(TestCase):
 
     def test_normal_case(self):
         area = AreaUtils.seeding(1, True)
+
         output = BagUtils.get_next_uid(area)
         eput = "{}{}1".format(area.uid, self.first_part)
         self.assertEqual(output, eput)
-        Bag.objects.create(area=area)
+        Bag(area=area).save()
 
         output = BagUtils.get_next_uid(area)
         eput = "{}{}2".format(area.uid, self.first_part)
         self.assertEqual(output, eput)
-        Bag.objects.create(area=area)
+        Bag(area=area).save()
 
         area = AreaUtils.seeding(2, True)
         output = BagUtils.get_next_uid(area)
