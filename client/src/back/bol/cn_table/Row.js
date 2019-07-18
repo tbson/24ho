@@ -62,10 +62,6 @@ export default ({preview = false, data, index=0, total=0, onEdit, onCheck, onRem
                 <a className="editBtn" onClick={() => onEdit(preview ? data.uid : data.id)}>
                     <span className="fas fa-edit text-info pointer" />
                 </a>
-                <span>&nbsp;&nbsp;&nbsp;</span>
-                <a className="removeBtn" onClick={() => _onRemove(id)}>
-                    <span className="fas fa-trash-alt text-danger pointer" />
-                </a>
             </td>
         </tr>
     );

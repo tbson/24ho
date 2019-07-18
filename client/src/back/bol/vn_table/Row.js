@@ -40,16 +40,10 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
             <td>{Tools.dateTimeFormat(data.created_at)}</td>
             <td>{data.uid}</td>
             <td>{data.bag_uid}</td>
-            <td><BoolOutput value={!!data.cn_date} /></td>
-            <td className="center">
-                <a className="editBtn" onClick={() => showForm(data.id)}>
-                    <span className="fas fa-edit text-info pointer" />
-                </a>
-                <span>&nbsp;&nbsp;&nbsp;</span>
-                <a className="removeBtn" onClick={() => _onRemove(id)}>
-                    <span className="fas fa-trash-alt text-danger pointer" />
-                </a>
+            <td>
+                <BoolOutput value={!!data.cn_date} />
             </td>
+            <td className="center" />
         </tr>
     );
 };
