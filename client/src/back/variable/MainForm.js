@@ -14,6 +14,7 @@ import ButtonsBar from 'src/utils/components/form/ButtonsBar';
 import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
 
 export class Service {
+    static toggleEvent = 'TOGGLE_VARIABLE_MAIN_FORM';
     static firstInputSelector = "[name='uid']";
 
     static focusFirstInput() {
@@ -47,35 +48,46 @@ export class Service {
                 ok ? onChange({...data, checked: false}, id ? 'update' : 'add') : setErrors(Tools.setFormErrors(data))
             );
     }
+
+    static toggleForm(open: boolean, id: number = 0) {
+        Tools.event.dispatch(Service.toggleEvent, {open, id});
+    }
 }
 
 type Props = {
-    id: number,
-    open: boolean,
     close: Function,
     onChange: Function,
     children?: React.Node,
     submitTitle?: string
 };
-export default ({id, open, close, onChange, children, submitTitle = 'Save'}: Props) => {
+export default ({close, onChange, children, submitTitle = 'Save'}: Props) => {
     const {validationSchema, handleSubmit} = Service;
 
-    const [openModal, setOpenModal] = useState(false);
+    const [open, setOpen] = useState(false);
+    const [id, setId] = useState(0);
     const [initialValues, setInitialValues] = useState(Service.initialValues);
 
     const retrieveThenOpen = (id: number) =>
         Service.retrieveRequest(id).then(resp => {
             if (!resp.ok) return Tools.popMessage(resp.data.detail, 'error');
             setInitialValues({...resp.data});
-            setOpenModal(true);
+            setOpen(true);
+            setId(id);
         });
 
+    const handleToggle = ({detail: {open, id}}) => {
+        open ? retrieveThenOpen(id) : setOpen(false);
+    };
+
     useEffect(() => {
-        open ? retrieveThenOpen(id) : setOpenModal(false);
-    }, [open]);
+        Tools.event.listen(Service.toggleEvent, handleToggle);
+        return () => {
+            Tools.event.remove(Service.toggleEvent, handleToggle);
+        };
+    }, []);
 
     return (
-        <DefaultModal open={openModal} close={close} title="Variable manager">
+        <DefaultModal open={open} close={close} title="Variable manager">
             <Formik
                 initialValues={{...initialValues}}
                 validationSchema={validationSchema}

@@ -7,6 +7,7 @@ import {apiUrls} from '../_data';
 import type {TRow, DbRow, ListItem, FormOpenType, FormOpenKeyType} from '../_data';
 import {Pagination, SearchInput} from 'src/utils/components/TableUtils';
 import MainForm from '../MainForm';
+import {Service as MainFormService} from '../MainForm';
 import Row from './Row.js';
 
 type Props = {};
@@ -35,13 +36,7 @@ export class Service {
 
 export default ({}: Props) => {
     const [list, setList] = useState([]);
-    const [formOpen, setFormOpen] = useState<FormOpenType>({
-        main: false
-    });
-    const [modalId, setModalId] = useState(0);
     const [links, setLinks] = useState({next: '', previous: ''});
-
-    const toggleForm = (value: boolean, key: FormOpenKeyType = 'main') => setFormOpen({...formOpen, [key]: value});
 
     const listAction = ListTools.actions(list);
 
@@ -53,7 +48,7 @@ export default ({}: Props) => {
     };
 
     const onChange = (data: TRow, type: string) => {
-        toggleForm(false);
+        MainFormService.toggleForm(false);
         setList(listAction(data)[type]());
     };
 
@@ -69,11 +64,6 @@ export default ({}: Props) => {
 
         const r = confirm(ListTools.getDeleteMessage(ids.length));
         r && Service.handleBulkRemove(ids).then(data => setList(listAction(data).bulkRemove()));
-    };
-
-    const showForm = (id: number) => {
-        toggleForm(true);
-        setModalId(id);
     };
 
     const searchList = (keyword: string) => getList('', keyword ? {search: keyword} : {});
@@ -93,7 +83,9 @@ export default ({}: Props) => {
                         <th scope="col">Key</th>
                         <th scope="col">Value</th>
                         <th scope="col" style={{padding: 8}} className="row80">
-                            <button className="btn btn-primary btn-sm btn-block add-button" onClick={() => showForm(0)}>
+                            <button
+                                className="btn btn-primary btn-sm btn-block add-button"
+                                onClick={() => MainFormService.toggleForm(true)}>
                                 <span className="fas fa-plus" />
                                 &nbsp; Add
                             </button>
@@ -117,7 +109,7 @@ export default ({}: Props) => {
                             key={key}
                             onCheck={onCheck}
                             onRemove={onRemove}
-                            showForm={showForm}
+                            showForm={id => MainFormService.toggleForm(true, id)}
                         />
                     ))}
                 </tbody>
@@ -137,8 +129,12 @@ export default ({}: Props) => {
                 </tfoot>
             </table>
 
-            <MainForm id={modalId} open={formOpen.main} close={() => toggleForm(false)} onChange={onChange}>
-                <button type="button" className="btn btn-light" action="close" onClick={() => toggleForm(false)}>
+            <MainForm close={() => MainFormService.toggleForm(false)} onChange={onChange}>
+                <button
+                    type="button"
+                    className="btn btn-light"
+                    action="close"
+                    onClick={() => MainFormService.toggleForm(false)}>
                     Cancel
                 </button>
             </MainForm>
