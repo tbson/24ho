@@ -17,7 +17,7 @@ import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
 import Editable from 'src/utils/components/Editable';
 
 export class Service {
-    static openEvent = 'OPEN_BAG_GET_OR_CREATE_FORM';
+    static toggleEvent = 'TOGGLE_BAG_GET_OR_CREATE_FORM';
 
     static firstInputSelector = "[name='uid']";
 
@@ -45,7 +45,7 @@ export class Service {
     }
 
     static toggleForm(open: boolean) {
-        Tools.event.dispatch(Service.openEvent, open);
+        Tools.event.dispatch(Service.toggleEvent, open);
     }
 }
 
@@ -85,10 +85,15 @@ export default ({onChange, children, submitTitle = 'Save'}: Props) => {
         setListBag(newListBag);
     };
 
+    const handleToggle = ({detail: open}) => {
+        open ? retrieveThenOpen() : handleClose();
+    };
+
     useEffect(() => {
-        Tools.event.listen(Service.openEvent, function(open) {
-            open ? retrieveThenOpen() : handleClose();
-        });
+        Tools.event.listen(Service.toggleEvent, handleToggle);
+        return () => {
+            Tools.event.remove(Service.toggleEvent, handleToggle);
+        };
     }, []);
 
     return (

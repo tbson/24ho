@@ -777,7 +777,11 @@ export default class Tools {
 
     static event = {
         listen: (eventName: string, callback: Function) => {
-            window.document.addEventListener(eventName, ({detail}) => callback(detail), false);
+            window.document.addEventListener(eventName, callback, false);
+        },
+
+        remove: (eventName: string, callback: Function) => {
+            window.document.removeEventListener(eventName, callback, false);
         },
 
         dispatch: (eventName: string, detail: any) => {

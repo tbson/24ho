@@ -15,7 +15,7 @@ export default class Spinner extends React.Component<Props, State> {
     };
     constructor(props: Props) {
         super(props);
-        Tools.event.listen('TOGGLE_SPINNER', spinning => this.setState({spinning}));
+        Tools.event.listen('TOGGLE_SPINNER', ({detail: spinning}) => this.setState({spinning}));
     }
 
     render() {
