@@ -1,15 +1,19 @@
+import datetime
+from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import action
 from rest_framework.viewsets import (GenericViewSet, )
 from rest_framework import status
 from utils.common_classes.custom_pagination import NoPaginationStatic
 from .models import Bol, BolFilter
+from apps.bag.models import Bag
 from .utils import BolUtils
 from apps.order_item.serializers import OrderItemBaseSr
 from apps.order.serializers import OrderBaseSr
 from .serializers import (
     BolBaseSr,
 )
+from apps.bag.serializers import BagListSr
 from utils.common_classes.custom_permission import CustomPermission
 from utils.helpers.res_tools import res
 
@@ -43,7 +47,20 @@ class BolViewSet(GenericViewSet):
         queryset = self.filter_queryset(queryset)
         queryset = self.paginate_queryset(queryset)
         serializer = BolBaseSr(queryset, many=True)
-        return self.get_paginated_response(serializer.data)
+
+        today = timezone.now()
+        last_30_day = today - datetime.timedelta(days=30)
+
+        bags = Bag.objects.filter(created_at__lte=today, created_at__gt=last_30_day)
+
+        result = {
+            'items': serializer.data,
+            'extra': {
+                'bags': BagListSr(bags, many=True).data
+            }
+        }
+
+        return self.get_paginated_response(result)
 
     def retrieve(self, request, pk=None):
         obj = get_object_or_404(Bol, pk=pk)
@@ -87,6 +104,13 @@ class BolViewSet(GenericViewSet):
         }
 
         return NoPaginationStatic.get_paginated_response(result)
+
+    def change_bag(self, request, pk=None):
+        obj = get_object_or_404(Bol, pk=pk)
+        value = request.data.get('value', obj.purchase_code)
+        bag = int(value)
+        serializer = BolUtils.partial_update(obj, 'bag', bag)
+        return res(serializer.data)
 
     @action(methods=['delete'], detail=True)
     def delete(self, request, pk=None):

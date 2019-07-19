@@ -23,3 +23,8 @@ class BagBaseSr(ModelSerializer):
         if not obj.area:
             return ''
         return obj.area.uid
+
+
+class BagListSr(BagBaseSr):
+    class Meta(BagBaseSr.Meta):
+        fields = ('created_at', 'id', 'uid', )

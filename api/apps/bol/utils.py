@@ -199,3 +199,13 @@ class BolUtils:
             order.save()
 
         return remain
+
+    @staticmethod
+    def partial_update(obj, key, value):
+        from .serializers import BolBaseSr
+        data = {}
+        data[key] = value
+        serializer = BolBaseSr(obj, data=data, partial=True)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+        return serializer

@@ -41,6 +41,7 @@ export class Service {
 
 const Component = ({history}: Props) => {
     const [list, setList] = useState([]);
+    const [listBag, setListBag] = useState([]);
     const [formOpen, setFormOpen] = useState<FormOpenType>({
         main: false
     });
@@ -55,6 +56,7 @@ const Component = ({history}: Props) => {
         const data = await Service.handleGetList(url, {...params, cn_date__isnull: false});
         if (!data) return;
         setList(ListTools.prepare(data.items));
+        setListBag(data.extra.bags.map(item => ({value: item.id, label: item.uid})));
         setLinks(data.links);
     };
 
@@ -110,7 +112,7 @@ const Component = ({history}: Props) => {
                         </th>
                         <th scope="col">Ngày</th>
                         <th scope="col">Mã vận đơn</th>
-                        <th scope="col">Bao</th>
+                        <th scope="col">Bao hàng</th>
                         <th scope="col" className="right">
                             Khối lượng
                         </th>
@@ -150,7 +152,8 @@ const Component = ({history}: Props) => {
                     {list.map((data, key) => (
                         <Row
                             className="table-row"
-                            data={data}
+                            listBag={listBag}
+                            item={data}
                             key={key}
                             onCheck={onCheck}
                             onRemove={onRemove}

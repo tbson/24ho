@@ -1,9 +1,12 @@
 // @flow
 import * as React from 'react';
+import {useState} from 'react';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
 import {apiUrls} from '../_data';
 import type {TRow} from '../_data';
+import type {SelectOptions} from 'src/utils/helpers/Tools';
+import Editable from 'src/utils/components/Editable';
 
 export class Service {
     static removeRequest(id: number): Promise<Object> {
@@ -21,12 +24,16 @@ type RowPropTypes = {
     total?: number,
     index?: number,
     preview?: boolean,
-    data: TRow,
+    item: TRow,
     onCheck?: Function,
+    listBag: SelectOptions,
     onEdit: Function,
     onRemove: Function
 };
-export default ({preview = false, data, index=0, total=0, onEdit, onCheck, onRemove}: RowPropTypes) => {
+export default ({preview = false, listBag=[], item, index = 0, total = 0, onEdit, onCheck, onRemove}: RowPropTypes) => {
+
+    const [data, setData] = useState(item);
+
     const id = parseInt(data.id);
 
     const _onRemove = id => {
@@ -51,7 +58,18 @@ export default ({preview = false, data, index=0, total=0, onEdit, onCheck, onRem
             </th>
             <td>{Tools.dateTimeFormat(data.created_at)}</td>
             <td>{data.uid}</td>
-            <td>{data.bag_uid}</td>
+            <td>
+                <Editable
+                    onChange={setData}
+                    name="data"
+                    formater={parseInt}
+                    endPoint={apiUrls.change_bag.replace('/pk-', `/${data.id}/`)}
+                    type="select"
+                    options={listBag}
+                    placeholder="Bao hàng...">
+                    <span>{data.bag_uid}</span>
+                </Editable>
+            </td>
             <td className="mono right">{data.mass}</td>
             <td className="mono right">{data.length}</td>
             <td className="mono right">{data.width}</td>

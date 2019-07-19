@@ -25,10 +25,15 @@ get_order_items_for_checking = BolViewSet.as_view({
     'get': 'get_order_items_for_checking',
 })
 
+change_bag = BolViewSet.as_view({
+    'put': 'change_bag',
+})
+
 app_name = os.getcwd().split(os.sep)[-1]
 urlpatterns = [
     path('', base_endpoint),
     path('<int:pk>', pk_endpoint),
     path('<str:uid>', retrieve_uid),
     path('get-order-items-for-checking/<str:uid>', get_order_items_for_checking),
+    path('<int:pk>/change-bag/', change_bag),
 ]

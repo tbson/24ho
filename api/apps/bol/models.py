@@ -180,6 +180,7 @@ class Bol(TimeStampedModel):
         ordering = ['-id']
         permissions = (
             ("get_order_items_for_checking_bol", "Can get order items for checking from bol"),
+            ("change_bag_bol", "Can change bag"),
         )
 
 
