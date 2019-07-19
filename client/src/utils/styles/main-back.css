@@ -210,3 +210,11 @@ input:invalid {
     color: #346b89;
     border-bottom: 1px dashed #346b89;
 }
+
+.accordion__panel {
+    padding: 0 !important;
+}
+
+.no-margin-bottom {
+    margin-bottom: 0;
+}

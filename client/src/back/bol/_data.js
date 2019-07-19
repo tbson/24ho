@@ -8,7 +8,8 @@ const rawApiUrls = [
         controller: 'bol',
         endpoints: {
             crud: '',
-            change_bag: 'pk/change-bag'
+            change_bag: 'pk/change-bag',
+            get_date: 'date'
         }
     }
 ];

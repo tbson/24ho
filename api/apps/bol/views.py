@@ -6,13 +6,13 @@ from rest_framework.decorators import action
 from rest_framework.viewsets import (GenericViewSet, )
 from rest_framework import status
 from utils.common_classes.custom_pagination import NoPaginationStatic
-from .models import Bol, BolFilter
+from .models import Bol, BolDate, BolFilter
 from apps.bag.models import Bag
 from .utils import BolUtils
 from apps.order_item.serializers import OrderItemBaseSr
 from apps.order.serializers import OrderBaseSr
 from .serializers import (
-    BolBaseSr,
+    BolBaseSr, BolDateSr
 )
 from apps.bag.serializers import BagListSr
 from utils.common_classes.custom_permission import CustomPermission
@@ -33,7 +33,7 @@ class BolViewSet(GenericViewSet):
     _name = 'bol'
     serializer_class = BolBaseSr
     permission_classes = (BolPermission, )
-    search_fields = ('uid', 'cn_date', 'vn_date', )
+    search_fields = ('uid', 'cn_date', 'vn_date', 'bol_date_id')
     filterset_class = BolFilter
 
     def get_object(self, pk):
@@ -113,6 +113,13 @@ class BolViewSet(GenericViewSet):
             raise ValidationError("Bao hàng không được để rỗng.")
         serializer = BolUtils.partial_update(obj, 'bag', value)
         return res(serializer.data)
+
+    @action(methods=['get'], detail=False)
+    def get_date(self, request, pk=None):
+        queryset = BolDate.objects.all()
+        queryset = self.paginate_queryset(queryset)
+        serializer = BolDateSr(queryset, many=True)
+        return self.get_paginated_response(serializer.data)
 
     @action(methods=['delete'], detail=True)
     def delete(self, request, pk=None):

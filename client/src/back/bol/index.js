@@ -11,6 +11,7 @@ import NavWrapper from 'src/utils/components/nav_wrapper/';
 import Table from './main_table/';
 import CNTable from './cn_table/';
 import VNTable from './vn_table/';
+import DateTable from './date_table/';
 
 type Props = {
     match: Object
@@ -27,7 +28,10 @@ const Component = ({match}: Props) => {
             <Tabs defaultIndex={type}>
                 <TabList>
                     <Tab>
-                        <span>Vận đơn</span>
+                        <span>Tất cả vận đơn</span>
+                    </Tab>
+                    <Tab>
+                        <span>Vận đơn theo ngày</span>
                     </Tab>
                     <Tab>
                         <span>Vận đơn TQ</span>
@@ -37,6 +41,7 @@ const Component = ({match}: Props) => {
                     </Tab>
                 </TabList>
                 <TabPanel><Table/></TabPanel>
+                <TabPanel><DateTable/></TabPanel>
                 <TabPanel><CNTable/></TabPanel>
                 <TabPanel><VNTable/></TabPanel>
             </Tabs>

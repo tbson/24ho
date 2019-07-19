@@ -29,6 +29,10 @@ change_bag = BolViewSet.as_view({
     'put': 'change_bag',
 })
 
+get_date = BolViewSet.as_view({
+    'get': 'get_date',
+})
+
 app_name = os.getcwd().split(os.sep)[-1]
 urlpatterns = [
     path('', base_endpoint),
@@ -36,4 +40,5 @@ urlpatterns = [
     path('<str:uid>', retrieve_uid),
     path('get-order-items-for-checking/<str:uid>', get_order_items_for_checking),
     path('<int:pk>/change-bag/', change_bag),
+    path('date/', get_date),
 ]

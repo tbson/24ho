@@ -181,6 +181,7 @@ class Bol(TimeStampedModel):
         permissions = (
             ("get_order_items_for_checking_bol", "Can get order items for checking from bol"),
             ("change_bag_bol", "Can change bag"),
+            ("get_date_bol", "Can get date"),
         )
 
 
@@ -188,7 +189,8 @@ class BolFilter(filters.FilterSet):
     cn_date__isnull = filters.BooleanFilter(field_name="cn_date", lookup_expr='isnull')
     vn_date__isnull = filters.BooleanFilter(field_name="vn_date", lookup_expr='isnull')
     order_id = filters.NumberFilter(field_name="order_id", lookup_expr='exact')
+    bol_date_id = filters.NumberFilter(field_name="bol_date_id", lookup_expr='exact')
 
     class Meta:
         model = Bol
-        fields = ['order_id', 'cn_date__isnull', 'vn_date__isnull']
+        fields = ['order_id', 'bol_date_id', 'cn_date__isnull', 'vn_date__isnull']

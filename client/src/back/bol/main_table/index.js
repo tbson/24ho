@@ -11,6 +11,7 @@ import Row from './Row.js';
 
 type Props = {
     order_id?: number,
+    bol_date_id?: number,
     notifyChange?: Function
 };
 
@@ -36,7 +37,7 @@ export class Service {
     }
 }
 
-export default ({order_id = 0, notifyChange}: Props) => {
+export default ({order_id = 0, bol_date_id = 0, notifyChange}: Props) => {
     const [list, setList] = useState([]);
     const [formOpen, setFormOpen] = useState<FormOpenType>({
         main: false
@@ -49,7 +50,10 @@ export default ({order_id = 0, notifyChange}: Props) => {
     const listAction = ListTools.actions(list);
 
     const getList = async (url?: string, params?: Object = {}) => {
-        const data = await Service.handleGetList(url, order_id ? {...params, order_id} : params);
+        let composedParams = {...params};
+        if (order_id) composedParams = {...composedParams, order_id};
+        if (bol_date_id) composedParams = {...composedParams, bol_date_id};
+        const data = await Service.handleGetList(url, composedParams);
         if (!data) return;
         setList(ListTools.prepare(data.items));
         setLinks(data.links);
@@ -89,7 +93,7 @@ export default ({order_id = 0, notifyChange}: Props) => {
 
     return (
         <div>
-            <table className="table table-striped">
+            <table className="table table-striped no-margin-bottom">
                 <thead className="thead-light">
                     <tr>
                         <th className="row25">
@@ -115,9 +119,7 @@ export default ({order_id = 0, notifyChange}: Props) => {
                         <th scope="col" className="right">
                             Số kiện
                         </th>
-                        <th scope="col">
-                            Bảo hiểm
-                        </th>
+                        <th scope="col">Bảo hiểm</th>
                         <th scope="col">Ghi chú</th>
                         <th scope="col" style={{padding: 8}} className="row80">
                             <button className="btn btn-primary btn-sm btn-block add-button" onClick={() => showForm(0)}>
