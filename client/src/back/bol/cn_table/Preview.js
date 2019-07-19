@@ -45,7 +45,7 @@ export default ({list, onEdit, onRemove}: Props) => {
                         <Row
                             preview={true}
                             className="table-row"
-                            data={data}
+                            item={data}
                             key={key}
                             total={list.length}
                             index={key}

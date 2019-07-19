@@ -134,8 +134,9 @@ export default class TextInput extends React.Component<Props, State> {
     }
 
     render() {
-        const {disabled} = this.props;
-        const options = {
+        let {disabled, options, type} = this.props;
+        if (type === 'select' && !options.length) disabled = true;
+        const props = {
             isOpen: this.state.isOpen,
             onOuterAction: () => {
                 this.setState({isOpen: false});
@@ -149,6 +150,6 @@ export default class TextInput extends React.Component<Props, State> {
             // $FlowFixMe: do not complain
             className: (this.props.children.props.className || '') + (disabled ? '' : ' editable')
         });
-        return <Popover {...options}>{children}</Popover>;
+        return <Popover {...props}>{children}</Popover>;
     }
 }

@@ -26,7 +26,7 @@ type RowPropTypes = {
     preview?: boolean,
     item: TRow,
     onCheck?: Function,
-    listBag: SelectOptions,
+    listBag?: SelectOptions,
     onEdit: Function,
     onRemove: Function
 };
