@@ -1,6 +1,7 @@
 import datetime
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
+from rest_framework.serializers import ValidationError
 from rest_framework.decorators import action
 from rest_framework.viewsets import (GenericViewSet, )
 from rest_framework import status
@@ -108,8 +109,9 @@ class BolViewSet(GenericViewSet):
     def change_bag(self, request, pk=None):
         obj = get_object_or_404(Bol, pk=pk)
         value = request.data.get('value', obj.purchase_code)
-        bag = int(value)
-        serializer = BolUtils.partial_update(obj, 'bag', bag)
+        if not value:
+            raise ValidationError("Bao hàng không được để rỗng.")
+        serializer = BolUtils.partial_update(obj, 'bag', value)
         return res(serializer.data)
 
     @action(methods=['delete'], detail=True)

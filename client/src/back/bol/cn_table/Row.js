@@ -61,6 +61,7 @@ export default ({preview = false, listBag=[], item, index = 0, total = 0, onEdit
             <td>
                 <Editable
                     onChange={setData}
+                    value={data.bag}
                     name="data"
                     formater={parseInt}
                     endPoint={apiUrls.change_bag.replace('/pk-', `/${data.id}/`)}
