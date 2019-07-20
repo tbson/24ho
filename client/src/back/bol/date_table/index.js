@@ -61,6 +61,9 @@ export default ({}: Props) => {
                     </AccordionItem>
                 ))}
             </Accordion>
+            <div className="right">
+                <Pagination next={links.next} prev={links.previous} onNavigate={getList} />
+            </div>
         </div>
     );
 };

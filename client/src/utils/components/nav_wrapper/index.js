@@ -48,15 +48,15 @@ const App = ({history, location, children}: Props) => {
     const renderMenu = (menu: string) => {
         switch (menu) {
             case 'profile':
-                return menuItem('', 'Profile', 'fas fa-user');
+                return menuItem('', 'Tài khoản', 'fas fa-user');
             case 'admin':
                 if (APP !== 'admin') return null;
                 return menuItem('staff', 'Admin', 'fas fa-user-secret');
             case 'customer':
                 if (APP !== 'admin') return null;
-                return menuItem('customer', 'Customer', 'fas fa-user-ninja');
+                return menuItem('customer', 'Khách hàng', 'fas fa-user-ninja');
             case 'order':
-                return menuItem('order', 'Order', 'fas fa-shipping-fast');
+                return menuItem('order', 'Đơn order', 'fas fa-shipping-fast');
             case 'bol':
                 return menuItem('bol', 'Vận đơn', 'fas fa-box');
             case 'bag':
@@ -64,25 +64,25 @@ const App = ({history, location, children}: Props) => {
                 return menuItem('bag', 'Bao hàng', 'fas fa-box-open');
             case 'variable':
                 if (APP !== 'admin') return null;
-                return menuItem('variable', 'Variable', 'fas fa-cog');
+                return menuItem('variable', 'Cấu hình', 'fas fa-cog');
             case 'area':
                 if (APP !== 'admin') return null;
-                return menuItem('area', 'Area', 'fas fa-map-marker-alt');
+                return menuItem('area', 'Vùng', 'fas fa-map-marker-alt');
             case 'address':
                 if (APP !== 'user') return null;
-                return menuItem('address', 'Address', 'fas fa-map-marker-alt');
+                return menuItem('address', 'Địa chỉ', 'fas fa-map-marker-alt');
             case 'cart':
                 if (APP !== 'user') return null;
-                return menuItem('cart', 'Cart', 'fas fa-shopping-cart');
+                return menuItem('cart', 'Giỏ hàng', 'fas fa-shopping-cart');
             case 'rate':
                 if (APP !== 'admin') return null;
-                return menuItem('rate', 'Rate', 'fas fa-yen-sign');
+                return menuItem('rate', 'Tỷ giá', 'fas fa-yen-sign');
             case 'orderFee':
                 if (APP !== 'admin') return null;
-                return menuItem('order-fee', 'Order fee', 'fas fa-percent');
+                return menuItem('order-fee', 'Phí dịch vụ', 'fas fa-percent');
             case 'countCheck':
                 if (APP !== 'admin') return null;
-                return menuItem('count-check', 'Count check', 'fas fa-tasks');
+                return menuItem('count-check', 'Kiểm đếm', 'fas fa-tasks');
         }
     };
 

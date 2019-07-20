@@ -215,6 +215,10 @@ input:invalid {
     padding: 0 !important;
 }
 
+.accordion__button {
+    padding: 10px !important;
+}
+
 .no-margin-bottom {
     margin-bottom: 0;
 }

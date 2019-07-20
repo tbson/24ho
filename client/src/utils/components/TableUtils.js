@@ -45,7 +45,7 @@ export const Pagination = ({next, prev, onNavigate}: PaginationPropTypes) => {
         return (
             <button className="btn btn-primary btn-sm" onClick={() => onNavigate(prev)}>
                 <span className="fas fa-chevron-left pointer" />
-                &nbsp; Prev
+                &nbsp; Trang trước
             </button>
         );
     };
@@ -55,7 +55,7 @@ export const Pagination = ({next, prev, onNavigate}: PaginationPropTypes) => {
         return [
             <span key="1">&nbsp;&nbsp;&nbsp;</span>,
             <button className="btn btn-primary btn-sm" key="2" onClick={() => onNavigate(next)}>
-                Next &nbsp;
+                Trang tiếp &nbsp;
                 <span className="fas fa-chevron-right pointer" />
             </button>
         ];
