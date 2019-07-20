@@ -17,6 +17,7 @@ class BagManager(models.Manager):
 
 class Bag(TimeStampedModel):
     area = models.ForeignKey(Area, models.PROTECT, related_name='area_bags')
+    bol_date = models.IntegerField(null=True)
     uid = models.CharField(max_length=128, unique=True)
     objects = BagManager()
 

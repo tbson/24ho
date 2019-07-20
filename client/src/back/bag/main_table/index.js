@@ -10,7 +10,9 @@ import MainForm from '../MainForm';
 import Row from './Row.js';
 import {Service as AreaService} from 'src/back/area/';
 
-type Props = {};
+type Props = {
+    bol_date: number
+};
 
 export class Service {
     static listRequest(url?: string, params?: Object): Promise<Object> {
@@ -34,7 +36,7 @@ export class Service {
     }
 }
 
-export default ({}: Props) => {
+export default ({bol_date = 0}: Props) => {
     const [list, setList] = useState([]);
     const [listArea, setListArea] = useState([]);
     const [formOpen, setFormOpen] = useState<FormOpenType>({
@@ -48,7 +50,9 @@ export default ({}: Props) => {
     const listAction = ListTools.actions(list);
 
     const getList = async (url?: string, params?: Object) => {
-        const data = await Service.handleGetList(url, params);
+        let composedParams = {...params};
+        if (bol_date) composedParams = {...composedParams, bol_date};
+        const data = await Service.handleGetList(url, composedParams);
         if (!data) return;
         const _listArea = AreaService.areaToOptions(data.extra.list_area);
         setListArea(_listArea);
@@ -89,14 +93,14 @@ export default ({}: Props) => {
 
     return (
         <div>
-            <table className="table table-striped">
+            <table className="table table-striped no-margin-bottom">
                 <thead className="thead-light">
                     <tr>
                         <th className="row25">
                             <span className="fas fa-check text-info pointer check-all-button" onClick={onCheckAll} />
                         </th>
-                        <th scope="col">Area</th>
-                        <th scope="col">UID</th>
+                        <th scope="col">Mã bao</th>
+                        <th scope="col">Vùng</th>
                         <th scope="col" style={{padding: 8}} className="row80">
                             <button className="btn btn-primary btn-sm btn-block add-button" onClick={() => showForm(0)}>
                                 <span className="fas fa-plus" />

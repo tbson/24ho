@@ -1,5 +1,7 @@
 // @flow
 import * as React from 'react';
+// $FlowFixMe: do not complain about importing node_modules
+import {Link} from 'react-router-dom';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
 import {apiUrls} from '../_data';
@@ -36,8 +38,12 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
             <th className="row25">
                 <input id={id} className="check" type="checkbox" checked={data.checked} onChange={() => onCheck(id)} />
             </th>
+            <td>
+                <Link to={`/bol/${data.id}`}>
+                    {data.uid}
+                </Link>
+            </td>
             <td>{data.area_uid}</td>
-            <td>{data.uid}</td>
             <td className="center">
                 <a className="editBtn" onClick={() => showForm(data.id)}>
                     <span className="fas fa-edit text-info pointer" />

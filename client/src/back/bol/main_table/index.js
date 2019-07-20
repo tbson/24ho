@@ -11,6 +11,7 @@ import Row from './Row.js';
 
 type Props = {
     order_id?: number,
+    bag_id?: number,
     bol_date_id?: number,
     notifyChange?: Function
 };
@@ -37,7 +38,7 @@ export class Service {
     }
 }
 
-export default ({order_id = 0, bol_date_id = 0, notifyChange}: Props) => {
+export default ({order_id = 0, bol_date_id = 0, bag_id = 0, notifyChange}: Props) => {
     const [list, setList] = useState([]);
     const [formOpen, setFormOpen] = useState<FormOpenType>({
         main: false
@@ -53,6 +54,7 @@ export default ({order_id = 0, bol_date_id = 0, notifyChange}: Props) => {
         let composedParams = {...params};
         if (order_id) composedParams = {...composedParams, order_id};
         if (bol_date_id) composedParams = {...composedParams, bol_date_id};
+        if (bag_id) composedParams = {...composedParams, bag_id};
         const data = await Service.handleGetList(url, composedParams);
         if (!data) return;
         setList(ListTools.prepare(data.items));
@@ -88,6 +90,7 @@ export default ({order_id = 0, bol_date_id = 0, notifyChange}: Props) => {
     const searchList = (keyword: string) => getList('', keyword ? {search: keyword} : {});
 
     useEffect(() => {
+        console.log(bag_id);
         getList();
     }, []);
 

@@ -17,6 +17,7 @@ class BagViewSet(GenericViewSet):
     serializer_class = BagBaseSr
     permission_classes = (CustomPermission, )
     search_fields = ('uid', )
+    filterset_fields = ('bol_date', )
 
     def get_object(self, pk):
         obj = get_object_or_404(Bag, pk=pk)

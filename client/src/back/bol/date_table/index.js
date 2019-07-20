@@ -5,7 +5,7 @@ import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
 import {apiUrls} from '../_data';
 import {Pagination, SearchInput} from 'src/utils/components/TableUtils';
-import MainTable from '../main_table/';
+import MainTable from 'src/back/bag/main_table/';
 
 import {
     Accordion,
@@ -49,14 +49,14 @@ export default ({}: Props) => {
 
     return (
         <div>
-            <Accordion>
+            <Accordion allowZeroExpanded={true}>
                 {list.map(item => (
                     <AccordionItem key={item.id}>
                         <AccordionItemHeading>
                             <AccordionItemButton>{item.date}</AccordionItemButton>
                         </AccordionItemHeading>
                         <AccordionItemPanel>
-                            <MainTable bol_date_id={item.id} />
+                            <MainTable bol_date={item.id} />
                         </AccordionItemPanel>
                     </AccordionItem>
                 ))}

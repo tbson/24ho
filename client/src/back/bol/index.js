@@ -21,8 +21,8 @@ const Component = ({match}: Props) => {
     useEffect(() => {
         document.title = 'Bill of landing manager';
     }, []);
-
     const type = match.params.type ? parseInt(match.params.type) : 0;
+    const bag_id = match.params.bagId ? parseInt(match.params.bagId) : 0;
     return (
         <NavWrapper>
             <Tabs defaultIndex={type}>
@@ -40,10 +40,18 @@ const Component = ({match}: Props) => {
                         <span>Vận đơn VN</span>
                     </Tab>
                 </TabList>
-                <TabPanel><Table/></TabPanel>
-                <TabPanel><DateTable/></TabPanel>
-                <TabPanel><CNTable/></TabPanel>
-                <TabPanel><VNTable/></TabPanel>
+                <TabPanel>
+                    <Table bag_id={bag_id} />
+                </TabPanel>
+                <TabPanel>
+                    <DateTable />
+                </TabPanel>
+                <TabPanel>
+                    <CNTable />
+                </TabPanel>
+                <TabPanel>
+                    <VNTable />
+                </TabPanel>
             </Tabs>
         </NavWrapper>
     );

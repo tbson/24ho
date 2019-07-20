@@ -43,6 +43,10 @@ import translations from 'src/utils/translations.json';
 
 type Props = {};
 
+const AbstractBol = props => {
+    return APP === 'admin' ? <Bol {...props} /> : <CustomerBol {...props} />;
+};
+
 class App extends React.Component<Props> {
     constructor(props: Props) {
         super(props);
@@ -63,7 +67,10 @@ class App extends React.Component<Props> {
                     <PrivateRoute path="/customer" component={Customer} />
                     <PrivateRoute exact path="/order" component={Order} />
                     <PrivateRoute exact path="/order/:id" component={OrderDetail} />
-                    <PrivateRoute path="/bol" component={APP === 'admin' ? Bol : CustomerBol} />
+                    <PrivateRoute
+                        path="/bol/:bagId?"
+                        render={props => <AbstractBol {...props} key={props.match.params.bagId} />}
+                    />
                     <PrivateRoute path="/bol-cn-adding/:bagId" component={BolCNAdding} />
                     <PrivateRoute path="/bag" component={Bag} />
                     <PrivateRoute path="/area" exact component={Area} />

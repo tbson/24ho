@@ -139,6 +139,10 @@ class Bol(TimeStampedModel):
         if self._state.adding:
             date = BolDate.objects.get_or_create(timezone.now())
             self.bol_date = date
+            bag = self.bag
+            if bag and not bag.bol_date:
+                bag.bol_date = date.id
+                bag.save()
 
         if self.uid:
             self.uid = self.uid.strip().upper()
@@ -190,7 +194,8 @@ class BolFilter(filters.FilterSet):
     vn_date__isnull = filters.BooleanFilter(field_name="vn_date", lookup_expr='isnull')
     order_id = filters.NumberFilter(field_name="order_id", lookup_expr='exact')
     bol_date_id = filters.NumberFilter(field_name="bol_date_id", lookup_expr='exact')
+    bag_id = filters.NumberFilter(field_name="bag_id", lookup_expr='exact')
 
     class Meta:
         model = Bol
-        fields = ['order_id', 'bol_date_id', 'cn_date__isnull', 'vn_date__isnull']
+        fields = ['order_id', 'bol_date_id', 'bag_id', 'cn_date__isnull', 'vn_date__isnull']
