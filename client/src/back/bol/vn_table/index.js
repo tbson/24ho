@@ -88,17 +88,19 @@ export default ({}: Props) => {
             <table className="table table-striped">
                 <thead className="thead-light">
                     <tr>
+                        {/*
                         <th className="row25">
                             <span className="fas fa-check text-info pointer check-all-button" onClick={onCheckAll} />
                         </th>
+                        */}
+                        <th scope="col">#</th>
                         <th scope="col">Ngày</th>
                         <th scope="col">Mã vận đơn</th>
                         <th scope="col">Bao</th>
                         <th scope="col">Khớp</th>
                         <th scope="col" style={{padding: 8}} className="row80">
-                            <button className="btn btn-primary btn-sm btn-block add-button" onClick={() => showForm(0)}>
-                                <span className="fas fa-plus" />
-                                &nbsp; Add
+                            <button className="btn btn-primary btn-sm btn-block add-button" onClick={() => getList()}>
+                                <span className="fas fa-sync" />
                             </button>
                         </th>
                     </tr>
@@ -113,26 +115,26 @@ export default ({}: Props) => {
                 </tbody>
 
                 <tbody>
-                    {list.map((data, key) => (
+                    {list.map((data, index) => (
                         <Row
                             className="table-row"
                             data={data}
-                            key={key}
-                            onCheck={onCheck}
-                            onRemove={onRemove}
-                            showForm={showForm}
+                            key={index}
+                            index={index}
                         />
                     ))}
                 </tbody>
 
                 <tfoot className="thead-light">
                     <tr>
+                        {/*
                         <th className="row25">
                             <span
                                 className="fas fa-trash-alt text-danger pointer bulk-remove-button"
                                 onClick={onBulkRemove}
                             />
                         </th>
+                        */}
                         <th className="row25 right" colSpan="99">
                             <Pagination next={links.next} prev={links.previous} onNavigate={getList} />
                         </th>

@@ -11,6 +11,7 @@ import NavWrapper from 'src/utils/components/nav_wrapper/';
 import Table from './main_table/';
 import CNTable from './cn_table/';
 import VNTable from './vn_table/';
+import VNAdding from './VNAdding';
 import DateTable from './date_table/';
 
 type Props = {
@@ -50,7 +51,14 @@ const Component = ({match}: Props) => {
                     <CNTable />
                 </TabPanel>
                 <TabPanel>
-                    <VNTable />
+                    <div className="row">
+                        <div className="col">
+                            <VNTable />
+                        </div>
+                        <div className="col">
+                            <VNAdding />
+                        </div>
+                    </div>
                 </TabPanel>
             </Tabs>
         </NavWrapper>

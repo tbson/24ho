@@ -186,6 +186,7 @@ class Bol(TimeStampedModel):
             ("get_order_items_for_checking_bol", "Can get order items for checking from bol"),
             ("change_bag_bol", "Can change bag"),
             ("get_date_bol", "Can get date"),
+            ("match_vn_bol", "Can get match VN bol"),
         )
 
 
@@ -195,7 +196,8 @@ class BolFilter(filters.FilterSet):
     order_id = filters.NumberFilter(field_name="order_id", lookup_expr='exact')
     bol_date_id = filters.NumberFilter(field_name="bol_date_id", lookup_expr='exact')
     bag_id = filters.NumberFilter(field_name="bag_id", lookup_expr='exact')
+    bag_uid = filters.CharFilter(field_name="bag__uid", lookup_expr='exact')
 
     class Meta:
         model = Bol
-        fields = ['order_id', 'bol_date_id', 'bag_id', 'cn_date__isnull', 'vn_date__isnull']
+        fields = ['order_id', 'bol_date_id', 'bag_id', 'bag_uid', 'cn_date__isnull', 'vn_date__isnull']

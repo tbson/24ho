@@ -90,7 +90,6 @@ export default ({order_id = 0, bol_date_id = 0, bag_id = 0, notifyChange}: Props
     const searchList = (keyword: string) => getList('', keyword ? {search: keyword} : {});
 
     useEffect(() => {
-        console.log(bag_id);
         getList();
     }, []);
 

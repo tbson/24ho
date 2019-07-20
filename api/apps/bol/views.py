@@ -90,6 +90,16 @@ class BolViewSet(GenericViewSet):
             serializer.save()
         return res(serializer.data)
 
+    @action(methods=['post'], detail=True)
+    def match_vn(self, request):
+        uid = request.data.get('bol_uid', '').strip().upper()
+        bag_uid = request.data.get('bag_uid', '').strip().upper()
+        obj = get_object_or_404(Bol, uid=uid, bag__uid=bag_uid)
+        if not obj.vn_date:
+            obj.vn_date = timezone.now()
+            obj.save()
+        return res(BolBaseSr(obj).data)
+
     @action(methods=['get'], detail=False)
     def get_order_items_for_checking(self, request, uid=''):
         order_items = BolUtils.get_items_for_checking(uid)
