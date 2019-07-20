@@ -208,8 +208,8 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
-TIME_ZONE = 'Asia/Saigon'
+USE_TZ = False
+TIME_ZONE = 'Asia/Ho_Chi_Minh'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
