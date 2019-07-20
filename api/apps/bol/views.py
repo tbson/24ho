@@ -33,7 +33,7 @@ class BolViewSet(GenericViewSet):
     _name = 'bol'
     serializer_class = BolBaseSr
     permission_classes = (BolPermission, )
-    search_fields = ('uid', 'cn_date', 'vn_date', 'bol_date_id', 'bag_id', )
+    search_fields = ('uid', 'cn_date', 'vn_date', )
     filterset_class = BolFilter
 
     def get_object(self, pk):
