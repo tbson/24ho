@@ -10,7 +10,8 @@ const rawApiUrls = [
             crud: '',
             change_bag: 'pk/change-bag',
             get_date: 'date',
-            match_vn: 'match-vn'
+            match_vn: 'match-vn',
+            getOrderitemsForChecking: 'get-order-items-for-checking'
         }
     }
 ];

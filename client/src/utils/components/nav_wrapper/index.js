@@ -59,6 +59,8 @@ const App = ({history, location, children}: Props) => {
                 return menuItem('order', 'Đơn order', 'fas fa-shipping-fast');
             case 'bol':
                 return menuItem('bol', 'Vận đơn', 'fas fa-box');
+            case 'check':
+                return menuItem('check', 'Kiểm hàng', 'fas fa-check-double');
             case 'bag':
                 if (APP !== 'admin') return null;
                 return menuItem('bag', 'Bao hàng', 'fas fa-box-open');
@@ -100,6 +102,7 @@ const App = ({history, location, children}: Props) => {
                     {renderMenu('order')}
                     {renderMenu('bol')}
                     {renderMenu('bag')}
+                    {renderMenu('check')}
                     {renderMenu('variable')}
                     {renderMenu('area')}
                     {renderMenu('address')}

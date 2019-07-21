@@ -34,6 +34,7 @@ import DeliveryFee from './delivery_fee/';
 import CountCheck from './count_check/';
 import Bol from './bol/';
 import Bag from './bag/';
+import Check from './bol/Check';
 import CustomerBol from './bol/CustomerBol';
 import BolCNAdding from './bol/CNAdding';
 
@@ -73,6 +74,7 @@ class App extends React.Component<Props> {
                     />
                     <PrivateRoute path="/bol-cn-adding/:bagId" component={BolCNAdding} />
                     <PrivateRoute path="/bag" component={Bag} />
+                    <PrivateRoute path="/check" component={Check} />
                     <PrivateRoute path="/area" exact component={Area} />
                     <PrivateRoute path="/area/:id" exact component={AreaDetail} />
                     <PrivateRoute path="/address" component={Address} />
