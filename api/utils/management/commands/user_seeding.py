@@ -15,8 +15,10 @@ class Command(BaseCommand):
             username='admin',
             is_superuser=True,
             is_staff=True,
-            email='admin@localhost',
-            password='password'
+            email='admin@localhost.com',
+            password='password',
+            first_name='admin',
+            last_name='1',
         )
         # Grand all permission to this user
         permissions = Permission.objects.all()
@@ -25,8 +27,10 @@ class Command(BaseCommand):
 
         user = User.objects.create_user(
             username='user',
-            email='user@localhost',
-            password='password'
+            email='user@localhost.com',
+            password='password',
+            first_name='user',
+            last_name='1',
         )
         Customer.objects.create(user=user)
 
