@@ -60,6 +60,7 @@ const App = ({history, location, children}: Props) => {
             case 'bol':
                 return menuItem('bol', 'Vận đơn', 'fas fa-box');
             case 'check':
+                if (APP !== 'admin') return null;
                 return menuItem('check', 'Kiểm hàng', 'fas fa-check-double');
             case 'bag':
                 if (APP !== 'admin') return null;
