@@ -13,6 +13,12 @@ class OrderBaseSr(ModelSerializer):
     approver_name = SerializerMethodField()
     address_name = SerializerMethodField()
     status_name = SerializerMethodField()
+    purchase_code = CharField(required=False, allow_blank=True, validators=[
+        UniqueValidator(
+            queryset=Order.objects.all(),
+            message="Duplicate purchase code",
+        )]
+    )
 
     class Meta:
         model = Order
@@ -22,13 +28,6 @@ class OrderBaseSr(ModelSerializer):
             'customer': {'required': False},
             'uid': {'required': False}
         }
-
-    purchase_code = CharField(required=False, validators=[
-        UniqueValidator(
-            queryset=Order.objects.all(),
-            message="Duplicate purchase code",
-        )]
-    )
 
     def get_vnd_total_discount(self, obj):
         from .utils import OrderUtils

@@ -37,6 +37,10 @@ match_vn = BolViewSet.as_view({
     'post': 'match_vn',
 })
 
+check = BolViewSet.as_view({
+    'post': 'check',
+})
+
 app_name = os.getcwd().split(os.sep)[-1]
 urlpatterns = [
     path('', base_endpoint),
@@ -45,5 +49,6 @@ urlpatterns = [
     path('get-order-items-for-checking/<str:uid>', get_order_items_for_checking),
     path('<int:pk>/change-bag/', change_bag),
     path('match-vn/', match_vn),
+    path('check/', check),
     path('date/', get_date),
 ]

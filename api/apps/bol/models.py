@@ -131,8 +131,6 @@ class Bol(TimeStampedModel):
 
     note = models.CharField(max_length=250, blank=True)
 
-    checked = models.BooleanField(default=False)
-
     objects = BolManager()
 
     def save(self, *args, **kwargs):
@@ -187,6 +185,7 @@ class Bol(TimeStampedModel):
             ("change_bag_bol", "Can change bag"),
             ("get_date_bol", "Can get date"),
             ("match_vn_bol", "Can get match VN bol"),
+            ("check_bol", "Can check bol"),
         )
 
 

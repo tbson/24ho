@@ -173,31 +173,32 @@ class BolUtils:
         return result
 
     @staticmethod
-    def checking(order: models.QuerySet, checked_items: Dict[int, int]) -> Dict[int, int]:
-        if not Schema({int: lambda n: n >= 0}).is_valid(checked_items):
-            raise ValidationError(error_messages['INT_CHECKED_QUANTITY'])
-
-        items = OrderItem.objects.filter(pk__in=checked_items.keys())
-
-        if items.count() != len(checked_items.keys()):
-            raise ValidationError(error_messages['ORDER_ITEM_MISSING'])
-
-        if items.filter(order_id=order.pk).count() != items.count():
-            raise ValidationError(error_messages['ORDER_MISSING_IN_ORDER_ITEM'])
-
+    def check(order: models.QuerySet, checked_items: Dict[str, int]) -> Dict[str, int]:
         remain = {}
-        for item in items:
-            if item.quantity < checked_items[item.pk]:
-                raise ValidationError(error_messages['CHECKED_QUANTITY_LARGER_THAN_ORIGINAL_QUANTITY'])
-            if item.quantity > checked_items[item.pk]:
-                remain[item.pk] = item.quantity - checked_items[item.pk]
-                item.checked_quantity = checked_items[item.pk]
-                item.save()
+        if len(checked_items.keys()):
+            if not Schema({str: lambda n: n >= 0}).is_valid(checked_items):
+                raise ValidationError(error_messages['INT_CHECKED_QUANTITY'])
 
-        if len(remain.keys()):
-            order.pending = True
-            order.save()
+            items = OrderItem.objects.filter(pk__in=checked_items.keys())
 
+            if items.count() != len(checked_items.keys()):
+                raise ValidationError(error_messages['ORDER_ITEM_MISSING'])
+
+            if items.filter(order_id=order.pk).count() != items.count():
+                raise ValidationError(error_messages['ORDER_MISSING_IN_ORDER_ITEM'])
+
+            for item in items:
+                checked_value = checked_items[str(item.pk)]
+                if item.quantity < checked_value:
+                    raise ValidationError(error_messages['CHECKED_QUANTITY_LARGER_THAN_ORIGINAL_QUANTITY'])
+                if item.quantity > checked_value:
+                    remain[item.pk] = item.quantity - checked_value
+                    item.checked_quantity = checked_value
+                    item.save()
+
+            if len(remain.keys()):
+                order.pending = True
+                order.save()
         return remain
 
     @staticmethod

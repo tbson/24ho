@@ -698,35 +698,35 @@ class UtilsGetItemsForChecking(TestCase):
         self.assertTrue(error_messages['ORDER_ITEM_NOT_FOUND'] in str(context.exception))
 
 
-class UtilsChecking(TestCase):
+class UtilsCheck(TestCase):
     def test_normal_case(self):
         order = OrderUtils.seeding(1, True)
         order_items = OrderItemUtils.seeding(3)
 
         checked_input = {}
-        checked_input[order_items[0].pk] = 1
-        checked_input[order_items[1].pk] = 2
-        checked_input[order_items[2].pk] = 3
+        checked_input[str(order_items[0].pk)] = 1
+        checked_input[str(order_items[1].pk)] = 2
+        checked_input[str(order_items[2].pk)] = 3
 
         for order_item in order_items:
             order_item.order = order
             order_item.save()
 
-        result = BolUtils.checking(order, checked_input)
+        result = BolUtils.check(order, checked_input)
 
         checked = OrderItem.objects.filter(order_id=order.pk)
         for checked_item in checked:
-            self.assertEqual(checked_item.checked_quantity, checked_input[checked_item.pk])
+            self.assertEqual(checked_item.checked_quantity, checked_input[str(checked_item.pk)])
         self.assertEqual(result, {})
         self.assertEqual(order.pending, False)
 
     def test_invalid_input(self):
         order = OrderUtils.seeding(1, True)
         checked_input = {
-            1: 'a'
+            '1': 'a'
         }
         with self.assertRaises(ValidationError) as context:
-            BolUtils.checking(order, checked_input)
+            BolUtils.check(order, checked_input)
         self.assertTrue(error_messages['INT_CHECKED_QUANTITY'] in str(context.exception))
 
     def test_item_order_not_found(self):
@@ -739,13 +739,13 @@ class UtilsChecking(TestCase):
             order_item.save()
 
         checked_input = {}
-        checked_input[order_items[0].pk] = 1
-        checked_input[order_items[1].pk] = 2
-        checked_input[order_items[2].pk] = 3
-        checked_input[order_item_4.pk] = 4
+        checked_input[str(order_items[0].pk)] = 1
+        checked_input[str(order_items[1].pk)] = 2
+        checked_input[str(order_items[2].pk)] = 3
+        checked_input[str(order_item_4.pk)] = 4
 
         with self.assertRaises(ValidationError) as context:
-            BolUtils.checking(order, checked_input)
+            BolUtils.check(order, checked_input)
         self.assertTrue(error_messages['ITEM_ORDER_NOT_FOUND'] in str(context.exception))
 
     def test_order_item_missing(self):
@@ -757,12 +757,12 @@ class UtilsChecking(TestCase):
             order_item.save()
 
         checked_input = {}
-        checked_input[order_items[0].pk] = 1
-        checked_input[order_items[1].pk] = 2
-        checked_input[99] = 2
+        checked_input[str(order_items[0].pk)] = 1
+        checked_input[str(order_items[1].pk)] = 2
+        checked_input[str(99)] = 2
 
         with self.assertRaises(ValidationError) as context:
-            BolUtils.checking(order, checked_input)
+            BolUtils.check(order, checked_input)
         self.assertTrue(error_messages['ORDER_ITEM_MISSING'] in str(context.exception))
 
     def test_wrong_order(self):
@@ -771,9 +771,9 @@ class UtilsChecking(TestCase):
         order_items = OrderItemUtils.seeding(3)
 
         checked_input = {}
-        checked_input[order_items[0].pk] = 1
-        checked_input[order_items[1].pk] = 2
-        checked_input[order_items[2].pk] = 3
+        checked_input[str(order_items[0].pk)] = 1
+        checked_input[str(order_items[1].pk)] = 2
+        checked_input[str(order_items[2].pk)] = 3
 
         for order_item in order_items:
             order_item.order = order
@@ -783,7 +783,7 @@ class UtilsChecking(TestCase):
         order_items[0].save()
 
         with self.assertRaises(ValidationError) as context:
-            BolUtils.checking(order, checked_input)
+            BolUtils.check(order, checked_input)
         self.assertTrue(error_messages['ORDER_MISSING_IN_ORDER_ITEM'] in str(context.exception))
 
     def test_missing(self):
@@ -791,15 +791,15 @@ class UtilsChecking(TestCase):
         order_items = OrderItemUtils.seeding(3)
 
         checked_input = {}
-        checked_input[order_items[0].pk] = 1
-        checked_input[order_items[1].pk] = 2
-        checked_input[order_items[2].pk] = 1
+        checked_input[str(order_items[0].pk)] = 1
+        checked_input[str(order_items[1].pk)] = 2
+        checked_input[str(order_items[2].pk)] = 1
 
         for order_item in order_items:
             order_item.order = order
             order_item.save()
 
-        result = BolUtils.checking(order, checked_input)
+        result = BolUtils.check(order, checked_input)
 
         checked = OrderItem.objects.filter(order_id=order.pk)
 
@@ -807,7 +807,7 @@ class UtilsChecking(TestCase):
         missing[order_items[2].pk] = 2
 
         for checked_item in checked:
-            self.assertEqual(checked_item.checked_quantity, checked_input[checked_item.pk])
+            self.assertEqual(checked_item.checked_quantity, checked_input[str(checked_item.pk)])
         self.assertEqual(result, missing)
         self.assertEqual(order.pending, True)
 
@@ -816,16 +816,16 @@ class UtilsChecking(TestCase):
         order_items = OrderItemUtils.seeding(3)
 
         checked_input = {}
-        checked_input[order_items[0].pk] = 4
-        checked_input[order_items[1].pk] = 2
-        checked_input[order_items[2].pk] = 3
+        checked_input[str(order_items[0].pk)] = 4
+        checked_input[str(order_items[1].pk)] = 2
+        checked_input[str(order_items[2].pk)] = 3
 
         for order_item in order_items:
             order_item.order = order
             order_item.save()
 
         with self.assertRaises(ValidationError) as context:
-            BolUtils.checking(order, checked_input)
+            BolUtils.check(order, checked_input)
         self.assertTrue(error_messages['CHECKED_QUANTITY_LARGER_THAN_ORIGINAL_QUANTITY'] in str(context.exception))
 
     '''

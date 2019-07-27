@@ -1,6 +1,7 @@
 import uuid
 import logging
 import json
+from django.db import models
 from django.utils import timezone
 from unittest.mock import patch, MagicMock
 from rest_framework.test import APIClient
@@ -880,3 +881,41 @@ class StatusNormalFlow(TestCase):
         ]
         for status in list_pull_status:
             MoveOrderStatusUtils.move(self.order, status)
+
+
+class UtilsCloneOrder(TestCase):
+    def setUp(self):
+        # Add order items
+        order_items = OrderItemUtils.seeding(2)
+        self.order = order_items[0].order
+        self.order.status = Status.NEW
+        self.order.save()
+
+        # Add bol
+        bol = BolUtils.seeding(1, True)
+        bol.order = self.order
+        bol.save()
+
+        order_items[0].quantity = 4
+        order_items[0].checked_quantity = 4
+        order_items[0].save()
+
+        order_items[1].quantity = 5
+        order_items[1].checked_quantity = 5
+        order_items[1].save()
+
+        self.order_items = order_items
+
+    def test_normal_case(self):
+        self.assertEqual(OrderItem.objects.count(), 2)
+        remain = {}
+        remain[self.order_items[1].pk] = 2
+        new_order = OrderUtils.clone_order(self.order, remain)
+        new_order_items = new_order.order_items.all()
+        self.assertEqual(Order.objects.count(), 2)
+        self.assertNotEqual(self.order.uid, new_order.uid)
+        self.assertEqual(OrderItem.objects.count(), 3)
+        self.assertEqual(self.order.order_items.count(), 2)
+        self.assertEqual(new_order_items.count(), 1)
+        self.assertEqual(new_order_items.first().quantity, 2)
+        self.order.order_items.get(quantity=5)

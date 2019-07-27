@@ -431,6 +431,12 @@ export default class Tools {
         return result;
     }
 
+    static apiClient(url: string, data: Object = {}, method: string = 'GET', usePayload: boolean = true) {
+        return Tools.apiCall(url, data, method, usePayload)
+            .then(resp => (resp.ok ? resp.data || {} : Promise.reject(resp)))
+            .catch(Tools.popMessageOrRedirect);
+    }
+
     static getCheckedId(listItem: Array<Object>): string {
         const result = listItem.filter(item => !!item.checked).map(item => item.id);
         return result.join(',');

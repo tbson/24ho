@@ -116,6 +116,26 @@ class BolViewSet(GenericViewSet):
 
         return NoPaginationStatic.get_paginated_response(result)
 
+    @action(methods=['post'], detail=False)
+    def check(self, request):
+        from apps.order.models import Order
+        from apps.order.utils import OrderUtils
+        uid = request.data.get('uid', None)
+        checked_items = request.data.get('checked_items', {})
+
+        order = get_object_or_404(Order, uid=uid)
+
+        remain = BolUtils.check(order, checked_items)
+
+        if (len(remain.keys())):
+            OrderUtils.clone_order(order, remain)
+
+        order.checked_date = timezone.now()
+        order.checker = request.user.staff
+        order.save()
+
+        return res({})
+
     def change_bag(self, request, pk=None):
         obj = get_object_or_404(Bol, pk=pk)
         value = request.data.get('value', obj.purchase_code)

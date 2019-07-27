@@ -17,7 +17,7 @@ export class Service {}
 const CheckInput = ({id, checked_quantity, onChange}: CheckInputProp) => {
     const [value, setValue] = useState(checked_quantity);
     const handleChange = e => {
-        const _value = e.target.value
+        const _value = e.target.value;
         setValue(_value);
         onChange(id, _value);
     };
@@ -97,11 +97,20 @@ export default ({}: Props) => {
     };
 
     const handleQuantityChange = (id, value) => {
-        if (value) setCheckedItems({...checkedItems, [id]: value});
+        if (value) setCheckedItems({...checkedItems, [id]: parseInt(value)});
     };
 
     const submitCheck = () => {
-        console.log(checkedItems);
+        const params = {uid: orderUid, checked_items: checkedItems};
+        Tools.apiClient(apiUrls.check, params, 'POST').then(data => {
+            setList([]);
+            setBolUid('');
+            setBolList([]);
+            setOrderUid('');
+            const bolInputElm = document.querySelector('#bol-input');
+            bolInputElm && bolInputElm.focus();
+            Tools.popMessage('Kiểm hàng thành công, quét vận đơn khác để tiếp tục.');
+        });
     };
 
     const TableHead = () => (

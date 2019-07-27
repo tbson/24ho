@@ -11,6 +11,7 @@ const rawApiUrls = [
             change_bag: 'pk/change-bag',
             get_date: 'date',
             match_vn: 'match-vn',
+            check: 'check',
             getOrderitemsForChecking: 'get-order-items-for-checking'
         }
     }

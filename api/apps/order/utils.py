@@ -9,6 +9,7 @@ from apps.address.utils import AddressUtils
 from apps.order_fee.utils import OrderFeeUtils
 from .models import Status
 from utils.helpers.tools import Tools
+from typing import Dict
 
 
 class OrderUtils:
@@ -232,6 +233,31 @@ class OrderUtils:
         last_uid = last_item.uid if last_item is not None else ''
         date = timezone.now()
         return (last_uid, address.uid, date)
+
+    @staticmethod
+    def clone_order(order: models.QuerySet, remain: Dict[int, int]) -> models.QuerySet:
+        from .serializers import OrderBaseSr
+        from apps.order_item.serializers import OrderItemBaseSr
+        pks = [int(i) for i in remain.keys()]
+        order_items = order.order_items.filter(pk__in=pks)
+        order_data = OrderBaseSr(order).data
+        del order_data['id']
+        order_data['uid'] = OrderUtils.get_next_uid(order.address)
+        order_data['purchase_code'] = ''
+
+        new_order = OrderBaseSr(data=order_data)
+        new_order.is_valid(raise_exception=True)
+        new_order = new_order.save()
+        for item in order_items:
+            data = OrderItemBaseSr(item).data
+            data['order'] = new_order.pk
+            data['quantity'] = remain[item.pk]
+            data['checked_quantity'] = remain[item.pk]
+            instance = OrderItemBaseSr(data=data)
+            instance.is_valid(raise_exception=True)
+            instance.save()
+
+        return new_order
 
 
 class MoveOrderStatusUtils:
