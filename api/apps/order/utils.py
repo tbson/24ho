@@ -29,6 +29,11 @@ class ComplaintDecide:
     CHANGE = 3
 
 
+class QuantityResolve:
+    CHECK_EQUAL_ORIGINAL = 1
+    ORIGINAL_EQUAL_CHECK = 2
+
+
 class OrderUtils:
 
     @staticmethod
@@ -270,6 +275,14 @@ class OrderUtils:
         return result
 
     @staticmethod
+    def get_remain(order: models.QuerySet) -> Dict[str, int]:
+        remain = {}
+        for item in order.order_items.all():
+            if (item.quantity > item.checked_quantity):
+                remain[str(item.pk)] = item.quantity - item.checked_quantity
+        return remain
+
+    @staticmethod
     def check(order: models.QuerySet, checked_items: Dict[str, int]) -> Dict[str, int]:
         from apps.order_item.models import OrderItem
         remain = {}
@@ -300,7 +313,7 @@ class OrderUtils:
         return remain
 
     @staticmethod
-    def clone_order(order: models.QuerySet, remain: Dict[int, int]) -> models.QuerySet:
+    def clone_order(order: models.QuerySet, remain: Dict[str, int]) -> models.QuerySet:
         from .serializers import OrderBaseSr
         from apps.order_item.serializers import OrderItemBaseSr
         pks = [int(i) for i in remain.keys()]
@@ -316,10 +329,50 @@ class OrderUtils:
         for item in order_items:
             data = OrderItemBaseSr(item).data
             data['order'] = new_order.pk
-            data['quantity'] = remain[item.pk]
-            data['checked_quantity'] = remain[item.pk]
+            data['quantity'] = remain[str(item.pk)]
+            data['checked_quantity'] = remain[str(item.pk)]
             instance = OrderItemBaseSr(data=data)
             instance.is_valid(raise_exception=True)
             instance.save()
 
         return new_order
+
+    @staticmethod
+    def unpending(order: models.QuerySet) -> models.QuerySet:
+        order.pending = False
+        order.save()
+        return order
+
+    @staticmethod
+    def quantity_resolve(order: models.QuerySet, resolve_type: int) -> models.QuerySet:
+        if resolve_type == QuantityResolve.CHECK_EQUAL_ORIGINAL:
+            for item in order.order_items.all():
+                item.checked_quantity = item.quantity
+                item.save()
+        if resolve_type == QuantityResolve.ORIGINAL_EQUAL_CHECK:
+            for item in order.order_items.all():
+                item.quantity = item.checked_quantity
+                item.save()
+        return order
+
+    @staticmethod
+    def complaint_agree(order: models.QuerySet) -> models.QuerySet:
+        OrderUtils.unpending(order)
+        OrderUtils.quantity_resolve(order, QuantityResolve.CHECK_EQUAL_ORIGINAL)
+        return order
+
+    @staticmethod
+    def complaint_money_back(order: models.QuerySet) -> models.QuerySet:
+        OrderUtils.unpending(order)
+        OrderUtils.quantity_resolve(order, QuantityResolve.ORIGINAL_EQUAL_CHECK)
+        return order
+
+    @staticmethod
+    def complaint_change(order: models.QuerySet) -> models.QuerySet:
+        remain = OrderUtils.get_remain(order)
+        OrderUtils.unpending(order)
+        OrderUtils.quantity_resolve(order, QuantityResolve.ORIGINAL_EQUAL_CHECK)
+        if (len(remain.keys())):
+            OrderUtils.clone_order(order, remain)
+
+        return order

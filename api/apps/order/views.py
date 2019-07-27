@@ -1,8 +1,9 @@
-from django.utils import timezone
 from django.db import transaction
+from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import action
 from rest_framework.viewsets import (GenericViewSet, )
+from rest_framework.serializers import ValidationError
 from rest_framework import status
 from .models import Order, Status
 from apps.staff.models import Staff
@@ -10,7 +11,8 @@ from apps.address.models import Address
 from .serializers import OrderBaseSr
 from apps.staff.serializers import StaffCompactSr
 from apps.address.serializers import AddressBaseSr
-from .utils import OrderUtils, MoveOrderStatusUtils
+from .utils import OrderUtils, ComplaintDecide
+from .move_status_utils import MoveStatusUtils
 from utils.common_classes.custom_pagination import NoPaginationStatic
 from utils.helpers.tools import Tools
 from apps.order_item.utils import OrderItemUtils
@@ -135,7 +137,7 @@ class OrderViewSet(GenericViewSet):
     def change_status(self, request, pk=None):
         obj = get_object_or_404(Order, pk=pk)
         status = request.data.get('value', obj.status)
-        obj = MoveOrderStatusUtils.move(obj, int(status))
+        obj = MoveStatusUtils.move(obj, int(status))
         serializer = OrderBaseSr(obj)
         return res(serializer.data)
 
@@ -146,7 +148,7 @@ class OrderViewSet(GenericViewSet):
         for pk in pks:
             obj = get_object_or_404(Order, pk=pk)
             if obj.status == Status.NEW:
-                MoveOrderStatusUtils.move(obj, Status.APPROVED)
+                MoveStatusUtils.move(obj, Status.APPROVED)
         return res({'approved': pks})
 
     @action(methods=['get'], detail=False)
@@ -180,13 +182,24 @@ class OrderViewSet(GenericViewSet):
 
         remain = OrderUtils.check(order, checked_items)
 
-        if (len(remain.keys())):
-            OrderUtils.clone_order(order, remain)
-
         order.checked_date = timezone.now()
         order.checker = request.user.staff
         order.save()
+        return res(remain)
 
+    @action(methods=['post'], detail=False)
+    def complaint_resolve(self, request):
+        uid = request.data.get('uid', None)
+        order = get_object_or_404(Order, uid=uid)
+        decide = int(request.data.get('decide', ComplaintDecide.AGREE))
+        if decide == ComplaintDecide.AGREE:
+            OrderUtils.complaint_agree(order)
+        elif decide == ComplaintDecide.MONEY_BACK:
+            OrderUtils.complain_money_back(order)
+        elif decide == ComplaintDecide.CHANGE:
+            OrderUtils.complaint_change(order)
+        else:
+            raise ValidationError("Lựa chọn giải quyết khiếu nại không hợp lệ.")
         return res({})
 
     @action(methods=['delete'], detail=True)

@@ -1129,3 +1129,67 @@ class UtilsCloneOrder(TestCase):
         self.assertEqual(new_order_items.count(), 1)
         self.assertEqual(new_order_items.first().quantity, 2)
         self.order.order_items.get(quantity=5)
+
+
+class UtilsComplaintResolve(TestCase):
+    def setUp(self):
+        order_items = OrderItemUtils.seeding(2)
+        self.order = order_items[0].order
+        self.order.pending = True
+        self.order.save()
+
+        order_items[0].quantity = 4
+        order_items[0].checked_quantity = 2
+        order_items[0].save()
+
+        order_items[1].quantity = 5
+        order_items[1].checked_quantity = 1
+        order_items[1].save()
+        self.order_items = order_items
+
+    def test_agree(self):
+        OrderUtils.complaint_agree(self.order)
+        order = Order.objects.get(pk=self.order.pk)
+        order_item_0 = OrderItem.objects.get(pk=self.order_items[0].pk)
+        order_item_1 = OrderItem.objects.get(pk=self.order_items[1].pk)
+
+        self.assertEqual(order.pending, False)
+
+        self.assertEqual(order_item_0.quantity, 4)
+        self.assertEqual(order_item_0.checked_quantity, 4)
+
+        self.assertEqual(order_item_1.quantity, 5)
+        self.assertEqual(order_item_1.checked_quantity, 5)
+
+    def test_money_back(self):
+        OrderUtils.complaint_money_back(self.order)
+        order = Order.objects.get(pk=self.order.pk)
+        order_item_0 = OrderItem.objects.get(pk=self.order_items[0].pk)
+        order_item_1 = OrderItem.objects.get(pk=self.order_items[1].pk)
+
+        self.assertEqual(order.pending, False)
+
+        self.assertEqual(order_item_0.quantity, 2)
+        self.assertEqual(order_item_0.checked_quantity, 2)
+
+        self.assertEqual(order_item_1.quantity, 1)
+        self.assertEqual(order_item_1.checked_quantity, 1)
+
+        self.assertEqual(Order.objects.count(), 1)
+
+    def test_change(self):
+        OrderUtils.complaint_change(self.order)
+        order = Order.objects.get(pk=self.order.pk)
+        order_item_0 = OrderItem.objects.get(pk=self.order_items[0].pk)
+        order_item_1 = OrderItem.objects.get(pk=self.order_items[1].pk)
+
+        self.assertEqual(order.pending, False)
+
+        self.assertEqual(order_item_0.quantity, 2)
+        self.assertEqual(order_item_0.checked_quantity, 2)
+
+        self.assertEqual(order_item_1.quantity, 1)
+        self.assertEqual(order_item_1.checked_quantity, 1)
+
+        self.assertEqual(Order.objects.count(), 2)
+        self.assertEqual(OrderItem.objects.count(), 4)
