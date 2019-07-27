@@ -1,3 +1,4 @@
+from django.utils import timezone
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import action
@@ -10,6 +11,7 @@ from .serializers import OrderBaseSr
 from apps.staff.serializers import StaffCompactSr
 from apps.address.serializers import AddressBaseSr
 from .utils import OrderUtils, MoveOrderStatusUtils
+from utils.common_classes.custom_pagination import NoPaginationStatic
 from utils.helpers.tools import Tools
 from apps.order_item.utils import OrderItemUtils
 from utils.common_classes.custom_permission import CustomPermission
@@ -146,6 +148,46 @@ class OrderViewSet(GenericViewSet):
             if obj.status == Status.NEW:
                 MoveOrderStatusUtils.move(obj, Status.APPROVED)
         return res({'approved': pks})
+
+    @action(methods=['get'], detail=False)
+    def get_order_items_for_checking(self, request, uid=''):
+        from apps.bol.models import Bol
+        from apps.order_item.serializers import OrderItemBaseSr
+        from apps.bol.serializers import BolBaseSr
+        order_items = OrderUtils.get_items_for_checking(uid)
+        order = order_items[0].order
+        bols = Bol.objects.filter(order_id=order.pk)
+
+        result = {
+            'items': OrderItemBaseSr(order_items, many=True).data,
+            'extra': {
+                'order': OrderBaseSr(order).data,
+                'bols': BolBaseSr(bols, many=True).data
+            }
+        }
+
+        return NoPaginationStatic.get_paginated_response(result)
+
+    @transaction.atomic
+    @action(methods=['post'], detail=False)
+    def check(self, request):
+        from apps.order.models import Order
+        from apps.order.utils import OrderUtils
+        uid = request.data.get('uid', None)
+        checked_items = request.data.get('checked_items', {})
+
+        order = get_object_or_404(Order, uid=uid)
+
+        remain = OrderUtils.check(order, checked_items)
+
+        if (len(remain.keys())):
+            OrderUtils.clone_order(order, remain)
+
+        order.checked_date = timezone.now()
+        order.checker = request.user.staff
+        order.save()
+
+        return res({})
 
     @action(methods=['delete'], detail=True)
     def delete(self, request, pk=None):

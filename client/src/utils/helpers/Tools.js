@@ -431,7 +431,12 @@ export default class Tools {
         return result;
     }
 
-    static apiClient(url: string, data: Object = {}, method: string = 'GET', usePayload: boolean = true) {
+    static apiClient(
+        url: string,
+        data: Object = {},
+        method: string = 'GET',
+        usePayload: boolean = true
+    ): Promise<Object> {
         return Tools.apiCall(url, data, method, usePayload)
             .then(resp => (resp.ok ? resp.data || {} : Promise.reject(resp)))
             .catch(Tools.popMessageOrRedirect);

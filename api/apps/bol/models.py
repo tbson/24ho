@@ -181,11 +181,9 @@ class Bol(TimeStampedModel):
         db_table = "bols"
         ordering = ['-id']
         permissions = (
-            ("get_order_items_for_checking_bol", "Can get order items for checking from bol"),
             ("change_bag_bol", "Can change bag"),
             ("get_date_bol", "Can get date"),
             ("match_vn_bol", "Can get match VN bol"),
-            ("check_bol", "Can check bol"),
         )
 
 

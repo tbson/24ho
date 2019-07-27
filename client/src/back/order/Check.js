@@ -87,9 +87,9 @@ export default ({}: Props) => {
     };
 
     const handleSearch = (bag_uid: string) => {
-        Tools.apiCall(apiUrls.getOrderitemsForChecking + bag_uid).then(resp => {
-            const extra = resp.data.extra;
-            const listItem = resp.data.items || [];
+        Tools.apiClient(apiUrls.getOrderitemsForChecking + bag_uid).then(data => {
+            const extra = data.extra;
+            const listItem = data.items || [];
             setList(listItem);
             setBolList(extra && extra.bols.map(item => item.uid).join(', '));
             setOrderUid(extra && extra.order.uid);

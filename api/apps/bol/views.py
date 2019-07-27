@@ -5,12 +5,9 @@ from rest_framework.serializers import ValidationError
 from rest_framework.decorators import action
 from rest_framework.viewsets import (GenericViewSet, )
 from rest_framework import status
-from utils.common_classes.custom_pagination import NoPaginationStatic
 from .models import Bol, BolDate, BolFilter
 from apps.bag.models import Bag
 from .utils import BolUtils
-from apps.order_item.serializers import OrderItemBaseSr
-from apps.order.serializers import OrderBaseSr
 from .serializers import (
     BolBaseSr, BolDateSr
 )
@@ -99,42 +96,6 @@ class BolViewSet(GenericViewSet):
             obj.vn_date = timezone.now()
             obj.save()
         return res(BolBaseSr(obj).data)
-
-    @action(methods=['get'], detail=False)
-    def get_order_items_for_checking(self, request, uid=''):
-        order_items = BolUtils.get_items_for_checking(uid)
-        order = order_items[0].order
-        bols = Bol.objects.filter(order_id=order.pk)
-
-        result = {
-            'items': OrderItemBaseSr(order_items, many=True).data,
-            'extra': {
-                'order': OrderBaseSr(order).data,
-                'bols': BolBaseSr(bols, many=True).data
-            }
-        }
-
-        return NoPaginationStatic.get_paginated_response(result)
-
-    @action(methods=['post'], detail=False)
-    def check(self, request):
-        from apps.order.models import Order
-        from apps.order.utils import OrderUtils
-        uid = request.data.get('uid', None)
-        checked_items = request.data.get('checked_items', {})
-
-        order = get_object_or_404(Order, uid=uid)
-
-        remain = BolUtils.check(order, checked_items)
-
-        if (len(remain.keys())):
-            OrderUtils.clone_order(order, remain)
-
-        order.checked_date = timezone.now()
-        order.checker = request.user.staff
-        order.save()
-
-        return res({})
 
     def change_bag(self, request, pk=None):
         obj = get_object_or_404(Bol, pk=pk)

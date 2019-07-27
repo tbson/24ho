@@ -141,4 +141,6 @@ class Order(TimeStampedModel):
             ("change_purchase_code_order", "Can change purchase code"),
             ("change_status_order", "Can change status"),
             ("bulk_approve_order", "Can bulk approve"),
+            ("get_order_items_for_checking_order", "Can get order items for checking from bol"),
+            ("check_order", "Can check order"),
         )

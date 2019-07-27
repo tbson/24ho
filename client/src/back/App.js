@@ -34,7 +34,7 @@ import DeliveryFee from './delivery_fee/';
 import CountCheck from './count_check/';
 import Bol from './bol/';
 import Bag from './bag/';
-import Check from './bol/Check';
+import Check from './order/Check';
 import CustomerBol from './bol/CustomerBol';
 import BolCNAdding from './bol/CNAdding';
 

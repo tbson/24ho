@@ -18,7 +18,9 @@ const rawApiUrls = [
             change_order_fee_factor: 'pk/change-order-fee-factor',
             change_purchase_code: 'pk/change-purchase-code',
             change_status: 'pk/change-status',
-            bulk_approve: 'bulk-approve'
+            bulk_approve: 'bulk-approve',
+            check: 'check',
+            getOrderitemsForChecking: 'get-order-items-for-checking'
         }
     },
     {

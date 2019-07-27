@@ -56,6 +56,14 @@ bulk_approve = OrderViewSet.as_view({
     'put': 'bulk_approve',
 })
 
+get_order_items_for_checking = OrderViewSet.as_view({
+    'get': 'get_order_items_for_checking',
+})
+
+check = OrderViewSet.as_view({
+    'post': 'check',
+})
+
 app_name = os.getcwd().split(os.sep)[-1]
 urlpatterns = (
     path('', base),
@@ -70,4 +78,6 @@ urlpatterns = (
     path('<int:pk>/change-purchase-code/', change_purchase_code),
     path('<int:pk>/change-status/', change_status),
     path('bulk-approve/', bulk_approve),
+    path('get-order-items-for-checking/<str:uid>', get_order_items_for_checking),
+    path('check/', check),
 )
