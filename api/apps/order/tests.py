@@ -7,7 +7,8 @@ from unittest.mock import patch, MagicMock
 from rest_framework.test import APIClient
 from django.test import TestCase
 from .models import Order, Status
-from .utils import OrderUtils, MoveOrderStatusUtils, error_messages
+from .utils import OrderUtils, error_messages
+from .move_status_utils import MoveStatusUtils
 from .serializers import OrderBaseSr
 from apps.address.utils import AddressUtils
 from apps.order_item.models import OrderItem
@@ -866,7 +867,7 @@ class StatusNormalFlow(TestCase):
             Status.DISCARD
         ]
         for status in list_push_status:
-            MoveOrderStatusUtils.move(self.order, status)
+            MoveStatusUtils.move(self.order, status)
 
         list_pull_status = [
             Status.DONE,
@@ -880,7 +881,7 @@ class StatusNormalFlow(TestCase):
             Status.NEW
         ]
         for status in list_pull_status:
-            MoveOrderStatusUtils.move(self.order, status)
+            MoveStatusUtils.move(self.order, status)
 
 
 class UtilsGetItemsForChecking(TestCase):

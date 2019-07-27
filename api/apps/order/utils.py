@@ -8,7 +8,6 @@ from django.db.models import Sum, F
 from rest_framework.serializers import ValidationError
 from apps.address.utils import AddressUtils
 from apps.order_fee.utils import OrderFeeUtils
-from .models import Status
 from utils.helpers.tools import Tools
 from typing import Dict
 
@@ -22,6 +21,12 @@ error_messages = {
     'CHECKED_QUANTITY_LARGER_THAN_ORIGINAL_QUANTITY': 'Khối lượng kiểm lớn hơn khối lượng thực.',
     'INT_CHECKED_QUANTITY': 'Số lượng kiểm phải là số nguyên >= 0.'
 }
+
+
+class ComplaintDecide:
+    AGREE = 1
+    MONEY_BACK = 2
+    CHANGE = 3
 
 
 class OrderUtils:
@@ -318,168 +323,3 @@ class OrderUtils:
             instance.save()
 
         return new_order
-
-
-class MoveOrderStatusUtils:
-
-    @staticmethod
-    def move(item: models.QuerySet, status: Status) -> models.QuerySet:
-        if abs(item.status - status) > 1:
-            raise ValidationError("Đơn hàng chuyển trạng thái không hợp lệ.")
-
-        if status == Status.NEW:
-            return MoveOrderStatusUtils.new(item)
-        if status == Status.APPROVED:
-            return MoveOrderStatusUtils.approved(item)
-        if status == Status.DEBT:
-            return MoveOrderStatusUtils.debt(item)
-        if status == Status.PAID:
-            return MoveOrderStatusUtils.paid(item)
-        if status == Status.DISPATCHED:
-            return MoveOrderStatusUtils.dispatched(item)
-        if status == Status.CN_STORE:
-            return MoveOrderStatusUtils.cn_store(item)
-        if status == Status.VN_STORE:
-            return MoveOrderStatusUtils.vn_store(item)
-        if status == Status.EXPORTED:
-            return MoveOrderStatusUtils.exported(item)
-        if status == Status.DONE:
-            return MoveOrderStatusUtils.done(item)
-        if status == Status.DISCARD:
-            return MoveOrderStatusUtils.discard(item)
-
-    @staticmethod
-    def save(item: models.QuerySet, status: Status) -> models.QuerySet:
-        item.status = status
-        item.save()
-        return item
-
-    @staticmethod
-    def new(item: models.QuerySet) -> models.QuerySet:
-        new_status = Status.NEW
-
-        def cleanup():
-            pass
-
-        def move():
-            return MoveOrderStatusUtils.save(item, new_status)
-
-        cleanup()
-        return move()
-
-    @staticmethod
-    def approved(item: models.QuerySet) -> models.QuerySet:
-        new_status = Status.APPROVED
-
-        def cleanup():
-            pass
-
-        def move():
-            return MoveOrderStatusUtils.save(item, new_status)
-
-        cleanup()
-        return move()
-
-    @staticmethod
-    def debt(item: models.QuerySet) -> models.QuerySet:
-        new_status = Status.DEBT
-
-        def cleanup():
-            pass
-
-        def move():
-            return MoveOrderStatusUtils.save(item, new_status)
-
-        cleanup()
-        return move()
-
-    @staticmethod
-    def paid(item: models.QuerySet) -> models.QuerySet:
-        new_status = Status.PAID
-
-        def cleanup():
-            pass
-
-        def move():
-            return MoveOrderStatusUtils.save(item, new_status)
-
-        cleanup()
-        return move()
-
-    @staticmethod
-    def dispatched(item: models.QuerySet) -> models.QuerySet:
-        new_status = Status.DISPATCHED
-
-        def cleanup():
-            pass
-
-        def move():
-            return MoveOrderStatusUtils.save(item, new_status)
-
-        cleanup()
-        return move()
-
-    @staticmethod
-    def cn_store(item: models.QuerySet) -> models.QuerySet:
-        new_status = Status.CN_STORE
-
-        def cleanup():
-            pass
-
-        def move():
-            return MoveOrderStatusUtils.save(item, new_status)
-
-        cleanup()
-        return move()
-
-    @staticmethod
-    def vn_store(item: models.QuerySet) -> models.QuerySet:
-        new_status = Status.VN_STORE
-
-        def cleanup():
-            pass
-
-        def move():
-            return MoveOrderStatusUtils.save(item, new_status)
-
-        cleanup()
-        return move()
-
-    @staticmethod
-    def exported(item: models.QuerySet) -> models.QuerySet:
-        new_status = Status.EXPORTED
-
-        def cleanup():
-            pass
-
-        def move():
-            return MoveOrderStatusUtils.save(item, new_status)
-
-        cleanup()
-        return move()
-
-    @staticmethod
-    def done(item: models.QuerySet) -> models.QuerySet:
-        new_status = Status.DONE
-
-        def cleanup():
-            pass
-
-        def move():
-            return MoveOrderStatusUtils.save(item, new_status)
-
-        cleanup()
-        return move()
-
-    @staticmethod
-    def discard(item: models.QuerySet) -> models.QuerySet:
-        new_status = Status.DISCARD
-
-        def cleanup():
-            pass
-
-        def move():
-            return MoveOrderStatusUtils.save(item, new_status)
-
-        cleanup()
-        return move()
