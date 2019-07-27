@@ -86,14 +86,25 @@ export default ({}: Props) => {
         inputTimeout = setTimeout(() => handleSearch(value), 500);
     };
 
+    const reset = () => {
+        setList([]);
+        setBolUid('');
+        setBolList([]);
+        setOrderUid('');
+        const bolInputElm = document.querySelector('#bol-input');
+        bolInputElm && bolInputElm.focus();
+    };
+
     const handleSearch = (bag_uid: string) => {
-        Tools.apiClient(apiUrls.getOrderitemsForChecking + bag_uid).then(data => {
-            const extra = data.extra;
-            const listItem = data.items || [];
-            setList(listItem);
-            setBolList(extra && extra.bols.map(item => item.uid).join(', '));
-            setOrderUid(extra && extra.order.uid);
-        });
+        Tools.apiClient(apiUrls.getOrderitemsForChecking + bag_uid)
+            .then(data => {
+                const extra = data.extra;
+                const listItem = data.items || [];
+                setList(listItem);
+                setBolList(extra && extra.bols.map(item => item.uid).join(', '));
+                setOrderUid(extra && extra.order.uid);
+            })
+            .catch(reset);
     };
 
     const handleQuantityChange = (id, value) => {
@@ -103,12 +114,7 @@ export default ({}: Props) => {
     const submitCheck = () => {
         const params = {uid: orderUid, checked_items: checkedItems};
         Tools.apiClient(apiUrls.check, params, 'POST').then(data => {
-            setList([]);
-            setBolUid('');
-            setBolList([]);
-            setOrderUid('');
-            const bolInputElm = document.querySelector('#bol-input');
-            bolInputElm && bolInputElm.focus();
+            reset();
             Tools.popMessage('Kiểm hàng thành công, quét vận đơn khác để tiếp tục.');
         });
     };

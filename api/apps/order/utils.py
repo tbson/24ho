@@ -14,6 +14,7 @@ from typing import Dict
 
 error_messages = {
     'BOL_ORDER_NOT_FOUND': 'Vận đơn này chưa được gắn với order nào.',
+    'ORDER_WAS_PANDING': 'Đơn hàng của vận đơn này đang trong trạng thái khiếu nại.',
     'ORDER_MISSING_IN_ORDER_ITEM': 'Một trong những sản phẩm không nằm trong đơn hàng.',
     'ORDER_ITEM_MISSING': 'Số lượng sản phẩm không khớp.',
     'ITEM_ORDER_NOT_FOUND': 'Một trong những sản phẩm không nằm trong đơn hàng.',
@@ -254,6 +255,9 @@ class OrderUtils:
             raise ValidationError(error_messages['BOL_ORDER_NOT_FOUND'])
 
         order = bol.order
+        if order.pending:
+            raise ValidationError(error_messages['ORDER_WAS_PANDING'])
+
         result = order.order_items.filter(quantity__gt=0)
         if result.count() == 0:
             raise ValidationError(error_messages['ORDER_ITEM_NOT_FOUND'])
