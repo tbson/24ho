@@ -944,12 +944,12 @@ class UtilsGetItemsForChecking(TestCase):
 
         with self.assertRaises(ValidationError) as context:
             OrderUtils.get_items_for_checking(bol.uid)
-        self.assertTrue(error_messages['ORDER_WAS_PANDING'] in str(context.exception))
+        self.assertTrue(error_messages['ORDER_WAS_PENDING'] in str(context.exception))
 
-    def test_after_dispatching_order(self):
+    def test_after_exporting_order(self):
         bol = BolUtils.seeding(1, True)
         order = OrderUtils.seeding(1, True)
-        order.status = Status.DISPATCHED
+        order.status = Status.EXPORTED
         order.save()
 
         bol.order = order
@@ -957,7 +957,7 @@ class UtilsGetItemsForChecking(TestCase):
 
         with self.assertRaises(ValidationError) as context:
             OrderUtils.get_items_for_checking(bol.uid)
-        self.assertTrue(error_messages['ORDER_AFTER_DISPATCHING'] in str(context.exception))
+        self.assertTrue(error_messages['ORDER_AFTER_EXPORTING'] in str(context.exception))
 
     def test_no_items(self):
         bol = BolUtils.seeding(1, True)
@@ -1094,7 +1094,7 @@ class UtilsCheck(TestCase):
         checked = OrderItem.objects.filter(order_id=order.pk)
 
         missing = {}
-        missing[order_items[2].pk] = 2
+        missing[str(order_items[2].pk)] = 2
 
         for checked_item in checked:
             self.assertEqual(checked_item.checked_quantity, checked_input[str(checked_item.pk)])
@@ -1145,7 +1145,7 @@ class UtilsCloneOrder(TestCase):
     def test_normal_case(self):
         self.assertEqual(OrderItem.objects.count(), 2)
         remain = {}
-        remain[self.order_items[1].pk] = 2
+        remain[str(self.order_items[1].pk)] = 2
         new_order = OrderUtils.clone_order(self.order, remain)
         new_order_items = new_order.order_items.all()
         self.assertEqual(Order.objects.count(), 2)

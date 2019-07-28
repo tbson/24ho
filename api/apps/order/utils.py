@@ -13,8 +13,8 @@ from typing import Dict
 
 error_messages = {
     'BOL_ORDER_NOT_FOUND': 'Vận đơn này chưa được gắn với order nào.',
-    'ORDER_WAS_PANDING': 'Đơn hàng của vận đơn này đang trong trạng thái khiếu nại.',
-    'ORDER_AFTER_DISPATCHING': 'Có ít nhất 1 vận đơn của đơn hàng này đã được xuất.',
+    'ORDER_WAS_PENDING': 'Đơn hàng của vận đơn này đang trong trạng thái khiếu nại.',
+    'ORDER_AFTER_EXPORTING': 'Có ít nhất 1 vận đơn của đơn hàng này đã được xuất.',
     'ORDER_MISSING_IN_ORDER_ITEM': 'Một trong những sản phẩm không nằm trong đơn hàng.',
     'ORDER_ITEM_MISSING': 'Số lượng sản phẩm không khớp.',
     'ITEM_ORDER_NOT_FOUND': 'Một trong những sản phẩm không nằm trong đơn hàng.',
@@ -268,10 +268,10 @@ class OrderUtils:
 
         order = bol.order
         if order.pending:
-            raise ValidationError(error_messages['ORDER_WAS_PANDING'])
+            raise ValidationError(error_messages['ORDER_WAS_PENDING'])
 
-        if order.status >= Status.DISPATCHED:
-            raise ValidationError(error_messages['ORDER_AFTER_DISPATCHING'])
+        if order.status >= Status.EXPORTED:
+            raise ValidationError(error_messages['ORDER_AFTER_EXPORTING'])
 
         result = order.order_items.filter(quantity__gt=0)
         if result.count() == 0:
