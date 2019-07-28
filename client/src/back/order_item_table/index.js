@@ -7,12 +7,6 @@ import {apiUrls} from 'src/back/order/_data';
 import {SearchInput} from 'src/utils/components/TableUtils';
 import Row from './Row.js';
 
-type Props = {
-    order_id: number,
-    rate: number,
-    notifyChange: Function
-};
-
 export class Service {
     static listRequest(params: Object = {}): Promise<Object> {
         return Tools.apiCall(apiUrls.orderItemCrud, params);
@@ -35,7 +29,13 @@ export class Service {
     }
 }
 
-export default ({order_id, rate, notifyChange}: Props) => {
+type Props = {
+    pending: boolean,
+    order_id: number,
+    rate: number,
+    notifyChange: Function
+};
+export default ({pending = false, order_id, rate, notifyChange}: Props) => {
     const [list, setList] = useState([]);
 
     const listAction = ListTools.actions(list);
@@ -105,6 +105,7 @@ export default ({order_id, rate, notifyChange}: Props) => {
                     {list.map((data, key) => (
                         <Row
                             className="table-row"
+                            pending={pending}
                             data={data}
                             key={key}
                             onCheck={onCheck}
@@ -117,10 +118,12 @@ export default ({order_id, rate, notifyChange}: Props) => {
                 <tfoot className="thead-light">
                     <tr>
                         <th className="row25">
-                            <span
-                                className="fas fa-trash-alt text-danger pointer bulk-remove-button"
-                                onClick={onBulkRemove}
-                            />
+                            {pending || (
+                                <span
+                                    className="fas fa-trash-alt text-danger pointer bulk-remove-button"
+                                    onClick={onBulkRemove}
+                                />
+                            )}
                         </th>
                         <th className="row25 right" colSpan="99" />
                     </tr>

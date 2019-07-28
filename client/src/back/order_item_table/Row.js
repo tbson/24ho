@@ -20,17 +20,18 @@ export class Service {
 }
 
 type RowPropTypes = {
+    pending?: boolean,
     data: OrderItemType,
     onCheck: Function,
     onRemove: Function,
     onPartialChange: Function
 };
-export default ({data, onCheck, onRemove, onPartialChange}: RowPropTypes) => {
+export default ({pending = false, data, onCheck, onRemove, onPartialChange}: RowPropTypes) => {
     const id = parseInt(data.id);
 
     const _onRemove = id => {
         const r = confirm(ListTools.getDeleteMessage(1));
-        r && onRemove({id});
+        r && Service.handleRemove(id).then(onRemove);
     };
 
     const {quantity, unit_price, price, rate} = data;
@@ -43,11 +44,17 @@ export default ({data, onCheck, onRemove, onPartialChange}: RowPropTypes) => {
                 <input id={id} className="check" type="checkbox" checked={data.checked} onChange={() => onCheck(id)} />
             </th>
             <td>
-                <Description data={data} onPartialChange={onPartialChange} />
+                <Description pending={pending} data={data} onPartialChange={onPartialChange} />
             </td>
             <td className="right mono">
+                {pending && (
+                    <>
+                        <span>{data.checked_quantity}</span>
+                        <span>/</span>
+                    </>
+                )}
                 <Editable
-                    disabled={!Tools.isAdmin()}
+                    disabled={!Tools.isAdmin() || pending}
                     onChange={onPartialChange}
                     name="value"
                     value={data.quantity}
@@ -60,7 +67,7 @@ export default ({data, onCheck, onRemove, onPartialChange}: RowPropTypes) => {
             <td>
                 <div className="cny mono">
                     <Editable
-                        disabled={!Tools.isAdmin()}
+                        disabled={!Tools.isAdmin() || pending}
                         onChange={onPartialChange}
                         name="value"
                         value={data.unit_price}
@@ -78,7 +85,7 @@ export default ({data, onCheck, onRemove, onPartialChange}: RowPropTypes) => {
             </td>
             <td>
                 <Editable
-                    disabled={!Tools.isAdmin()}
+                    disabled={!Tools.isAdmin() || pending}
                     onChange={onPartialChange}
                     name="value"
                     value={data.note}
@@ -88,19 +95,26 @@ export default ({data, onCheck, onRemove, onPartialChange}: RowPropTypes) => {
                 </Editable>
             </td>
             <td className="center">
-                <a className="removeBtn" onClick={() => _onRemove(id)}>
-                    <span className="fas fa-trash-alt text-danger pointer" />
-                </a>
+                {pending || (
+                    <a className="removeBtn" onClick={() => _onRemove(id)}>
+                        <span className="fas fa-trash-alt text-danger pointer" />
+                    </a>
+                )}
             </td>
         </tr>
     );
 };
 
 type DescriptionType = {
+    pending: boolean,
     data: OrderItemType,
     onPartialChange: Function
 };
-export const Description = ({data: {id, title, image, color, size, link}, onPartialChange}: DescriptionType) => {
+export const Description = ({
+    pending,
+    data: {id, title, image, color, size, link},
+    onPartialChange
+}: DescriptionType) => {
     return (
         <table width="100%">
             <tbody>
@@ -118,7 +132,7 @@ export const Description = ({data: {id, title, image, color, size, link}, onPart
                             <div>
                                 <strong>Màu: </strong>
                                 <Editable
-                                    disabled={!Tools.isAdmin()}
+                                    disabled={!Tools.isAdmin() || pending}
                                     onChange={onPartialChange}
                                     name="value"
                                     value={color}
@@ -132,7 +146,7 @@ export const Description = ({data: {id, title, image, color, size, link}, onPart
                             <div>
                                 <strong>Size: </strong>
                                 <Editable
-                                    disabled={!Tools.isAdmin()}
+                                    disabled={!Tools.isAdmin() || pending}
                                     onChange={onPartialChange}
                                     name="value"
                                     value={size}

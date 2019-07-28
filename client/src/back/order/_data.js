@@ -74,7 +74,8 @@ export type OrderType = {
     vnd_total: number,
     vnd_paid: number,
     vnd_total_discount: number,
-    checked: boolean
+    checked: boolean,
+    pending: boolean
 };
 
 export type ListOrderType = Array<OrderType>;
@@ -88,6 +89,7 @@ export type OrderItemType = {
     size: string,
     link: string,
     quantity: number,
+    checked_quantity: number,
     unit_price: number,
     price: number,
     unit_price: number,

@@ -181,7 +181,10 @@ class OrderViewSet(GenericViewSet):
         order = get_object_or_404(Order, uid=uid)
 
         remain = OrderUtils.check(order, checked_items)
-
+        print('-------------------')
+        print(remain)
+        if len(remain.keys()):
+            order.pending = True
         order.checked_date = timezone.now()
         order.checker = request.user.staff
         order.save()

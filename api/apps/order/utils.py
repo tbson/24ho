@@ -290,7 +290,6 @@ class OrderUtils:
     @staticmethod
     def check(order: models.QuerySet, checked_items: Dict[str, int]) -> Dict[str, int]:
         from apps.order_item.models import OrderItem
-        remain = {}
         if len(checked_items.keys()):
             if not Schema({str: lambda n: n >= 0}).is_valid(checked_items):
                 raise ValidationError(error_messages['INT_CHECKED_QUANTITY'])
@@ -308,12 +307,13 @@ class OrderUtils:
                 if item.quantity < checked_value:
                     raise ValidationError(error_messages['CHECKED_QUANTITY_LARGER_THAN_ORIGINAL_QUANTITY'])
                 if item.quantity > checked_value:
-                    remain[item.pk] = item.quantity - checked_value
                     item.checked_quantity = checked_value
                     item.save()
 
-            if len(remain.keys()):
-                OrderUtils.pending(order)
+        remain = OrderUtils.get_remain(order)
+        if len(remain.keys()):
+            OrderUtils.pending(order)
+
         return remain
 
     @staticmethod

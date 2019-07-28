@@ -84,7 +84,7 @@ const OrderInfo = ({data: _data}: OrderInfoType) => {
                                     <div>
                                         <span>Mã giao dịch: </span>
                                         <Editable
-                                            disabled={!Tools.isAdmin()}
+                                            disabled={!Tools.isAdmin() || data.pending}
                                             onChange={setData}
                                             name="value"
                                             value={data.purchase_code}
@@ -174,6 +174,34 @@ const FinInfo = ({data}: FinInfoType) => {
     );
 };
 
+type ControlTypes = {
+    id: number,
+    pending: boolean,
+    onRemove: Function
+};
+const Control = ({id, pending, onRemove}: ControlTypes) => {
+    if (pending) {
+        return (
+            <div>
+                <a className="complaint-resolve-btn" onClick={() => onRemove(id)}>
+                    <span className="fas fa-question-circle text-danger pointer" />
+                </a>
+            </div>
+        );
+    }
+    return (
+        <div>
+            <Link className="editBtn" to={`/order/${id}`}>
+                <span className="fas fa-eye text-info pointer" />
+            </Link>
+            <span>&nbsp;&nbsp;&nbsp;</span>
+            <a className="removeBtn" onClick={() => onRemove(id)}>
+                <span className="fas fa-trash-alt text-danger pointer" />
+            </a>
+        </div>
+    );
+};
+
 type RowPropTypes = {
     data: OrderType,
     options: OptionsType,
@@ -182,6 +210,7 @@ type RowPropTypes = {
 };
 export default ({data, options = {}, onCheck, onRemove}: RowPropTypes) => {
     const id = parseInt(data.id);
+    const pending = !!data.pending;
 
     const _onRemove = id => {
         const r = confirm(ListTools.getDeleteMessage(1));
@@ -203,13 +232,7 @@ export default ({data, options = {}, onCheck, onRemove}: RowPropTypes) => {
                 <FinInfo data={data} />
             </td>
             <td className="center">
-                <Link className="editBtn" to={`/order/${id}`}>
-                    <span className="fas fa-eye text-info pointer" />
-                </Link>
-                <span>&nbsp;&nbsp;&nbsp;</span>
-                <a className="removeBtn" onClick={() => _onRemove(id)}>
-                    <span className="fas fa-trash-alt text-danger pointer" />
-                </a>
+                <Control id={id} pending={pending} onRemove={_onRemove} />
             </td>
         </tr>
     );

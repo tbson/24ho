@@ -66,7 +66,7 @@ const Detail = ({match}) => {
         <NavWrapper>
             <div className="row">
                 <div className="col-md-9 no-padding-right">
-                    <Info data={data} addresses={options.addresses} onPartialChange={setData} />
+                    <Info pending={data.pending} data={data} addresses={options.addresses} onPartialChange={setData} />
                     <Tabs>
                         <TabList>
                             <Tab>
@@ -77,15 +77,20 @@ const Detail = ({match}) => {
                             </Tab>
                         </TabList>
                         <TabPanel>
-                            <OrderItemTable order_id={id} rate={data.rate} notifyChange={retrieve} />
+                            <OrderItemTable
+                                order_id={id}
+                                rate={data.rate}
+                                pending={data.pending}
+                                notifyChange={retrieve}
+                            />
                         </TabPanel>
                         <TabPanel>
-                            <BolTable order_id={id || 0} notifyChange={retrieve}/>
+                            <BolTable order_id={id || 0} notifyChange={retrieve} />
                         </TabPanel>
                     </Tabs>
                 </div>
                 <div className="col-md-3 no-padding-left">
-                    <Accounting data={data} onPartialChange={setData} />
+                    <Accounting pending={data.pending} data={data} onPartialChange={setData} />
                 </div>
             </div>
         </NavWrapper>

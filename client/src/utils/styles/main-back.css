@@ -227,3 +227,7 @@ button {
 .no-margin-bottom {
     margin-bottom: 0;
 }
+
+.complaint-resolve-btn {
+    font-size: 50px;
+}

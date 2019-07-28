@@ -6,11 +6,12 @@ import Editable from 'src/utils/components/Editable';
 import OnlyAdmin from 'src/utils/components/OnlyAdmin';
 
 type Props = {
+    pending: boolean,
     data: Object,
     onPartialChange: Function
 };
 
-export default ({data, onPartialChange}: Props) => {
+export default ({pending = false, data, onPartialChange}: Props) => {
     const {rate} = data;
     const {
         cny_amount,
@@ -59,6 +60,7 @@ export default ({data, onPartialChange}: Props) => {
                     <td className="mono cny">
                         <OnlyAdmin>
                             <Editable
+                                disabled={!Tools.isAdmin() || pending}
                                 onChange={onPartialChange}
                                 name="value"
                                 value={order_fee_factor}
@@ -76,7 +78,7 @@ export default ({data, onPartialChange}: Props) => {
                     <td>Kiểm đếm:</td>
                     <td className="mono cny">
                         <Editable
-                            disabled={!Tools.isAdmin()}
+                            disabled={!Tools.isAdmin() || pending}
                             onChange={onPartialChange}
                             name="value"
                             value={count_check_fee_input}
@@ -107,7 +109,7 @@ export default ({data, onPartialChange}: Props) => {
                     <td>Nội địa TQ:</td>
                     <td className="mono cny">
                         <Editable
-                            disabled={!Tools.isAdmin()}
+                            disabled={!Tools.isAdmin() || pending}
                             onChange={onPartialChange}
                             name="value"
                             value={cny_inland_delivery_fee}

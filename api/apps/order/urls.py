@@ -64,6 +64,10 @@ check = OrderViewSet.as_view({
     'post': 'check',
 })
 
+complaint_resolve = OrderViewSet.as_view({
+    'post': 'complaint_resolve',
+})
+
 app_name = os.getcwd().split(os.sep)[-1]
 urlpatterns = (
     path('', base),
@@ -80,4 +84,5 @@ urlpatterns = (
     path('bulk-approve/', bulk_approve),
     path('get-order-items-for-checking/<str:uid>', get_order_items_for_checking),
     path('check/', check),
+    path('complaint-resolve/', complaint_resolve),
 )
