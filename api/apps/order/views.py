@@ -25,7 +25,7 @@ class OrderViewSet(GenericViewSet):
     serializer_class = OrderBaseSr
     permission_classes = (CustomPermission, )
     search_fields = ('uid', 'value')
-    filterset_fields = ('status', )
+    filterset_fields = ('status', 'pending', )
 
     def list(self, request):
         queryset = Order.objects.all()

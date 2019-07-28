@@ -32,12 +32,18 @@ export default () => {
                             <span>{value}</span>
                         </Tab>
                     ))}
+                    <Tab>
+                        <span>Khiếu nại</span>
+                    </Tab>
                 </TabList>
                 {Object.entries(STATUS).map(([key, value]) => (
                     <TabPanel key={key}>
                         <Table status={parseInt(key)} />
                     </TabPanel>
                 ))}
+                <TabPanel>
+                    <Table status={0} pending={true} />
+                </TabPanel>
             </Tabs>
         </NavWrapper>
     );

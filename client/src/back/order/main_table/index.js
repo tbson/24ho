@@ -8,10 +8,6 @@ import {Pagination, SearchInput} from 'src/utils/components/TableUtils';
 import OnlyAdmin from 'src/utils/components/OnlyAdmin';
 import Row from './Row.js';
 
-type Props = {
-    status: number
-};
-
 export class Service {
     static listRequest(url?: string, params?: Object): Promise<Object> {
         return Tools.apiCall(url ? url : apiUrls.crud, params);
@@ -54,7 +50,11 @@ export class Service {
     }
 }
 
-export default ({status}: Props) => {
+type Props = {
+    status: number,
+    pending?: boolean
+};
+export default ({status, pending = false}: Props) => {
     const [list, setList] = useState([]);
     const [options, setOptions] = useState({
         sale: [],
@@ -67,8 +67,8 @@ export default ({status}: Props) => {
     const listAction = ListTools.actions(list);
 
     const getList = async (url?: string, params?: Object) => {
-        let _params = {...params};
-        if (status) _params = {...params, status};
+        let _params = {...params, pending};
+        if (status) _params = {..._params, status};
         const data = await Service.handleGetList(url, _params);
         if (!data) return;
         setList(ListTools.prepare(data.items));
