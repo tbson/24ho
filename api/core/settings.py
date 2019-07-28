@@ -70,6 +70,7 @@ PROJECT_APPS = [
     'apps.count_check',
     'apps.bol',
     'apps.bag',
+    'apps.transaction',
     'apps.sr',
 ]
 

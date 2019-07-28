@@ -61,6 +61,10 @@ urlpatterns = (
         include('apps.bag.urls', namespace='bag'),
     ),
     path(
+        'transaction/',
+        include('apps.transaction.urls', namespace='transaction'),
+    ),
+    path(
         'category/',
         include('apps.category.urls', namespace='category'),
     ),
