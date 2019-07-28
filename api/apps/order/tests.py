@@ -933,6 +933,32 @@ class UtilsGetItemsForChecking(TestCase):
             OrderUtils.get_items_for_checking(bol.uid)
         self.assertTrue(error_messages['BOL_ORDER_NOT_FOUND'] in str(context.exception))
 
+    def test_pending_order(self):
+        bol = BolUtils.seeding(1, True)
+        order = OrderUtils.seeding(1, True)
+        order.pending = True
+        order.save()
+
+        bol.order = order
+        bol.save()
+
+        with self.assertRaises(ValidationError) as context:
+            OrderUtils.get_items_for_checking(bol.uid)
+        self.assertTrue(error_messages['ORDER_WAS_PANDING'] in str(context.exception))
+
+    def test_after_dispatching_order(self):
+        bol = BolUtils.seeding(1, True)
+        order = OrderUtils.seeding(1, True)
+        order.status = Status.DISPATCHED
+        order.save()
+
+        bol.order = order
+        bol.save()
+
+        with self.assertRaises(ValidationError) as context:
+            OrderUtils.get_items_for_checking(bol.uid)
+        self.assertTrue(error_messages['ORDER_AFTER_DISPATCHING'] in str(context.exception))
+
     def test_no_items(self):
         bol = BolUtils.seeding(1, True)
         order = OrderUtils.seeding(1, True)

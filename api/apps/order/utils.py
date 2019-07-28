@@ -14,6 +14,7 @@ from typing import Dict
 error_messages = {
     'BOL_ORDER_NOT_FOUND': 'Vận đơn này chưa được gắn với order nào.',
     'ORDER_WAS_PANDING': 'Đơn hàng của vận đơn này đang trong trạng thái khiếu nại.',
+    'ORDER_AFTER_DISPATCHING': 'Có ít nhất 1 vận đơn của đơn hàng này đã được xuất.',
     'ORDER_MISSING_IN_ORDER_ITEM': 'Một trong những sản phẩm không nằm trong đơn hàng.',
     'ORDER_ITEM_MISSING': 'Số lượng sản phẩm không khớp.',
     'ITEM_ORDER_NOT_FOUND': 'Một trong những sản phẩm không nằm trong đơn hàng.',
@@ -259,6 +260,7 @@ class OrderUtils:
     @staticmethod
     def get_items_for_checking(uid: str) -> models.QuerySet:
         from apps.bol.models import Bol
+        from .models import Status
 
         bol = Bol.objects.filter(uid=uid).first()
         if not bol.order_id:
@@ -267,6 +269,9 @@ class OrderUtils:
         order = bol.order
         if order.pending:
             raise ValidationError(error_messages['ORDER_WAS_PANDING'])
+
+        if order.status >= Status.DISPATCHED:
+            raise ValidationError(error_messages['ORDER_AFTER_DISPATCHING'])
 
         result = order.order_items.filter(quantity__gt=0)
         if result.count() == 0:
@@ -308,8 +313,7 @@ class OrderUtils:
                     item.save()
 
             if len(remain.keys()):
-                order.pending = True
-                order.save()
+                OrderUtils.pending(order)
         return remain
 
     @staticmethod
@@ -336,6 +340,12 @@ class OrderUtils:
             instance.save()
 
         return new_order
+
+    @staticmethod
+    def pending(order: models.QuerySet) -> models.QuerySet:
+        order.pending = True
+        order.save()
+        return order
 
     @staticmethod
     def unpending(order: models.QuerySet) -> models.QuerySet:
