@@ -143,4 +143,5 @@ class Order(TimeStampedModel):
             ("bulk_approve_order", "Can bulk approve"),
             ("get_order_items_for_checking_order", "Can get order items for checking from bol"),
             ("check_order", "Can check order"),
+            ("complaint_resolve_order", "Can resolve complaint"),
         )

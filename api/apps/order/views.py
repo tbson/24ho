@@ -127,10 +127,13 @@ class OrderViewSet(GenericViewSet):
 
     @action(methods=['put'], detail=True)
     def change_purchase_code(self, request, pk=None):
+        from apps.bol.models import Bol
         obj = get_object_or_404(Order, pk=pk)
         value = request.data.get('value', obj.purchase_code)
         serializer = OrderUtils.partial_update(obj, 'purchase_code', value)
-        return res(serializer.data)
+        data = serializer.data
+        Bol.objects.filter(purchase_code=data.get('purchase_code')).update(order=obj)
+        return res(data)
 
     @transaction.atomic
     @action(methods=['put'], detail=True)
@@ -181,8 +184,6 @@ class OrderViewSet(GenericViewSet):
         order = get_object_or_404(Order, uid=uid)
 
         remain = OrderUtils.check(order, checked_items)
-        print('-------------------')
-        print(remain)
         if len(remain.keys()):
             order.pending = True
         order.checked_date = timezone.now()
@@ -191,14 +192,13 @@ class OrderViewSet(GenericViewSet):
         return res(remain)
 
     @action(methods=['post'], detail=False)
-    def complaint_resolve(self, request):
-        uid = request.data.get('uid', None)
-        order = get_object_or_404(Order, uid=uid)
+    def complaint_resolve(self, request, pk=None):
+        order = get_object_or_404(Order, pk=pk)
         decide = int(request.data.get('decide', ComplaintDecide.AGREE))
         if decide == ComplaintDecide.AGREE:
             OrderUtils.complaint_agree(order)
         elif decide == ComplaintDecide.MONEY_BACK:
-            OrderUtils.complain_money_back(order)
+            OrderUtils.complaint_money_back(order)
         elif decide == ComplaintDecide.CHANGE:
             OrderUtils.complaint_change(order)
         else:

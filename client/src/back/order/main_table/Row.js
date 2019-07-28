@@ -12,6 +12,12 @@ import type {SelectOptions} from 'src/utils/helpers/Tools';
 import {apiUrls, STATUS} from '../_data';
 import type {OrderType} from '../_data';
 
+const complaintDecideOptions = [
+    {value: 1, label: 'Chấp nhận'},
+    {value: 2, label: 'Lấy lại tiền'},
+    {value: 3, label: 'Đổi hàng'}
+];
+
 export class Service {
     static removeRequest(id: number): Promise<Object> {
         return Tools.apiCall(apiUrls.crud + id, {}, 'DELETE');
@@ -183,9 +189,19 @@ const Control = ({id, pending, onRemove}: ControlTypes) => {
     if (pending) {
         return (
             <div>
-                <a className="complaint-resolve-btn" onClick={() => onRemove(id)}>
-                    <span className="fas fa-question-circle text-danger pointer" />
-                </a>
+                <Editable
+                    onChange={() => onRemove(id, true)}
+                    type="select"
+                    options={complaintDecideOptions}
+                    name="decide"
+                    value={1}
+                    adding={true}
+                    endPoint={apiUrls.complaintResolve.replace('/pk-', `/${id}/`)}
+                    placeholder="Xử lý khiếu nại">
+                    <span className="complaint-resolve-btn">
+                        <span className="fas fa-question-circle text-danger pointer" />
+                    </span>
+                </Editable>
             </div>
         );
     }
@@ -212,7 +228,8 @@ export default ({data, options = {}, onCheck, onRemove}: RowPropTypes) => {
     const id = parseInt(data.id);
     const pending = !!data.pending;
 
-    const _onRemove = id => {
+    const _onRemove = (id, complaintResolve = false) => {
+        if (complaintResolve) return onRemove({id});
         const r = confirm(ListTools.getDeleteMessage(1));
         r && Service.handleRemove(id).then(onRemove);
     };

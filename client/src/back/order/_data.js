@@ -20,6 +20,7 @@ const rawApiUrls = [
             change_status: 'pk/change-status',
             bulk_approve: 'bulk-approve',
             check: 'check',
+            complaintResolve: 'pk/complaint-resolve',
             getOrderitemsForChecking: 'get-order-items-for-checking'
         }
     },

@@ -84,5 +84,5 @@ urlpatterns = (
     path('bulk-approve/', bulk_approve),
     path('get-order-items-for-checking/<str:uid>', get_order_items_for_checking),
     path('check/', check),
-    path('complaint-resolve/', complaint_resolve),
+    path('<int:pk>/complaint-resolve/', complaint_resolve),
 )
