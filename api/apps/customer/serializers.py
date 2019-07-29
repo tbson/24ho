@@ -44,3 +44,17 @@ class CustomerRetrieveSr(CustomerBaseSr):
 
     def get_cust_care_name(self, obj):
         return StaffUtils.getName(obj.cust_care)
+
+
+class CustomerSelectSr(CustomerBaseSr):
+
+    username = SerializerMethodField()
+
+    class Meta(CustomerBaseSr.Meta):
+        fields = [
+            'id',
+            'username'
+        ]
+
+    def get_username(self, obj):
+        return obj.user.username

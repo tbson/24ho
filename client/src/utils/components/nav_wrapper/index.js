@@ -55,6 +55,9 @@ const App = ({history, location, children}: Props) => {
             case 'customer':
                 if (APP !== 'admin') return null;
                 return menuItem('customer', 'Khách hàng', 'fas fa-user-ninja');
+            case 'transaction':
+                if (APP !== 'admin') return null;
+                return menuItem('transaction', 'Ví điện tử', 'fas fa-wallet');
             case 'order':
                 return menuItem('order', 'Đơn order', 'fas fa-shipping-fast');
             case 'bol':
@@ -100,6 +103,7 @@ const App = ({history, location, children}: Props) => {
                     {renderMenu('profile')}
                     {renderMenu('admin')}
                     {renderMenu('customer')}
+                    {renderMenu('transaction')}
                     {renderMenu('order')}
                     {renderMenu('bol')}
                     {renderMenu('bag')}

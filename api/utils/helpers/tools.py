@@ -25,7 +25,7 @@ class Tools:
         return result
 
     @staticmethod
-    def string_to_bool(input):
+    def string_to_bool(input: str) -> bool:
         input = input.lower().strip()
         if input == '' or input == 'false':
             return False

@@ -56,6 +56,7 @@ export default ({
                     return (
                         <>
                             <Select
+                                className="select-input"
                                 value={value}
                                 isMulti={isMulti}
                                 isSearchable={true}

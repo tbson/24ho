@@ -47,3 +47,9 @@ class CustomerUtils:
             customerGroup.permissions.add(permission)
 
         instance.user.groups.add(customerGroup)
+
+    @staticmethod
+    def get_list_for_select():
+        from .serializers import CustomerSelectSr
+        from .models import Customer
+        return CustomerSelectSr(Customer.objects.all(), many=True).data

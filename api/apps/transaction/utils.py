@@ -31,3 +31,9 @@ class TransactionUtils:
             return [get_data(i) for i in range(1, index + 1)]
 
         return get_data(index) if single is True else get_list_data(index)
+
+    @staticmethod
+    def update_staff(data: dict, user: models.QuerySet) -> dict:
+        data['staff'] = user.staff
+        data['staff_username'] = user.username
+        return data

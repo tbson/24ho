@@ -231,3 +231,6 @@ button {
 .complaint-resolve-btn {
     font-size: 50px;
 }
+.select-input div{
+    border-radius: 0 !important;
+}
