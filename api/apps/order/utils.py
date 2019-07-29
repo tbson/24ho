@@ -10,6 +10,7 @@ from apps.address.utils import AddressUtils
 from apps.order_fee.utils import OrderFeeUtils
 from utils.helpers.tools import Tools
 from typing import Dict
+from django.conf import settings
 
 error_messages = {
     'BOL_ORDER_NOT_FOUND': 'Vận đơn này chưa được gắn với order nào.',
@@ -386,3 +387,12 @@ class OrderUtils:
             OrderUtils.clone_order(order, remain)
 
         return order
+
+    @staticmethod
+    def can_deposit(order: models.QuerySet) -> bool:
+        from apps.transaction.utils import TransactionUtils
+        from .serializers import OrderBaseSr
+        balance = TransactionUtils.get_customer_balance(order.customer.pk)
+        if balance >= OrderUtils.get_vnd_total(OrderBaseSr(order).data) * settings.DEPOSIT_FACTOR / 100:
+            return True
+        return False

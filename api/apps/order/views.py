@@ -147,10 +147,13 @@ class OrderViewSet(GenericViewSet):
     @transaction.atomic
     @action(methods=['put'], detail=False)
     def bulk_approve(self, request):
+        from .utils import OrderUtils
         pks = self.request.data.get('ids', [])
         for pk in pks:
             obj = get_object_or_404(Order, pk=pk)
             if obj.status == Status.NEW:
+                if not OrderUtils.can_deposit(obj):
+                    raise ValidationError("Đơn hàng {} không đủ tiền đặt cọc.".format(obj.uid))
                 MoveStatusUtils.move(obj, Status.APPROVED)
         return res({'approved': pks})
 

@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Sum
 
 
 class TransactionUtils:
@@ -61,3 +62,11 @@ class TransactionUtils:
         if type == Type.OTHER_SUB_FEE:
             return False
         return False
+
+    @staticmethod
+    def get_customer_balance(id: int) -> int:
+        from .models import Transaction
+        query = Transaction.objects.filter(customer_id=id, is_assets=True)
+        assets = query.filter(is_assets=True).aggregate(Sum('amount')).get('amount__sum')
+        liabilities = query.filter(is_assets=False).aggregate(Sum('amount')).get('amount__sum')
+        return assets - liabilities
