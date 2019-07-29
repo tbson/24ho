@@ -1128,9 +1128,17 @@ class UtilsCloneOrder(TestCase):
         self.order.save()
 
         # Add bol
-        bol = BolUtils.seeding(1, True)
-        bol.order = self.order
-        bol.save()
+        self.bol = BolUtils.seeding(1, True)
+        self.bol1 = BolUtils.seeding(2, True)
+        self.bol2 = BolUtils.seeding(3, True)
+
+        self.bol.order = self.order
+        self.bol1.order = self.order
+        self.bol2.order = self.order
+
+        self.bol.save()
+        self.bol1.save()
+        self.bol2.save()
 
         order_items[0].quantity = 4
         order_items[0].checked_quantity = 4
@@ -1143,10 +1151,11 @@ class UtilsCloneOrder(TestCase):
         self.order_items = order_items
 
     def test_normal_case(self):
+        potential_bols = ",".join([self.bol.uid, self.bol2.uid])
         self.assertEqual(OrderItem.objects.count(), 2)
         remain = {}
         remain[str(self.order_items[1].pk)] = 2
-        new_order = OrderUtils.clone_order(self.order, remain)
+        new_order = OrderUtils.clone_order(self.order, remain, potential_bols)
         new_order_items = new_order.order_items.all()
         self.assertEqual(Order.objects.count(), 2)
         self.assertNotEqual(self.order.uid, new_order.uid)
@@ -1155,6 +1164,11 @@ class UtilsCloneOrder(TestCase):
         self.assertEqual(new_order_items.count(), 1)
         self.assertEqual(new_order_items.first().quantity, 2)
         self.order.order_items.get(quantity=5)
+
+        # Check splitting bols
+        self.assertEqual(self.order.order_bols.all().count(), 1)
+        self.assertEqual(self.order.order_bols.first().uid, self.bol1.uid)
+        self.assertEqual(new_order.order_bols.all().count(), 2)
 
 
 class UtilsComplaintResolve(TestCase):

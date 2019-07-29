@@ -107,6 +107,7 @@ class Order(TimeStampedModel):
     statistics = JSONField(default=dict)
     status = models.PositiveIntegerField(choices=STATUS_CHOICES, default=1)
     pending = models.BooleanField(default=False)
+    potential_bols = models.TextField(blank=True)
 
     objects = OrderManager()
 

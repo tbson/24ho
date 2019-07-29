@@ -183,6 +183,7 @@ class OrderViewSet(GenericViewSet):
         from apps.order.utils import OrderUtils
         uid = request.data.get('uid', None)
         checked_items = request.data.get('checked_items', {})
+        potential_bols = request.data.get('potential_bols', '')
 
         order = get_object_or_404(Order, uid=uid)
 
@@ -191,6 +192,7 @@ class OrderViewSet(GenericViewSet):
             order.pending = True
         order.checked_date = timezone.now()
         order.checker = request.user.staff
+        order.potential_bols = potential_bols
         order.save()
         return res(remain)
 

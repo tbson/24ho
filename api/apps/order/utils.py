@@ -318,19 +318,25 @@ class OrderUtils:
         return remain
 
     @staticmethod
-    def clone_order(order: models.QuerySet, remain: Dict[str, int]) -> models.QuerySet:
+    def clone_order(order: models.QuerySet, remain: Dict[str, int], potential_bols: str) -> models.QuerySet:
         from .serializers import OrderBaseSr
         from apps.order_item.serializers import OrderItemBaseSr
+        from apps.bol.models import Bol
         pks = [int(i) for i in remain.keys()]
         order_items = order.order_items.filter(pk__in=pks)
         order_data = OrderBaseSr(order).data
         del order_data['id']
         order_data['uid'] = OrderUtils.get_next_uid(order.address)
-        order_data['purchase_code'] = ''
+        order_data['purchase_code'] = order_data['purchase_code'] + '-kn'
 
         new_order = OrderBaseSr(data=order_data)
         new_order.is_valid(raise_exception=True)
         new_order = new_order.save()
+
+        for bol in Bol.objects.filter(uid__in=potential_bols.split(',')):
+            bol.purchase_code = order_data['purchase_code']
+            bol.save()
+
         for item in order_items:
             data = OrderItemBaseSr(item).data
             data['order'] = new_order.pk
@@ -349,10 +355,11 @@ class OrderUtils:
         return order
 
     @staticmethod
-    def unpending(order: models.QuerySet) -> models.QuerySet:
+    def unpending(order: models.QuerySet) -> str:
+        potential_bols = order.potential_bols
         order.pending = False
         order.save()
-        return order
+        return potential_bols
 
     @staticmethod
     def quantity_resolve(order: models.QuerySet, resolve_type: int) -> models.QuerySet:
@@ -381,10 +388,10 @@ class OrderUtils:
     @staticmethod
     def complaint_change(order: models.QuerySet) -> models.QuerySet:
         remain = OrderUtils.get_remain(order)
-        OrderUtils.unpending(order)
+        potential_bols = OrderUtils.unpending(order)
         OrderUtils.quantity_resolve(order, QuantityResolve.ORIGINAL_EQUAL_CHECK)
         if (len(remain.keys())):
-            OrderUtils.clone_order(order, remain)
+            OrderUtils.clone_order(order, remain, potential_bols)
 
         return order
 

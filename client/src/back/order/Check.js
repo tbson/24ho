@@ -4,6 +4,8 @@ import {useState, useEffect} from 'react';
 import NavWrapper from 'src/utils/components/nav_wrapper/';
 import Tools from 'src/utils/helpers/Tools';
 import {apiUrls} from './_data';
+import CheckForm from './CheckForm';
+import {Service as CheckFormService} from './CheckForm';
 
 type Props = {};
 type CheckInputProp = {
@@ -12,7 +14,34 @@ type CheckInputProp = {
     onChange: Function
 };
 
-export class Service {}
+export class Service {
+    static CHECKED_STATUS = {
+        OK: 0,
+        MISSING: 1,
+        OVER: 2
+    };
+    static listToObj(listItem: Array<Object>): Object {
+        const originalCheckedItems = {};
+        for (const item of listItem) {
+            originalCheckedItems[item.id] = item.checked_quantity;
+        }
+        return originalCheckedItems;
+    }
+    static mergeCheckedQuantity(listItem: Array<Object>, checkedItems: Object): Object {
+        const originalCheckedItems = Service.listToObj(listItem);
+        return {...originalCheckedItems, ...checkedItems};
+    }
+
+    static checkedStatus(listItem: Object, checkedItems: Object): number {
+        const originalCheckedItems = Service.listToObj(listItem);
+        const status = Service.CHECKED_STATUS['OK'];
+        for (const i in originalCheckedItems) {
+            if (originalCheckedItems[i] > checkedItems[i]) return Service.CHECKED_STATUS['MISSING'];
+            if (originalCheckedItems[i] < checkedItems[i]) return Service.CHECKED_STATUS['OVER'];
+        }
+        return status;
+    }
+}
 
 const CheckInput = ({id, checked_quantity, onChange}: CheckInputProp) => {
     const [value, setValue] = useState(checked_quantity);
@@ -73,7 +102,7 @@ const Row = ({data, index, onChange}) => {
 let inputTimeout;
 export default ({}: Props) => {
     const [list, setList] = useState([]);
-    const [bolList, setBolList] = useState('');
+    const [listBol, setListBol] = useState('');
     const [orderUid, setOrderUid] = useState('');
     const [bolUid, setBolUid] = useState('');
     const [checkedItems, setCheckedItems] = useState({});
@@ -89,7 +118,7 @@ export default ({}: Props) => {
     const reset = () => {
         setList([]);
         setBolUid('');
-        setBolList([]);
+        setListBol('');
         setOrderUid('');
         const bolInputElm = document.querySelector('#bol-input');
         bolInputElm && bolInputElm.focus();
@@ -101,7 +130,7 @@ export default ({}: Props) => {
                 const extra = data.extra;
                 const listItem = data.items || [];
                 setList(listItem);
-                setBolList(extra && extra.bols.map(item => item.uid).join(', '));
+                setListBol(extra && extra.bols.map(item => item.uid).join(', '));
                 setOrderUid(extra && extra.order.uid);
             })
             .catch(reset);
@@ -112,6 +141,12 @@ export default ({}: Props) => {
     };
 
     const submitCheck = () => {
+        const checkedItemsFull = Service.mergeCheckedQuantity(list, checkedItems);
+        const status = Service.checkedStatus(list, checkedItemsFull);
+        if (status === Service.CHECKED_STATUS['OVER']) return alert('Số lượng kiểm vượt quá số lượng thực.');
+        if (status === Service.CHECKED_STATUS['MISSING']) {
+            return CheckFormService.toggleForm(true);
+        }
         const params = {uid: orderUid, checked_items: checkedItems};
         Tools.apiClient(apiUrls.check, params, 'POST').then(data => {
             reset();
@@ -135,6 +170,15 @@ export default ({}: Props) => {
     );
 
     useEffect(() => {}, []);
+
+    const onSelectBol = ({bols}) => {
+        const params = {uid: orderUid, checked_items: checkedItems, potential_bols: bols.join(',')};
+        Tools.apiClient(apiUrls.check, params, 'POST').then(data => {
+            reset();
+            Tools.popMessage('Kiểm hàng thành công, quét vận đơn khác để tiếp tục.');
+        });
+        CheckFormService.toggleForm(false);
+    }
 
     return (
         <NavWrapper>
@@ -167,7 +211,7 @@ export default ({}: Props) => {
                         </div>
                         <div>
                             <strong>Vận đơn: </strong>
-                            <span>{bolList || 'Chưa có ...'}</span>
+                            <span>{listBol || 'Chưa có ...'}</span>
                         </div>
                     </div>
                 </div>
@@ -181,6 +225,19 @@ export default ({}: Props) => {
                     ))}
                 </tbody>
             </table>
+
+            <CheckForm
+                listBol={listBol.split(', ').map(item => ({value: item, label: item}))}
+                close={() => CheckFormService.toggleForm(false)}
+                onChange={onSelectBol}>
+                <button
+                    type="button"
+                    className="btn btn-light"
+                    action="close"
+                    onClick={() => CheckFormService.toggleForm(false)}>
+                    Cancel
+                </button>
+            </CheckForm>
         </NavWrapper>
     );
 };
