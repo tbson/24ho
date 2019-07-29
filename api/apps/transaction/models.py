@@ -61,9 +61,12 @@ class Transaction(TimeStampedModel):
     amount = models.FloatField()
     type = models.IntegerField(choices=TYPE_CHOICES)
     money_type = models.IntegerField(choices=MONEY_TYPE_CHOICES)
+    assets = models.BooleanField(default=True)
     note = models.TextField(blank=True)
 
     def save(self, *args, **kwargs):
+        from .utils import TransactionUtils
+        self.assets = TransactionUtils.is_assets(self.type)
         if not self.uid:
             self.uid = Tools.get_uuid()
         if self.customer:

@@ -36,3 +36,28 @@ class TransactionUtils:
     def update_staff(data: dict, user: models.QuerySet) -> dict:
         data['staff'] = user.staff
         return data
+
+    @staticmethod
+    def is_assets(type: int) -> bool:
+        from .models import Type
+        if type == Type.RECHARGE:
+            return True
+        if type == Type.DEPOSIT:
+            return False
+        if type == Type.PAY:
+            return False
+        if type == Type.WITHDRAW:
+            return False
+        if type == Type.CN_DELIVERY_FEE:
+            return False
+        if type == Type.VN_DELIVERY_FEE:
+            return False
+        if type == Type.COMPLAINT_REFUND:
+            return True
+        if type == Type.DISCOUNT_REFUND:
+            return True
+        if type == Type.DISCARD_REFUND:
+            return True
+        if type == Type.OTHER_SUB_FEE:
+            return False
+        return False
