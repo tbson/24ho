@@ -55,7 +55,7 @@ class Transaction(TimeStampedModel):
     order_uid = models.CharField(max_length=64, blank=True)
 
     staff = models.ForeignKey(Staff, models.PROTECT, related_name='staff_transactions')
-    staff_username = models.CharField(max_length=64)
+    staff_username = models.CharField(max_length=64, blank=True)
 
     uid = models.CharField(max_length=64, unique=True)
     amount = models.FloatField()
@@ -68,6 +68,8 @@ class Transaction(TimeStampedModel):
             self.uid = Tools.get_uuid()
         if self.customer:
             self.customer_username = self.customer.user.username
+        if self.staff:
+            self.staff_username = self.staff.user.username
         super(Transaction, self).save(*args, **kwargs)
 
     def __str__(self):

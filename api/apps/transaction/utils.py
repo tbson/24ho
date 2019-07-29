@@ -35,5 +35,4 @@ class TransactionUtils:
     @staticmethod
     def update_staff(data: dict, user: models.QuerySet) -> dict:
         data['staff'] = user.staff
-        data['staff_username'] = user.username
         return data
