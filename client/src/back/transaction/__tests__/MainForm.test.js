@@ -169,8 +169,11 @@ describe('Service.handleSubmit', () => {
 describe('Service.validationSchema', () => {
     test('Success', () => {
         const values = {
-            uid: 'uid1',
-            value: 'value1'
+            customer: 1,
+            amount: 1000,
+            type: 1,
+            money_type: 5,
+            note: ''
         };
         const output = Service.validationSchema.isValidSync(values);
         expect(output).toEqual(true);
@@ -178,11 +181,12 @@ describe('Service.validationSchema', () => {
 
     test('Fail', () => {
         const values = {
-            uid: 'uid1',
-            value: ''
+            note: ''
         };
         const eput = {
-            value: [ErrMsgs.REQUIRED]
+            amount: [ErrMsgs.REQUIRED],
+            type: [ErrMsgs.REQUIRED],
+            money_type: [ErrMsgs.REQUIRED],
         };
         let output = {};
         try {

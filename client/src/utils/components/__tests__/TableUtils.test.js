@@ -43,7 +43,7 @@ describe('Pagination component', () => {
         const wrapper = shallow(<Pagination {...props} />);
         expect(wrapper.find('button')).toHaveLength(1);
         const elem = wrapper.find('button').first();
-        expect(elem.text()).toMatch(/Next/);
+        expect(elem.text()).toMatch(/Trang tiếp\ /);
         elem.simulate('click');
         expect(props.onNavigate.mock.calls.length).toEqual(1);
         expect(props.onNavigate.mock.calls[0][0]).toEqual('http://localhost/?page=2');
@@ -58,7 +58,7 @@ describe('Pagination component', () => {
         const wrapper = shallow(<Pagination {...props} />);
         expect(wrapper.find('button')).toHaveLength(1);
         const elem = wrapper.find('button').first();
-        expect(elem.text()).toMatch(/Prev/);
+        expect(elem.text()).toMatch(/\ Trang trước/);
         elem.simulate('click');
         expect(props.onNavigate.mock.calls.length).toEqual(1);
         expect(props.onNavigate.mock.calls[0][0]).toEqual('http://localhost/?page=1');
