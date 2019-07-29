@@ -33,7 +33,7 @@ export default () => {
                         </Tab>
                     ))}
                     <Tab>
-                        <span>Khiếu nại</span>
+                        <span>Kiểm thiếu</span>
                     </Tab>
                 </TabList>
                 {Object.entries(STATUS).map(([key, value]) => (
