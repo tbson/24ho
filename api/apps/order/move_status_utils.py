@@ -43,7 +43,7 @@ class MoveStatusUtils:
         new_status = Status.NEW
 
         def prepare():
-            TransactionUtils.approve_order(item, context.get('approver', None))
+            TransactionUtils.deposit(item, context.get('approver', None))
 
         def move():
             return MoveStatusUtils.save(item, new_status)
@@ -57,11 +57,11 @@ class MoveStatusUtils:
 
         def prepare():
             if item.status == Status.NEW:
-                TransactionUtils.approve_order(item, context.get('approver', None))
+                TransactionUtils.deposit(item, context.get('approver', None))
 
             if item.status == Status.DEBT:
                 pass
-                # TransactionUtils.unapprove_order(item)
+                # TransactionUtils.undeposit(item)
 
         def move():
             return MoveStatusUtils.save(item, new_status)

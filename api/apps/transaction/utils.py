@@ -94,12 +94,12 @@ class TransactionUtils:
         return transaction.uid
 
     @staticmethod
-    def approve_order(order: models.QuerySet, staff: models.QuerySet):
+    def deposit(order: models.QuerySet, staff: models.QuerySet):
         from .models import Type, MoneyType
         from .models import Transaction
         from apps.order.utils import OrderUtils
 
-        TransactionUtils.unapprove_order(order)
+        TransactionUtils.undeposit(order)
 
         amount = OrderUtils.get_deposit_amount(order)
         can_deposit = OrderUtils.can_deposit(order)
@@ -118,7 +118,7 @@ class TransactionUtils:
         transaction.save()
 
     @staticmethod
-    def unapprove_order(order: models.QuerySet):
+    def undeposit(order: models.QuerySet):
         from .models import Type
         for transaction in order.order_transactions.filter(type=Type.DEPOSIT):
             transaction.delete()

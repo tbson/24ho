@@ -870,7 +870,7 @@ class StatusNormalFlow(TestCase):
         ]
         for status in list_push_status:
             MoveStatusUtils.move(self.order, status, approver=self.staff)
-            TransactionUtils.unapprove_order(self.order)
+            TransactionUtils.undeposit(self.order)
 
         list_pull_status = [
             Status.DONE,
@@ -885,7 +885,7 @@ class StatusNormalFlow(TestCase):
         ]
         for status in list_pull_status:
             MoveStatusUtils.move(self.order, status, approver=self.staff)
-            TransactionUtils.unapprove_order(self.order)
+            TransactionUtils.undeposit(self.order)
 
 
 class UtilsGetItemsForChecking(TestCase):

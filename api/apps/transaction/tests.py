@@ -109,7 +109,7 @@ class UtilApproveOrder(TestCase):
         TransactionUtils.recharge(100000000, MoneyType.CASH, order.customer, staff, '')
         self.assertEqual(Transaction.objects.count(), 1)
 
-        TransactionUtils.approve_order(order, staff)
+        TransactionUtils.deposit(order, staff)
         transaction = Transaction.objects.first()
 
         self.assertEqual(Transaction.objects.count(), 2)
@@ -126,8 +126,8 @@ class UtilUnapproveOrder(TestCase):
         order = OrderUtils.seeding(1, True)
         staff = StaffUtils.seeding(1, True)
 
-        TransactionUtils.approve_order(order, staff)
+        TransactionUtils.deposit(order, staff)
         self.assertEqual(Transaction.objects.count(), 1)
 
-        TransactionUtils.unapprove_order(order)
+        TransactionUtils.undeposit(order)
         self.assertEqual(Transaction.objects.count(), 0)
