@@ -1,5 +1,11 @@
 from django.db import models
 from django.db.models import Sum
+from rest_framework.serializers import ValidationError
+
+
+error_messages = {
+    'DUPLICATE_DEPOSIT_TRANSACTION': 'Đơn hàng này đã ghi nhận kế toán.'
+}
 
 
 class TransactionUtils:
@@ -67,6 +73,52 @@ class TransactionUtils:
     def get_customer_balance(id: int) -> int:
         from .models import Transaction
         query = Transaction.objects.filter(customer_id=id, is_assets=True)
-        assets = query.filter(is_assets=True).aggregate(Sum('amount')).get('amount__sum')
-        liabilities = query.filter(is_assets=False).aggregate(Sum('amount')).get('amount__sum')
+        assets = query.filter(is_assets=True).aggregate(Sum('amount')).get('amount__sum') or 0
+        liabilities = query.filter(is_assets=False).aggregate(Sum('amount')).get('amount__sum') or 0
         return assets - liabilities
+
+    @staticmethod
+    def recharge(amount: int, money_type: int, customer: models.QuerySet, staff: models.QuerySet, note: str) -> str:
+        from .models import Type
+        from .models import Transaction
+
+        transaction = Transaction(
+            customer=customer,
+            staff=staff,
+            amount=amount,
+            type=Type.RECHARGE,
+            money_type=money_type,
+            note="Khách {} nạp tiền".format(customer.user.username)
+        )
+        transaction.save()
+        return transaction.uid
+
+    @staticmethod
+    def approve_order(order: models.QuerySet, staff: models.QuerySet):
+        from .models import Type, MoneyType
+        from .models import Transaction
+        from apps.order.utils import OrderUtils
+
+        TransactionUtils.unapprove_order(order)
+
+        amount = OrderUtils.get_deposit_amount(order)
+        can_deposit = OrderUtils.can_deposit(order)
+        if not can_deposit:
+            raise ValidationError("Đơn hàng {} không đủ tiền đặt cọc.".format(order.uid))
+
+        transaction = Transaction(
+            order=order,
+            customer=order.customer,
+            staff=staff,
+            amount=amount,
+            type=Type.DEPOSIT,
+            money_type=MoneyType.INDIRECT,
+            note="Đặt cọc đơn {}".format(order.uid)
+        )
+        transaction.save()
+
+    @staticmethod
+    def unapprove_order(order: models.QuerySet):
+        from .models import Type
+        for transaction in order.order_transactions.filter(type=Type.DEPOSIT):
+            transaction.delete()

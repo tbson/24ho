@@ -18,6 +18,7 @@ from apps.customer.utils import CustomerUtils
 from apps.staff.utils import StaffUtils
 from apps.bol.utils import BolUtils
 from apps.count_check.utils import CountCheckUtils
+from apps.transaction.utils import TransactionUtils
 from utils.helpers.test_helpers import TestHelpers
 from django.conf import settings
 # Create your tests here.
@@ -850,6 +851,7 @@ class Serializer(TestCase):
 
 class StatusNormalFlow(TestCase):
     def setUp(self):
+        self.staff = StaffUtils.seeding(1, True)
         self.order = OrderUtils.seeding(1, True)
         self.order.status = Status.NEW
         self.order.save()
@@ -867,7 +869,8 @@ class StatusNormalFlow(TestCase):
             Status.DISCARD
         ]
         for status in list_push_status:
-            MoveStatusUtils.move(self.order, status)
+            MoveStatusUtils.move(self.order, status, approver=self.staff)
+            TransactionUtils.unapprove_order(self.order)
 
         list_pull_status = [
             Status.DONE,
@@ -881,7 +884,8 @@ class StatusNormalFlow(TestCase):
             Status.NEW
         ]
         for status in list_pull_status:
-            MoveStatusUtils.move(self.order, status)
+            MoveStatusUtils.move(self.order, status, approver=self.staff)
+            TransactionUtils.unapprove_order(self.order)
 
 
 class UtilsGetItemsForChecking(TestCase):

@@ -396,10 +396,14 @@ class OrderUtils:
         return order
 
     @staticmethod
+    def get_deposit_amount(order: models.QuerySet) -> int:
+        from .serializers import OrderBaseSr
+        return int(OrderUtils.get_vnd_total(OrderBaseSr(order).data) * settings.DEPOSIT_FACTOR / 100)
+
+    @staticmethod
     def can_deposit(order: models.QuerySet) -> bool:
         from apps.transaction.utils import TransactionUtils
-        from .serializers import OrderBaseSr
         balance = TransactionUtils.get_customer_balance(order.customer.pk)
-        if balance >= OrderUtils.get_vnd_total(OrderBaseSr(order).data) * settings.DEPOSIT_FACTOR / 100:
+        if balance >= OrderUtils.get_deposit_amount(order):
             return True
         return False

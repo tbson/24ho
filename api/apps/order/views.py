@@ -140,7 +140,7 @@ class OrderViewSet(GenericViewSet):
     def change_status(self, request, pk=None):
         obj = get_object_or_404(Order, pk=pk)
         status = request.data.get('value', obj.status)
-        obj = MoveStatusUtils.move(obj, int(status))
+        obj = MoveStatusUtils.move(obj, int(status), approver=request.user.staff)
         serializer = OrderBaseSr(obj)
         return res(serializer.data)
 
@@ -154,7 +154,8 @@ class OrderViewSet(GenericViewSet):
             if obj.status == Status.NEW:
                 if not OrderUtils.can_deposit(obj):
                     raise ValidationError("Đơn hàng {} không đủ tiền đặt cọc.".format(obj.uid))
-                MoveStatusUtils.move(obj, Status.APPROVED)
+                deposit = OrderUtils.get_deposit_amount(obj)
+                MoveStatusUtils.move(obj, Status.APPROVED, approver=request.user.staff, amount=deposit)
         return res({'approved': pks})
 
     @action(methods=['get'], detail=False)

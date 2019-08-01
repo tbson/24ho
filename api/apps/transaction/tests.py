@@ -1,9 +1,12 @@
 import logging
 from rest_framework.test import APIClient
 from django.test import TestCase
-from .models import Transaction
+from .models import Transaction, Type, MoneyType
 from .utils import TransactionUtils
 from utils.helpers.test_helpers import TestHelpers
+from apps.order.utils import OrderUtils
+from apps.order_item.utils import OrderItemUtils
+from apps.staff.utils import StaffUtils
 # Create your tests here.
 
 
@@ -90,4 +93,41 @@ class TransactionTestCase(TestCase):
             "/api/v1/transaction/?ids={}".format(','.join([str(self.items[1].pk), str(self.items[2].pk)]))
         )
         self.assertEqual(response.status_code, 204)
+        self.assertEqual(Transaction.objects.count(), 0)
+
+
+class UtilApproveOrder(TestCase):
+
+    def test_normal_case(self):
+        order = OrderUtils.seeding(1, True)
+        order_items = OrderItemUtils.seeding(2)
+        for order_item in order_items:
+            order_item.order = order
+            order_item.save()
+
+        staff = StaffUtils.seeding(1, True)
+        TransactionUtils.recharge(100000000, MoneyType.CASH, order.customer, staff, '')
+        self.assertEqual(Transaction.objects.count(), 1)
+
+        TransactionUtils.approve_order(order, staff)
+        transaction = Transaction.objects.first()
+
+        self.assertEqual(Transaction.objects.count(), 2)
+        self.assertEqual(transaction.order, order)
+        self.assertEqual(transaction.staff, staff)
+        self.assertEqual(transaction.customer, order.customer)
+        self.assertEqual(transaction.amount, OrderUtils.get_deposit_amount(order))
+        self.assertEqual(transaction.type, Type.DEPOSIT)
+
+
+class UtilUnapproveOrder(TestCase):
+
+    def test_normal_case(self):
+        order = OrderUtils.seeding(1, True)
+        staff = StaffUtils.seeding(1, True)
+
+        TransactionUtils.approve_order(order, staff)
+        self.assertEqual(Transaction.objects.count(), 1)
+
+        TransactionUtils.unapprove_order(order)
         self.assertEqual(Transaction.objects.count(), 0)
