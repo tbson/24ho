@@ -43,7 +43,7 @@ class MoveStatusUtils:
         new_status = Status.NEW
 
         def prepare():
-            TransactionUtils.deposit(item, context.get('approver', None))
+            TransactionUtils.undeposit(item)
 
         def move():
             return MoveStatusUtils.save(item, new_status)
@@ -58,10 +58,6 @@ class MoveStatusUtils:
         def prepare():
             if item.status == Status.NEW:
                 TransactionUtils.deposit(item, context.get('approver', None))
-
-            if item.status == Status.DEBT:
-                pass
-                # TransactionUtils.undeposit(item)
 
         def move():
             return MoveStatusUtils.save(item, new_status)
