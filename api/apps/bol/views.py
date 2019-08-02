@@ -14,6 +14,7 @@ from .serializers import (
 from apps.bag.serializers import BagListSr
 from utils.common_classes.custom_permission import CustomPermission
 from utils.helpers.res_tools import res
+from utils.helpers.tools import Tools
 
 
 class BolPermission(CustomPermission):
@@ -73,7 +74,7 @@ class BolViewSet(GenericViewSet):
 
     @action(methods=['post'], detail=True)
     def add(self, request):
-        data = request.data
+        data = Tools.upper_key(request.data, 'uid')
         serializer = BolBaseSr(data=data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
@@ -82,7 +83,8 @@ class BolViewSet(GenericViewSet):
     @action(methods=['put'], detail=True)
     def change(self, request, pk=None):
         obj = self.get_object(pk)
-        serializer = BolBaseSr(obj, data=request.data, partial=True)
+        data = Tools.upper_key(request.data, 'uid')
+        serializer = BolBaseSr(obj, data=data, partial=True)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
         return res(serializer.data)

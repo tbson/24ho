@@ -134,6 +134,7 @@ class Bol(TimeStampedModel):
     objects = BolManager()
 
     def save(self, *args, **kwargs):
+        from apps.order.utils import OrderUtils
         if self._state.adding:
             date = BolDate.objects.get_or_create(timezone.now())
             self.bol_date = date
@@ -167,12 +168,25 @@ class Bol(TimeStampedModel):
         super(Bol, self).save(*args, **kwargs)
         if self.order:
             Order.objects.re_cal(self.order)
+            OrderUtils.check_paid_status(self.order)
+            OrderUtils.check_dispatched_status(self.order)
+            OrderUtils.check_cn_status(self.order)
+            OrderUtils.check_vn_status(self.order)
+            OrderUtils.check_exported_status(self.order)
+            OrderUtils.check_done_status(self.order)
 
     def delete(self, *args, **kwargs):
+        from apps.order.utils import OrderUtils
         order = self.order
         super(Bol, self).delete(*args, **kwargs)
         if order:
             Order.objects.re_cal(order)
+            OrderUtils.check_paid_status(order)
+            OrderUtils.check_dispatched_status(self.order)
+            OrderUtils.check_cn_status(self.order)
+            OrderUtils.check_vn_status(self.order)
+            OrderUtils.check_exported_status(self.order)
+            OrderUtils.check_done_status(self.order)
 
     def __str__(self):
         return self.uid

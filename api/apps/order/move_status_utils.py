@@ -9,7 +9,10 @@ class MoveStatusUtils:
     @staticmethod
     def move(item: models.QuerySet, status: Status, **context) -> models.QuerySet:
         if abs(item.status - status) > 1:
-            raise ValidationError("Đơn hàng chuyển trạng thái không hợp lệ.")
+            if status == Status.PAID and item.status > Status.PAID:
+                pass
+            else:
+                raise ValidationError("Đơn hàng chuyển trạng thái không hợp lệ.")
 
         if status == Status.NEW:
             return MoveStatusUtils.new(item, **context)

@@ -269,3 +269,9 @@ class Tools:
     @staticmethod
     def get_next_uid_index(uid: str) -> int:
         return int(re.split('[A-L]', uid)[-1]) + 1 if uid else 1
+
+    @staticmethod
+    def upper_key(obj: dict, key: str) -> dict:
+        if key in obj:
+            obj[key] = str(obj[key]).strip().upper()
+        return obj

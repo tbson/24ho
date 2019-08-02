@@ -407,3 +407,75 @@ class OrderUtils:
         if balance >= OrderUtils.get_deposit_amount(order):
             return True
         return False
+
+    @staticmethod
+    def check_paid_status(order: models.QuerySet):
+        from .models import Status
+        from .move_status_utils import MoveStatusUtils
+        if not order.order_bols.count() and order.status > Status.PAID:
+            try:
+                MoveStatusUtils.move(order, Status.PAID)
+            except ValidationError:
+                pass
+
+    @staticmethod
+    def check_dispatched_status(order: models.QuerySet):
+        from .models import Status
+        from .move_status_utils import MoveStatusUtils
+        if order.order_bols.count():
+            try:
+                MoveStatusUtils.move(order, Status.DISPATCHED)
+            except ValidationError:
+                pass
+
+    @staticmethod
+    def check_cn_status(order: models.QuerySet):
+        from .models import Status
+        from .move_status_utils import MoveStatusUtils
+        number_of_cn_bols = order.order_bols.filter(cn_date__isnull=False).count()
+        if number_of_cn_bols:
+            try:
+                MoveStatusUtils.move(order, Status.CN_STORE)
+            except ValidationError:
+                pass
+
+    @staticmethod
+    def check_vn_status(order: models.QuerySet):
+        from .models import Status
+        from .move_status_utils import MoveStatusUtils
+        number_of_bols = order.order_bols.count()
+        number_of_vn_bols = order.order_bols.filter(vn_date__isnull=False).count()
+        if number_of_bols and number_of_vn_bols == number_of_bols:
+            try:
+                MoveStatusUtils.move(order, Status.VN_STORE)
+            except ValidationError:
+                pass
+
+    @staticmethod
+    def check_exported_status(order: models.QuerySet):
+        from .models import Status
+        from .move_status_utils import MoveStatusUtils
+        number_of_bols = order.order_bols.count()
+        number_of_export_bols = order.order_bols.filter(exported_date__isnull=False).count()
+        if number_of_bols and number_of_export_bols == number_of_bols:
+            try:
+                MoveStatusUtils.move(order, Status.EXPORTED)
+            except ValidationError:
+                pass
+
+    @staticmethod
+    def check_done_status(order: models.QuerySet):
+        from .models import Status
+        from .move_status_utils import MoveStatusUtils
+        number_of_bols = order.order_bols.count()
+        number_of_export_bols = order.order_bols.filter(exported_date__isnull=False).count()
+
+        if number_of_bols and number_of_export_bols == number_of_bols:
+            last_exported_bol = order.order_bols.all().order_by('-exported_date').first()
+            if last_exported_bol and last_exported_bol.exported_date:
+                delta = timezone.now() - last_exported_bol.exported_date
+                if delta.days > settings.COMPLAINT_DAYS:
+                    try:
+                        MoveStatusUtils.move(order, Status.DONE)
+                    except ValidationError:
+                        pass

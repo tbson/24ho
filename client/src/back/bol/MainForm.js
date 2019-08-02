@@ -71,17 +71,23 @@ export class Service {
         return id ? Tools.apiCall(apiUrls.crud + id) : Promise.resolve({ok: true, data: Service.initialValues});
     }
 
-    static handleSubmit(id: number, onChange: Function, reOpenDialog: boolean) {
-        return (values: Object, {setErrors}: Object) =>
-            Service.changeRequest(id ? {...values, id} : values).then(({ok, data}) =>
+    static handleSubmit(id: number, order_id: number, onChange: Function, reOpenDialog: boolean) {
+        return (values: Object, {setErrors}: Object) => {
+            let params = {...values};
+            if (id) params = {...params, id};
+            if (order_id) params = {...params, order: parseInt(order_id)};
+            console.log(params);
+            return Service.changeRequest(params).then(({ok, data}) =>
                 ok
                     ? onChange({...data, checked: false}, id ? 'update' : 'add', reOpenDialog)
                     : setErrors(Tools.setFormErrors(data))
             );
+        };
     }
 }
 
 type Props = {
+    order_id?: number,
     id: number,
     open: boolean,
     close: Function,
@@ -89,7 +95,7 @@ type Props = {
     children?: React.Node,
     submitTitle?: string
 };
-export default ({id, open, close, onChange, children, submitTitle = 'Save'}: Props) => {
+export default ({id, order_id = 0, open, close, onChange, children, submitTitle = 'Save'}: Props) => {
     const firstInputSelector = "[name='uid']";
     const {validationSchema, handleSubmit} = Service;
 
@@ -125,7 +131,7 @@ export default ({id, open, close, onChange, children, submitTitle = 'Save'}: Pro
             <Formik
                 initialValues={{...initialValues}}
                 validationSchema={validationSchema}
-                onSubmit={handleSubmit(id, onChange, reOpenDialog)}>
+                onSubmit={handleSubmit(id, order_id, onChange, reOpenDialog)}>
                 {({errors, values, handleSubmit}) => (
                     <Form>
                         <div className="row">

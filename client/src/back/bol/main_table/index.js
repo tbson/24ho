@@ -168,7 +168,7 @@ export default ({order_id = 0, bol_date_id = 0, bag_id = 0, notifyChange}: Props
                 </tfoot>
             </table>
 
-            <MainForm id={modalId} open={formOpen.main} close={() => toggleForm(false)} onChange={onChange}>
+            <MainForm order_id={order_id} id={modalId} open={formOpen.main} close={() => toggleForm(false)} onChange={onChange}>
                 <button type="button" className="btn btn-light" action="close" onClick={() => toggleForm(false)}>
                     Cancel
                 </button>
