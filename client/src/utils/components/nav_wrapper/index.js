@@ -70,7 +70,7 @@ const App = ({history, location, children}: Props) => {
                 return menuItem('bag', 'Bao hàng', 'fas fa-box-open');
             case 'export':
                 if (APP !== 'admin') return null;
-                return menuItem('export', 'Xuất hàng', 'fas fa-dolly');
+                return menuItem('export', 'Phiếu xuất', 'fas fa-dolly');
             case 'variable':
                 if (APP !== 'admin') return null;
                 return menuItem('variable', 'Cấu hình', 'fas fa-cog');

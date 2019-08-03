@@ -1,4 +1,6 @@
 from django.db import models
+from apps.customer.utils import CustomerUtils
+from apps.staff.utils import StaffUtils
 
 
 class ReceiptUtils:
@@ -6,13 +8,21 @@ class ReceiptUtils:
     @staticmethod
     def seeding(index: int, single: bool = False, save: bool = True) -> models.QuerySet:
         from .serializers import ReceiptBaseSr
+        from .models import Type
+
+        customer = CustomerUtils.seeding(1, True)
+        staff = StaffUtils.seeding(1, True)
+
         if index == 0:
             raise Exception('Indext must be start with 1.')
 
         def get_data(i: int) -> dict:
             data = {
-                'uid': "uid{}".format(i),
-                'value': "value{}".format(i)
+                'customer': customer.pk,
+                'staff': staff.pk,
+                'type': Type.ORDER,
+                'vnd_sub_fee': 1000 + i,
+                'vnd_total': 10000 + i
             }
             if save is False:
                 return data
