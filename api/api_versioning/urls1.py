@@ -65,6 +65,10 @@ urlpatterns = (
         include('apps.transaction.urls', namespace='transaction'),
     ),
     path(
+        'receipt/',
+        include('apps.receipt.urls', namespace='receipt'),
+    ),
+    path(
         'category/',
         include('apps.category.urls', namespace='category'),
     ),

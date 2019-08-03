@@ -4,6 +4,7 @@ from utils.models.model import TimeStampedModel
 from apps.staff.models import Staff
 from apps.address.models import Address
 from apps.customer.models import Customer
+from apps.receipt.models import Receipt
 from utils.helpers.tools import Tools
 
 
@@ -52,6 +53,8 @@ class OrderManager(models.Manager):
 class Order(TimeStampedModel):
 
     uid = models.CharField(max_length=50, unique=True)
+
+    receipt = models.ForeignKey(Receipt, models.PROTECT, related_name='receipt_orders', null=True)
 
     address = models.ForeignKey(Address, models.PROTECT, related_name='address_orders')
     customer = models.ForeignKey(Customer, models.PROTECT, related_name='customer_orders')

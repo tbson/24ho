@@ -6,6 +6,7 @@ from apps.customer.models import Customer
 from apps.address.models import Address
 from apps.order.models import Order
 from apps.bag.models import Bag
+from apps.receipt.models import Receipt
 from utils.helpers.tools import Tools
 
 
@@ -85,6 +86,8 @@ class Bol(TimeStampedModel):
         (DeliveryFeeType.VOLUME_RANGE, '5. Thang mét khối'),
         (DeliveryFeeType.VOLUME, '6. Đơn giá mét khối'),
     )
+
+    receipt = models.ForeignKey(Receipt, models.PROTECT, related_name='receipt_bols', null=True)
 
     bag = models.ForeignKey(Bag, models.SET_NULL, related_name='bag_bols', null=True)
     bol_date = models.ForeignKey(BolDate, models.SET_NULL, related_name='date_bols', null=True)

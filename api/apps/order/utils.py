@@ -398,7 +398,12 @@ class OrderUtils:
     @staticmethod
     def get_deposit_amount(order: models.QuerySet) -> int:
         from .serializers import OrderBaseSr
-        return int(OrderUtils.get_vnd_total(OrderBaseSr(order).data) * settings.DEPOSIT_FACTOR / 100)
+        return int(OrderUtils.get_vnd_total(OrderBaseSr(order).data) * order.deposit_factor / 100)
+
+    @staticmethod
+    def get_remain_after_deposit_amount(order: models.QuerySet) -> int:
+        from .serializers import OrderBaseSr
+        return int(OrderUtils.get_vnd_total(OrderBaseSr(order).data) * (100 - order.deposit_factor) / 100)
 
     @staticmethod
     def can_deposit(order: models.QuerySet) -> bool:
