@@ -39,6 +39,7 @@ import CustomerBol from './bol/CustomerBol';
 import BolCNAdding from './bol/CNAdding';
 import Transaction from './transaction/';
 import Receipt from './receipt/';
+import BolExport from './bol/Export';
 
 import {APP} from 'src/constants';
 import Trans from 'src/utils/helpers/Trans';
@@ -86,7 +87,8 @@ class App extends React.Component<Props> {
                     <PrivateRoute path="/delivery-fee" component={DeliveryFee} />
                     <PrivateRoute path="/count-check" component={CountCheck} />
                     <PrivateRoute path="/transaction" component={Transaction} />
-                    <PrivateRoute path="/receipt" component={Receipt} />
+                    <PrivateRoute exact path="/receipt" component={Receipt} />
+                    <PrivateRoute exact path="/receipt/export" component={BolExport} />
                     <Route component={NotMatch} />
                 </Switch>
             </div>

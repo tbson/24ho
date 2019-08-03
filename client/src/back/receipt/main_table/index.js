@@ -1,5 +1,7 @@
 // @flow
 import * as React from 'react';
+// $FlowFixMe: do not complain about importing node_modules
+import {Link} from 'react-router-dom';
 import {useState, useEffect} from 'react';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
@@ -84,17 +86,23 @@ export default ({}: Props) => {
                         <th scope="col">Mã xuất</th>
                         <th scope="col">Nhân viên</th>
                         <th scope="col">Mã địa chỉ</th>
-                        <th scope="col" className="right">Phụ phí</th>
-                        <th scope="col" className="right">Thành tiền</th>
-                        <th scope="col" className="right">Tổng cộng</th>
+                        <th scope="col" className="right">
+                            Phụ phí
+                        </th>
+                        <th scope="col" className="right">
+                            Thành tiền
+                        </th>
+                        <th scope="col" className="right">
+                            Tổng cộng
+                        </th>
                         <th scope="col">Ghi chú</th>
                         <th scope="col" style={{padding: 8}} className="row80">
-                            <button
-                                className="btn btn-primary btn-sm btn-block add-button"
-                                onClick={() => MainFormService.toggleForm(true)}>
-                                <span className="fas fa-plus" />
-                                &nbsp; Add
-                            </button>
+                            <Link to="/receipt/export">
+                                <button className="btn btn-primary btn-sm btn-block add-button">
+                                    <span className="fas fa-plus" />
+                                    &nbsp; Add
+                                </button>
+                            </Link>
                         </th>
                     </tr>
                 </thead>
