@@ -1,6 +1,7 @@
 from django.db import models
 from apps.customer.utils import CustomerUtils
 from apps.staff.utils import StaffUtils
+from apps.address.utils import AddressUtils
 
 
 class ReceiptUtils:
@@ -12,6 +13,7 @@ class ReceiptUtils:
 
         customer = CustomerUtils.seeding(1, True)
         staff = StaffUtils.seeding(1, True)
+        address = AddressUtils.seeding(1, True)
 
         if index == 0:
             raise Exception('Indext must be start with 1.')
@@ -20,6 +22,7 @@ class ReceiptUtils:
             data = {
                 'customer': customer.pk,
                 'staff': staff.pk,
+                'address': address.pk,
                 'type': Type.ORDER,
                 'vnd_sub_fee': 1000 + i,
                 'vnd_total': 10000 + i

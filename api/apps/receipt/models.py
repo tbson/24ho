@@ -2,6 +2,7 @@ from django.db import models
 from utils.models.model import TimeStampedModel
 from apps.customer.models import Customer
 from apps.staff.models import Staff
+from apps.address.models import Address
 from utils.helpers.tools import Tools
 
 
@@ -25,6 +26,9 @@ class Receipt(TimeStampedModel):
     staff = models.ForeignKey(Staff, models.PROTECT, related_name='staff_receipts')
     staff_username = models.CharField(max_length=64, blank=True)
 
+    address = models.ForeignKey(Address, models.PROTECT, related_name='address_receipts')
+    address_code = models.CharField(max_length=64, blank=True)
+
     uid = models.CharField(max_length=60, unique=True)
     type = models.IntegerField(choices=TYPE_CHOICES, default=1)
 
@@ -39,6 +43,8 @@ class Receipt(TimeStampedModel):
             self.customer_username = self.customer.user.username
         if self.staff:
             self.staff_username = self.staff.user.username
+        if self.address:
+            self.address_code = self.address.uid
         super(Receipt, self).save(*args, **kwargs)
 
     def __str__(self):
