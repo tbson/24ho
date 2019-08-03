@@ -58,6 +58,7 @@ export default ({preview = false, listBag=[], item, index = 0, total = 0, onEdit
             </th>
             <td>{Tools.dateTimeFormat(data.created_at)}</td>
             <td>{data.uid}</td>
+            <td>{data.address_code}</td>
             <td>
                 <Editable
                     onChange={setData}

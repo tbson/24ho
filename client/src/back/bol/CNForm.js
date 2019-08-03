@@ -29,6 +29,7 @@ export class Service {
     static initialValues = {
         id: 0,
         uid: '',
+        address_code: '',
         mass: 0,
         length: 0,
         width: 0,
@@ -45,6 +46,7 @@ export class Service {
     static validationSchema = Yup.object().shape({
         id: Yup.number(),
         uid: Yup.string().required(ErrMsgs.REQUIRED),
+        address_code: Yup.string(),
         mass: Yup.number(),
         length: Yup.number(),
         width: Yup.number(),
@@ -160,13 +162,23 @@ export const FormPart = ({onSubmit, initialValues, submitTitle = '', children}: 
             {({errors, values, handleSubmit, resetForm}) => {
                 return (
                     <Form>
-                        <TextInput
-                            name="uid"
-                            label="Mã vận đơn"
-                            autoFocus={true}
-                            onBlur={Service.checkUID(resetForm)}
-                            required={true}
-                        />
+                        <div className="row">
+                            <div className="col">
+                                <TextInput
+                                    name="uid"
+                                    label="Mã vận đơn"
+                                    autoFocus={true}
+                                    onBlur={Service.checkUID(resetForm)}
+                                    required={true}
+                                />
+                            </div>
+                            <div className="col">
+                                <TextInput
+                                    name="address_code"
+                                    label="Mã địa chỉ"
+                                />
+                            </div>
+                        </div>
                         <TextInput name="mass" label="Khối lượng (KG)" />
                         <div className="row">
                             <div className="col">

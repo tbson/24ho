@@ -152,6 +152,7 @@ class Bol(TimeStampedModel):
         if self.address:
             self.address_code = self.address.uid
         elif self.address_code:
+            self.address_code = self.address_code.strip().upper()
             try:
                 address = Address.objects.get(uid=self.address_code)
                 self.address = address
