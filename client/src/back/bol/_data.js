@@ -14,7 +14,7 @@ const rawApiUrls = [
             check: 'check',
             getOrderitemsForChecking: 'get-order-items-for-checking',
             readyToExport: 'ready-to-export',
-            checkExportList: 'check-export-list'
+            export: 'export'
         }
     }
 ];

@@ -70,7 +70,7 @@ class BolViewSet(GenericViewSet):
 
         return NoPaginationStatic.get_paginated_response(serializer.data)
 
-    def check_export_list(self, request):
+    def export(self, request):
         ids = [int(pk) for pk in self.request.query_params.get('ids', '').split(',')]
         bols = Bol.objects.filter(pk__in=ids)
 

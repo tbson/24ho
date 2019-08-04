@@ -206,7 +206,7 @@ class Bol(TimeStampedModel):
             ("get_date_bol", "Can get date"),
             ("match_vn_bol", "Can get match VN bol"),
             ("ready_to_export_list_bol", "Can get bol to export"),
-            ("check_export_list_bol", "Can check before export"),
+            ("export_bol", "Can check before export"),
         )
 
 

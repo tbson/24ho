@@ -28,10 +28,10 @@ class MoneyType:
 TYPE_CHOICES = (
     (Type.RECHARGE, 'Nạp tiền'),
     (Type.DEPOSIT, 'Đặt cọc đơn'),
-    (Type.PAY, 'Thanh toán đơn hàng'),
+    (Type.PAY, 'Thanh toán đơn hàng'),  # For order bols
     (Type.WITHDRAW, 'Rút tiền'),
-    (Type.CN_DELIVERY_FEE, 'Phí vận chuyển CN-VN'),
-    (Type.VN_DELIVERY_FEE, 'Phí vận chuyển nội địa VN'),
+    (Type.CN_DELIVERY_FEE, 'Phí vận chuyển CN-VN'),  # For transport bols
+    (Type.VN_DELIVERY_FEE, 'Phí vận chuyển nội địa VN'),  # For exporting bols
     (Type.COMPLAINT_REFUND, 'Hoàn tiền khiếu nại'),
     (Type.DISCARD_REFUND, 'Hoàn tiền chiết khấu'),
     (Type.DISCARD_REFUND, 'Hoàn tiền huỷ đơn'),
