@@ -4,6 +4,7 @@ from apps.customer.models import Customer
 from apps.staff.models import Staff
 from apps.order.models import Order
 from utils.helpers.tools import Tools
+from apps.receipt.models import Receipt
 
 
 class Type:
@@ -48,6 +49,8 @@ MONEY_TYPE_CHOICES = (
 
 
 class Transaction(TimeStampedModel):
+    receipt = models.ForeignKey(Receipt, models.PROTECT, related_name='receipt_transactions', null=True)
+
     customer = models.ForeignKey(Customer, models.PROTECT, related_name='customer_transactions', null=True)
     customer_username = models.CharField(max_length=64, blank=True)
 

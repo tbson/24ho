@@ -85,21 +85,20 @@ class BolViewSet(GenericViewSet):
         from apps.rate.utils import RateUtils
 
         ids = [int(pk) for pk in self.request.query_params.get('ids', '').split(',')]
-        vnd_other_sub_fee = int(self.request.query_params.get('vnd_sub_fee', 0))
-        note = self.request.query_params.get('note', '')
-
         bols = Bol.objects.filter(pk__in=ids)
 
         status = BolUtils.export_check(bols, ids)
         if status:
             raise ValidationError(status)
 
-        '''
+        vnd_other_sub_fee = int(self.request.query_params.get('vnd_sub_fee', 0))
+        note = self.request.query_params.get('note', '')
+
         vnd_sub_fee = 0
         vnd_total = 0
-        type = Type.ORDER
-        if bols.filter(order__isnull=True).count() == bols.count():
-            type = Type.TRANSPORT
+        '''
+        type = BolUtils.get_bols_type(bols)
+        if type == Type.TRANSPORT
             latest_rate = RateUtils.get_latest_rate()
             for bol in bols:
                 bol.rate = latest_rate['value']

@@ -246,3 +246,10 @@ class BolUtils:
         if status:
             return status
         return ""
+
+    @staticmethod
+    def get_bols_type(bols: models.QuerySet) -> int:
+        from apps.receipt.models import Type
+        if bols.filter(order__isnull=True).count() == bols.count():
+            return Type.TRANSPORT
+        return Type.ORDER
