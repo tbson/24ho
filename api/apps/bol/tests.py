@@ -4,7 +4,7 @@ from rest_framework.test import APIClient
 from django.test import TestCase
 from django.utils import timezone
 from .models import Bol, BolDate, DeliveryFeeType
-from .utils import BolUtils
+from .utils import BolUtils, error_messages
 from utils.helpers.test_helpers import TestHelpers
 from apps.delivery_fee.utils import DeliveryFeeUtils
 from apps.customer.utils import CustomerUtils
@@ -615,6 +615,86 @@ class UtilsWoodenBoxFee(TestCase):
         item.cny_wooden_box_fee = 1000
         item.save()
         self.assertEqual(BolUtils.cal_wooden_box_fee(item), 1000)
+
+
+class UtilsExportNoMissingBols(TestCase):
+    def setUp(self):
+        self.items = BolUtils.seeding(2)
+        self.ids = [self.items[0].pk, self.items[1].pk]
+
+    def test_success_case(self):
+        items = Bol.objects.filter(pk__in=self.ids)
+        self.assertEqual(BolUtils.export_no_missing_bols(items, self.ids), '')
+
+    def test_fail_case(self):
+        items = Bol.objects.filter(pk__in=self.ids)
+        ids = self.ids + [999]
+
+        self.assertEqual(BolUtils.export_no_missing_bols(items, ids), error_messages['EXPORT_MISSING_BOLS'])
+
+
+class UtilsExportNoMixBols(TestCase):
+    def setUp(self):
+        order = OrderUtils.seeding(1, True)
+        self.items = BolUtils.seeding(2)
+        self.ids = [self.items[0].pk, self.items[1].pk]
+
+        self.items[0].order = order
+        self.items[0].save()
+
+    def test_fail_case(self):
+        items = Bol.objects.filter(pk__in=self.ids)
+
+        self.assertEqual(BolUtils.export_no_mix_bols(items, self.ids), error_messages['EXPORT_MIX_BOLS'])
+
+
+class UtilsExportNoIncompleteOrderBols(TestCase):
+    def setUp(self):
+        order = OrderUtils.seeding(1, True)
+        self.items = BolUtils.seeding(3)
+        self.ids = [self.items[0].pk, self.items[1].pk]
+        for item in self.items:
+            item.order = order
+            item.save()
+
+    def test_fail_case(self):
+        items = Bol.objects.filter(pk__in=self.ids)
+
+        self.assertEqual(
+            BolUtils.export_no_incomplete_order_bols(items, self.ids),
+            error_messages['EXPORT_INCOMPLETE_ORDER_BOLS']
+        )
+
+
+class UtilsExportNoMultipleCustomerBols(TestCase):
+    def setUp(self):
+        customer = CustomerUtils.seeding(1, True)
+        self.customer1 = CustomerUtils.seeding(2, True)
+
+        self.items = BolUtils.seeding(3)
+        self.ids = [self.items[0].pk, self.items[1].pk, self.items[2].pk]
+
+        for item in self.items:
+            item.address = None
+            item.address_code = ''
+            item.customer = customer
+            item.save()
+
+    def test_success_case(self):
+        items = Bol.objects.filter(pk__in=self.ids)
+
+        self.assertEqual(BolUtils.export_no_multiple_customer_bols(items), '')
+
+    def test_fail_case(self):
+        self.items[0].customer = self.customer1
+        self.items[0].save()
+
+        items = Bol.objects.filter(pk__in=self.ids)
+
+        self.assertEqual(
+            BolUtils.export_no_multiple_customer_bols(items),
+            error_messages['EXPORT_MULTIPLE_CUSTOMER_BOLS']
+        )
 
     '''
     def test_pending(self):

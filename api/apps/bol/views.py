@@ -15,6 +15,7 @@ from apps.bag.serializers import BagListSr
 from utils.common_classes.custom_permission import CustomPermission
 from utils.helpers.res_tools import res
 from utils.helpers.tools import Tools
+from utils.common_classes.custom_pagination import NoPaginationStatic
 
 
 class BolPermission(CustomPermission):
@@ -60,6 +61,24 @@ class BolViewSet(GenericViewSet):
         }
 
         return self.get_paginated_response(result)
+
+    def ready_to_export_list(self, request):
+        queryset = Bol.objects.filter(address__isnull=False, cn_date__isnull=False, exported_date__isnull=True)
+        queryset = self.filter_queryset(queryset)
+        queryset = self.paginate_queryset(queryset)
+        serializer = BolBaseSr(queryset, many=True)
+
+        return NoPaginationStatic.get_paginated_response(serializer.data)
+
+    def check_export_list(self, request):
+        ids = [int(pk) for pk in self.request.query_params.get('ids', '').split(',')]
+        bols = Bol.objects.filter(pk__in=ids)
+
+        status = Tools.check_export_list(bols, ids)
+        if status:
+            raise ValidationError(status)
+
+        return res({'ok': True})
 
     def retrieve(self, request, pk=None):
         obj = get_object_or_404(Bol, pk=pk)

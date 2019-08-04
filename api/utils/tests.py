@@ -57,3 +57,33 @@ class ToolsGetNextUidOrder(TestCase):
         output = Tools.get_next_uid_index(uid)
         eput = 1
         self.assertEqual(output, eput)
+
+
+class ToolsIsSemiContain(TestCase):
+    def test_normal_case(self):
+        parent = [1, 2, 3]
+        child = [1, 6]
+        output = Tools.is_semi_contain(parent, child)
+        eput = True
+        self.assertEqual(output, eput)
+
+    def test_normal_case_but_child_larger_than_parent(self):
+        parent = [1, 2, 3]
+        child = [1, 6, 3, 5]
+        output = Tools.is_semi_contain(parent, child)
+        eput = True
+        self.assertEqual(output, eput)
+
+    def test_sub_set(self):
+        parent = [1, 2, 3]
+        child = [1, 3]
+        output = Tools.is_semi_contain(parent, child)
+        eput = False
+        self.assertEqual(output, eput)
+
+    def test_no_intersection(self):
+        parent = [1, 2, 3]
+        child = [4, 5]
+        output = Tools.is_semi_contain(parent, child)
+        eput = False
+        self.assertEqual(output, eput)

@@ -3,6 +3,14 @@ from apps.address.utils import AddressUtils
 from apps.delivery_fee.models import DeliveryFeeUnitPriceType
 from apps.delivery_fee.utils import DeliveryFeeUtils
 from django.conf import settings
+from utils.helpers.tools import Tools
+
+error_messages = {
+    "EXPORT_MISSING_BOLS": "Có ít nhất 1 vận đơn vừa bị xoá.",
+    "EXPORT_MIX_BOLS": "Không thể xuất lẫn vận đơn vận chuyển và order.",
+    "EXPORT_INCOMPLETE_ORDER_BOLS": "Không thể xuất lẻ vận đơn của đơn hàng.",
+    "EXPORT_MULTIPLE_CUSTOMER_BOLS": "Không thể xuất cho nhiều khách hàng.",
+}
 
 
 class BolUtils:
@@ -152,3 +160,56 @@ class BolUtils:
         if serializer.is_valid(raise_exception=True):
             serializer.save()
         return serializer
+
+    @staticmethod
+    def export_no_missing_bols(bols: models.QuerySet, ids: list) -> str:
+        if bols.count() != len(ids):
+            return error_messages['EXPORT_MISSING_BOLS']
+        return ""
+
+    @staticmethod
+    def export_no_mix_bols(bols: models.QuerySet, ids: list) -> str:
+        number_of_order_bols = bols.filter(order=None).count()
+        if number_of_order_bols > 0 and number_of_order_bols < len(ids):
+            return error_messages['EXPORT_MIX_BOLS']
+        return ""
+
+    @staticmethod
+    def export_no_incomplete_order_bols(bols: models.QuerySet, ids: list) -> str:
+        orders_have_multiple_bols = {}
+        for bol in bols:
+            if bol.order.order_bols.count() > 1:
+                orders_have_multiple_bols[str(bol.order.pk)] = bol.order
+        orders = orders_have_multiple_bols.values()
+
+        for order in orders:
+            sub_bols = [bol.pk for bol in order.order_bols.all()]
+            if Tools.is_semi_contain(ids, sub_bols):
+                return error_messages['EXPORT_INCOMPLETE_ORDER_BOLS']
+        return ""
+
+    @staticmethod
+    def export_no_multiple_customer_bols(bols: models.QuerySet) -> str:
+        customers = [bol.customer.pk for bol in bols]
+        if len(set(customers)) > 1:
+            return error_messages['EXPORT_MULTIPLE_CUSTOMER_BOLS']
+        return ""
+
+    @staticmethod
+    def check_export_list(bols: models.QuerySet, ids: list) -> str:
+        status = BolUtils.export_no_mix_bols(bols, ids)
+        if status:
+            return status
+
+        status = BolUtils.export_no_mix_bols(bols, ids)
+        if status:
+            return status
+
+        status = BolUtils.export_no_incomplete_order_bols(bols, ids)
+        if status:
+            return status
+
+        status = BolUtils.export_no_multiple_customer_bols(bols)
+        if status:
+            return status
+        return ""

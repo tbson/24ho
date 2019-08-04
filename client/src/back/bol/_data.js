@@ -12,7 +12,8 @@ const rawApiUrls = [
             get_date: 'date',
             match_vn: 'match-vn',
             check: 'check',
-            getOrderitemsForChecking: 'get-order-items-for-checking'
+            getOrderitemsForChecking: 'get-order-items-for-checking',
+            readyToExport: 'ready-to-export'
         }
     }
 ];

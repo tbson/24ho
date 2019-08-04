@@ -275,3 +275,11 @@ class Tools:
         if key in obj:
             obj[key] = str(obj[key]).strip().upper()
         return obj
+
+    @staticmethod
+    def is_semi_contain(_parent: list, _child: list) -> bool:
+        parent = set(_parent)
+        child = set(_child)
+        if child.isdisjoint(parent) or child.issubset(parent):
+            return False
+        return True

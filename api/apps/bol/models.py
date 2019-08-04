@@ -149,6 +149,9 @@ class Bol(TimeStampedModel):
         if self.uid:
             self.uid = self.uid.strip().upper()
 
+        if not self.address and not self.address_code:
+            self.address_code = ''
+
         if self.address:
             self.address_code = self.address.uid
         elif self.address_code:
@@ -202,6 +205,7 @@ class Bol(TimeStampedModel):
             ("change_bag_bol", "Can change bag"),
             ("get_date_bol", "Can get date"),
             ("match_vn_bol", "Can get match VN bol"),
+            ("ready_to_export_list_bol", "Can get bol to export"),
         )
 
 
