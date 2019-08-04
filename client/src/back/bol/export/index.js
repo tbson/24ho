@@ -9,6 +9,8 @@ import Tools from 'src/utils/helpers/Tools';
 import PrepareTable from './prepare_table/';
 import ResultTable from './result_table/';
 import DelayInput from 'src/utils/components/DelayInput';
+import ExportForm from './ExportForm';
+import {Service as ExportFormService} from './ExportForm';
 
 type Props = {
     match: Object
@@ -56,7 +58,7 @@ const Component = ({match}: Props) => {
         // $FlowFixMe: do not complain
         const ids = resultList.map(item => item.id);
         Tools.apiClient(apiUrls.exportCheck, {ids: ids.join(',')}).then(resp => {
-            console.log(resp);
+            resp.ok && ExportFormService.toggleForm(true);
         });
     };
 
@@ -89,6 +91,7 @@ const Component = ({match}: Props) => {
                     <ResultTable list={resultList} move={moveLeft} />
                 </div>
             </div>
+            <ExportForm onChange={console.log} ids={resultList.map(item => item.id)}/>
         </NavWrapper>
     );
 };
