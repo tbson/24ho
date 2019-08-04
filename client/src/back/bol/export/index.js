@@ -48,9 +48,17 @@ const Component = ({match}: Props) => {
     const addressFilter = address_code => {
         const address = address_code.trim().toUpperCase();
         console.log(address);
-        setPrepareList([...list.filter(item => item.address_code === address)])
+        setPrepareList([...list.filter(item => item.address_code === address)]);
         setResultList([]);
-    }
+    };
+
+    const checkAndExport = () => {
+        // $FlowFixMe: do not complain
+        const ids = resultList.map(item => item.id);
+        Tools.apiClient(apiUrls.checkExportList, {ids: ids.join(',')}).then(resp => {
+            console.log(resp);
+        });
+    };
 
     return (
         <NavWrapper>
@@ -62,8 +70,12 @@ const Component = ({match}: Props) => {
                     <DelayInput onChange={addressFilter} placeholder="Mã địa chỉ..." />
                 </div>
                 <div className="col-md-6">
-                    <button type="button" className="btn btn-success btn-block" disabled={!resultList.length}>
-                        <span className="fas fa-dolly"/>
+                    <button
+                        type="button"
+                        onClick={checkAndExport}
+                        className="btn btn-success btn-block"
+                        disabled={!resultList.length}>
+                        <span className="fas fa-dolly" />
                         &nbsp;
                         <span>Xuất Hàng</span>
                     </button>

@@ -13,7 +13,8 @@ const rawApiUrls = [
             match_vn: 'match-vn',
             check: 'check',
             getOrderitemsForChecking: 'get-order-items-for-checking',
-            readyToExport: 'ready-to-export'
+            readyToExport: 'ready-to-export',
+            checkExportList: 'check-export-list'
         }
     }
 ];

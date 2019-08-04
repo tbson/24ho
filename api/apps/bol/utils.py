@@ -178,7 +178,7 @@ class BolUtils:
     def export_no_incomplete_order_bols(bols: models.QuerySet, ids: list) -> str:
         orders_have_multiple_bols = {}
         for bol in bols:
-            if bol.order.order_bols.count() > 1:
+            if bol.order and bol.order.order_bols.count() > 1:
                 orders_have_multiple_bols[str(bol.order.pk)] = bol.order
         orders = orders_have_multiple_bols.values()
 

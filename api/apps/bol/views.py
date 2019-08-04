@@ -74,7 +74,7 @@ class BolViewSet(GenericViewSet):
         ids = [int(pk) for pk in self.request.query_params.get('ids', '').split(',')]
         bols = Bol.objects.filter(pk__in=ids)
 
-        status = Tools.check_export_list(bols, ids)
+        status = BolUtils.check_export_list(bols, ids)
         if status:
             raise ValidationError(status)
 
