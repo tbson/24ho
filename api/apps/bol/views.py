@@ -70,13 +70,39 @@ class BolViewSet(GenericViewSet):
 
         return NoPaginationStatic.get_paginated_response(serializer.data)
 
-    def export(self, request):
+    def export_check(self, request):
         ids = [int(pk) for pk in self.request.query_params.get('ids', '').split(',')]
         bols = Bol.objects.filter(pk__in=ids)
 
-        status = BolUtils.check_export_list(bols, ids)
+        status = BolUtils.export_check(bols, ids)
         if status:
             raise ValidationError(status)
+
+        return res({'ok': True})
+
+    def export(self, request):
+        from apps.receipt.models import Receipt, Type
+        from apps.rate.utils import RateUtils
+        ids = [int(pk) for pk in self.request.query_params.get('ids', '').split(',')]
+        bols = Bol.objects.filter(pk__in=ids)
+
+        status = BolUtils.export_check(bols, ids)
+        if status:
+            raise ValidationError(status)
+        '''
+        vnd_sub_fee = 0
+        vnd_total = 0
+        type = Type.ORDER
+        if bols.filter(order__isnull=True).count() == bols.count():
+            type = Type.TRANSPORT
+            latest_rate = RateUtils.get_latest_rate()
+            for bol in bols:
+                bol.rate = latest_rate['value']
+                bol.real_rate = latest_rate['real_value']
+                bol.save()
+                vnd_sub_fee = vnd_sub_fee + int(bol.cny_sub_fee * bol.rate)
+                vnd_total = BolUtils.cal_delivery_fee(bol)
+        '''
 
         return res({'ok': True})
 

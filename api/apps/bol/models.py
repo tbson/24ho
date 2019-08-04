@@ -127,6 +127,9 @@ class Bol(TimeStampedModel):
     cny_shockproof_fee = models.FloatField(default=0)
     cny_wooden_box_fee = models.FloatField(default=0)
 
+    rate = models.PositiveIntegerField(default=0)  # For transport bols only
+    real_rate = models.PositiveIntegerField(default=0)  # For transport bols only
+
     packages = models.IntegerField(default=1)
 
     insurance = models.BooleanField(default=False)
@@ -206,7 +209,8 @@ class Bol(TimeStampedModel):
             ("get_date_bol", "Can get date"),
             ("match_vn_bol", "Can get match VN bol"),
             ("ready_to_export_list_bol", "Can get bol to export"),
-            ("export_bol", "Can check before export"),
+            ("export_bol", "Can export"),
+            ("export_check_bol", "Can check before export"),
         )
 
 

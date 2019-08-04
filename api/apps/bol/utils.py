@@ -6,6 +6,9 @@ from django.conf import settings
 from utils.helpers.tools import Tools
 
 error_messages = {
+    "EXPORT_MISSING_ADDRESS": "Có ít nhất 1 vận đơn thiếu mã địa chỉ.",
+    "EXPORT_MISSING_CN_DATE": "Có ít nhất 1 vận đơn chưa về kho TQ.",
+    "EXPORT_ALREADY": "Có ít nhất 1 vận đơn đã được xuất.",
     "EXPORT_MISSING_BOLS": "Có ít nhất 1 vận đơn vừa bị xoá.",
     "EXPORT_MIX_BOLS": "Không thể xuất lẫn vận đơn vận chuyển và order.",
     "EXPORT_INCOMPLETE_ORDER_BOLS": "Không thể xuất lẻ vận đơn của đơn hàng.",
@@ -162,6 +165,24 @@ class BolUtils:
         return serializer
 
     @staticmethod
+    def export_missing_address(bols: models.QuerySet) -> str:
+        if bols.filter(address__isnull=True).count():
+            return error_messages['EXPORT_MISSING_ADDRESS']
+        return ""
+
+    @staticmethod
+    def export_missing_cn_date(bols: models.QuerySet) -> str:
+        if bols.filter(cn_date__isnull=True).count():
+            return error_messages['EXPORT_MISSING_CN_DATE']
+        return ""
+
+    @staticmethod
+    def export_already(bols: models.QuerySet) -> str:
+        if bols.filter(exported_date__isnull=False).count():
+            return error_messages['EXPORT_ALREADY']
+        return ""
+
+    @staticmethod
     def export_no_missing_bols(bols: models.QuerySet, ids: list) -> str:
         if bols.count() != len(ids):
             return error_messages['EXPORT_MISSING_BOLS']
@@ -196,7 +217,19 @@ class BolUtils:
         return ""
 
     @staticmethod
-    def check_export_list(bols: models.QuerySet, ids: list) -> str:
+    def export_check(bols: models.QuerySet, ids: list) -> str:
+        status = BolUtils.export_missing_address(bols)
+        if status:
+            return status
+
+        status = BolUtils.export_missing_cn_date(bols)
+        if status:
+            return status
+
+        status = BolUtils.export_already(bols)
+        if status:
+            return status
+
         status = BolUtils.export_no_mix_bols(bols, ids)
         if status:
             return status

@@ -6,13 +6,12 @@ from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from rest_framework import status
 from .models import Rate
-from apps.variable.models import Variable
+from .utils import RateUtils
 from .serializers import (
     RateBaseSr,
 )
 from utils.common_classes.custom_permission import CustomPermission
 from utils.helpers.res_tools import res
-from django.conf import settings
 
 
 class RateViewSet(GenericViewSet):
@@ -69,15 +68,4 @@ class ExposeView(APIView):
     permission_classes = (AllowAny, )
 
     def get(self, request, format=None):
-        value = settings.DEFAULT_RATE
-        real_value = settings.DEFAULT_REAL_RATE
-        try:
-            item = RateBaseSr(Rate.objects.latest('pk')).data
-            value = item['order_rate']
-            real_value = item['rate']
-        except Rate.DoesNotExist:
-            try:
-                value = Variable.objects.get(uid='rate').value
-            except Variable.DoesNotExist:
-                pass
-        return res({'value': int(value), 'real_value': int(real_value)})
+        return res(RateUtils.get_latest_rate())

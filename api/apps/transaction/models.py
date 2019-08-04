@@ -31,11 +31,11 @@ TYPE_CHOICES = (
     (Type.PAY, 'Thanh toán đơn hàng'),  # For order bols
     (Type.WITHDRAW, 'Rút tiền'),
     (Type.CN_DELIVERY_FEE, 'Phí vận chuyển CN-VN'),  # For transport bols
-    (Type.VN_DELIVERY_FEE, 'Phí vận chuyển nội địa VN'),  # For exporting bols
+    (Type.VN_DELIVERY_FEE, 'Phí vận chuyển nội địa VN'),
     (Type.COMPLAINT_REFUND, 'Hoàn tiền khiếu nại'),
     (Type.DISCARD_REFUND, 'Hoàn tiền chiết khấu'),
     (Type.DISCARD_REFUND, 'Hoàn tiền huỷ đơn'),
-    (Type.OTHER_SUB_FEE, 'Phụ phí khác'),
+    (Type.OTHER_SUB_FEE, 'Phụ phí khác'),  # For transport bols
 )
 
 MONEY_TYPE_CHOICES = (

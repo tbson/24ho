@@ -1,5 +1,6 @@
 from django.utils import timezone
 from django.db import models
+from django.conf import settings
 
 
 class RateUtils:
@@ -42,3 +43,23 @@ class RateUtils:
         last_item.updated_at = timezone.now()
         last_item.save()
         return last_item
+
+    @staticmethod
+    def get_latest_rate() -> dict:
+        from .serializers import RateBaseSr
+        from .models import Rate
+        from apps.variable.models import Variable
+
+        value = settings.DEFAULT_RATE
+        real_value = settings.DEFAULT_REAL_RATE
+        try:
+            item = RateBaseSr(Rate.objects.latest('pk')).data
+            value = item['order_rate']
+            real_value = item['rate']
+        except Rate.DoesNotExist:
+            try:
+                value = Variable.objects.get(uid='rate').value
+            except Variable.DoesNotExist:
+                pass
+
+        return {'value': int(value), 'real_value': int(real_value)}

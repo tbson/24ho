@@ -52,10 +52,10 @@ const Component = ({match}: Props) => {
         setResultList([]);
     };
 
-    const exportBols = () => {
+    const exportCheck = () => {
         // $FlowFixMe: do not complain
         const ids = resultList.map(item => item.id);
-        Tools.apiClient(apiUrls.export, {ids: ids.join(',')}).then(resp => {
+        Tools.apiClient(apiUrls.exportCheck, {ids: ids.join(',')}).then(resp => {
             console.log(resp);
         });
     };
@@ -72,7 +72,7 @@ const Component = ({match}: Props) => {
                 <div className="col-md-6">
                     <button
                         type="button"
-                        onClick={exportBols}
+                        onClick={exportCheck}
                         className="btn btn-success btn-block"
                         disabled={!resultList.length}>
                         <span className="fas fa-dolly" />

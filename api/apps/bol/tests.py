@@ -696,7 +696,64 @@ class UtilsExportNoMultipleCustomerBols(TestCase):
             error_messages['EXPORT_MULTIPLE_CUSTOMER_BOLS']
         )
 
-    '''
-    def test_pending(self):
-        pass
-    '''
+
+class UtilsExportMissingAddress(TestCase):
+    def setUp(self):
+        self.items = BolUtils.seeding(3)
+        self.ids = [self.items[0].pk, self.items[1].pk, self.items[2].pk]
+
+    def test_success_case(self):
+        items = Bol.objects.filter(pk__in=self.ids)
+
+        self.assertEqual(BolUtils.export_missing_address(items), '')
+
+    def test_fail_case(self):
+        self.items[0].address = None
+        self.items[0].address_code = ''
+        self.items[0].save()
+
+        items = Bol.objects.filter(pk__in=self.ids)
+        self.assertEqual(
+            BolUtils.export_missing_address(items),
+            error_messages['EXPORT_MISSING_ADDRESS']
+        )
+
+
+class UtilsExportMissingCnDate(TestCase):
+    def setUp(self):
+        self.items = BolUtils.seeding(3)
+        self.ids = [self.items[0].pk, self.items[1].pk, self.items[2].pk]
+
+    def test_success_case(self):
+        for bol in self.items:
+            bol.cn_date = timezone.now()
+            bol.save()
+
+        items = Bol.objects.filter(pk__in=self.ids)
+
+        self.assertEqual(BolUtils.export_missing_cn_date(items), '')
+
+    def test_fail_case(self):
+        items = Bol.objects.filter(pk__in=self.ids)
+        self.assertEqual(
+            BolUtils.export_missing_cn_date(items),
+            error_messages['EXPORT_MISSING_CN_DATE']
+        )
+
+
+class UtilsExportAlready(TestCase):
+    def setUp(self):
+        self.items = BolUtils.seeding(3)
+        self.ids = [self.items[0].pk, self.items[1].pk, self.items[2].pk]
+
+    def test_fail_case(self):
+        self.items[0].exported_date = timezone.now()
+        self.items[0].save()
+
+        items = Bol.objects.filter(pk__in=self.ids)
+
+        self.assertEqual(BolUtils.export_already(items), error_messages['EXPORT_ALREADY'])
+
+    def test_success_case(self):
+        items = Bol.objects.filter(pk__in=self.ids)
+        self.assertEqual(BolUtils.export_already(items), '')

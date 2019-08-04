@@ -21,6 +21,10 @@ ready_to_export_list = BolViewSet.as_view({
     'get': 'ready_to_export_list',
 })
 
+export_check = BolViewSet.as_view({
+    'get': 'export_check',
+})
+
 export = BolViewSet.as_view({
     'get': 'export',
 })
@@ -49,6 +53,7 @@ urlpatterns = [
     path('<int:pk>/change-bag/', change_bag),
     path('match-vn/', match_vn),
     path('ready-to-export/', ready_to_export_list),
+    path('export-check/', export_check),
     path('export/', export),
     path('date/', get_date),
 ]
