@@ -40,9 +40,9 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
             <td>{data.uid}</td>
             <td>{data.staff_username}</td>
             <td>{data.address_code}</td>
-            <td className="mono vnd">{data.vnd_sub_fee}</td>
+            <td className="mono vnd">{data.vnd_other_sub_fee}</td>
             <td className="mono vnd">{data.vnd_total}</td>
-            <td className="mono vnd">{data.vnd_sub_fee + data.vnd_total}</td>
+            <td className="mono vnd">{data.vnd_other_sub_fee + data.vnd_total}</td>
             <td>{data.note}</td>
             <td className="center">
                 <a className="editBtn" onClick={() => showForm(data.id)}>

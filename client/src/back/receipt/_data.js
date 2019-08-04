@@ -25,7 +25,7 @@ export type FormValues = {
     uid: string,
     staff_username: string,
     address_code: string,
-    vnd_sub_fee: number,
+    vnd_other_sub_fee: number,
     vnd_total: number,
     note: string
 };

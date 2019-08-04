@@ -83,15 +83,17 @@ class BolViewSet(GenericViewSet):
     def export(self, request):
         from apps.receipt.models import Receipt, Type
         from apps.rate.utils import RateUtils
+
         ids = [int(pk) for pk in self.request.query_params.get('ids', '').split(',')]
-        vnd_sub_fee = int(self.request.query_params.get('vnd_sub_fee', 0))
+        vnd_other_sub_fee = int(self.request.query_params.get('vnd_sub_fee', 0))
         note = self.request.query_params.get('note', '')
-        print([ids, vnd_sub_fee, note])
+
         bols = Bol.objects.filter(pk__in=ids)
 
         status = BolUtils.export_check(bols, ids)
         if status:
             raise ValidationError(status)
+
         '''
         vnd_sub_fee = 0
         vnd_total = 0

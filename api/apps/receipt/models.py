@@ -32,7 +32,7 @@ class Receipt(TimeStampedModel):
     uid = models.CharField(max_length=60, unique=True)
     type = models.IntegerField(choices=TYPE_CHOICES, default=1)
 
-    vnd_sub_fee = models.IntegerField(default=0)
+    vnd_other_sub_fee = models.IntegerField(default=0)
     vnd_total = models.IntegerField(default=0)
     note = models.TextField(blank=True)
 
