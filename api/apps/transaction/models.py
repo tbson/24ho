@@ -3,6 +3,7 @@ from utils.models.model import TimeStampedModel
 from apps.customer.models import Customer
 from apps.staff.models import Staff
 from apps.order.models import Order
+from apps.bol.models import Bol
 from utils.helpers.tools import Tools
 from apps.receipt.models import Receipt
 
@@ -54,11 +55,14 @@ class Transaction(TimeStampedModel):
     customer = models.ForeignKey(Customer, models.PROTECT, related_name='customer_transactions', null=True)
     customer_username = models.CharField(max_length=64, blank=True)
 
+    staff = models.ForeignKey(Staff, models.PROTECT, related_name='staff_transactions')
+    staff_username = models.CharField(max_length=64, blank=True)
+
     order = models.ForeignKey(Order, models.PROTECT, related_name='order_transactions', null=True)
     order_uid = models.CharField(max_length=64, blank=True)
 
-    staff = models.ForeignKey(Staff, models.PROTECT, related_name='staff_transactions')
-    staff_username = models.CharField(max_length=64, blank=True)
+    bol = models.ForeignKey(Bol, models.PROTECT, related_name='order_transactions', null=True)
+    bol_uid = models.CharField(max_length=64, blank=True)
 
     uid = models.CharField(max_length=64, unique=True)
     amount = models.FloatField()
@@ -69,13 +73,22 @@ class Transaction(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         from .utils import TransactionUtils
+
         self.is_assets = TransactionUtils.is_assets(self.type)
+
         if not self.uid:
             self.uid = Tools.get_uuid()
+
         if self.customer:
             self.customer_username = self.customer.user.username
         if self.staff:
             self.staff_username = self.staff.user.username
+
+        if self.order:
+            self.order_uid = self.order.uid
+        if self.bol:
+            self.bol_uid = self.bol.uid
+
         super(Transaction, self).save(*args, **kwargs)
 
     def __str__(self):

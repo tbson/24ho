@@ -1,4 +1,5 @@
 import datetime
+from django.db import transaction
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from rest_framework.serializers import ValidationError
@@ -80,9 +81,10 @@ class BolViewSet(GenericViewSet):
 
         return res({'ok': True})
 
+    @transaction.atomic
     def export(self, request):
         from apps.receipt.models import Receipt, Type
-        from apps.rate.utils import RateUtils
+        from apps.transaction.utils import TransactionUtils
 
         ids = [int(pk) for pk in self.request.query_params.get('ids', '').split(',')]
         bols = Bol.objects.filter(pk__in=ids)
@@ -93,20 +95,32 @@ class BolViewSet(GenericViewSet):
 
         vnd_other_sub_fee = int(self.request.query_params.get('vnd_sub_fee', 0))
         note = self.request.query_params.get('note', '')
-
-        vnd_sub_fee = 0
-        vnd_total = 0
-        '''
+        customer = bols[0].customer
+        staff = request.user.staff
         type = BolUtils.get_bols_type(bols)
-        if type == Type.TRANSPORT
-            latest_rate = RateUtils.get_latest_rate()
-            for bol in bols:
-                bol.rate = latest_rate['value']
-                bol.real_rate = latest_rate['real_value']
-                bol.save()
-                vnd_sub_fee = vnd_sub_fee + int(bol.cny_sub_fee * bol.rate)
-                vnd_total = BolUtils.cal_delivery_fee(bol)
-        '''
+        address = bols[0].address
+
+        receipt = Receipt(
+            vnd_other_sub_fee=vnd_other_sub_fee,
+            note=note,
+            customer=customer,
+            staff=staff,
+            type=type,
+            address=address
+        )
+        receipt.save()
+
+        if vnd_other_sub_fee:
+            TransactionUtils.charge_receipt_other_sub_fee(vnd_other_sub_fee, customer, staff, receipt)
+
+        total = vnd_other_sub_fee
+        if type == Type.TRANSPORT:
+            total = total + BolUtils.export_transport_bols(bols, receipt, customer, staff)
+        else:
+            total = total + BolUtils.export_order_bols(bols, receipt, customer, staff)
+
+        receipt.vnd_total = total
+        receipt.save()
 
         return res({'ok': True})
 

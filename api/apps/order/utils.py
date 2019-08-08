@@ -152,6 +152,11 @@ class OrderUtils:
         return int(rate * cny + vnd) - vnd_total_discount
 
     @staticmethod
+    def get_vnd_total_obj(order: models.QuerySet) -> int:
+        from .serializers import OrderBaseSr
+        return OrderUtils.get_vnd_total(OrderBaseSr(order).data)
+
+    @staticmethod
     def cal_amount(item: models.QuerySet) -> float:
         if item.order_items.count() == 0:
             return 0
@@ -484,3 +489,13 @@ class OrderUtils:
                         MoveStatusUtils.move(order, Status.DONE)
                     except ValidationError:
                         pass
+
+    @staticmethod
+    def get_orders_from_bols(bols: models.QuerySet) -> models.QuerySet:
+        from .models import Order
+        order_list = []
+        for bol in bols:
+            if bol.order:
+                order_list.append(bol.order.pk)
+
+        return Order.objects.filter(pk__in=set(order_list))

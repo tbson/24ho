@@ -32,6 +32,13 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
         r && Service.handleRemove(id).then(onRemove);
     };
 
+    const getStatus = (item: TRow) => {
+        if (item.exported_date) return <strong className="green">Xuất hàng</strong>
+        if (item.vn_date) return <strong className="blue">Kho VN</strong>
+        if (item.cn_date) return <strong className="red">Kho TQ</strong>
+        return <span>Phát hàng</span>
+    }
+
     return (
         <tr>
             <th className="row25">
@@ -41,8 +48,7 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
             <td>{data.uid}</td>
             <td>{data.address_code}</td>
             <td>{data.bag_uid}</td>
-            <td><BoolOutput value={!!data.cn_date}/></td>
-            <td><BoolOutput value={!!data.vn_date}/></td>
+            <td>{getStatus(data)}</td>
             <td className="mono right">{data.mass}</td>
             <td className="mono right">{data.length}</td>
             <td className="mono right">{data.width}</td>

@@ -64,6 +64,7 @@ export class Service {
 export default ({}: Props) => {
     const [list, setList] = useState([]);
     const [listCustomer, setListCustomer] = useState([]);
+    const [balance, setBalance] = useState(0);
     const [links, setLinks] = useState({next: '', previous: ''});
 
     const listAction = ListTools.actions(list);
@@ -78,6 +79,7 @@ export default ({}: Props) => {
         setList(ListTools.prepare(data.items));
         setLinks(data.links);
         listCustomer.length || setListCustomer(data.extra.list_customer || []);
+        setBalance(data.extra.balance || 0);
     };
 
     const onChange = (data: TRow, type: string) => {
@@ -107,28 +109,43 @@ export default ({}: Props) => {
 
     return (
         <div>
+            {!Tools.isAdmin() && (
+                <div style={{margin: 10}}>
+                    <span>Số dư: </span>
+                    <strong className="vnd">{Tools.numberFormat(balance)}</strong>
+                </div>
+            )}
             <table className="table table-striped">
                 <thead className="thead-light">
                     <tr>
-                        <th className="row25">
-                            <span className="fas fa-check text-info pointer check-all-button" onClick={onCheckAll} />
-                        </th>
+                        {Tools.isAdmin() && (
+                            <th className="row25">
+                                <span
+                                    className="fas fa-check text-info pointer check-all-button"
+                                    onClick={onCheckAll}
+                                />
+                            </th>
+                        )}
                         <th scope="col">Ngày</th>
-                        <th scope="col" className="right">Số lượng</th>
+                        <th scope="col" className="right">
+                            Số lượng
+                        </th>
                         <th scope="col">Mã giao dịch</th>
                         <th scope="col">Nhân viên giao dịch</th>
-                        <th scope="col">Khách hàng</th>
+                        {Tools.isAdmin() && <th scope="col">Khách hàng</th>}
                         <th scope="col">Loại giao dịch</th>
                         <th scope="col">Loại tiền</th>
                         <th scope="col">Ghi chú</th>
-                        <th scope="col" style={{padding: 8}} className="row80">
-                            <button
-                                className="btn btn-primary btn-sm btn-block add-button"
-                                onClick={() => MainFormService.toggleForm(true)}>
-                                <span className="fas fa-plus" />
-                                &nbsp; Add
-                            </button>
-                        </th>
+                        {Tools.isAdmin() && (
+                            <th scope="col" style={{padding: 8}} className="row80">
+                                <button
+                                    className="btn btn-primary btn-sm btn-block add-button"
+                                    onClick={() => MainFormService.toggleForm(true)}>
+                                    <span className="fas fa-plus" />
+                                    &nbsp; Add
+                                </button>
+                            </th>
+                        )}
                     </tr>
                 </thead>
 
@@ -153,19 +170,21 @@ export default ({}: Props) => {
                     ))}
                 </tbody>
 
-                <tfoot className="thead-light">
-                    <tr>
-                        <th className="row25">
-                            <span
-                                className="fas fa-trash-alt text-danger pointer bulk-remove-button"
-                                onClick={onBulkRemove}
-                            />
-                        </th>
-                        <th className="row25 right" colSpan="99">
-                            <Pagination next={links.next} prev={links.previous} onNavigate={getList} />
-                        </th>
-                    </tr>
-                </tfoot>
+                {Tools.isAdmin() && (
+                    <tfoot className="thead-light">
+                        <tr>
+                            <th className="row25">
+                                <span
+                                    className="fas fa-trash-alt text-danger pointer bulk-remove-button"
+                                    onClick={onBulkRemove}
+                                />
+                            </th>
+                            <th className="row25 right" colSpan="99">
+                                <Pagination next={links.next} prev={links.previous} onNavigate={getList} />
+                            </th>
+                        </tr>
+                    </tfoot>
+                )}
             </table>
 
             <MainForm

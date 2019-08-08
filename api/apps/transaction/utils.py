@@ -122,3 +122,97 @@ class TransactionUtils:
         from .models import Type
         for transaction in order.order_transactions.filter(type=Type.DEPOSIT):
             transaction.delete()
+
+    @staticmethod
+    def charge_bol_delivery_fee(
+        amount: int,
+        customer: models.QuerySet,
+        staff: models.QuerySet,
+        receipt: models.QuerySet,
+        bol: models.QuerySet,
+    ) -> str:
+        from .models import Type, MoneyType
+        from .models import Transaction
+
+        transaction = Transaction(
+            customer=customer,
+            staff=staff,
+            amount=amount,
+            type=Type.CN_DELIVERY_FEE,
+            money_type=MoneyType.INDIRECT,
+            receipt=receipt,
+            bol=bol,
+            note="Tiền vận chuyển vận đơn {}".format(bol.uid)
+        )
+        transaction.save()
+        return transaction.uid
+
+    @staticmethod
+    def charge_bol_other_sub_fee(
+        amount: int,
+        customer: models.QuerySet,
+        staff: models.QuerySet,
+        receipt: models.QuerySet,
+        bol: models.QuerySet,
+    ) -> str:
+        from .models import Type, MoneyType
+        from .models import Transaction
+
+        transaction = Transaction(
+            customer=customer,
+            staff=staff,
+            amount=amount,
+            type=Type.OTHER_SUB_FEE,
+            money_type=MoneyType.INDIRECT,
+            receipt=receipt,
+            bol=bol,
+            note="Phụ phí khác vận đơn {}".format(bol.uid)
+        )
+        transaction.save()
+        return transaction.uid
+
+    @staticmethod
+    def charge_receipt_other_sub_fee(
+        amount: int,
+        customer: models.QuerySet,
+        staff: models.QuerySet,
+        receipt: models.QuerySet
+    ) -> str:
+        from .models import Type, MoneyType
+        from .models import Transaction
+
+        transaction = Transaction(
+            customer=customer,
+            staff=staff,
+            amount=amount,
+            type=Type.OTHER_SUB_FEE,
+            money_type=MoneyType.INDIRECT,
+            receipt=receipt,
+            note="Phụ phí khác phiếu thu {}".format(receipt.uid)
+        )
+        transaction.save()
+        return transaction.uid
+
+    @staticmethod
+    def charge_order_remain(
+        amount: int,
+        customer: models.QuerySet,
+        staff: models.QuerySet,
+        receipt: models.QuerySet,
+        order: models.QuerySet
+    ) -> str:
+        from .models import Type, MoneyType
+        from .models import Transaction
+
+        transaction = Transaction(
+            customer=customer,
+            staff=staff,
+            amount=amount,
+            type=Type.PAY,
+            money_type=MoneyType.INDIRECT,
+            receipt=receipt,
+            order=order,
+            note="Thanh toán đơn hàng {}".format(order.uid)
+        )
+        transaction.save()
+        return transaction.uid

@@ -4,7 +4,7 @@ import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
 import {apiUrls} from '../_data';
 import type {TRow} from '../_data';
-import {Service as TableService} from './index.js'
+import {Service as TableService} from './index.js';
 
 export class Service {
     static removeRequest(id: number): Promise<Object> {
@@ -34,28 +34,38 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
 
     return (
         <tr>
-            <th className="row25">
-                <input id={id} className="check" type="checkbox" checked={data.checked} onChange={() => onCheck(id)} />
-            </th>
-            <td>
+            {Tools.isAdmin() && (
+                <th className="row25">
+                    <input
+                        id={id}
+                        className="check"
+                        type="checkbox"
+                        checked={data.checked}
+                        onChange={() => onCheck(id)}
+                    />
+                </th>
+            )}
+            <td className="mono">
                 <span>{Tools.dateTimeFormat(data.created_at)}</span>
             </td>
             <td className="mono vnd">{Tools.numberFormat(parseInt(data.amount))}</td>
-            <td>{data.uid}</td>
+            <td className="mono">{data.uid}</td>
             <td>{data.staff_username}</td>
-            <td>{data.customer_username}</td>
+            {Tools.isAdmin() && <td>{data.customer_username}</td>}
             <td>{TableService.listType[String(data.type)]}</td>
             <td>{TableService.listMoneyType[String(data.money_type)]}</td>
             <td>{data.note}</td>
-            <td className="center">
-                <a className="editBtn" onClick={() => showForm(data.id)}>
-                    <span className="fas fa-edit text-info pointer" />
-                </a>
-                <span>&nbsp;&nbsp;&nbsp;</span>
-                <a className="removeBtn" onClick={() => _onRemove(id)}>
-                    <span className="fas fa-trash-alt text-danger pointer" />
-                </a>
-            </td>
+            {Tools.isAdmin() && (
+                <td className="center">
+                    <a className="editBtn" onClick={() => showForm(data.id)}>
+                        <span className="fas fa-edit text-info pointer" />
+                    </a>
+                    <span>&nbsp;&nbsp;&nbsp;</span>
+                    <a className="removeBtn" onClick={() => _onRemove(id)}>
+                        <span className="fas fa-trash-alt text-danger pointer" />
+                    </a>
+                </td>
+            )}
         </tr>
     );
 };

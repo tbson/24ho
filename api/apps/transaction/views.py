@@ -21,7 +21,12 @@ class TransactionViewSet(GenericViewSet):
     search_fields = ('uid', 'staff_username', 'customer_username')
 
     def list(self, request):
+        balance = 0
         queryset = Transaction.objects.all()
+        if hasattr(request.user, 'customer'):
+            queryset = queryset.filter(customer=request.user.customer)
+            balance = TransactionUtils.get_customer_balance(request.user.customer)
+
         queryset = self.filter_queryset(queryset)
         queryset = self.paginate_queryset(queryset)
         serializer = TransactionBaseSr(queryset, many=True)
@@ -29,7 +34,8 @@ class TransactionViewSet(GenericViewSet):
         result = {
             'items': serializer.data,
             'extra': {
-                'list_customer': []
+                'list_customer': [],
+                'balance': balance
             }
         }
         is_fetch_customers = Tools.string_to_bool(request.query_params.get('customers', 'False'))

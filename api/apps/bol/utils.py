@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 from apps.address.utils import AddressUtils
 from apps.delivery_fee.models import DeliveryFeeUnitPriceType
 from apps.delivery_fee.utils import DeliveryFeeUtils
@@ -253,3 +254,55 @@ class BolUtils:
         if bols.filter(order__isnull=True).count() == bols.count():
             return Type.TRANSPORT
         return Type.ORDER
+
+    @staticmethod
+    def export_transport_bols(
+        bols: models.QuerySet,
+        receipt: models.QuerySet,
+        customer: models.QuerySet,
+        staff: models.QuerySet
+    ) -> int:
+        from apps.rate.utils import RateUtils
+        from apps.transaction.utils import TransactionUtils
+
+        total = 0
+        latest_rate = RateUtils.get_latest_rate()
+        for bol in bols:
+            bol.rate = latest_rate['value']
+            bol.real_rate = latest_rate['real_value']
+            bol.receipt = receipt
+            bol.exported_date = timezone.now()
+            bol.save()
+
+            vnd_delivery_fee = BolUtils.cal_delivery_fee(bol).get('delivery_fee', 0)
+            if vnd_delivery_fee:
+                total = total + vnd_delivery_fee
+                TransactionUtils.charge_bol_delivery_fee(vnd_delivery_fee, customer, staff, receipt, bol)
+
+            vnd_sub_fee = int(bol.cny_sub_fee * bol.rate)
+            if vnd_sub_fee:
+                total = total + vnd_sub_fee
+                TransactionUtils.charge_bol_other_sub_fee(vnd_sub_fee, customer, staff, receipt, bol)
+        return total
+
+    @staticmethod
+    def export_order_bols(
+        bols: models.QuerySet,
+        receipt: models.QuerySet,
+        customer: models.QuerySet,
+        staff: models.QuerySet
+    ) -> int:
+        from apps.order.utils import OrderUtils
+        from apps.transaction.utils import TransactionUtils
+
+        total = 0
+        for bol in bols:
+            bol.receipt = receipt
+            bol.exported_date = timezone.now()
+            bol.save()
+        orders = OrderUtils.get_orders_from_bols(bols)
+        for order in orders:
+            remain = OrderUtils.get_vnd_total_obj(order) - OrderUtils.get_deposit_amount(order)
+            total = total + remain
+            TransactionUtils.charge_order_remain(remain, customer, staff, receipt, order)
+        return total

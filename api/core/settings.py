@@ -268,6 +268,8 @@ USER_PERMISSIONS = (
     'change_color_orderitem',
     'change_size_orderitem',
     'change_note_orderitem',
+
+    'view_transaction',
 )
 
 DEFAULT_META = {
