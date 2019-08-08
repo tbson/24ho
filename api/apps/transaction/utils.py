@@ -72,7 +72,7 @@ class TransactionUtils:
     @staticmethod
     def get_customer_balance(id: int) -> int:
         from .models import Transaction
-        query = Transaction.objects.filter(customer_id=id, is_assets=True)
+        query = Transaction.objects.filter(customer_id=id)
         assets = query.filter(is_assets=True).aggregate(Sum('amount')).get('amount__sum') or 0
         liabilities = query.filter(is_assets=False).aggregate(Sum('amount')).get('amount__sum') or 0
         return assets - liabilities

@@ -6,6 +6,7 @@ from apps.address.models import Address
 from apps.customer.models import Customer
 from apps.receipt.models import Receipt
 from utils.helpers.tools import Tools
+from django.conf import settings
 
 
 class Status:
@@ -118,6 +119,10 @@ class Order(TimeStampedModel):
         from .utils import OrderUtils
         if self._state.adding and self.address and not self.uid:
             self.uid = OrderUtils.get_next_uid(self.address)
+            self.deposit_factor = settings.DEPOSIT_FACTOR
+            self.customer = self.address.customer
+            if self.customer.deposit_factor:
+                self.deposit_factor = self.customer.deposit_factor
 
         if self.purchase_code:
             self.purchase_code = self.purchase_code.strip()
