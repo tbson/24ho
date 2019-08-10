@@ -106,19 +106,14 @@ export default ({order_id = 0, bol_date_id = 0, bag_id = 0, notifyChange}: Props
                         <th scope="col">Mã địa chỉ</th>
                         <th scope="col">Bao</th>
                         <th scope="col">Trạng thái</th>
-                        <th scope="col" className="right">P.Vận Chuyển</th>
+                        <th scope="col" className="right">P.vận Chuyển</th>
                         <th scope="col" className="right">Bảo hiểm</th>
+                        <th scope="col" className="right">P.Phí khác</th>
                         <th scope="col" className="right">
                             Khối lượng
                         </th>
                         <th scope="col" className="right">
-                            Dài
-                        </th>
-                        <th scope="col" className="right">
-                            Rộng
-                        </th>
-                        <th scope="col" className="right">
-                            Cao
+                            Dài / Rộng / Cao
                         </th>
                         <th scope="col" className="right">
                             Số kiện

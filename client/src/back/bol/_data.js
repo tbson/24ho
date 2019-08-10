@@ -53,6 +53,9 @@ export type FormValues = {
     height: number,
     packages: number,
     cny_insurance_fee: number,
+    cny_sub_fee: number,
+    cny_shockproof_fee: number,
+    cny_wooden_box_fee: number,
     note: string
 };
 

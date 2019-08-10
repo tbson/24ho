@@ -820,6 +820,8 @@ class UtilsExportTransportBols(TestCase):
         self.bol.insurance = True
         self.bol.cny_insurance_value = 500
         self.bol.cny_sub_fee = 6.2
+        self.bol.cny_shockproof_fee = 0
+        self.bol.cny_wooden_box_fee = 1
         self.bol.save()
 
     def test_normal_case(self):
@@ -840,5 +842,5 @@ class UtilsExportTransportBols(TestCase):
         )
         self.assertEqual(
             Transaction.objects.get(type=Type.OTHER_SUB_FEE).amount,
-            self.bol.cny_sub_fee * self.bol.rate
+            (self.bol.cny_sub_fee + self.bol.cny_shockproof_fee + self.bol.cny_wooden_box_fee) * self.bol.rate
         )

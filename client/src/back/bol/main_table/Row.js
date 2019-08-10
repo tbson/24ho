@@ -33,11 +33,11 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
     };
 
     const getStatus = (item: TRow) => {
-        if (item.exported_date) return <strong className="green">Xuất hàng</strong>
-        if (item.vn_date) return <strong className="blue">Kho VN</strong>
-        if (item.cn_date) return <strong className="red">Kho TQ</strong>
-        return <span>Phát hàng</span>
-    }
+        if (item.exported_date) return <strong className="green">Xuất hàng</strong>;
+        if (item.vn_date) return <strong className="blue">Kho VN</strong>;
+        if (item.cn_date) return <strong className="red">Kho TQ</strong>;
+        return <span>Phát hàng</span>;
+    };
 
     return (
         <tr>
@@ -51,10 +51,13 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
             <td>{getStatus(data)}</td>
             <td className="mono vnd">{Tools.numberFormat(data.vnd_delivery_fee)}</td>
             <td className="mono cny">{Tools.numberFormat(data.cny_insurance_fee)}</td>
+            <td className="mono cny">
+                {Tools.numberFormat(data.cny_sub_fee + data.cny_shockproof_fee + data.cny_wooden_box_fee)}
+            </td>
             <td className="mono right">{data.mass}</td>
-            <td className="mono right">{data.length}</td>
-            <td className="mono right">{data.width}</td>
-            <td className="mono right">{data.height}</td>
+            <td className="mono right">
+                {data.length} / {data.width} / {data.height}
+            </td>
             <td className="mono right">{data.packages}</td>
             <td>{data.note}</td>
             <td className="center">

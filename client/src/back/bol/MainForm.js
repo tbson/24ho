@@ -76,7 +76,6 @@ export class Service {
             let params = {...values};
             if (id) params = {...params, id};
             if (order_id) params = {...params, order: parseInt(order_id)};
-            console.log(params);
             return Service.changeRequest(params).then(({ok, data}) =>
                 ok
                     ? onChange({...data, checked: false}, id ? 'update' : 'add', reOpenDialog)
