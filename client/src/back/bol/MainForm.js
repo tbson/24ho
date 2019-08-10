@@ -182,16 +182,18 @@ export default ({id, order_id = 0, open, close, onChange, children, submitTitle 
                                     <TextInput name="cny_wooden_box_fee" type="number" label="Phí đóng gỗ (CNY)" />
                                 )}
                             </div>
-                            <div className="col">
-                                <CheckInput name="insurance" label="Bảo hiểm" />
-                                {values.insurance && (
-                                    <TextInput
-                                        name="cny_insurance_value"
-                                        type="number"
-                                        label="Giá trị bảo hiểm (CNY)"
-                                    />
-                                )}
-                            </div>
+                            {!order_id && (
+                                <div className="col">
+                                    <CheckInput name="insurance" label="Bảo hiểm" />
+                                    {values.insurance && (
+                                        <TextInput
+                                            name="cny_insurance_value"
+                                            type="number"
+                                            label="Giá trị bảo hiểm (CNY)"
+                                        />
+                                    )}
+                                </div>
+                            )}
                         </div>
 
                         <OnlyAdmin>

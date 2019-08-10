@@ -163,6 +163,8 @@ class Bol(TimeStampedModel):
             self.address = self.order.address
             if self.order.purchase_code:
                 self.purchase_code = self.order.purchase_code
+            self.insurance = False
+            self.cny_insurance_value = 0
 
         if not self.address and not self.address_code:
             self.address_code = ''
