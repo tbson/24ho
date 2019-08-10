@@ -55,12 +55,12 @@ export default ({pending = false, data, addresses, onPartialChange}: Props) => {
                     <td>
                         <span>Số SP:</span>
                         &nbsp;
-                        <span>{data.statistics.packages}</span>
+                        <span>{data.statistics.quantity}</span>
                     </td>
                     <td>
                         <span>Số kiện:</span>
                         &nbsp;
-                        <span>{data.statistics.quantity}</span>
+                        <span>{data.statistics.packages}</span>
                     </td>
                 </tr>
                 <tr>
