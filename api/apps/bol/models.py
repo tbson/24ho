@@ -161,6 +161,8 @@ class Bol(TimeStampedModel):
 
         if self.order is not None:
             self.address = self.order.address
+            if self.order.purchase_code:
+                self.purchase_code = self.order.purchase_code
 
         if not self.address and not self.address_code:
             self.address_code = ''
