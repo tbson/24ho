@@ -73,9 +73,7 @@ export default ({preview = false, listBag=[], item, index = 0, total = 0, onEdit
                 </Editable>
             </td>
             <td className="mono right">{data.mass}</td>
-            <td className="mono right">{data.length}</td>
-            <td className="mono right">{data.width}</td>
-            <td className="mono right">{data.height}</td>
+            <td className="mono right">{data.length} /  {data.width} / {data.height}</td>
             <td className="mono right">{data.packages}</td>
             <td>{data.note}</td>
             <td className="center">

@@ -25,13 +25,7 @@ export default ({list, onEdit, onRemove}: Props) => {
                             Khối lượng
                         </th>
                         <th scope="col" className="right">
-                            Dài
-                        </th>
-                        <th scope="col" className="right">
-                            Rộng
-                        </th>
-                        <th scope="col" className="right">
-                            Cao
+                            Dài / Rộng / Cao
                         </th>
                         <th scope="col" className="right">
                             Số kiện
