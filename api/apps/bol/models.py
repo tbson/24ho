@@ -3,6 +3,7 @@ from django.utils import timezone
 from django_filters import rest_framework as filters
 from utils.models.model import TimeStampedModel
 from apps.customer.models import Customer
+from apps.staff.models import Staff
 from apps.address.models import Address
 from apps.order.models import Order
 from apps.bag.models import Bag
@@ -104,6 +105,7 @@ class Bol(TimeStampedModel):
     cn_date = models.DateTimeField(null=True)
     vn_date = models.DateTimeField(null=True)
     exported_date = models.DateTimeField(null=True)
+    exporter = models.ForeignKey(Staff, models.SET_NULL, related_name='staff_bols', null=True)
 
     mass = models.FloatField(default=0)
     mass_convert_factor = models.IntegerField(default=6000)
@@ -119,6 +121,8 @@ class Bol(TimeStampedModel):
     delivery_fee_type = models.IntegerField(choices=DELIVERY_FEE_TYPE_CHOICES, default=1)
 
     delivery_fee = models.IntegerField(default=0)
+
+    vnd_delivery_fee = models.IntegerField(default=0)
 
     shockproof = models.BooleanField(default=False)
     wooden_box = models.BooleanField(default=False)
@@ -141,6 +145,9 @@ class Bol(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         from apps.order.utils import OrderUtils
+        from apps.rate.utils import RateUtils
+        from .utils import BolUtils
+
         if self._state.adding:
             date = BolDate.objects.get_or_create(timezone.now())
             self.bol_date = date
@@ -165,6 +172,10 @@ class Bol(TimeStampedModel):
                 self.purchase_code = self.order.purchase_code
             self.insurance = False
             self.cny_insurance_value = 0
+        else:
+            latest_rate = RateUtils.get_latest_rate()
+            self.rate = latest_rate['value']
+            self.real_rate = latest_rate['real_value']
 
         if not self.address and not self.address_code:
             self.address_code = ''
@@ -184,6 +195,8 @@ class Bol(TimeStampedModel):
 
         if self.address:
             self.customer = self.address.customer
+
+        self.vnd_delivery_fee = BolUtils.cal_delivery_fee(self).get('delivery_fee', 0)
 
         super(Bol, self).save(*args, **kwargs)
         if self.order:

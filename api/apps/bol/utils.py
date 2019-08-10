@@ -267,19 +267,16 @@ class BolUtils:
         customer: models.QuerySet,
         staff: models.QuerySet
     ) -> int:
-        from apps.rate.utils import RateUtils
         from apps.transaction.utils import TransactionUtils
 
         total = 0
-        latest_rate = RateUtils.get_latest_rate()
         for bol in bols:
-            bol.rate = latest_rate['value']
-            bol.real_rate = latest_rate['real_value']
             bol.receipt = receipt
             bol.exported_date = timezone.now()
+            bol.exporter = staff
             bol.save()
 
-            vnd_delivery_fee = BolUtils.cal_delivery_fee(bol).get('delivery_fee', 0)
+            vnd_delivery_fee = bol.vnd_delivery_fee
             if vnd_delivery_fee:
                 total = total + vnd_delivery_fee
                 TransactionUtils.charge_bol_delivery_fee(vnd_delivery_fee, customer, staff, receipt, bol)
@@ -304,6 +301,7 @@ class BolUtils:
         for bol in bols:
             bol.receipt = receipt
             bol.exported_date = timezone.now()
+            bol.exporter = staff
             bol.save()
         orders = OrderUtils.get_orders_from_bols(bols)
         for order in orders:

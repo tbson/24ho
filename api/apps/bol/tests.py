@@ -525,6 +525,7 @@ class ModelCreateWithAddress(TestCase):
         self.assertEqual(item.address_code, self.address.uid)
 
 
+'''
 class ManagerReCal(TestCase):
     @patch(model_prefix.format('cal_delivery_fee'))
     def test_before_export(self, cal_delivery_fee):
@@ -540,6 +541,7 @@ class ManagerReCal(TestCase):
         item.save()
         Bol.objects.re_cal(item)
         cal_delivery_fee.assert_not_called()
+'''
 
 
 class ModelCreateWithPurchaseCode(TestCase):
@@ -806,3 +808,31 @@ class UtilsExportOrderBols(TestCase):
         vnd_total = OrderUtils.get_vnd_total_obj(self.order)
 
         self.assertEqual(deposit.amount + pay.amount, vnd_total)
+
+
+class UtilsExportTransportBols(TestCase):
+    def setUp(self):
+        self.customer = CustomerUtils.seeding(1, True)
+        self.staff = StaffUtils.seeding(1, True)
+
+        self.bol = BolUtils.seeding(1, True)
+        self.bol.mass = 5
+        self.bol.cny_sub_fee = 6.2
+        self.bol.save()
+
+    def test_normal_case(self):
+        # No transaction
+        self.assertEqual(Transaction.objects.count(), 0)
+
+        # Export
+        receipt = ReceiptUtils.seeding(1, True)
+        BolUtils.export_transport_bols(Bol.objects.filter(pk=self.bol.pk), receipt, self.customer, self.staff)
+        self.assertEqual(Transaction.objects.count(), 2)
+        self.assertEqual(
+            Transaction.objects.get(type=Type.CN_DELIVERY_FEE).amount,
+            self.bol.vnd_delivery_fee
+        )
+        self.assertEqual(
+            Transaction.objects.get(type=Type.OTHER_SUB_FEE).amount,
+            self.bol.cny_sub_fee * self.bol.rate
+        )

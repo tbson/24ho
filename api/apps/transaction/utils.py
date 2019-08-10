@@ -172,7 +172,7 @@ class TransactionUtils:
         return transaction.uid
 
     @staticmethod
-    def charge_receipt_other_sub_fee(
+    def charge_receipt_vnd_delivery_fee(
         amount: int,
         customer: models.QuerySet,
         staff: models.QuerySet,
@@ -185,7 +185,7 @@ class TransactionUtils:
             customer=customer,
             staff=staff,
             amount=amount,
-            type=Type.OTHER_SUB_FEE,
+            type=Type.VN_DELIVERY_FEE,
             money_type=MoneyType.INDIRECT,
             receipt=receipt,
             note="Phụ phí khác phiếu thu {}".format(receipt.uid)

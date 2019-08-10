@@ -49,6 +49,7 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
             <td>{data.address_code}</td>
             <td>{data.bag_uid}</td>
             <td>{getStatus(data)}</td>
+            <td className="mono vnd">{Tools.numberFormat(data.vnd_delivery_fee)}</td>
             <td className="mono right">{data.mass}</td>
             <td className="mono right">{data.length}</td>
             <td className="mono right">{data.width}</td>

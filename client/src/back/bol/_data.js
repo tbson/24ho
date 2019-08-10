@@ -46,6 +46,7 @@ export type FormValues = {
     cn_date: string,
     vn_date: string,
     exported_date: string,
+    vnd_delivery_fee: number,
     mass: number,
     length: number,
     width: number,

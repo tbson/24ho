@@ -101,7 +101,7 @@ class BolViewSet(GenericViewSet):
         if status:
             raise ValidationError(status)
 
-        vnd_other_sub_fee = int(self.request.query_params.get('vnd_sub_fee', 0))
+        vnd_delivery_fee = int(self.request.query_params.get('vnd_sub_fee', 0))
         note = self.request.query_params.get('note', '')
         customer = bols[0].customer
         staff = request.user.staff
@@ -109,7 +109,7 @@ class BolViewSet(GenericViewSet):
         address = bols[0].address
 
         receipt = Receipt(
-            vnd_other_sub_fee=vnd_other_sub_fee,
+            vnd_delivery_fee=vnd_delivery_fee,
             note=note,
             customer=customer,
             staff=staff,
@@ -118,10 +118,10 @@ class BolViewSet(GenericViewSet):
         )
         receipt.save()
 
-        if vnd_other_sub_fee:
-            TransactionUtils.charge_receipt_other_sub_fee(vnd_other_sub_fee, customer, staff, receipt)
+        if vnd_delivery_fee:
+            TransactionUtils.charge_receipt_vnd_delivery_fee(vnd_delivery_fee, customer, staff, receipt)
 
-        total = vnd_other_sub_fee
+        total = vnd_delivery_fee
         if type == Type.TRANSPORT:
             total = total + BolUtils.export_transport_bols(bols, receipt, customer, staff)
         else:
