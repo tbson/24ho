@@ -19,7 +19,8 @@ export default ({list, onEdit, onRemove}: Props) => {
                         <th className="row25">#</th>
                         <th scope="col">Ngày</th>
                         <th scope="col">Mã vận đơn</th>
-                        <th scope="col">Bao</th>
+                        <th scope="col">Bao hàng</th>
+                        <th scope="col">Địa chỉ</th>
                         <th scope="col" className="right">
                             Khối lượng
                         </th>
