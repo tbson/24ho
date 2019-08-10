@@ -78,7 +78,7 @@ class TransactionUtils:
         return assets - liabilities
 
     @staticmethod
-    def recharge(amount: int, money_type: int, customer: models.QuerySet, staff: models.QuerySet, note: str) -> str:
+    def recharge(amount: int, money_type: int, customer: models.QuerySet, staff: models.QuerySet) -> str:
         from .models import Type
         from .models import Transaction
 

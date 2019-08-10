@@ -42,6 +42,10 @@ class Tools:
         return '.'.join(path_arr)
 
     @staticmethod
+    def now() -> timezone:
+        return timezone.now()
+
+    @staticmethod
     def scale_image(ratio, path, scale_only=False):
         max_width = settings.IMAGE_MAX_WIDTH
         try:

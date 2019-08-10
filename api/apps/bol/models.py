@@ -156,9 +156,11 @@ class Bol(TimeStampedModel):
             try:
                 order = Order.objects.get(purchase_code=self.purchase_code)
                 self.order = order
-                self.address = order.address
             except Order.DoesNotExist:
                 pass
+
+        if self.order is not None:
+            self.address = self.order.address
 
         if not self.address and not self.address_code:
             self.address_code = ''

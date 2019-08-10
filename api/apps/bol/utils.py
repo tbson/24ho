@@ -20,7 +20,7 @@ error_messages = {
 class BolUtils:
 
     @staticmethod
-    def seeding(index: int, single: bool = False, save: bool = True) -> models.QuerySet:
+    def seeding(index: int, single: bool = False, save: bool = True, **kwargs) -> models.QuerySet:
         from .serializers import BolBaseSr
 
         if index == 0:
@@ -34,6 +34,11 @@ class BolUtils:
                 'uid': "UID{}".format(i),
                 'address': address.pk
             }
+
+            _order = kwargs.get('order', None)
+            if _order is not None:
+                data['order'] = _order.pk
+
             if save is False:
                 return data
 

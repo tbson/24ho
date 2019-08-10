@@ -39,7 +39,7 @@ class QuantityResolve:
 class OrderUtils:
 
     @staticmethod
-    def seeding(index: int, single: bool = False, save: bool = True) -> models.QuerySet:
+    def seeding(index: int, single: bool = False, save: bool = True, **kwargs) -> models.QuerySet:
         from .serializers import OrderBaseSr
 
         address = AddressUtils.seeding(1, True)
@@ -57,6 +57,10 @@ class OrderUtils:
                 'rate': 3400,
                 'real_rate': 3300
             }
+
+            _customer = kwargs.get('customer', None)
+            if _customer is not None:
+                data['customer'] = _customer.pk
 
             if save is False:
                 return data
@@ -402,13 +406,13 @@ class OrderUtils:
 
     @staticmethod
     def get_deposit_amount(order: models.QuerySet) -> int:
-        from .serializers import OrderBaseSr
-        return int(OrderUtils.get_vnd_total(OrderBaseSr(order).data) * order.deposit_factor / 100)
+        amount = OrderUtils.cal_amount(order)
+        return int(amount * order.rate * order.deposit_factor / 100)
 
     @staticmethod
     def get_remain_after_deposit_amount(order: models.QuerySet) -> int:
         from .serializers import OrderBaseSr
-        return int(OrderUtils.get_vnd_total(OrderBaseSr(order).data) * (100 - order.deposit_factor) / 100)
+        return int(OrderUtils.get_vnd_total(OrderBaseSr(order).data) - OrderUtils.get_deposit_amount(order))
 
     @staticmethod
     def can_deposit(order: models.QuerySet) -> bool:
@@ -499,3 +503,21 @@ class OrderUtils:
                 order_list.append(bol.order.pk)
 
         return Order.objects.filter(pk__in=set(order_list))
+
+    @staticmethod
+    def approve(order: models.QuerySet, staff: models.QuerySet) -> tuple:
+        from .move_status_utils import MoveStatusUtils
+        from .models import Status
+        if order.status == Status.NEW:
+            if not OrderUtils.can_deposit(order):
+                return (False, "Đơn hàng {} không đủ tiền đặt cọc.".format(order.uid))
+            deposit = OrderUtils.get_deposit_amount(order)
+            MoveStatusUtils.move(order, Status.APPROVED, approver=staff, amount=deposit)
+            return (True, "")
+        return (False, "Đơn hàng {} không ở trạng thái chờ duyệt.".format(order.uid))
+
+    @staticmethod
+    def force_cal(order: models.QuerySet) -> models.QuerySet:
+        order.__dict__.update(OrderUtils.cal_all(order))
+        order.save()
+        return order

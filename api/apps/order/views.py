@@ -5,7 +5,7 @@ from rest_framework.decorators import action
 from rest_framework.viewsets import (GenericViewSet, )
 from rest_framework.serializers import ValidationError
 from rest_framework import status
-from .models import Order, Status
+from .models import Order
 from apps.staff.models import Staff
 from apps.address.models import Address
 from .serializers import OrderBaseSr
@@ -150,12 +150,10 @@ class OrderViewSet(GenericViewSet):
         from .utils import OrderUtils
         pks = self.request.data.get('ids', [])
         for pk in pks:
-            obj = get_object_or_404(Order, pk=pk)
-            if obj.status == Status.NEW:
-                if not OrderUtils.can_deposit(obj):
-                    raise ValidationError("Đơn hàng {} không đủ tiền đặt cọc.".format(obj.uid))
-                deposit = OrderUtils.get_deposit_amount(obj)
-                MoveStatusUtils.move(obj, Status.APPROVED, approver=request.user.staff, amount=deposit)
+            order = get_object_or_404(Order, pk=pk)
+            success, message = OrderUtils.approve(order, request.user.staff)
+            if not success:
+                raise ValidationError(message)
         return res({'approved': pks})
 
     @action(methods=['get'], detail=False)

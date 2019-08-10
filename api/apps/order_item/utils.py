@@ -5,7 +5,7 @@ from .serializers import OrderItemBaseSr
 class OrderItemUtils:
 
     @staticmethod
-    def seeding(index: int, single: bool = False, save: bool = True) -> models.QuerySet:
+    def seeding(index: int, single: bool = False, save: bool = True, **kwargs) -> models.QuerySet:
         from apps.order.utils import OrderUtils
         order = OrderUtils.seeding(1, True)
 
@@ -20,6 +20,11 @@ class OrderItemUtils:
                 'quantity': i,
                 'unit_price': 10.5 + i
             }
+
+            _order = kwargs.get('order', None)
+            if _order is not None:
+                data['order'] = _order.pk
+
             if save is False:
                 return data
 

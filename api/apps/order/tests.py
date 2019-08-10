@@ -19,6 +19,7 @@ from apps.staff.utils import StaffUtils
 from apps.bol.utils import BolUtils
 from apps.count_check.utils import CountCheckUtils
 from apps.transaction.utils import TransactionUtils
+from apps.transaction.models import Transaction, Type, MoneyType
 from utils.helpers.test_helpers import TestHelpers
 from django.conf import settings
 # Create your tests here.
@@ -1237,3 +1238,100 @@ class UtilsComplaintResolve(TestCase):
 
         self.assertEqual(Order.objects.count(), 2)
         self.assertEqual(OrderItem.objects.count(), 4)
+
+
+class UtilsGetDepositAmount(TestCase):
+    def test_customer_did_not_set_deposit_factor(self):
+        customer = CustomerUtils.seeding(1, True)
+        order = OrderUtils.seeding(1, True, customer=customer)
+        self.assertEqual(order.deposit_factor, settings.DEPOSIT_FACTOR)
+
+    def test_customer_did_set_deposit_factor_negative(self):
+        customer = CustomerUtils.seeding(1, True)
+        customer.deposit_factor = -1
+        customer.save()
+
+        order = OrderUtils.seeding(1, True, customer=customer)
+        self.assertEqual(order.deposit_factor, settings.DEPOSIT_FACTOR)
+
+    def test_customer_did_set_deposit_factor_over_90(self):
+        customer = CustomerUtils.seeding(1, True)
+        customer.deposit_factor = 90.1
+        customer.save()
+
+        order = OrderUtils.seeding(1, True, customer=customer)
+        self.assertEqual(order.deposit_factor, settings.DEPOSIT_FACTOR)
+
+    def test_success(self):
+        customer = CustomerUtils.seeding(1, True)
+        customer.deposit_factor = 80.1
+        customer.save()
+
+        order = OrderUtils.seeding(1, True, customer=customer)
+        self.assertEqual(order.deposit_factor, customer.deposit_factor)
+
+
+class UtilsGetRemainAfterDepositAmount(TestCase):
+    def test_success(self):
+        customer = CustomerUtils.seeding(1, True)
+        customer.deposit_factor = 50
+        customer.save()
+
+        order = OrderUtils.seeding(1, True, customer=customer)
+        OrderItemUtils.seeding(1, True, order=order)
+
+        deposit_amount = OrderUtils.get_deposit_amount(order)
+        vnd_total = OrderUtils.get_vnd_total(OrderBaseSr(order).data)
+        self.assertEqual(
+            OrderUtils.get_remain_after_deposit_amount(order),
+            int(vnd_total) - deposit_amount
+        )
+
+
+class UtilsApprove(TestCase):
+    def setUp(self):
+        self.order = OrderUtils.seeding(1, True)
+        self.order.status = Status.NEW
+
+        self.staff = StaffUtils.seeding(1, True)
+
+        OrderItemUtils.seeding(1, order=self.order)
+        BolUtils.seeding(1, order=self.order)
+
+        OrderUtils.force_cal(self.order)
+
+    def test_not_enough_to_deposit(self):
+        # Approve
+        success, _ = OrderUtils.approve(self.order, self.staff)
+        self.assertEqual(success, False)
+        self.assertEqual(Transaction.objects.count(), 0)
+
+    def test_not_at_new_status(self):
+        self.order.status = Status.DEBT
+        self.order.save()
+
+        # Approve
+        success, _ = OrderUtils.approve(self.order, self.staff)
+        self.assertEqual(success, False)
+        self.assertEqual(Transaction.objects.count(), 0)
+
+    def test_success_case(self):
+        self.assertEqual(Transaction.objects.count(), 0)
+
+        # Recharge
+        recharge_amount = 50000
+        money_type = MoneyType.CASH
+        customer = CustomerUtils.seeding(1, True)
+        TransactionUtils.recharge(recharge_amount, money_type, customer, self.staff)
+        self.assertEqual(Transaction.objects.count(), 1)
+
+        # Approve
+        success, _ = OrderUtils.approve(self.order, self.staff)
+        self.assertEqual(success, True)
+        self.assertEqual(Transaction.objects.count(), 2)
+
+        deposit_transaction = Transaction.objects.get(order=self.order, type=Type.DEPOSIT)
+        self.assertEqual(
+            deposit_transaction.amount,
+            OrderUtils.get_deposit_amount(self.order)
+        )

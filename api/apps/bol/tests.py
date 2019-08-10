@@ -8,9 +8,16 @@ from .utils import BolUtils, error_messages
 from utils.helpers.test_helpers import TestHelpers
 from apps.delivery_fee.utils import DeliveryFeeUtils
 from apps.customer.utils import CustomerUtils
+from apps.staff.utils import StaffUtils
 from apps.order.utils import OrderUtils
+from apps.order.models import Status
+from apps.order_item.utils import OrderItemUtils
 from apps.address.utils import AddressUtils
+from apps.receipt.utils import ReceiptUtils
+from apps.transaction.utils import TransactionUtils
+from apps.transaction.models import Transaction, Type, MoneyType
 from django.conf import settings
+from utils.helpers.tools import Tools
 # Create your tests here.
 
 
@@ -757,3 +764,45 @@ class UtilsExportAlready(TestCase):
     def test_success_case(self):
         items = Bol.objects.filter(pk__in=self.ids)
         self.assertEqual(BolUtils.export_already(items), '')
+
+
+class UtilsExportOrderBols(TestCase):
+    def setUp(self):
+        self.customer = CustomerUtils.seeding(1, True)
+        self.staff = StaffUtils.seeding(1, True)
+
+        self.order = OrderUtils.seeding(1, True, customer=self.customer)
+        self.order.status = Status.NEW
+
+        OrderItemUtils.seeding(1, True, order=self.order)
+
+        self.bol = BolUtils.seeding(1, True, order=self.order)
+        self.bol.mass = 5
+        self.bol.save()
+
+        OrderUtils.force_cal(self.order)
+
+    def test_normal_case(self):
+        # Recharge
+        recharge_amount = 500000
+        money_type = MoneyType.CASH
+        TransactionUtils.recharge(recharge_amount, money_type, self.customer, self.staff)
+
+        # Approve
+        OrderUtils.approve(self.order, self.staff)
+
+        # Set status
+        self.order.status = Status.VN_STORE
+        self.order.cn_date = Tools.now()
+        self.order.vn_date = Tools.now()
+        self.order.save()
+
+        # Export
+        receipt = ReceiptUtils.seeding(1, True)
+        BolUtils.export_order_bols(self.order.order_bols.all(), receipt, self.customer, self.staff)
+
+        deposit = Transaction.objects.get(order=self.order, type=Type.DEPOSIT)
+        pay = Transaction.objects.get(order=self.order, type=Type.PAY)
+        vnd_total = OrderUtils.get_vnd_total_obj(self.order)
+
+        self.assertEqual(deposit.amount + pay.amount, vnd_total)

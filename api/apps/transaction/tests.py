@@ -96,17 +96,14 @@ class TransactionTestCase(TestCase):
         self.assertEqual(Transaction.objects.count(), 0)
 
 
-class UtilApproveOrder(TestCase):
+class UtilDeposit(TestCase):
 
     def test_normal_case(self):
         order = OrderUtils.seeding(1, True)
-        order_items = OrderItemUtils.seeding(2)
-        for order_item in order_items:
-            order_item.order = order
-            order_item.save()
+        OrderItemUtils.seeding(2, order=order)
 
         staff = StaffUtils.seeding(1, True)
-        TransactionUtils.recharge(100000000, MoneyType.CASH, order.customer, staff, '')
+        TransactionUtils.recharge(100000000, MoneyType.CASH, order.customer, staff)
         self.assertEqual(Transaction.objects.count(), 1)
 
         TransactionUtils.deposit(order, staff)
@@ -120,7 +117,7 @@ class UtilApproveOrder(TestCase):
         self.assertEqual(transaction.type, Type.DEPOSIT)
 
 
-class UtilUnapproveOrder(TestCase):
+class UtilUndeposit(TestCase):
 
     def test_normal_case(self):
         order = OrderUtils.seeding(1, True)

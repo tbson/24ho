@@ -119,9 +119,12 @@ class Order(TimeStampedModel):
         from .utils import OrderUtils
         if self._state.adding and self.address and not self.uid:
             self.uid = OrderUtils.get_next_uid(self.address)
-            self.deposit_factor = settings.DEPOSIT_FACTOR
+
             self.customer = self.address.customer
-            if self.customer.deposit_factor:
+            deposit_factor = self.customer.deposit_factor
+            if not deposit_factor or deposit_factor < 0 or deposit_factor > 90:
+                self.deposit_factor = settings.DEPOSIT_FACTOR
+            else:
                 self.deposit_factor = self.customer.deposit_factor
 
         if self.purchase_code:
