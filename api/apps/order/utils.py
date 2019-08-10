@@ -13,6 +13,7 @@ from typing import Dict
 from django.conf import settings
 
 error_messages = {
+    'BOL_NOT_FOUND': 'Vận đơn này không tồn tại.',
     'BOL_ORDER_NOT_FOUND': 'Vận đơn này chưa được gắn với order nào.',
     'ORDER_WAS_PENDING': 'Đơn hàng của vận đơn này đang trong trạng thái khiếu nại.',
     'ORDER_AFTER_EXPORTING': 'Có ít nhất 1 vận đơn của đơn hàng này đã được xuất.',
@@ -271,8 +272,12 @@ class OrderUtils:
     def get_items_for_checking(uid: str) -> models.QuerySet:
         from apps.bol.models import Bol
         from .models import Status
-
+        uid = uid.strip().upper()
         bol = Bol.objects.filter(uid=uid).first()
+
+        if bol is None:
+            raise ValidationError(error_messages['BOL_NOT_FOUND'])
+
         if not bol.order_id:
             raise ValidationError(error_messages['BOL_ORDER_NOT_FOUND'])
 
