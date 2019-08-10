@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import action
@@ -29,6 +30,7 @@ class ReceiptViewSet(GenericViewSet):
         serializer = ReceiptBaseSr(obj)
         return res(serializer.data)
 
+    @transaction.atomic
     @action(methods=['post'], detail=True)
     def add(self, request):
         serializer = ReceiptBaseSr(data=request.data)
@@ -36,6 +38,7 @@ class ReceiptViewSet(GenericViewSet):
             serializer.save()
         return res(serializer.data)
 
+    @transaction.atomic
     @action(methods=['put'], detail=True)
     def change(self, request, pk=None):
         obj = get_object_or_404(Receipt, pk=pk)
@@ -44,12 +47,14 @@ class ReceiptViewSet(GenericViewSet):
             serializer.save()
         return res(serializer.data)
 
+    @transaction.atomic
     @action(methods=['delete'], detail=True)
     def delete(self, request, pk=None):
         obj = get_object_or_404(Receipt, pk=pk)
         obj.delete()
         return res(status=status.HTTP_204_NO_CONTENT)
 
+    @transaction.atomic
     @action(methods=['delete'], detail=False)
     def delete_list(self, request):
         pk = self.request.query_params.get('ids', '')
