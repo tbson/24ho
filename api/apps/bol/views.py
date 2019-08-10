@@ -64,12 +64,20 @@ class BolViewSet(GenericViewSet):
         return self.get_paginated_response(result)
 
     def ready_to_export_list(self, request):
-        queryset = Bol.objects.filter(address__isnull=False, cn_date__isnull=False, exported_date__isnull=True)
+        queryset = Bol.objects.filter(
+            address__isnull=False,
+            cn_date__isnull=False,
+            exported_date__isnull=True
+        )
         queryset = self.filter_queryset(queryset)
-        queryset = self.paginate_queryset(queryset)
-        serializer = BolBaseSr(queryset, many=True)
 
-        return NoPaginationStatic.get_paginated_response(serializer.data)
+        order_bols = queryset.filter(order__isnull=False, order__checked_date__isnull=False)
+        transport_bols = queryset.filter(order__isnull=True)
+
+        order_bols_data = BolBaseSr(order_bols, many=True).data
+        transport_bols_data = BolBaseSr(transport_bols, many=True).data
+
+        return NoPaginationStatic.get_paginated_response(order_bols_data + transport_bols_data)
 
     def export_check(self, request):
         ids = [int(pk) for pk in self.request.query_params.get('ids', '').split(',')]
