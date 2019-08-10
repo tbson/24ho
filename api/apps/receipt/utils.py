@@ -39,3 +39,20 @@ class ReceiptUtils:
             return [get_data(i) for i in range(1, index + 1)]
 
         return get_data(index) if single is True else get_list_data(index)
+
+    @staticmethod
+    def cleanup_before_deleteing(receipt):
+        transactions = receipt.receipt_transactions.all()
+        for item in transactions:
+            item.delete()
+
+        bols = receipt.receipt_bols.all()
+        for item in bols:
+            item.receipt = None
+            item.exported_date = None
+            item.save()
+
+        orders = receipt.receipt_bols.all()
+        for item in orders:
+            item.receipt = None
+            item.save()

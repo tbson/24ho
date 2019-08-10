@@ -47,6 +47,13 @@ class Receipt(TimeStampedModel):
             self.address_code = self.address.uid
         super(Receipt, self).save(*args, **kwargs)
 
+    def delete(self, *args, **kwargs):
+        from .utils import ReceiptUtils
+
+        ReceiptUtils.cleanup_before_deleteing(self)
+
+        super(Receipt, self).delete(*args, **kwargs)
+
     def __str__(self):
         return self.uid
 
