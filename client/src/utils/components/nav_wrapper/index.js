@@ -106,8 +106,8 @@ const App = ({history, location, children}: Props) => {
                     {renderMenu('admin')}
                     {renderMenu('customer')}
                     {renderMenu('transaction')}
-                    {renderMenu('order')}
                     {renderMenu('bag')}
+                    {renderMenu('order')}
                     {renderMenu('bol')}
                     {renderMenu('check')}
                     {renderMenu('receipt')}

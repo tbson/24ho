@@ -281,6 +281,11 @@ class BolUtils:
                 total = total + vnd_delivery_fee
                 TransactionUtils.charge_bol_delivery_fee(vnd_delivery_fee, customer, staff, receipt, bol)
 
+            vnd_insurance_fee = int(bol.cny_insurance_fee * bol.rate)
+            if vnd_insurance_fee:
+                total = total + vnd_insurance_fee
+                TransactionUtils.charge_bol_insurance_fee(vnd_insurance_fee, customer, staff, receipt, bol)
+
             vnd_sub_fee = int(bol.cny_sub_fee * bol.rate)
             if vnd_sub_fee:
                 total = total + vnd_sub_fee

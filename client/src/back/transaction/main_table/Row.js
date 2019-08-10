@@ -2,9 +2,8 @@
 import * as React from 'react';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
-import {apiUrls} from '../_data';
+import {apiUrls, listType, listMoneyType} from '../_data';
 import type {TRow} from '../_data';
-import {Service as TableService} from './index.js';
 
 export class Service {
     static removeRequest(id: number): Promise<Object> {
@@ -52,8 +51,8 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
             <td className="mono">{data.uid}</td>
             <td>{data.staff_username}</td>
             {Tools.isAdmin() && <td>{data.customer_username}</td>}
-            <td>{TableService.listType[String(data.type)]}</td>
-            <td>{TableService.listMoneyType[String(data.money_type)]}</td>
+            <td>{listType[String(data.type)]}</td>
+            <td>{listMoneyType[String(data.money_type)]}</td>
             <td>{data.note}</td>
             {Tools.isAdmin() && (
                 <td className="center">

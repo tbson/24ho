@@ -107,6 +107,7 @@ export default ({order_id = 0, bol_date_id = 0, bag_id = 0, notifyChange}: Props
                         <th scope="col">Bao</th>
                         <th scope="col">Trạng thái</th>
                         <th scope="col" className="right">P.Vận Chuyển</th>
+                        <th scope="col" className="right">Bảo hiểm</th>
                         <th scope="col" className="right">
                             Khối lượng
                         </th>
@@ -122,7 +123,6 @@ export default ({order_id = 0, bol_date_id = 0, bag_id = 0, notifyChange}: Props
                         <th scope="col" className="right">
                             Số kiện
                         </th>
-                        <th scope="col">Bảo hiểm</th>
                         <th scope="col">Ghi chú</th>
                         <th scope="col" style={{padding: 8}} className="row80">
                             <button className="btn btn-primary btn-sm btn-block add-button" onClick={() => showForm(0)}>

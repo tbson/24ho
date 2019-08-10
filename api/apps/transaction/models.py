@@ -15,10 +15,11 @@ class Type:
     WITHDRAW = 4
     CN_DELIVERY_FEE = 5
     VN_DELIVERY_FEE = 6
-    COMPLAINT_REFUND = 7
-    DISCOUNT_REFUND = 8
-    DISCARD_REFUND = 9
-    OTHER_SUB_FEE = 10
+    INSURANCE_FEE = 7
+    COMPLAINT_REFUND = 8
+    DISCOUNT_REFUND = 9
+    DISCARD_REFUND = 10
+    OTHER_SUB_FEE = 11
 
 
 class MoneyType:
@@ -34,6 +35,7 @@ TYPE_CHOICES = (
     (Type.WITHDRAW, 'Rút tiền'),
     (Type.CN_DELIVERY_FEE, 'Phí vận chuyển CN-VN'),  # For transport bols
     (Type.VN_DELIVERY_FEE, 'Phí vận chuyển nội địa VN'),
+    (Type.INSURANCE_FEE, 'Phí bảo hiểm'),
     (Type.COMPLAINT_REFUND, 'Hoàn tiền khiếu nại'),
     (Type.DISCARD_REFUND, 'Hoàn tiền chiết khấu'),
     (Type.DISCARD_REFUND, 'Hoàn tiền huỷ đơn'),

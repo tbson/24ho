@@ -817,6 +817,8 @@ class UtilsExportTransportBols(TestCase):
 
         self.bol = BolUtils.seeding(1, True)
         self.bol.mass = 5
+        self.bol.insurance = True
+        self.bol.cny_insurance_value = 500
         self.bol.cny_sub_fee = 6.2
         self.bol.save()
 
@@ -827,10 +829,14 @@ class UtilsExportTransportBols(TestCase):
         # Export
         receipt = ReceiptUtils.seeding(1, True)
         BolUtils.export_transport_bols(Bol.objects.filter(pk=self.bol.pk), receipt, self.customer, self.staff)
-        self.assertEqual(Transaction.objects.count(), 2)
+        self.assertEqual(Transaction.objects.count(), 3)
         self.assertEqual(
             Transaction.objects.get(type=Type.CN_DELIVERY_FEE).amount,
             self.bol.vnd_delivery_fee
+        )
+        self.assertEqual(
+            Transaction.objects.get(type=Type.INSURANCE_FEE).amount,
+            self.bol.cny_insurance_fee * self.bol.rate
         )
         self.assertEqual(
             Transaction.objects.get(type=Type.OTHER_SUB_FEE).amount,

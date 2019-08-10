@@ -138,6 +138,7 @@ class Bol(TimeStampedModel):
 
     insurance = models.BooleanField(default=False)
     cny_insurance_value = models.FloatField(default=0)
+    cny_insurance_fee = models.FloatField(default=0)
 
     note = models.CharField(max_length=250, blank=True)
 
@@ -176,6 +177,7 @@ class Bol(TimeStampedModel):
             latest_rate = RateUtils.get_latest_rate()
             self.rate = latest_rate['value']
             self.real_rate = latest_rate['real_value']
+            self.cny_insurance_fee = BolUtils.cal_insurance_fee(self)
 
         if not self.address and not self.address_code:
             self.address_code = ''

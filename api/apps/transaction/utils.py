@@ -172,6 +172,30 @@ class TransactionUtils:
         return transaction.uid
 
     @staticmethod
+    def charge_bol_insurance_fee(
+        amount: int,
+        customer: models.QuerySet,
+        staff: models.QuerySet,
+        receipt: models.QuerySet,
+        bol: models.QuerySet,
+    ) -> str:
+        from .models import Type, MoneyType
+        from .models import Transaction
+
+        transaction = Transaction(
+            customer=customer,
+            staff=staff,
+            amount=amount,
+            type=Type.INSURANCE_FEE,
+            money_type=MoneyType.INDIRECT,
+            receipt=receipt,
+            bol=bol,
+            note="Phí bảo hiểm vận đơn {}".format(bol.uid)
+        )
+        transaction.save()
+        return transaction.uid
+
+    @staticmethod
     def charge_receipt_vnd_delivery_fee(
         amount: int,
         customer: models.QuerySet,

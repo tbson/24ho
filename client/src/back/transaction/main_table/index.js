@@ -4,7 +4,7 @@ import {useState, useEffect} from 'react';
 import type {SelectOptions} from 'src/utils/helpers/Tools';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
-import {apiUrls} from '../_data';
+import {apiUrls, listType, listMoneyType} from '../_data';
 import type {TRow, DbRow, ListItem, FormOpenType, FormOpenKeyType} from '../_data';
 import {Pagination, SearchInput} from 'src/utils/components/TableUtils';
 import MainForm from '../MainForm';
@@ -33,25 +33,6 @@ export class Service {
             .then(resp => (resp.ok ? {ids} : Promise.reject(resp)))
             .catch(Tools.popMessageOrRedirect);
     }
-
-    static listType = {
-        '1': 'Nạp tiền',
-        '2': 'Đặt cọc đơn',
-        '3': 'Thanh toán đơn hàng',
-        '4': 'Rút tiền',
-        '5': 'Phí vận chuyển CN-VN',
-        '6': 'Phí vận chuyển nội địa VN',
-        '7': 'Hoàn tiền khiếu nại',
-        '8': 'Hoàn tiền chiết khấu',
-        '9': 'Hoàn tiền huỷ đơn',
-        '10': 'Phụ phí khác'
-    };
-
-    static listMoneyType = {
-        '0': 'Gián tiếp',
-        '1': 'Tiền mặt',
-        '2': 'Chuyển khoản'
-    };
 
     static objToOptions(obj: Object): SelectOptions {
         return Object.entries(obj).map(([value, label]) => ({
@@ -189,8 +170,8 @@ export default ({}: Props) => {
 
             <MainForm
                 listCustomer={listCustomer.map(item => ({value: item.id, label: item.username}))}
-                listType={Service.objToOptions(Service.listType)}
-                listMoneyType={Service.objToOptions(Service.listMoneyType)}
+                listType={Service.objToOptions(listType)}
+                listMoneyType={Service.objToOptions(listMoneyType)}
                 close={() => MainFormService.toggleForm(false)}
                 onChange={onChange}>
                 <button

@@ -20,6 +20,26 @@ const rawApiUrls = [
 
 export const apiUrls = Tools.getApiUrls(rawApiUrls);
 
+export const listType = {
+    '1': 'Nạp tiền',
+    '2': 'Đặt cọc đơn',
+    '3': 'Thanh toán đơn hàng',
+    '4': 'Rút tiền',
+    '5': 'Phí vận chuyển CN-VN',
+    '6': 'Phí vận chuyển nội địa VN',
+    '7': 'Phí bảo hiểm',
+    '8': 'Hoàn tiền khiếu nại',
+    '9': 'Hoàn tiền chiết khấu',
+    '10': 'Hoàn tiền huỷ đơn',
+    '11': 'Phụ phí khác'
+};
+
+export const listMoneyType = {
+    '0': 'Gián tiếp',
+    '1': 'Tiền mặt',
+    '2': 'Chuyển khoản'
+};
+
 export type FormOpenType = {
     main: boolean
 };

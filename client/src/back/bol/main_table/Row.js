@@ -50,12 +50,12 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
             <td>{data.bag_uid}</td>
             <td>{getStatus(data)}</td>
             <td className="mono vnd">{Tools.numberFormat(data.vnd_delivery_fee)}</td>
+            <td className="mono cny">{Tools.numberFormat(data.cny_insurance_fee)}</td>
             <td className="mono right">{data.mass}</td>
             <td className="mono right">{data.length}</td>
             <td className="mono right">{data.width}</td>
             <td className="mono right">{data.height}</td>
             <td className="mono right">{data.packages}</td>
-            <td><BoolOutput value={data.insurance}/></td>
             <td>{data.note}</td>
             <td className="center">
                 <a className="editBtn" onClick={() => showForm(data.id)}>

@@ -52,7 +52,7 @@ export type FormValues = {
     width: number,
     height: number,
     packages: number,
-    insurance: boolean,
+    cny_insurance_fee: number,
     note: string
 };
 
