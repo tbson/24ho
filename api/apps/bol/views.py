@@ -66,7 +66,7 @@ class BolViewSet(GenericViewSet):
     def ready_to_export_list(self, request):
         queryset = Bol.objects.filter(
             address__isnull=False,
-            cn_date__isnull=False,
+            vn_date__isnull=False,
             exported_date__isnull=True
         )
         queryset = self.filter_queryset(queryset)
