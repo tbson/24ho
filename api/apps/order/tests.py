@@ -25,6 +25,13 @@ from django.conf import settings
 # Create your tests here.
 
 
+class OrderTmpCase(TestCase):
+    def test_normal_case(self):
+        order = OrderUtils.seeding(1, True)
+        order.hello = 'world'
+        order.save()
+
+
 class OrderUserGetItemsTestCase(TestCase):
 
     def setUp(self):

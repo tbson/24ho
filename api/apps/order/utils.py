@@ -16,13 +16,15 @@ error_messages = {
     'BOL_NOT_FOUND': 'Vận đơn này không tồn tại.',
     'BOL_ORDER_NOT_FOUND': 'Vận đơn này chưa được gắn với order nào.',
     'ORDER_WAS_PENDING': 'Đơn hàng của vận đơn này đang trong trạng thái khiếu nại.',
+    'ORDER_WAS_EXPORTED': 'Đơn hàng đã xuất ít nhất 1 vận đơn.',
     'ORDER_AFTER_EXPORTING': 'Có ít nhất 1 vận đơn của đơn hàng này đã được xuất.',
     'ORDER_MISSING_IN_ORDER_ITEM': 'Một trong những sản phẩm không nằm trong đơn hàng.',
     'ORDER_ITEM_MISSING': 'Số lượng sản phẩm không khớp.',
     'ITEM_ORDER_NOT_FOUND': 'Một trong những sản phẩm không nằm trong đơn hàng.',
     'ORDER_ITEM_NOT_FOUND': 'Vận đơn này không có mặt hàng nào.',
     'CHECKED_QUANTITY_LARGER_THAN_ORIGINAL_QUANTITY': 'Khối lượng kiểm lớn hơn khối lượng thực.',
-    'INT_CHECKED_QUANTITY': 'Số lượng kiểm phải là số nguyên >= 0.'
+    'INT_CHECKED_QUANTITY': 'Số lượng kiểm phải là số nguyên >= 0.',
+    'BOL_WAS_DISPATCHED': 'Đơn order này đã bắt đầu phát hàng.',
 }
 
 
@@ -526,3 +528,30 @@ class OrderUtils:
         order.__dict__.update(OrderUtils.cal_all(order))
         order.save()
         return order
+
+    @staticmethod
+    def check_order_for_frozen(order: models.QuerySet, delete_only: bool = False) -> models.QuerySet:
+        from .models import Status
+
+        if order.pending:
+            if hasattr(order, 'unpending'):
+                del order.unpending
+                return order
+            raise ValidationError(error_messages['ORDER_WAS_PENDING'])
+        if order.status >= Status.EXPORTED:
+            if hasattr(order, 'rollback'):
+                del order.rollback
+                return order
+            raise ValidationError(error_messages['ORDER_WAS_EXPORTED'])
+
+        if delete_only:
+            if order.status >= Status.DISPATCHED:
+                raise ValidationError(error_messages['BOL_WAS_DISPATCHED'])
+
+        return order
+
+    @staticmethod
+    def cleanup_before_deleting(order):
+        transactions = order.order_transactions.all()
+        for item in transactions:
+            item.delete()

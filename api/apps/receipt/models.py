@@ -50,7 +50,7 @@ class Receipt(TimeStampedModel):
     def delete(self, *args, **kwargs):
         from .utils import ReceiptUtils
 
-        ReceiptUtils.cleanup_before_deleteing(self)
+        ReceiptUtils.cleanup_before_deleting(self)
 
         super(Receipt, self).delete(*args, **kwargs)
 

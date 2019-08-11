@@ -117,6 +117,9 @@ class Order(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         from .utils import OrderUtils
+        if not self._state.adding:
+            self = OrderUtils.check_order_for_frozen(self)
+
         if self._state.adding and self.address and not self.uid:
             self.uid = OrderUtils.get_next_uid(self.address)
 
@@ -134,6 +137,12 @@ class Order(TimeStampedModel):
         if not Tools.is_testing():
             self.__dict__.update(OrderUtils.cal_all(self))
         super(Order, self).save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        from .utils import OrderUtils
+        OrderUtils.check_order_for_frozen(self, True)
+        OrderUtils.cleanup_before_deleting(self)
+        super(Order, self).delete(*args, **kwargs)
 
     def __str__(self):
         return self.address.title

@@ -244,6 +244,7 @@ export class Service {
     }
 
     static addressesToOptions(list: Array<Object>): Array<Object> {
+        if (!list) return [];
         return list.map(item => ({value: item.id, label: `${item.uid} - ${item.title}`}));
     }
 

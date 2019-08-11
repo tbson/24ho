@@ -3,11 +3,6 @@ from rest_framework.validators import UniqueValidator
 from .models import Order, STATUS_CHOICES
 from utils.helpers.tools import Tools
 
-error_messages = {
-    'ORDER_WAS_PENDING': 'Đơn hàng đang trong trạng thái khiếu nại.',
-    'ORDER_WAS_COMPLETED': 'Đơn hàng đã hoàn tất.'
-}
-
 
 class OrderBaseSr(ModelSerializer):
     vnd_total_discount = SerializerMethodField()
@@ -68,6 +63,7 @@ class OrderBaseSr(ModelSerializer):
     def get_status_name(self, obj):
         return dict(STATUS_CHOICES).get(obj.status, '')
 
+    '''
     def update(self, instance, validated_data):
         from .models import Status
         from .utils import error_messages
@@ -75,8 +71,9 @@ class OrderBaseSr(ModelSerializer):
             if instance.pending:
                 raise ValidationError(error_messages['ORDER_WAS_PENDING'])
             if instance.status >= Status.EXPORTED:
-                raise ValidationError(error_messages['ORDER_WAS_COMPLETED'])
+                raise ValidationError(error_messages['ORDER_WAS_EXPORTED'])
 
         [setattr(instance, key, value) for key, value in validated_data.items()]
         instance.save()
         return instance
+    '''
