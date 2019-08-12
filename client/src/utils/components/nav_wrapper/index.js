@@ -70,6 +70,9 @@ const App = ({history, location, children}: Props) => {
             case 'receipt':
                 if (APP !== 'admin') return null;
                 return menuItem('receipt', 'Phiếu xuất', 'fas fa-dolly');
+            case 'role':
+                if (APP !== 'admin') return null;
+                return menuItem('role', 'Phân quyền', 'fas fa-user-tag');
             case 'variable':
                 if (APP !== 'admin') return null;
                 return menuItem('variable', 'Cấu hình', 'fas fa-cog');
@@ -105,6 +108,7 @@ const App = ({history, location, children}: Props) => {
                     {renderMenu('profile')}
                     {renderMenu('admin')}
                     {renderMenu('customer')}
+                    {renderMenu('role')}
                     {renderMenu('transaction')}
                     {renderMenu('bag')}
                     {renderMenu('order')}
