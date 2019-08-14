@@ -10,6 +10,7 @@ from .serializers import (
     RoleBaseSr,
 )
 from utils.common_classes.custom_permission import CustomPermission
+from utils.common_classes.custom_pagination import NoPagination
 from utils.helpers.res_tools import res
 
 
@@ -17,6 +18,7 @@ class RoleViewSet(GenericViewSet):
     _name = 'role'
     serializer_class = RoleBaseSr
     permission_classes = (CustomPermission, )
+    pagination_class = NoPagination
     search_fields = ('name', )
 
     def list(self, request):
