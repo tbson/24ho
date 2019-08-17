@@ -15,7 +15,6 @@ import CheckInput from 'src/utils/components/formik_input/CheckInput';
 import DefaultModal from 'src/utils/components/modal/DefaultModal';
 import ButtonsBar from 'src/utils/components/form/ButtonsBar';
 import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
-import {FormContext} from 'src/utils/components/formik_input/Contexes';
 
 export class Service {
     static initialValues = {
@@ -117,20 +116,18 @@ export default ({id, open, close, onChange, children, submitTitle = 'Save'}: Pro
                 validationSchema={validationSchema}
                 onSubmit={handleSubmit(id, onChange, reOpenDialog)}>
                 {({errors, values, handleSubmit, resetForm, setFieldValue}) => (
-                    <FormContext.Provider value={{setFieldValue}}>
-                        <Form>
-                            <TextInput
-                                name="uid"
-                                label="Mã vận đơn"
-                                onChange={handleChange(handleSubmit)}
-                                autoFocus={true}
-                                required={true}
-                            />
-                            <HiddenInput name="vn_date" />
-                            <FormLevelErrMsg errors={errors.detail} />
-                            <ButtonsBar children={children} submitTitle={submitTitle} onClick={onClick(handleSubmit)} />
-                        </Form>
-                    </FormContext.Provider>
+                    <Form>
+                        <TextInput
+                            name="uid"
+                            label="Mã vận đơn"
+                            onChange={handleChange(handleSubmit)}
+                            autoFocus={true}
+                            required={true}
+                        />
+                        <HiddenInput name="vn_date" />
+                        <FormLevelErrMsg errors={errors.detail} />
+                        <ButtonsBar children={children} submitTitle={submitTitle} onClick={onClick(handleSubmit)} />
+                    </Form>
                 )}
             </Formik>
         </DefaultModal>
