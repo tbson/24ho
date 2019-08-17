@@ -12,6 +12,7 @@ import TextInput from 'src/utils/components/formik_input/TextInput';
 import DefaultModal from 'src/utils/components/modal/DefaultModal';
 import ButtonsBar from 'src/utils/components/form/ButtonsBar';
 import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
+import PermissionsInput from './PermissionsInput';
 
 export class Service {
     static toggleEvent = 'TOGGLE_ROLE_MAIN_FORM';
@@ -24,10 +25,12 @@ export class Service {
 
     static initialValues = {
         name: '',
+        permissions: []
     };
 
     static validationSchema = Yup.object().shape({
         name: Yup.string().required(ErrMsgs.REQUIRED),
+        permissions: Yup.array().of(Yup.number().min(0))
     });
 
     static changeRequest(params: Object) {
@@ -55,10 +58,11 @@ export class Service {
 type Props = {
     close: Function,
     onChange: Function,
+    permissions: Object,
     children?: React.Node,
     submitTitle?: string
 };
-export default ({close, onChange, children, submitTitle = 'Save'}: Props) => {
+export default ({close, onChange, permissions = {}, children, submitTitle = 'Save'}: Props) => {
     const {validationSchema, handleSubmit} = Service;
 
     const [open, setOpen] = useState(false);
@@ -93,6 +97,11 @@ export default ({close, onChange, children, submitTitle = 'Save'}: Props) => {
                 {({errors, handleSubmit}) => (
                     <Form>
                         <TextInput name="name" label="Nhóm" autoFocus={true} required={true} />
+                        <PermissionsInput
+                            grouped_permissions={permissions}
+                            permissions={initialValues.permissions}
+                            name="permissions"
+                        />
                         <FormLevelErrMsg errors={errors.detail} />
                         <ButtonsBar children={children} submitTitle={submitTitle} onClick={handleSubmit} />
                     </Form>

@@ -37,12 +37,14 @@ export class Service {
 export default ({}: Props) => {
     const [list, setList] = useState([]);
     const [links, setLinks] = useState({next: '', previous: ''});
+    const [permissions, setPermissions] = useState({});
 
     const listAction = ListTools.actions(list);
 
     const getList = async (url?: string, params?: Object) => {
         const data = await Service.handleGetList(url, params);
         if (!data) return;
+        setPermissions(data.extra.permissions);
         setList(ListTools.prepare(data.items));
         setLinks(data.links);
     };
@@ -128,7 +130,7 @@ export default ({}: Props) => {
                 </tfoot>
             </table>
 
-            <MainForm close={() => MainFormService.toggleForm(false)} onChange={onChange}>
+            <MainForm close={() => MainFormService.toggleForm(false)} onChange={onChange} permissions={permissions}>
                 <button
                     type="button"
                     className="btn btn-light"

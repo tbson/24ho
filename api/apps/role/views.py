@@ -12,6 +12,7 @@ from .serializers import (
 from utils.common_classes.custom_permission import CustomPermission
 from utils.common_classes.custom_pagination import NoPagination
 from utils.helpers.res_tools import res
+from .utils import RoleUtils
 
 
 class RoleViewSet(GenericViewSet):
@@ -22,11 +23,19 @@ class RoleViewSet(GenericViewSet):
     search_fields = ('name', )
 
     def list(self, request):
-        queryset = Role.objects.all()
+        queryset = Role.objects.exclude(name='Customer')
         queryset = self.filter_queryset(queryset)
         queryset = self.paginate_queryset(queryset)
         serializer = RoleBaseSr(queryset, many=True)
-        return self.get_paginated_response(serializer.data)
+
+        result = {
+            'items': serializer.data,
+            'extra': {
+                'permissions': RoleUtils.all_permissions()
+            }
+        }
+
+        return self.get_paginated_response(result)
 
     def retrieve(self, request, pk=None):
         obj = get_object_or_404(Role, pk=pk)
