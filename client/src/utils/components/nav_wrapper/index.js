@@ -16,7 +16,8 @@ type Props = {
 };
 
 const App = ({history, location, children}: Props) => {
-    const [toggled, setToggled] = useState(window.innerWidth >= 768 ? true : false);
+    const toggledValue = () => window.innerWidth >= 768 ? true : false;
+    const [toggled, setToggled] = useState(toggledValue());
 
     const logout = Tools.logout(history);
 
@@ -29,7 +30,7 @@ const App = ({history, location, children}: Props) => {
     }, []);
 
     const mediaQueryChanged = () => {
-        setToggled(!toggled);
+        setToggled(toggledValue());
     };
 
     const toggleAll = () => {
