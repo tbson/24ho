@@ -7,7 +7,7 @@ import Tools from 'src/utils/helpers/Tools';
 import type {ObjResp} from 'src/utils/helpers/Tools';
 import ButtonsBar from 'src/utils/components/form/ButtonsBar';
 import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
-import TextInput from 'src/utils/components/formik_input/TextInput';
+import TextInput from 'src/utils/components/input/TextInput';
 
 export class Service {
     static initialValues = {username: '', password: ''};

@@ -1,71 +1,59 @@
 // @flow
 import * as React from 'react';
 import {useState} from 'react';
+// $FlowFixMe: do not complain about hooks
+import {Field, ErrorMessage} from 'formik';
 import Tools from 'src/utils/helpers/Tools';
 import defaultAvatar from 'src/assets/images/default-avatar.svg';
+import Label from './Label';
 
 type Props = {
-    id: string,
-    label: string,
-    value: ?string,
-    placeholder?: string,
-    errMsg?: Array<string>,
-    disabled?: boolean,
-    onChange?: Function
+    name: string,
+    label?: string,
+    required?: boolean
 };
 
-type States = {
-    fileName?: string,
-    fileContent?: string
-};
-export default ({id, label, value, placeholder, errMsg = [], disabled = false, onChange}: Props) => {
-    const [fileName, setFileName] = useState('');
-    const [fileContent, setFileContent] = useState('');
-
-    const name = id.split('-').pop();
-    const className = `form-control ${errMsg.length ? 'is-invalid' : ''}`.trim();
-    let _fileName = fileName || Tools.getFileName(value || '');
-    let _fileContent = fileContent || value || '';
-
-    const _onChange = (event: Object) => {
-        const _fileName = Tools.getFileName(event.target.value);
-
-        // $FlowFixMe: This one never be null
-        const file = document.querySelector(`input[name=${name}]`).files[0];
-
-        const reader = new FileReader();
-        reader.addEventListener(
-            'load',
-            () => {
-                const _fileContent = reader.result;
-                setFileName(_fileName);
-                // $FlowFixMe: fileContent is string
-                setFileContent(_fileContent);
-            },
-            false
-        );
-        reader.readAsDataURL(file);
+export default ({name, label, required = false}: Props) => {
+    const onChange = (setFieldValue: Function) => {
+        return (e: Object) => setFieldValue(name, e.currentTarget.files[0]);
     };
 
     return (
-        <div className={`form-group ${name}-field`}>
-            <label htmlFor={name}>{label}</label>
-            <Preview fileContent={fileContent || _fileContent} />
-            <div className="custom-file">
-                <input type="file" className={className} name={name} id={name} onChange={_onChange} />
-                <label className="custom-file-label" htmlFor={name}>
-                    {fileName || placeholder}
-                </label>
-                <div className="invalid-feedback">{errMsg}</div>
-            </div>
+        <div className={'form-group'}>
+            <Field name={name}>
+                {({field, form}) => {
+                    const url = typeof field.value === 'object' ? URL.createObjectURL(field.value) : field.value;
+                    return (
+                        <>
+                            <Label name={name} label={label} required={required} />
+                            <div>
+                                <img src="" style={{width: '100%', maxWidth: 300}} />
+                            </div>
+                            <Preview url={url} />
+                            <input
+                                type="file"
+                                accept=".jpg,.jpeg,.png"
+                                name={name}
+                                className="form-control"
+                                placeholder="Select file"
+                                onChange={onChange(form.setFieldValue)}
+                            />
+                        </>
+                    );
+                }}
+            </Field>
+            <ErrorMessage name={name} className="red" component="div" />
         </div>
     );
 };
 
 type previewProps = {
-    fileContent?: string
+    url?: string
 };
-const Preview = ({fileContent}: previewProps) => {
-    const url = Tools.ensureImage(fileContent || '');
-    return <img src={fileContent || defaultAvatar} width="100%" />;
+const Preview = ({url}: previewProps) => {
+    return (
+        <div>
+            <img src={url || defaultAvatar} style={{width: '100%', maxWidth: 300}} />
+        </div>
+    );
 };

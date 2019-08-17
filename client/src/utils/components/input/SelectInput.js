@@ -1,88 +1,75 @@
 // @flow
 import * as React from 'react';
-import Tools from 'src/utils/helpers/Tools';
-import RawSelectInput from './RawSelectInput';
-import type {DropdownItemType} from 'src/utils/types/CommonTypes';
+// $FlowFixMe: do not complain about hooks
+import {Field, ErrorMessage} from 'formik';
+import Label from './Label';
+import type {SelectOptions} from 'src/utils/helpers/Tools';
+// $FlowFixMe: do not complain about importing node_modules
+import Loadable from 'react-loadable';
+const Select = Loadable({
+    // $FlowFixMe: do not complain about importing node_modules
+    loader: () => import('react-select'),
+    loading: () => <div>Loading select...</div>
+});
 
 type Props = {
-    options: Array<DropdownItemType>,
-    isMulti: boolean,
-
-    id: string,
-    type: string,
-    label: string,
-    errorMessage: string,
-    value?: any,
-    placeholder?: string,
-    required?: boolean,
+    name: string,
+    label?: string,
+    options: SelectOptions,
+    isMulti?: boolean,
     disabled?: boolean,
     autoFocus?: boolean,
-    onChange?: Function
+    required?: boolean
 };
 
-type States = {
-    value: string,
-    dataLoaded: boolean
-};
-
-export default class Input extends React.Component<Props, States> {
-    static defaultProps = {
-        type: 'text',
-        required: false,
-        disabled: false,
-        autoFocus: false,
-        errorMessage: ''
-    };
-
-    state = {
-        value: '',
-        dataLoaded: false
-    };
-
-    onChange = (value: string) => {
-        console.log('value:', value);
-        this.setState({value}, () => {
-            console.log('onChange:', this.state.value);
-        });
-    };
-
-    componentDidMount() {
-        this.setState({value: this.props.value, dataLoaded: true});
-    }
-
-    render() {
-        const {value, dataLoaded} = this.state;
-        if (!dataLoaded) return null;
-
-        const {id, label, options, isMulti, placeholder, onChange, errorMessage, required} = this.props;
-        const name = id.split('-').pop();
-        const className = `form-control ${errorMessage ? 'is-invalid' : ''}`.trim();
-        const selectProps = {options, value, isMulti};
-        const inputProps = {
-            ...this.props,
-            name,
-            className,
-            defaultValue: value,
-            placeholder: placeholder || `${label}...`
+export default ({
+    name,
+    label,
+    options,
+    autoFocus = false,
+    isMulti = false,
+    disabled = false,
+    required = false
+}: Props) => {
+    const handleChange = (setFieldValue: Function, isMulti: boolean) => {
+        return item => {
+            const value = isMulti ? item.map(i => i.value) : item.value;
+            setFieldValue(name, value);
         };
-
-        if (typeof onChange === 'function') {
-            inputProps.onChange = onChange;
-        }
-
-        delete inputProps.errorMessage;
-        delete inputProps.value;
-        delete inputProps.isMulti;
-
-        return (
-            <div className={`form-group ${name}-field`.trim()}>
-                <input {...inputProps} type="hidden" />
-                <label htmlFor={id} className={required ? 'red-dot' : ''}>
-                    {label}
-                </label>
-                <RawSelectInput {...selectProps} onChange={value => this.setState({value})} />
-                <div className="invalid-feedback">{errorMessage}</div>
-            </div>
-        );
-    }
-}
+    };
+    return (
+        <div className={'form-group'}>
+            <Label name={name} label={label} required={required} />
+            <Field name={name}>
+                {props => {
+                    const {field, form} = props;
+                    let value;
+                    if (isMulti) {
+                        value = options.filter(option => (field.value || []).includes(option.value));
+                    } else {
+                        value = options.find(option => option.value === field.value);
+                    }
+                    const renderErrorMessage = () => {
+                        if (!form.touched[field.name] || !form.errors[field.name]) return null;
+                        return <div className="red">{form.errors[field.name]}</div>;
+                    };
+                    return (
+                        <>
+                            <Select
+                                className="select-input"
+                                value={value}
+                                isMulti={isMulti}
+                                isSearchable={true}
+                                disabled={disabled}
+                                autoFocus={autoFocus}
+                                onChange={handleChange(form.setFieldValue, isMulti)}
+                                options={options}
+                            />
+                            {renderErrorMessage()}
+                        </>
+                    );
+                }}
+            </Field>
+        </div>
+    );
+};

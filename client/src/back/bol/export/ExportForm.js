@@ -8,7 +8,7 @@ import * as Yup from 'yup';
 import Tools from 'src/utils/helpers/Tools';
 import ErrMsgs from 'src/utils/helpers/ErrMsgs';
 import {apiUrls} from '../_data';
-import TextInput from 'src/utils/components/formik_input/TextInput';
+import TextInput from 'src/utils/components/input/TextInput';
 import DefaultModal from 'src/utils/components/modal/DefaultModal';
 import ButtonsBar from 'src/utils/components/form/ButtonsBar';
 import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';

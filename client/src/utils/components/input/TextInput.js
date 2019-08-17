@@ -1,57 +1,57 @@
 // @flow
 import * as React from 'react';
-import Tools from 'src/utils/helpers/Tools';
-import ErrorMessages from '../form/ErrorMessages';
+// $FlowFixMe: do not complain about hooks
+import {Field, ErrorMessage} from 'formik';
+import Label from './Label';
 
 type Props = {
-    id: string,
+    name: string,
+    label?: string,
     type?: string,
+    autoFocus?: boolean,
     required?: boolean,
     disabled?: boolean,
-    autoFocus?: boolean,
-    errMsg?: Array<string>,
-    value?: string,
-    placeholder?: string,
-    onChange?: Function,
-    label: string
+    onBlur?: Function,
+    onChange?: Function
 };
 
 export default ({
-    id,
+    name,
+    label,
     type = 'text',
+    autoFocus = false,
     required = false,
     disabled = false,
-    autoFocus = false,
-    errMsg = [],
-    label,
-    value,
-    placeholder,
-    onChange
+    onBlur: _onBlur,
+    onChange: _onChange
 }: Props) => {
-    const name = id.split('-').pop();
-    const className = `form-control ${errMsg.length ? 'is-invalid' : ''}`.trim();
-    const inputProps = {
-        id,
-        type,
-        required,
-        disabled,
-        autoFocus,
-        label,
-        placeholder,
-        name,
-        className,
-        defaultValue: value,
-        placeholder: placeholder || `${label}...`,
-        onChange: onChange === 'function' ? onChange : () => {}
+    const onBlur = typeof _onBlur === 'function' ? _onBlur : () => {};
+    const onChange = setFieldValue => e => {
+        const {value} = e.target;
+        setFieldValue(name, value);
+        typeof _onChange === 'function' && _onChange(value);
     };
 
     return (
-        <div className={`form-group ${name}-field`.trim()}>
-            <label htmlFor={id} className={required ? 'red-dot' : ''}>
-                {label}
-            </label>
-            <input {...inputProps} />
-            <ErrorMessages errors={errMsg} />
+        <div className={'form-group'}>
+            <Label name={name} label={label} required={required} />
+            <Field name={name}>
+                {({field, form}) => {
+                    return (
+                        <input
+                            id={name}
+                            type={type}
+                            autoFocus={autoFocus}
+                            disabled={disabled}
+                            className="form-control"
+                            onBlur={onBlur}
+                            value={field.value}
+                            onChange={onChange(form.setFieldValue)}
+                        />
+                    );
+                }}
+            </Field>
+            <ErrorMessage name={name} className="red" component="div" />
         </div>
     );
 };
