@@ -10,6 +10,7 @@ from .serializers import (
 )
 from apps.area.serializers import AreaBaseSr
 from utils.common_classes.custom_permission import CustomPermission
+from utils.common_classes.custom_pagination import NoPagination
 from utils.helpers.res_tools import res
 
 
@@ -17,7 +18,8 @@ class AddressViewSet(GenericViewSet):
     _name = 'address'
     serializer_class = AddressBaseSr
     permission_classes = (CustomPermission, )
-    search_fields = ('uid', 'value')
+    pagination_class = NoPagination
+    search_fields = ('uid', 'title')
 
     def list(self, request):
         if hasattr(self.request.user, 'customer'):

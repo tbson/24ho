@@ -17,6 +17,12 @@ const rawApiUrls = [
             export: 'export',
             exportCheck: 'export-check'
         }
+    },
+    {
+        controller: 'address',
+        endpoints: {
+            crud: ''
+        }
     }
 ];
 

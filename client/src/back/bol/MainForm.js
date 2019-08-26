@@ -9,6 +9,7 @@ import {APP} from 'src/constants';
 import OnlyAdmin from 'src/utils/components/OnlyAdmin';
 import {DeliveryFeeTypeOptions} from './_data';
 import Tools from 'src/utils/helpers/Tools';
+import type {SelectOptions} from 'src/utils/helpers/Tools';
 import ErrMsgs from 'src/utils/helpers/ErrMsgs';
 import {apiUrls} from './_data';
 import TextInput from 'src/utils/components/input/TextInput';
@@ -83,6 +84,10 @@ export class Service {
             );
         };
     }
+
+    static getAddressOptions(listAddress: Array<Object>): SelectOptions {
+        return listAddress.map(item => ({value: item.uid, label: item.uid + '-' + item.title}));
+    }
 }
 
 type Props = {
@@ -101,6 +106,7 @@ export default ({id, order_id = 0, open, close, onChange, children, submitTitle 
     const [openModal, setOpenModal] = useState(false);
     const [reOpenDialog, setReOpenDialog] = useState(true);
     const [initialValues, setInitialValues] = useState(Service.initialValues);
+    const [addressOptions, setAddressOptions] = useState([]);
 
     const retrieveThenOpen = (id: number) =>
         Service.retrieveRequest(id).then(resp => {
@@ -110,6 +116,12 @@ export default ({id, order_id = 0, open, close, onChange, children, submitTitle 
         });
 
     useEffect(() => {
+        if (!Tools.isAdmin()) {
+            Tools.fetch(apiUrls.addressCrud).then(listAddress=> {
+                setAddressOptions(Service.getAddressOptions(listAddress.items));
+            });
+        }
+
         open ? retrieveThenOpen(id) : setOpenModal(false);
         setReOpenDialog(id ? false : true);
     }, [open]);
@@ -137,10 +149,15 @@ export default ({id, order_id = 0, open, close, onChange, children, submitTitle 
                             <div className="col">
                                 <TextInput name="uid" label="Mã vận đơn" autoFocus={true} required={true} />
                             </div>
-                            <div className="col">
-                                <TextInput name="address_code" label="Mã địa chỉ" />
-                            </div>
+                            <OnlyAdmin reverse={true}>
+                                <div className="col">
+                                    <SelectInput name="address_code" options={addressOptions} label="Mã địa chỉ" />
+                                </div>
+                            </OnlyAdmin>
                             <OnlyAdmin>
+                                <div className="col">
+                                    <TextInput name="address_code" label="Mã địa chỉ" />
+                                </div>
                                 <div className="col">
                                     <TextInput name="purchase_code" label="Mã giao dịch" />
                                 </div>

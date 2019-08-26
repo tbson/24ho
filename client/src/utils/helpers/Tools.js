@@ -442,6 +442,10 @@ export default class Tools {
             .catch(Tools.popMessageOrRedirect);
     }
 
+    static fetch(url: string): Promise<Object> {
+        return Tools.apiClient(url, {}, 'GET', false);
+    }
+
     static getCheckedId(listItem: Array<Object>): string {
         const result = listItem.filter(item => !!item.checked).map(item => item.id);
         return result.join(',');

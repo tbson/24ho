@@ -238,3 +238,6 @@ button {
 .select-input div{
     border-radius: 0 !important;
 }
+input.form-control {
+    height: 38px;
+}
