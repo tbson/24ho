@@ -68,8 +68,10 @@ export class Service {
             : Tools.apiCall(apiUrls.crud + params.id, params, 'PUT');
     }
 
-    static retrieveRequest(id: number) {
-        return id ? Tools.apiCall(apiUrls.crud + id) : Promise.resolve({ok: true, data: Service.initialValues});
+    static retrieveRequest(id: number, initialValues: ?Object) {
+        return id
+            ? Tools.apiCall(apiUrls.crud + id)
+            : Promise.resolve({ok: true, data: initialValues || Service.initialValues});
     }
 
     static handleSubmit(id: number, order_id: number, onChange: Function, reOpenDialog: boolean) {
@@ -109,7 +111,7 @@ export default ({id, order_id = 0, open, close, onChange, children, submitTitle 
     const [addressOptions, setAddressOptions] = useState([]);
 
     const retrieveThenOpen = (id: number) =>
-        Service.retrieveRequest(id).then(resp => {
+        Service.retrieveRequest(id, initialValues).then(resp => {
             if (!resp.ok) return Tools.popMessage(resp.data.detail, 'error');
             setInitialValues({...resp.data});
             setOpenModal(true);
@@ -117,8 +119,13 @@ export default ({id, order_id = 0, open, close, onChange, children, submitTitle 
 
     useEffect(() => {
         if (!Tools.isAdmin()) {
-            Tools.fetch(apiUrls.addressCrud).then(listAddress=> {
+            Tools.fetch(apiUrls.addressCrud).then(listAddress => {
                 setAddressOptions(Service.getAddressOptions(listAddress.items));
+                const defaultAddress = listAddress.items.find(item => item.default === true);
+                if (defaultAddress) {
+                    const bol = {...initialValues, address_code: defaultAddress.uid};
+                    setInitialValues(bol);
+                }
             });
         }
 
@@ -143,87 +150,97 @@ export default ({id, order_id = 0, open, close, onChange, children, submitTitle 
                 initialValues={{...initialValues}}
                 validationSchema={validationSchema}
                 onSubmit={handleSubmit(id, order_id, onChange, reOpenDialog)}>
-                {({errors, values, handleSubmit}) => (
-                    <Form>
-                        <div className="row">
-                            <div className="col">
-                                <TextInput name="uid" label="Mã vận đơn" autoFocus={true} required={true} />
-                            </div>
-                            <OnlyAdmin reverse={true}>
-                                <div className="col">
-                                    <SelectInput name="address_code" options={addressOptions} label="Mã địa chỉ" />
-                                </div>
-                            </OnlyAdmin>
-                            <OnlyAdmin>
-                                <div className="col">
-                                    <TextInput name="address_code" label="Mã địa chỉ" />
-                                </div>
-                                <div className="col">
-                                    <TextInput name="purchase_code" label="Mã giao dịch" />
-                                </div>
-                            </OnlyAdmin>
-                        </div>
-                        <TextInput name="mass" type="number" label="Khối lượng (KG)" />
-                        <div className="row">
-                            <div className="col">
-                                <TextInput name="length" type="number" label="Dài (Cm)" />
-                            </div>
-                            <div className="col">
-                                <TextInput name="width" type="number" label="Rộng (Cm)" />
-                            </div>
-                            <div className="col">
-                                <TextInput name="height" type="number" label="Cao (Cm)" />
-                            </div>
-                        </div>
-                        <OnlyAdmin>
+                {({errors, values, handleSubmit}) => {
+                    return (
+                        <Form>
                             <div className="row">
                                 <div className="col">
-                                    <TextInput name="mass_unit_price" type="number" label="Đơn giá theo Kg (VND)" />
+                                    <TextInput name="uid" label="Mã vận đơn" autoFocus={true} required={true} />
+                                </div>
+                                <OnlyAdmin reverse={true}>
+                                    <div className="col">
+                                        <SelectInput name="address_code" options={addressOptions} label="Mã địa chỉ" />
+                                    </div>
+                                </OnlyAdmin>
+                                <OnlyAdmin>
+                                    <div className="col">
+                                        <TextInput name="address_code" label="Mã địa chỉ" />
+                                    </div>
+                                    <div className="col">
+                                        <TextInput name="purchase_code" label="Mã giao dịch" />
+                                    </div>
+                                </OnlyAdmin>
+                            </div>
+                            <TextInput name="mass" type="number" label="Khối lượng (KG)" />
+                            <div className="row">
+                                <div className="col">
+                                    <TextInput name="length" type="number" label="Dài (Cm)" />
                                 </div>
                                 <div className="col">
-                                    <TextInput name="volume_unit_price" type="number" label="Đơn giá theo Khối (VND)" />
+                                    <TextInput name="width" type="number" label="Rộng (Cm)" />
+                                </div>
+                                <div className="col">
+                                    <TextInput name="height" type="number" label="Cao (Cm)" />
                                 </div>
                             </div>
-                        </OnlyAdmin>
-                        <div className="row">
-                            <div className="col">
-                                <CheckInput name="shockproof" label="Chống sốc" />
-                                {values.shockproof && (
-                                    <TextInput name="cny_shockproof_fee" type="number" label="Phí chống sốc (CNY)" />
-                                )}
-                            </div>
-                            <div className="col">
-                                <CheckInput name="wooden_box" label="Đóng gỗ" />
-                                {values.wooden_box && (
-                                    <TextInput name="cny_wooden_box_fee" type="number" label="Phí đóng gỗ (CNY)" />
-                                )}
-                            </div>
-                            {!order_id && (
-                                <div className="col">
-                                    <CheckInput name="insurance" label="Bảo hiểm" />
-                                    {values.insurance && (
+                            <OnlyAdmin>
+                                <div className="row">
+                                    <div className="col">
+                                        <TextInput name="mass_unit_price" type="number" label="Đơn giá theo Kg (VND)" />
+                                    </div>
+                                    <div className="col">
                                         <TextInput
-                                            name="cny_insurance_value"
+                                            name="volume_unit_price"
                                             type="number"
-                                            label="Giá trị bảo hiểm (CNY)"
+                                            label="Đơn giá theo Khối (VND)"
+                                        />
+                                    </div>
+                                </div>
+                            </OnlyAdmin>
+                            <div className="row">
+                                <div className="col">
+                                    <CheckInput name="shockproof" label="Chống sốc" />
+                                    {values.shockproof && (
+                                        <TextInput
+                                            name="cny_shockproof_fee"
+                                            type="number"
+                                            label="Phí chống sốc (CNY)"
                                         />
                                     )}
                                 </div>
-                            )}
-                        </div>
+                                <div className="col">
+                                    <CheckInput name="wooden_box" label="Đóng gỗ" />
+                                    {values.wooden_box && (
+                                        <TextInput name="cny_wooden_box_fee" type="number" label="Phí đóng gỗ (CNY)" />
+                                    )}
+                                </div>
+                                {!order_id && (
+                                    <div className="col">
+                                        <CheckInput name="insurance" label="Bảo hiểm" />
+                                        {values.insurance && (
+                                            <TextInput
+                                                name="cny_insurance_value"
+                                                type="number"
+                                                label="Giá trị bảo hiểm (CNY)"
+                                            />
+                                        )}
+                                    </div>
+                                )}
+                            </div>
 
-                        <OnlyAdmin>
-                            <SelectInput
-                                name="delivery_fee_type"
-                                options={DeliveryFeeTypeOptions}
-                                label="Cách tính phí vận chuyển"
-                            />
-                        </OnlyAdmin>
-                        <TextInput name="note" label="Ghi chú" />
-                        <FormLevelErrMsg errors={errors.detail} />
-                        <ButtonsBar children={children} submitTitle={submitTitle} onClick={onClick(handleSubmit)} />
-                    </Form>
-                )}
+                            <OnlyAdmin>
+                                <SelectInput
+                                    name="delivery_fee_type"
+                                    options={DeliveryFeeTypeOptions}
+                                    label="Cách tính phí vận chuyển"
+                                />
+                            </OnlyAdmin>
+                            <TextInput name="note" label="Ghi chú" />
+                            <FormLevelErrMsg errors={errors.detail} />
+                            <ButtonsBar children={children} submitTitle={submitTitle} onClick={onClick(handleSubmit)} />
+                        </Form>
+                    );
+                }}
             </Formik>
         </DefaultModal>
     );
