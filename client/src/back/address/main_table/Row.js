@@ -4,6 +4,7 @@ import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
 import {apiUrls} from '../_data';
 import type {TRow} from '../_data';
+import {BoolOutput} from 'src/utils/components/TableUtils'
 
 export class Service {
     static removeRequest(id: number): Promise<Object> {
@@ -41,6 +42,7 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
             <td>{data.title}</td>
             <td>{data.phone}</td>
             <td>{data.fullname}</td>
+            <td><BoolOutput value={data.default}/></td>
             <td className="center">
                 <a className="editBtn" onClick={() => showForm(data.id)}>
                     <span className="fas fa-edit text-info pointer" />

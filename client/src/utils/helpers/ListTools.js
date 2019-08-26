@@ -12,12 +12,19 @@ export default class ListTools {
         return (data: Object) => {
             const index = list.findIndex(item => item.id === data.id);
             return {
-                remove: (): List => [...list.filter(item => item.id !== data.id)],
-                bulkRemove: (): List => [...list.filter(item => !data.ids.includes(item.id))],
-                add: (): List => [data, ...list],
-                update: (): List => {
-                    list[index] = {...list[index], ...data};
-                    return [...list];
+                remove: (_list: ?Array<Object> = undefined): List => {
+                    return [...(_list || list).filter(item => item.id !== data.id)];
+                },
+                bulkRemove: (_list: ?Array<Object> = undefined): List => {
+                    return [...(_list || list).filter(item => !data.ids.includes(item.id))];
+                },
+                add: (_list: ?Array<Object> = undefined): List => {
+                    return [data, ...(_list || list)];
+                },
+                update: (_list: ?Array<Object> = undefined): List => {
+                    const newList = _list || list;
+                    newList[index] = {...newList[index], ...data};
+                    return [...newList];
                 }
             };
         };

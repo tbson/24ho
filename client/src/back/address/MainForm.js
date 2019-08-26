@@ -10,6 +10,7 @@ import ErrMsgs from 'src/utils/helpers/ErrMsgs';
 import {apiUrls, Context} from './_data';
 import type {SelectOptions} from 'src/utils/helpers/Tools';
 import TextInput from 'src/utils/components/input/TextInput';
+import CheckInput from 'src/utils/components/input/CheckInput';
 import SelectInput from 'src/utils/components/input/SelectInput';
 import DefaultModal from 'src/utils/components/modal/DefaultModal';
 import ButtonsBar from 'src/utils/components/form/ButtonsBar';
@@ -20,7 +21,8 @@ export class Service {
         title: '',
         area: undefined,
         phone: '',
-        fullname: ''
+        fullname: '',
+        default: false
     };
 
     static validationSchema = Yup.object().shape({
@@ -28,7 +30,8 @@ export class Service {
         area: Yup.number().required(ErrMsgs.REQUIRED),
         phone: Yup.string()
             .required(ErrMsgs.REQUIRED)
-            .max(10, ErrMsgs.PHONE)
+            .max(10, ErrMsgs.PHONE),
+        default: Yup.boolean(),
     });
 
     static changeRequest(params: Object) {
@@ -103,6 +106,7 @@ export default ({id, listArea, open, close, onChange, children, submitTitle = 'S
                         <SelectInput name="area" label="Area" options={listArea} />
                         <TextInput name="phone" label="Phone" required={true} />
                         <TextInput name="fullname" label="Fullname" required={true} />
+                        <CheckInput name="default" label="Mặc định"/>
                         <FormLevelErrMsg errors={errors.detail} />
                         <ButtonsBar children={children} submitTitle={submitTitle} onClick={onClick(handleSubmit)} />
                     </Form>

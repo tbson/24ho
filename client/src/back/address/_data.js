@@ -30,7 +30,8 @@ export type FormValues = {
     uid?: string,
     title: string,
     phone: string,
-    fullname: string
+    fullname: string,
+    default: boolean
 };
 
 export type DbRow = FormValues & {

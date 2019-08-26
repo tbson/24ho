@@ -59,7 +59,9 @@ export default ({}: Props) => {
     const onChange = (data: TRow, type: string, reOpenDialog: boolean) => {
         toggleForm(false);
         data = AreaService.prepareItem(data, listArea);
-        setList(listAction(data)[type]());
+        let newList = [...list];
+        if (data.default) newList = list.map(item => ({...item, default: false}));
+        setList(listAction(data)[type](newList));
         reOpenDialog && toggleForm(true);
     };
 
@@ -101,6 +103,7 @@ export default ({}: Props) => {
                         <th scope="col">Address</th>
                         <th scope="col">Phone</th>
                         <th scope="col">Fullname</th>
+                        <th scope="col">Mặc định</th>
                         <th scope="col" style={{padding: 8}} className="row80">
                             <button className="btn btn-primary btn-sm btn-block add-button" onClick={() => showForm(0)}>
                                 <span className="fas fa-plus" />
