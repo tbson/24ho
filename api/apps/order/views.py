@@ -149,9 +149,12 @@ class OrderViewSet(GenericViewSet):
     def bulk_approve(self, request):
         from .utils import OrderUtils
         pks = self.request.data.get('ids', [])
+        sale = int(self.request.data.get('sale', 0))
+        if not sale:
+            sale = None
         for pk in pks:
             order = get_object_or_404(Order, pk=pk)
-            success, message = OrderUtils.approve(order, request.user.staff)
+            success, message = OrderUtils.approve(order, request.user.staff, sale)
             if not success:
                 raise ValidationError(message)
         return res({'approved': pks})

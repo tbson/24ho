@@ -16,14 +16,14 @@ import ButtonsBar from 'src/utils/components/form/ButtonsBar';
 import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
 
 export class Service {
-    static toggleEvent = 'TOGGLE_ORDER_CHECK_FORM';
+    static toggleEvent = 'TOGGLE_ORDER_APPROVE_FORM';
 
     static initialValues = {
-        bols: ''
+        sale: ''
     };
 
     static validationSchema = Yup.object().shape({
-        bols: Yup.string()
+        sale: Yup.string().required(ErrMsgs.REQUIRED)
     });
 
     static toggleForm(open: boolean, id: number = 0) {
@@ -32,13 +32,13 @@ export class Service {
 }
 
 type Props = {
-    listBol: SelectOptions,
+    listSale: SelectOptions,
     close: Function,
     onChange: Function,
     children?: React.Node,
     submitTitle?: string
 };
-export default ({listBol, close, onChange, children, submitTitle = 'Save'}: Props) => {
+export default ({listSale, close, onChange, children, submitTitle = 'Save'}: Props) => {
     const {validationSchema} = Service;
 
     const [open, setOpen] = useState(false);
@@ -57,17 +57,16 @@ export default ({listBol, close, onChange, children, submitTitle = 'Save'}: Prop
     }, []);
 
     return (
-        <DefaultModal open={open} close={close} title="Variable manager">
-            <Formik initialValues={{...initialValues}} validationSchema={validationSchema} onSubmit={onChange}>
+        <DefaultModal open={open} close={close} title="Nhân viên mua hàng">
+            <Formik
+                initialValues={{...initialValues}}
+                validationSchema={validationSchema}
+                onSubmit={values => onChange(values.sale)}>
                 {({errors, handleSubmit}) => (
                     <Form>
-                        <SelectInput name="bols" label="Vận đơn có thể chuyển" isMulti={true} options={listBol} />
+                        <SelectInput name="sale" label="Nhân viên mua hàng" required={true} options={listSale} />
                         <FormLevelErrMsg errors={errors.detail} />
-                        <ButtonsBar
-                            children={children}
-                            submitTitle={submitTitle}
-                            onClick={handleSubmit}
-                        />
+                        <ButtonsBar children={children} submitTitle={submitTitle} onClick={handleSubmit} />
                     </Form>
                 )}
             </Formik>

@@ -512,14 +512,16 @@ class OrderUtils:
         return Order.objects.filter(pk__in=set(order_list))
 
     @staticmethod
-    def approve(order: models.QuerySet, staff: models.QuerySet) -> tuple:
+    def approve(order: models.QuerySet, approver: models.QuerySet, sale: models.QuerySet) -> tuple:
         from .move_status_utils import MoveStatusUtils
         from .models import Status
         if order.status == Status.NEW:
             if not OrderUtils.can_deposit(order):
                 return (False, "Đơn hàng {} không đủ tiền đặt cọc.".format(order.uid))
             deposit = OrderUtils.get_deposit_amount(order)
-            MoveStatusUtils.move(order, Status.APPROVED, approver=staff, amount=deposit)
+            order.sale_id = sale
+            order.approver = approver
+            MoveStatusUtils.move(order, Status.APPROVED, approver=approver, amount=deposit)
             return (True, "")
         return (False, "Đơn hàng {} không ở trạng thái chờ duyệt.".format(order.uid))
 

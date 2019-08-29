@@ -7,6 +7,8 @@ import {apiUrls} from '../_data';
 import {Pagination, SearchInput} from 'src/utils/components/TableUtils';
 import OnlyAdmin from 'src/utils/components/OnlyAdmin';
 import Row from './Row.js';
+import ApproveForm from '../ApproveForm';
+import {Service as ApproveFormService} from '../ApproveForm';
 
 export class Service {
     static listRequest(url?: string, params?: Object): Promise<Object> {
@@ -17,8 +19,8 @@ export class Service {
         return Tools.apiCall(apiUrls.crud, {ids: ids.join(',')}, 'DELETE');
     }
 
-    static bulkApproveRequest(ids: Array<number>): Promise<Object> {
-        return Tools.apiCall(apiUrls.bulk_approve, {ids}, 'PUT');
+    static bulkApproveRequest(ids: Array<number>, sale: number): Promise<Object> {
+        return Tools.apiCall(apiUrls.bulk_approve, {ids, sale}, 'PUT');
     }
 
     static handleGetList(url?: string, params?: Object = {}): Promise<Object> {
@@ -33,8 +35,8 @@ export class Service {
             .catch(Tools.popMessageOrRedirect);
     }
 
-    static handleBulkApprove(ids: Array<number>): Promise<Object> {
-        return Service.bulkApproveRequest(ids)
+    static handleBulkApprove(ids: Array<number>, sale: number): Promise<Object> {
+        return Service.bulkApproveRequest(ids, sale)
             .then(resp => (resp.ok ? {ids} : Promise.reject(resp)))
             .catch(Tools.popMessageOrRedirect);
     }
@@ -92,18 +94,21 @@ export default ({status, pending = false}: Props) => {
 
     const searchList = (keyword: string) => getList('', keyword ? {search: keyword} : {});
 
+    const onSelectSale = (sale: number) => {
+        const ids = ListTools.getChecked(list);
+        Service.handleBulkApprove(ids, sale)
+            .then(data => {
+                Tools.popMessage(`Duyệt ${data.ids.length} đơn thành công.`);
+                ApproveFormService.toggleForm(false);
+                return data;
+            })
+            .then(data => setList(listAction(data).bulkRemove()));
+    };
+
     const onApprove = () => {
         const ids = ListTools.getChecked(list);
         if (!ids.length) return;
-        const message = 'Bạn có muốn duyệt các đơn này?';
-        const r = confirm(message);
-        r &&
-            Service.handleBulkApprove(ids)
-                .then(data => {
-                    Tools.popMessage(`Duyệt ${data.ids.length} đơn thành công.`);
-                    return data;
-                })
-                .then(data => setList(listAction(data).bulkRemove()));
+        ApproveFormService.toggleForm(true);
     };
 
     useEffect(() => {
@@ -163,6 +168,19 @@ export default ({status, pending = false}: Props) => {
                     </tr>
                 </tfoot>
             </table>
+
+            <ApproveForm
+                listSale={options.sale}
+                close={() => ApproveFormService.toggleForm(false)}
+                onChange={onSelectSale}>
+                <button
+                    type="button"
+                    className="btn btn-light"
+                    action="close"
+                    onClick={() => ApproveFormService.toggleForm(false)}>
+                    Cancel
+                </button>
+            </ApproveForm>
         </div>
     );
 };
