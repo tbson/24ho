@@ -115,6 +115,8 @@ class TransactionUtils:
             money_type=MoneyType.INDIRECT,
             note="Đặt cọc đơn {}".format(order.uid)
         )
+        order.deposit = amount
+        order.save()
         transaction.save()
 
     @staticmethod
@@ -122,6 +124,8 @@ class TransactionUtils:
         from .models import Type
         for transaction in order.order_transactions.filter(type=Type.DEPOSIT):
             transaction.delete()
+        order.deposit = 0
+        order.save()
 
     @staticmethod
     def charge_bol_delivery_fee(

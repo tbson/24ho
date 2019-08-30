@@ -103,6 +103,7 @@ class Order(TimeStampedModel):
     order_fee_factor = models.FloatField(default=0)
 
     deposit_factor = models.FloatField(default=0)
+    deposit = models.PositiveIntegerField(default=0)
 
     mass = models.FloatField(default=0)
     packages = models.PositiveIntegerField(default=0)
