@@ -791,7 +791,7 @@ class UtilsExportOrderBols(TestCase):
         TransactionUtils.recharge(recharge_amount, money_type, self.customer, self.staff)
 
         # Approve
-        OrderUtils.approve(self.order, self.staff)
+        OrderUtils.approve(self.order, self.staff, self.staff)
 
         # Set status
         self.order.status = Status.VN_STORE

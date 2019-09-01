@@ -878,7 +878,7 @@ class StatusNormalFlow(TestCase):
         ]
         for status in list_push_status:
             MoveStatusUtils.move(self.order, status, approver=self.staff)
-            TransactionUtils.undeposit(self.order)
+            # TransactionUtils.undeposit(self.order)
 
         list_pull_status = [
             Status.DONE,
@@ -893,7 +893,7 @@ class StatusNormalFlow(TestCase):
         ]
         for status in list_pull_status:
             MoveStatusUtils.move(self.order, status, approver=self.staff)
-            TransactionUtils.undeposit(self.order)
+            # TransactionUtils.undeposit(self.order)
 
 
 class UtilsGetItemsForChecking(TestCase):
@@ -949,10 +949,13 @@ class UtilsGetItemsForChecking(TestCase):
         bol = BolUtils.seeding(1, True)
         order = OrderUtils.seeding(1, True)
         order.pending = True
-        order.save()
+        order.do_not_check_pending = True
 
         bol.order = order
         bol.save()
+
+        order.do_not_check_pending = True
+        order.save()
 
         with self.assertRaises(ValidationError) as context:
             OrderUtils.get_items_for_checking(bol.uid)
@@ -962,10 +965,13 @@ class UtilsGetItemsForChecking(TestCase):
         bol = BolUtils.seeding(1, True)
         order = OrderUtils.seeding(1, True)
         order.status = Status.EXPORTED
-        order.save()
+        order.do_not_check_exported = True
 
         bol.order = order
         bol.save()
+
+        order.do_not_check_exported = True
+        order.save()
 
         with self.assertRaises(ValidationError) as context:
             OrderUtils.get_items_for_checking(bol.uid)
@@ -1187,8 +1193,7 @@ class UtilsComplaintResolve(TestCase):
     def setUp(self):
         order_items = OrderItemUtils.seeding(2)
         self.order = order_items[0].order
-        self.order.pending = True
-        self.order.save()
+        self.order.do_not_check_pending = True
 
         order_items[0].quantity = 4
         order_items[0].checked_quantity = 2
@@ -1197,7 +1202,11 @@ class UtilsComplaintResolve(TestCase):
         order_items[1].quantity = 5
         order_items[1].checked_quantity = 1
         order_items[1].save()
+
         self.order_items = order_items
+        self.order.pending = True
+        self.order.do_not_check_pending = True
+        self.order.save()
 
     def test_agree(self):
         OrderUtils.complaint_agree(self.order)
@@ -1309,7 +1318,7 @@ class UtilsApprove(TestCase):
 
     def test_not_enough_to_deposit(self):
         # Approve
-        success, _ = OrderUtils.approve(self.order, self.staff)
+        success, _ = OrderUtils.approve(self.order, self.staff, self.staff)
         self.assertEqual(success, False)
         self.assertEqual(Transaction.objects.count(), 0)
 
@@ -1318,7 +1327,7 @@ class UtilsApprove(TestCase):
         self.order.save()
 
         # Approve
-        success, _ = OrderUtils.approve(self.order, self.staff)
+        success, _ = OrderUtils.approve(self.order, self.staff, self.staff)
         self.assertEqual(success, False)
         self.assertEqual(Transaction.objects.count(), 0)
 
@@ -1333,7 +1342,7 @@ class UtilsApprove(TestCase):
         self.assertEqual(Transaction.objects.count(), 1)
 
         # Approve
-        success, _ = OrderUtils.approve(self.order, self.staff)
+        success, _ = OrderUtils.approve(self.order, self.staff, self.staff)
         self.assertEqual(success, True)
         self.assertEqual(Transaction.objects.count(), 2)
 

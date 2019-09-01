@@ -54,6 +54,6 @@ class ReceiptUtils:
 
         orders = receipt.receipt_bols.all()
         for item in orders:
-            item.rollback = True
+            item.do_not_check_exported = True
             item.receipt = None
             item.save()

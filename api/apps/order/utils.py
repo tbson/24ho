@@ -366,6 +366,7 @@ class OrderUtils:
 
     @staticmethod
     def pending(order: models.QuerySet) -> models.QuerySet:
+        order.do_not_check_pending = True
         order.pending = True
         order.save()
         return order
@@ -535,14 +536,18 @@ class OrderUtils:
     def check_order_for_frozen(order: models.QuerySet, delete_only: bool = False) -> models.QuerySet:
         from .models import Status
 
-        if order.pending:
-            if hasattr(order, 'unpending'):
-                del order.unpending
+        if hasattr(order, 'move_status'):
+            del order.move_status
+            return order
+
+        if order.pending is True:
+            if hasattr(order, 'do_not_check_pending'):
+                del order.do_not_check_pending
                 return order
             raise ValidationError(error_messages['ORDER_WAS_PENDING'])
         if order.status >= Status.EXPORTED:
-            if hasattr(order, 'rollback'):
-                del order.rollback
+            if hasattr(order, 'do_not_check_exported'):
+                del order.do_not_check_exported
                 return order
             raise ValidationError(error_messages['ORDER_WAS_EXPORTED'])
 

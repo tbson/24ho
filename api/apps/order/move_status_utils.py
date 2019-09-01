@@ -14,6 +14,8 @@ class MoveStatusUtils:
             else:
                 raise ValidationError("Đơn hàng chuyển trạng thái không hợp lệ.")
 
+        item.do_not_check_pending = True
+        item.move_status = True
         if status == Status.NEW:
             return MoveStatusUtils.new(item, **context)
         if status == Status.APPROVED:
