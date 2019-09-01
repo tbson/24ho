@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import action
@@ -33,6 +34,7 @@ class OrderItemViewSet(GenericViewSet):
         serializer = OrderItemBaseSr(obj)
         return res(serializer.data)
 
+    @transaction.atomic
     @action(methods=['post'], detail=True)
     def add(self, request):
         serializer = OrderItemBaseSr(data=request.data)
@@ -40,6 +42,7 @@ class OrderItemViewSet(GenericViewSet):
             serializer.save()
         return res(serializer.data)
 
+    @transaction.atomic
     @action(methods=['put'], detail=True)
     def change_color(self, request, pk=None):
         obj = get_object_or_404(OrderItem, pk=pk)
@@ -47,6 +50,7 @@ class OrderItemViewSet(GenericViewSet):
         serializer = OrderItemUtils.partial_update(obj, 'color', value)
         return res(serializer.data)
 
+    @transaction.atomic
     @action(methods=['put'], detail=True)
     def change_size(self, request, pk=None):
         obj = get_object_or_404(OrderItem, pk=pk)
@@ -54,6 +58,7 @@ class OrderItemViewSet(GenericViewSet):
         serializer = OrderItemUtils.partial_update(obj, 'size', value)
         return res(serializer.data)
 
+    @transaction.atomic
     @action(methods=['put'], detail=True)
     def change_quantity(self, request, pk=None):
         obj = get_object_or_404(OrderItem, pk=pk)
@@ -61,6 +66,7 @@ class OrderItemViewSet(GenericViewSet):
         serializer = OrderItemUtils.partial_update(obj, 'quantity', value)
         return res(serializer.data)
 
+    @transaction.atomic
     @action(methods=['put'], detail=True)
     def change_unit_price(self, request, pk=None):
         obj = get_object_or_404(OrderItem, pk=pk)
@@ -68,6 +74,7 @@ class OrderItemViewSet(GenericViewSet):
         serializer = OrderItemUtils.partial_update(obj, 'unit_price', value)
         return res(serializer.data)
 
+    @transaction.atomic
     @action(methods=['put'], detail=True)
     def change_note(self, request, pk=None):
         obj = get_object_or_404(OrderItem, pk=pk)
@@ -75,12 +82,14 @@ class OrderItemViewSet(GenericViewSet):
         serializer = OrderItemUtils.partial_update(obj, 'note', value)
         return res(serializer.data)
 
+    @transaction.atomic
     @action(methods=['delete'], detail=True)
     def delete(self, request, pk=None):
         obj = get_object_or_404(OrderItem, pk=pk)
         obj.delete()
         return res(status=status.HTTP_204_NO_CONTENT)
 
+    @transaction.atomic
     @action(methods=['delete'], detail=False)
     def delete_list(self, request):
         pk = self.request.query_params.get('ids', '')

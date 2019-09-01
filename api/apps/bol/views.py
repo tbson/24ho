@@ -143,6 +143,7 @@ class BolViewSet(GenericViewSet):
         serializer = BolBaseSr(obj)
         return res(serializer.data)
 
+    @transaction.atomic
     @action(methods=['post'], detail=True)
     def add(self, request):
         data = Tools.upper_key(request.data, 'uid')
@@ -151,6 +152,7 @@ class BolViewSet(GenericViewSet):
             serializer.save()
         return res(serializer.data)
 
+    @transaction.atomic
     @action(methods=['put'], detail=True)
     def change(self, request, pk=None):
         obj = self.get_object(pk)
@@ -160,6 +162,7 @@ class BolViewSet(GenericViewSet):
             serializer.save()
         return res(serializer.data)
 
+    @transaction.atomic
     @action(methods=['post'], detail=True)
     def match_vn(self, request):
         uid = request.data.get('bol_uid', '').strip().upper()
@@ -170,6 +173,7 @@ class BolViewSet(GenericViewSet):
             obj.save()
         return res(BolBaseSr(obj).data)
 
+    @transaction.atomic
     def change_bag(self, request, pk=None):
         obj = get_object_or_404(Bol, pk=pk)
         value = request.data.get('value', obj.purchase_code)
@@ -178,6 +182,7 @@ class BolViewSet(GenericViewSet):
         serializer = BolUtils.partial_update(obj, 'bag', value)
         return res(serializer.data)
 
+    @transaction.atomic
     @action(methods=['get'], detail=False)
     def get_date(self, request, pk=None):
         queryset = BolDate.objects.all()
@@ -185,12 +190,14 @@ class BolViewSet(GenericViewSet):
         serializer = BolDateSr(queryset, many=True)
         return self.get_paginated_response(serializer.data)
 
+    @transaction.atomic
     @action(methods=['delete'], detail=True)
     def delete(self, request, pk=None):
         obj = self.get_object(pk)
         obj.delete()
         return res(status=status.HTTP_204_NO_CONTENT)
 
+    @transaction.atomic
     @action(methods=['delete'], detail=False)
     def delete_list(self, request):
         pk = self.request.query_params.get('ids', '')
