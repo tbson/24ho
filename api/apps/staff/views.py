@@ -12,7 +12,7 @@ from django.contrib.auth.models import Group
 from .models import Staff
 from utils.serializers.user import UserSr
 from .serializers import StaffBaseSr
-from apps.group.serializers import GroupBaseSr
+from utils.serializers.group import GroupBaseSr
 from utils.common_classes.custom_permission import CustomPermission
 from django.contrib.auth.hashers import make_password, check_password
 from django.utils import timezone

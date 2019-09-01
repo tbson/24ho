@@ -2,8 +2,8 @@
 from rest_framework.serializers import ModelSerializer
 from rest_framework.serializers import SerializerMethodField
 from .models import Staff
-from apps.group.serializers import GroupBaseSr
 from utils.serializers.user import UserRetrieveSr
+from utils.serializers.group import GroupBaseSr
 
 
 class StaffBaseSr(ModelSerializer):
