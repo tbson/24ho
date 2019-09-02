@@ -201,27 +201,30 @@ class Bol(TimeStampedModel):
         self.vnd_delivery_fee = BolUtils.cal_delivery_fee(self).get('delivery_fee', 0)
 
         super(Bol, self).save(*args, **kwargs)
-        if self.order:
-            Order.objects.re_cal(self.order)
-            OrderUtils.check_paid_status(self.order)
-            OrderUtils.check_dispatched_status(self.order)
-            OrderUtils.check_cn_status(self.order)
-            OrderUtils.check_vn_status(self.order)
-            OrderUtils.check_exported_status(self.order)
-            OrderUtils.check_done_status(self.order)
+        order = self.order
+        if order:
+            order.do_not_check_exported = True
+            Order.objects.re_cal(order)
+            OrderUtils.check_paid_status(order)
+            OrderUtils.check_dispatched_status(order)
+            OrderUtils.check_cn_status(order)
+            OrderUtils.check_vn_status(order)
+            OrderUtils.check_exported_status(order)
+            OrderUtils.check_done_status(order)
 
     def delete(self, *args, **kwargs):
         from apps.order.utils import OrderUtils
         order = self.order
         super(Bol, self).delete(*args, **kwargs)
         if order:
+            order.do_not_check_exported = True
             Order.objects.re_cal(order)
             OrderUtils.check_paid_status(order)
-            OrderUtils.check_dispatched_status(self.order)
-            OrderUtils.check_cn_status(self.order)
-            OrderUtils.check_vn_status(self.order)
-            OrderUtils.check_exported_status(self.order)
-            OrderUtils.check_done_status(self.order)
+            OrderUtils.check_dispatched_status(order)
+            OrderUtils.check_cn_status(order)
+            OrderUtils.check_vn_status(order)
+            OrderUtils.check_exported_status(order)
+            OrderUtils.check_done_status(order)
 
     def __str__(self):
         return self.uid
