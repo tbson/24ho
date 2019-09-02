@@ -103,3 +103,6 @@ class Transaction(TimeStampedModel):
     class Meta:
         db_table = "transactions"
         ordering = ['-id']
+        permissions = (
+            ("retrieve_to_print", "Can print transaction"),
+        )

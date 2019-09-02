@@ -17,8 +17,13 @@ pk_endpoint = ReceiptViewSet.as_view({
     'delete': 'delete'
 })
 
+retrieve_to_print = ReceiptViewSet.as_view({
+    'get': 'retrieve_to_print',
+})
+
 app_name = os.getcwd().split(os.sep)[-1]
 urlpatterns = [
     path('', base_endpoint),
     path('<int:pk>', pk_endpoint),
+    path('print/<int:pk>', retrieve_to_print),
 ]

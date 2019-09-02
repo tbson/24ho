@@ -28,7 +28,6 @@ export class Service {
 export default ({}: Props) => {
     const [list, setList] = useState([]);
     const [links, setLinks] = useState({next: '', previous: ''});
-    const [previewData, setPreviewData] = useState({});
 
     const getList = async (url?: string, _params?: Object) => {
         let params = {..._params, money_type: 1};
@@ -40,7 +39,7 @@ export default ({}: Props) => {
 
     const searchList = (keyword: string) => getList('', keyword ? {search: keyword} : {});
 
-    const handlePrint = id => {
+    const handlePrint = (id: number) => {
         PreviewService.toggleForm(true, id);
     };
 
@@ -89,7 +88,7 @@ export default ({}: Props) => {
                     </tfoot>
                 )}
             </table>
-            <Preview data={previewData} close={() => PreviewService.toggleForm(false)}/>
+            <Preview close={() => PreviewService.toggleForm(false)} />
         </div>
     );
 };

@@ -60,3 +60,6 @@ class Receipt(TimeStampedModel):
     class Meta:
         db_table = "receipts"
         ordering = ['-id']
+        permissions = (
+            ("retrieve_to_print", "Can print receipt"),
+        )

@@ -261,6 +261,17 @@ class BolUtils:
         return Type.ORDER
 
     @staticmethod
+    def calculate_transport_bol_fee(bols: models.QuerySet) -> dict:
+        result = {}
+        for bol in bols:
+            result[str(bol.pk)] = {
+                'vnd_delivery_fee': bol.vnd_delivery_fee,
+                'vnd_insurance_fee': int(bol.cny_insurance_fee * bol.rate),
+                'vnd_sub_fee': int((bol.cny_sub_fee + bol.cny_shockproof_fee + bol.cny_wooden_box_fee) * bol.rate)
+            }
+        return result
+
+    @staticmethod
     def export_transport_bols(
         bols: models.QuerySet,
         receipt: models.QuerySet,
@@ -268,7 +279,7 @@ class BolUtils:
         staff: models.QuerySet
     ) -> int:
         from apps.transaction.utils import TransactionUtils
-
+        transport_bol_fee = BolUtils.calculate_transport_bol_fee(bols)
         total = 0
         for bol in bols:
             bol.receipt = receipt
@@ -276,17 +287,19 @@ class BolUtils:
             bol.exporter = staff
             bol.save()
 
-            vnd_delivery_fee = bol.vnd_delivery_fee
+            fee_obj = transport_bol_fee[str(bol.pk)]
+
+            vnd_delivery_fee = fee_obj['vnd_delivery_fee']
             if vnd_delivery_fee:
                 total = total + vnd_delivery_fee
                 TransactionUtils.charge_bol_delivery_fee(vnd_delivery_fee, customer, staff, receipt, bol)
 
-            vnd_insurance_fee = int(bol.cny_insurance_fee * bol.rate)
+            vnd_insurance_fee = fee_obj['vnd_insurance_fee']
             if vnd_insurance_fee:
                 total = total + vnd_insurance_fee
                 TransactionUtils.charge_bol_insurance_fee(vnd_insurance_fee, customer, staff, receipt, bol)
 
-            vnd_sub_fee = int((bol.cny_sub_fee + bol.cny_shockproof_fee + bol.cny_wooden_box_fee) * bol.rate)
+            vnd_sub_fee = fee_obj['vnd_sub_fee']
             if vnd_sub_fee:
                 total = total + vnd_sub_fee
                 TransactionUtils.charge_bol_other_sub_fee(vnd_sub_fee, customer, staff, receipt, bol)
@@ -314,3 +327,9 @@ class BolUtils:
             total = total + remain
             TransactionUtils.charge_order_remain(remain, customer, staff, receipt, order)
         return total
+
+    @staticmethod
+    def get_bols_from_receipt(receipt: models.QuerySet) -> list:
+        from apps.bol.serializers import BolBaseSr
+        bols = receipt.receipt_bols.all()
+        return BolBaseSr(bols, many=True).data

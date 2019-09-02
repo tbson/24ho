@@ -19,11 +19,12 @@ export class Service {
 
 type RowPropTypes = {
     data: TRow,
+    onPrint: Function,
     showForm: Function,
     onCheck: Function,
     onRemove: Function
 };
-export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
+export default ({data, showForm, onPrint, onCheck, onRemove}: RowPropTypes) => {
     const id = parseInt(data.id);
 
     const _onRemove = id => {
@@ -45,6 +46,10 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
             <td className="mono vnd">{Tools.numberFormat(data.vnd_total)}</td>
             <td>{data.note}</td>
             <td className="center">
+                <a className="printBtn" onClick={() => onPrint(data.id)}>
+                    <span className="fas fa-print text-success pointer" />
+                </a>
+                <span>&nbsp;&nbsp;&nbsp;</span>
                 <a className="editBtn" onClick={() => showForm(data.id)}>
                     <span className="fas fa-edit text-info pointer" />
                 </a>

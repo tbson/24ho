@@ -11,6 +11,8 @@ import {Pagination, SearchInput} from 'src/utils/components/TableUtils';
 import MainForm from '../MainForm';
 import {Service as MainFormService} from '../MainForm';
 import Row from './Row.js';
+import Preview from '../Preview';
+import {Service as PreviewService} from '../Preview';
 
 type Props = {};
 
@@ -70,6 +72,10 @@ export default ({}: Props) => {
 
     const searchList = (keyword: string) => getList('', keyword ? {search: keyword} : {});
 
+    const handlePrint = (id: number) => {
+        PreviewService.toggleForm(true, id);
+    };
+
     useEffect(() => {
         getList();
     }, []);
@@ -122,6 +128,7 @@ export default ({}: Props) => {
                             data={data}
                             key={key}
                             onCheck={onCheck}
+                            onPrint={handlePrint}
                             onRemove={onRemove}
                             showForm={id => MainFormService.toggleForm(true, id)}
                         />
@@ -152,6 +159,8 @@ export default ({}: Props) => {
                     Cancel
                 </button>
             </MainForm>
+
+            <Preview close={() => PreviewService.toggleForm(false)} />
         </div>
     );
 };

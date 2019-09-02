@@ -2,6 +2,7 @@ from django.db import models
 from apps.customer.utils import CustomerUtils
 from apps.staff.utils import StaffUtils
 from apps.address.utils import AddressUtils
+from utils.helpers.tools import Tools
 
 
 class ReceiptUtils:
@@ -57,3 +58,32 @@ class ReceiptUtils:
             item.do_not_check_exported = True
             item.receipt = None
             item.save()
+
+    @staticmethod
+    def retrieve_to_print_common(receipt: models.QuerySet) -> dict:
+        from apps.variable.utils import VariableUtils
+        from apps.address.serializers import AddressBaseSr
+
+        return {
+            'company_info': VariableUtils.get_company_info(),
+            'customer': {
+                'fullname': Tools.get_fullname(receipt.customer),
+            },
+            'staff': {
+                'fullname': Tools.get_fullname(receipt.staff),
+            },
+            'address': AddressBaseSr(receipt.address).data,
+            'uid': receipt.uid,
+            'created_at': receipt.created_at,
+            'vnd_delivery_fee': receipt.vnd_delivery_fee,
+            'vnd_total': receipt.vnd_total,
+            'note': receipt.note
+        }
+
+    @staticmethod
+    def retrieve_to_print_transport(receipt: models.QuerySet) -> dict:
+        return {}
+
+    @staticmethod
+    def retrieve_to_print_order(receipt: models.QuerySet) -> dict:
+        return {}

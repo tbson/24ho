@@ -244,3 +244,6 @@ input.form-control {
 button.btn {
     height: 38px;
 }
+.dot-underline {
+    border-bottom: 1px dotted #000;
+}

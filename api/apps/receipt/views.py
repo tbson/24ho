@@ -10,6 +10,7 @@ from .serializers import (
 )
 from utils.common_classes.custom_permission import CustomPermission
 from utils.helpers.res_tools import res
+from .utils import ReceiptUtils
 
 
 class ReceiptViewSet(GenericViewSet):
@@ -29,6 +30,15 @@ class ReceiptViewSet(GenericViewSet):
         obj = get_object_or_404(Receipt, pk=pk)
         serializer = ReceiptBaseSr(obj)
         return res(serializer.data)
+
+    def retrieve_to_print(self, request, pk=None):
+        from apps.bol.utils import BolUtils
+
+        receipt = get_object_or_404(Receipt, pk=pk)
+        result = ReceiptUtils.retrieve_to_print_common(receipt)
+        bols = BolUtils.calculate_transport_bol_fee(receipt.receipt_bols.all())
+        result['bols'] = bols
+        return res(result)
 
     @transaction.atomic
     @action(methods=['post'], detail=True)

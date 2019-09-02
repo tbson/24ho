@@ -7,11 +7,11 @@ import ReactToPrint from 'react-to-print';
 import Barcode from 'react-barcode';
 import DefaultModal from 'src/utils/components/modal/DefaultModal';
 import Tools from 'src/utils/helpers/Tools';
-import {apiUrls} from 'src/back/transaction/_data';
+import {apiUrls} from 'src/back/receipt/_data';
 import logoUrl from 'src/assets/images/logo.jpg';
 
 export class Service {
-    static toggleEvent = 'TOGGLE_PRINT_TRANSACTION_FORM';
+    static toggleEvent = 'TOGGLE_PRINT_RECEIPT_FORM';
 
     static toggleForm(open: boolean, id: number = 0) {
         Tools.event.dispatch(Service.toggleEvent, {open, id});
@@ -50,7 +50,7 @@ export default ({close}: Props) => {
 
     return (
         <div>
-            <DefaultModal open={open} close={close} size="lg" title="Phiếu thu">
+            <DefaultModal open={open} close={close} size="lg" title="Phiếu giao hàng">
                 <div>
                     <Content data={data} ref={contentRef} />
                     <hr />
@@ -80,9 +80,12 @@ class Content extends React.Component<ContentProps> {
         const {data} = this.props;
         const {
             company_info: {info_ten_cty, info_dia_chi, info_email, info_phone, info_website},
-            amount,
+            vnd_delivery_fee,
+            vnd_total,
             note,
-            customer: {fullname, address}
+            address,
+            customer,
+            staff
         } = data;
         return (
             <div style={{padding: 10, paddingTop: 40}}>
@@ -108,36 +111,60 @@ class Content extends React.Component<ContentProps> {
                 </div>
                 <br />
                 <div>
-                    <h1 className="center">PHIẾU THU TIỀN</h1>
-                    <div className="center">{Tools.dateFormat(data.created_at)}</div>
+                    <h1 className="center">PHIẾU GIAO HÀNG</h1>
                 </div>
                 <br />
                 <div>
                     <span>Họ tên người nhận: </span>
-                    <span>{fullname}</span>
+                    <span>{customer.fullname}</span>
                 </div>
                 <div>
                     <span>Địa chỉ: </span>
-                    <span>{address}</span>
+                    <span>{address.title}</span>
                 </div>
                 <div>
-                    <span>Số tiền: </span>
-                    <span>{Tools.numberFormat(amount)}₫</span>
+                    <strong>Nhân viên lập phiếu: </strong>
+                    <span>{staff.fullname}</span>
                 </div>
                 <div>
-                    <span>Lý do nộp: </span>
-                    <span>{note}</span>
+                    <span>{Tools.dateFormat(data.created_at)}</span>
+                    &nbsp;
+                    <span>|</span>
+                    &nbsp;
+                    <strong>{address.uid}</strong>
                 </div>
                 <br/>
+                <div>
+                    <span>Phí giao hàng: </span>
+                    <span>{Tools.numberFormat(vnd_delivery_fee)}₫</span>
+                </div>
+                <div>
+                    <span>Tổng cộng: </span>
+                    <span>{Tools.numberFormat(parseInt(vnd_total) + parseInt(vnd_delivery_fee))}₫</span>
+                </div>
+                <div className="row">
+                    <div className="col-sm-3">
+                        <span>Ghi chú: </span>
+                    </div>
+                    <div className="col-sm-9">
+                        <div className="dot-underline">{note}</div>
+                        <div className="dot-underline">&nbsp;</div>
+                        <div className="dot-underline">&nbsp;</div>
+                    </div>
+                </div>
+                <div>
+                    <em>Ngày........Tháng........Năm........</em>
+                </div>
+                <br />
                 <div className="row">
                     <div className="col center">
-                        <strong>Người nộp</strong>
+                        <strong>Bên giao</strong>
                         <div>
                             <em>(Ký, họ tên)</em>
                         </div>
                     </div>
                     <div className="col center">
-                        <strong>Người nhận</strong>
+                        <strong>Bên nhận</strong>
                         <div>
                             <em>(Ký, họ tên)</em>
                         </div>

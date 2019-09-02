@@ -7,7 +7,8 @@ const rawApiUrls = [
     {
         controller: 'receipt',
         endpoints: {
-            crud: ''
+            crud: '',
+            print: 'print'
         }
     }
 ];
