@@ -414,6 +414,8 @@ class OrderUtils:
 
     @staticmethod
     def get_deposit_amount(order: models.QuerySet) -> int:
+        if order.deposit:
+            return order.deposit
         amount = OrderUtils.cal_amount(order)
         return int(amount * order.rate * order.deposit_factor / 100)
 
