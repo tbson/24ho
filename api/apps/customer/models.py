@@ -27,6 +27,7 @@ class Customer(models.Model):
 
     phone = models.CharField(max_length=32)
     company = models.CharField(max_length=256, blank=True)
+    address = models.CharField(max_length=256, blank=True)
 
     sale = models.ForeignKey(Staff, models.SET_NULL, related_name='sale', blank=True, null=True)
     cust_care = models.ForeignKey(Staff, models.SET_NULL, related_name='cust_care', blank=True, null=True)
