@@ -201,17 +201,25 @@ export default ({id, order_id = 0, open, close, onChange, children, submitTitle 
                                 <div className="col">
                                     <CheckInput name="shockproof" label="Chống sốc" />
                                     {values.shockproof && (
-                                        <TextInput
-                                            name="cny_shockproof_fee"
-                                            type="number"
-                                            label="Phí chống sốc (CNY)"
-                                        />
+                                        <OnlyAdmin>
+                                            <TextInput
+                                                name="cny_shockproof_fee"
+                                                type="number"
+                                                label="Phí chống sốc (CNY)"
+                                            />
+                                        </OnlyAdmin>
                                     )}
                                 </div>
                                 <div className="col">
                                     <CheckInput name="wooden_box" label="Đóng gỗ" />
                                     {values.wooden_box && (
-                                        <TextInput name="cny_wooden_box_fee" type="number" label="Phí đóng gỗ (CNY)" />
+                                        <OnlyAdmin>
+                                            <TextInput
+                                                name="cny_wooden_box_fee"
+                                                type="number"
+                                                label="Phí đóng gỗ (CNY)"
+                                            />
+                                        </OnlyAdmin>
                                     )}
                                 </div>
                                 {!order_id && (
