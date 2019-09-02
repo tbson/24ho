@@ -216,9 +216,13 @@ class Tools:
         }
 
     @staticmethod
-    def get_fullname(obj):
-        first_name = obj.user.first_name
-        last_name = obj.user.last_name
+    def get_fullname(obj, is_user=False):
+        if is_user:
+            first_name = obj.first_name
+            last_name = obj.last_name
+        else:
+            first_name = obj.user.first_name
+            last_name = obj.user.last_name
         return "{} {}".format(last_name, first_name)
 
     @staticmethod

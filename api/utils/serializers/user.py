@@ -4,6 +4,7 @@ from rest_framework.validators import UniqueValidator
 from rest_framework.serializers import SerializerMethodField
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
+from utils.helpers.tools import Tools
 
 
 class UserSr(ModelSerializer):
@@ -37,7 +38,7 @@ class UserSr(ModelSerializer):
 
     @staticmethod
     def get_fullname(obj):
-        return "{} {}".format(obj.last_name, obj.first_name)
+        return Tools.get_fullname(obj, True)
 
     def create(self, validated_data):
         instance = User.objects.create_user(**validated_data)

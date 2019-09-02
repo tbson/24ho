@@ -82,7 +82,7 @@ class Content extends React.Component<ContentProps> {
             company_info: {info_ten_cty, info_dia_chi, info_email, info_phone, info_website},
             amount,
             note,
-            customer
+            customer: {fullname, address}
         } = data;
         return (
             <div style={{padding: 10, paddingTop: 40}}>
@@ -114,11 +114,11 @@ class Content extends React.Component<ContentProps> {
                 <br />
                 <div>
                     <span>Họ tên người nhận: </span>
-                    <span>{customer.user_data.fullname}</span>
+                    <span>{fullname}</span>
                 </div>
                 <div>
                     <span>Địa chỉ: </span>
-                    <span>{customer.address}</span>
+                    <span>{address}</span>
                 </div>
                 <div>
                     <span>Số tiền: </span>

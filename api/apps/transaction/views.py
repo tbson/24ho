@@ -15,7 +15,6 @@ from .utils import TransactionUtils
 from apps.bank.models import Bank
 from apps.bank.serializers import BankBaseSr
 from apps.variable.utils import VariableUtils
-from apps.customer.serializers import CustomerBaseSr
 
 
 class TransactionViewSet(GenericViewSet):
@@ -55,12 +54,19 @@ class TransactionViewSet(GenericViewSet):
         return res(serializer.data)
 
     def retrieve_to_print(self, request, pk=None):
-        result = {}
-        obj = get_object_or_404(Transaction, pk=pk)
-        result = TransactionBaseSr(obj).data
-        result['company_info'] = VariableUtils.get_company_info()
-        result['customer'] = CustomerBaseSr(obj.customer).data
-        return res(result)
+        transaction = get_object_or_404(Transaction, pk=pk)
+
+        return res({
+            'company_info': VariableUtils.get_company_info(),
+            'customer': {
+                'fullname': Tools.get_fullname(transaction.customer),
+                'address': transaction.customer.address,
+            },
+            'uid': transaction.uid,
+            'created_at': transaction.created_at,
+            'amount': transaction.amount,
+            'note': transaction.note
+        })
 
     @action(methods=['post'], detail=True)
     def add(self, request):
