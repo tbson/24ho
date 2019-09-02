@@ -111,7 +111,7 @@ export default ({id, order_id = 0, open, close, onChange, children, submitTitle 
     const [addressOptions, setAddressOptions] = useState([]);
 
     const retrieveThenOpen = (id: number) =>
-        Service.retrieveRequest(id, initialValues).then(resp => {
+        Service.retrieveRequest(id, id ? initialValues : Service.initialValues).then(resp => {
             if (!resp.ok) return Tools.popMessage(resp.data.detail, 'error');
             setInitialValues({...resp.data});
             setOpenModal(true);
