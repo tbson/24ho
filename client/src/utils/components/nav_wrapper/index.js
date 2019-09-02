@@ -71,6 +71,9 @@ const App = ({history, location, children}: Props) => {
             case 'receipt':
                 if (APP !== 'admin') return null;
                 return menuItem('receipt', 'Phiếu xuất', 'fas fa-dolly');
+            case 'bank':
+                if (APP !== 'admin') return null;
+                return menuItem('bank', 'Ngân hàng', 'fas fa-university');
             case 'role':
                 if (APP !== 'admin') return null;
                 return menuItem('role', 'Phân quyền', 'fas fa-user-tag');
@@ -116,6 +119,7 @@ const App = ({history, location, children}: Props) => {
                     {renderMenu('bol')}
                     {renderMenu('check')}
                     {renderMenu('receipt')}
+                    {renderMenu('bank')}
                     {renderMenu('variable')}
                     {renderMenu('area')}
                     {renderMenu('address')}
