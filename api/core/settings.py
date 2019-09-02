@@ -72,6 +72,7 @@ PROJECT_APPS = [
     'apps.bag',
     'apps.transaction',
     'apps.receipt',
+    'apps.bank',
     'apps.sr',
 ]
 
