@@ -3,6 +3,8 @@ import * as React from 'react';
 import {useState, useEffect, useRef} from 'react';
 // $FlowFixMe: do not complain about importing node_modules
 import ReactToPrint from 'react-to-print';
+// $FlowFixMe: do not complain about importing node_modules
+import Barcode from 'react-barcode';
 import DefaultModal from 'src/utils/components/modal/DefaultModal';
 import Tools from 'src/utils/helpers/Tools';
 import {apiUrls} from 'src/back/transaction/_data';
@@ -74,6 +76,10 @@ type ContentProps = {
 };
 class Content extends React.Component<ContentProps> {
     render() {
-        return <div>Preview</div>;
+        return (
+            <div>
+                <Barcode value="fbfa2117-472c-4c93-8672-26580aea94a3" />
+            </div>
+        );
     }
 }
