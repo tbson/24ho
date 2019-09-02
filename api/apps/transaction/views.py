@@ -21,6 +21,7 @@ class TransactionViewSet(GenericViewSet):
     serializer_class = TransactionBaseSr
     permission_classes = (CustomPermission, )
     search_fields = ('uid', 'staff_username', 'customer_username')
+    filterset_fields = ('money_type', )
 
     def list(self, request):
         balance = 0
@@ -47,6 +48,11 @@ class TransactionViewSet(GenericViewSet):
         return self.get_paginated_response(result)
 
     def retrieve(self, request, pk=None):
+        obj = get_object_or_404(Transaction, pk=pk)
+        serializer = TransactionBaseSr(obj)
+        return res(serializer.data)
+
+    def retrieve_to_print(self, request, pk=None):
         obj = get_object_or_404(Transaction, pk=pk)
         serializer = TransactionBaseSr(obj)
         return res(serializer.data)

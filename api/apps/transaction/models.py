@@ -98,6 +98,7 @@ class Transaction(TimeStampedModel):
 
     def __str__(self):
         return self.uid
+    # retrieve_to_print
 
     class Meta:
         db_table = "transactions"
