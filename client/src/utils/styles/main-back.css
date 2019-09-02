@@ -241,3 +241,6 @@ button {
 input.form-control {
     height: 38px;
 }
+button.btn {
+    height: 38px;
+}
