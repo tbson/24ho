@@ -58,6 +58,7 @@ export class Service {
 
 type Props = {
     listCustomer: SelectOptions,
+    listBank: SelectOptions,
     listType: SelectOptions,
     listMoneyType: SelectOptions,
     close: Function,
@@ -65,7 +66,16 @@ type Props = {
     children?: React.Node,
     submitTitle?: string
 };
-export default ({listCustomer, listType, listMoneyType, close, onChange, children, submitTitle = 'Save'}: Props) => {
+export default ({
+    listCustomer,
+    listBank,
+    listType,
+    listMoneyType,
+    close,
+    onChange,
+    children,
+    submitTitle = 'Save'
+}: Props) => {
     const {validationSchema, handleSubmit} = Service;
     const [open, setOpen] = useState(false);
     const [id, setId] = useState(0);
@@ -96,23 +106,28 @@ export default ({listCustomer, listType, listMoneyType, close, onChange, childre
                 initialValues={{...initialValues}}
                 validationSchema={validationSchema}
                 onSubmit={handleSubmit(id, onChange)}>
-                {({errors, handleSubmit}) => (
-                    <Form>
-                        <TextInput name="amount" type="number" label="Số tiền" required autofocus/>
-                        <div className="row">
-                            <div className="col">
-                                <SelectInput name="type" options={listType} label="Loại giao dịch" required/>
+                {({errors, handleSubmit, values}) => {
+                    return (
+                        <Form>
+                            <TextInput name="amount" type="number" label="Số tiền" required autofocus />
+                            <div className="row">
+                                <div className="col">
+                                    <SelectInput name="type" options={listType} label="Loại giao dịch" required />
+                                </div>
+                                <div className="col">
+                                    <SelectInput name="money_type" options={listMoneyType} label="Loại tiền" required />
+                                </div>
                             </div>
-                            <div className="col">
-                                <SelectInput name="money_type" options={listMoneyType} label="Loại tiền" required/>
-                            </div>
-                        </div>
-                        <SelectInput name="customer" options={listCustomer} label="Khách hàng" />
-                        <TextInput name="note" label="Ghi chú" />
-                        <FormLevelErrMsg errors={errors.detail} />
-                        <ButtonsBar children={children} submitTitle={submitTitle} onClick={handleSubmit} />
-                    </Form>
-                )}
+                            <SelectInput name="customer" options={listCustomer} label="Khách hàng" />
+                            {values.money_type === 1 && (
+                                <SelectInput name="bank" options={listBank} label="Ngân hàng" />
+                            )}
+                            <TextInput name="note" label="Ghi chú" />
+                            <FormLevelErrMsg errors={errors.detail} />
+                            <ButtonsBar children={children} submitTitle={submitTitle} onClick={handleSubmit} />
+                        </Form>
+                    );
+                }}
             </Formik>
         </DefaultModal>
     );

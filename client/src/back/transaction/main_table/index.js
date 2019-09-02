@@ -40,11 +40,16 @@ export class Service {
             label: `${value} - ${String(label)}`
         }));
     }
+
+    static getBankOptions(list: Array<Object>): SelectOptions {
+        return list.map(({id, uid, title}) => ({value: id, label: `${uid} - ${title}`}));
+    }
 }
 
 export default ({}: Props) => {
     const [list, setList] = useState([]);
     const [listCustomer, setListCustomer] = useState([]);
+    const [listBank, setListBank] = useState([]);
     const [balance, setBalance] = useState(0);
     const [links, setLinks] = useState({next: '', previous: ''});
 
@@ -60,6 +65,7 @@ export default ({}: Props) => {
         setList(ListTools.prepare(data.items));
         setLinks(data.links);
         listCustomer.length || setListCustomer(data.extra.list_customer || []);
+        listBank.length || setListBank(data.extra.list_bank || []);
         setBalance(data.extra.balance || 0);
     };
 
@@ -170,6 +176,7 @@ export default ({}: Props) => {
 
             <MainForm
                 listCustomer={listCustomer.map(item => ({value: item.id, label: item.username}))}
+                listBank={Service.getBankOptions(listBank)}
                 listType={Service.objToOptions(listType)}
                 listMoneyType={Service.objToOptions(listMoneyType)}
                 close={() => MainFormService.toggleForm(false)}

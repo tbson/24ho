@@ -12,6 +12,8 @@ from utils.common_classes.custom_permission import CustomPermission
 from utils.helpers.res_tools import res
 from utils.helpers.tools import Tools
 from .utils import TransactionUtils
+from apps.bank.models import Bank
+from apps.bank.serializers import BankBaseSr
 
 
 class TransactionViewSet(GenericViewSet):
@@ -34,6 +36,7 @@ class TransactionViewSet(GenericViewSet):
         result = {
             'items': serializer.data,
             'extra': {
+                'list_bank': BankBaseSr(Bank.objects.all(), many=True).data,
                 'list_customer': [],
                 'balance': balance
             }

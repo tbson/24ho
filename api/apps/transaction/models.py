@@ -6,6 +6,7 @@ from apps.order.models import Order
 from apps.bol.models import Bol
 from utils.helpers.tools import Tools
 from apps.receipt.models import Receipt
+from apps.bank.models import Bank
 
 
 class Type:
@@ -56,6 +57,8 @@ class Transaction(TimeStampedModel):
 
     customer = models.ForeignKey(Customer, models.PROTECT, related_name='customer_transactions', null=True)
     customer_username = models.CharField(max_length=64, blank=True)
+
+    bank = models.ForeignKey(Bank, models.PROTECT, related_name='bank_transactions', null=True)
 
     staff = models.ForeignKey(Staff, models.PROTECT, related_name='staff_transactions')
     staff_username = models.CharField(max_length=64, blank=True)
