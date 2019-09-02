@@ -8,6 +8,8 @@ import {apiUrls, listType, listMoneyType} from 'src/back/transaction/_data';
 import type {TRow, DbRow, ListItem, FormOpenType, FormOpenKeyType} from 'src/back/transaction/_data';
 import {Pagination, SearchInput} from 'src/utils/components/TableUtils';
 import Row from './Row.js';
+import Preview from '../Preview';
+import {Service as PreviewService} from '../Preview';
 
 type Props = {};
 
@@ -26,6 +28,7 @@ export class Service {
 export default ({}: Props) => {
     const [list, setList] = useState([]);
     const [links, setLinks] = useState({next: '', previous: ''});
+    const [previewData, setPreviewData] = useState({});
 
     const getList = async (url?: string, _params?: Object) => {
         let params = {..._params, money_type: 1};
@@ -38,9 +41,7 @@ export default ({}: Props) => {
     const searchList = (keyword: string) => getList('', keyword ? {search: keyword} : {});
 
     const handlePrint = id => {
-        Tools.apiClient(apiUrls.print + id)
-            .then(console.log)
-            .catch(console.log);
+        PreviewService.toggleForm(true, id);
     };
 
     useEffect(() => {
@@ -88,6 +89,7 @@ export default ({}: Props) => {
                     </tfoot>
                 )}
             </table>
+            <Preview data={previewData} close={() => PreviewService.toggleForm(false)}/>
         </div>
     );
 };
