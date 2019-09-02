@@ -3,10 +3,27 @@ from django.contrib.auth.models import Permission
 from django.contrib.auth.models import User
 from apps.staff.models import Staff
 from apps.customer.models import Customer
+from apps.variable.models import Variable
 
 
 class Command(BaseCommand):
     help = 'Create root, tbson (staff), sonnl (customer)'
+
+    @staticmethod
+    def variable_seeding():
+        list_item = [
+            {'uid': 'info-ten-cty', 'value': 'SAMPLE'},
+            {'uid': 'info-dia-chi', 'value': 'SAMPLE'},
+            {'uid': 'info-email', 'value': 'SAMPLE'},
+            {'uid': 'info-phone', 'value': 'SAMPLE'},
+            {'uid': 'info-website', 'value': 'SAMPLE'},
+        ]
+        for item in list_item:
+            try:
+                Variable.objects.get(uid=item['uid'])
+            except Variable.DoesNotExist:
+                new_item = Variable(**item)
+                new_item.save()
 
     def handle(self, *args, **options):
         self.stdout.write(self.style.SUCCESS('Start...'))
@@ -33,5 +50,7 @@ class Command(BaseCommand):
             last_name='1',
         )
         Customer.objects.create(user=user)
+
+        Command.variable_seeding()
 
         self.stdout.write(self.style.SUCCESS('Done!!!'))
