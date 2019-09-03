@@ -18,7 +18,7 @@
             "^.+\\.js?$": "babel-jest"
         },
         "moduleNameMapper": {
-            "\\.(css|less|scss|sass|svg)$": "identity-obj-proxy"
+            "\\.(css|less|scss|sass|svg|jpg|png|gif)$": "identity-obj-proxy"
         }
     },
     "devDependencies": {

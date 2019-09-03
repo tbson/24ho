@@ -20,6 +20,23 @@ export class Service {
     static retrieve(id: number) {
         return Tools.apiClient(apiUrls.print + id);
     }
+
+    static bolsObjectToList(bols: Object): Array<Object> {
+        return Object.values(bols);
+    }
+
+    static bolsSum(bols: Object): Object {
+        const listBol = Service.bolsObjectToList(bols);
+        return listBol.reduce(
+            (sumObj, bol) => {
+                const vnd_delivery_fee = sumObj.vnd_delivery_fee + bol.vnd_delivery_fee;
+                const vnd_insurance_fee = sumObj.vnd_insurance_fee + bol.vnd_insurance_fee;
+                const vnd_sub_fee = sumObj.vnd_sub_fee + bol.vnd_sub_fee;
+                return {vnd_delivery_fee, vnd_insurance_fee, vnd_sub_fee};
+            },
+            {vnd_delivery_fee: 0, vnd_insurance_fee: 0, vnd_sub_fee: 0}
+        );
+    }
 }
 
 type Props = {
@@ -85,8 +102,10 @@ class Content extends React.Component<ContentProps> {
             note,
             address,
             customer,
-            staff
+            staff,
+            bols
         } = data;
+        const bolsSum = Service.bolsSum(bols);
         return (
             <div style={{padding: 10, paddingTop: 40}}>
                 <div className="row">
@@ -133,20 +152,59 @@ class Content extends React.Component<ContentProps> {
                     &nbsp;
                     <strong>{address.uid}</strong>
                 </div>
-                <br/>
+                <br />
+                <table className="table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Mã vận đơn</th>
+                            <th>Phí vận chuyển</th>
+                            <th>Phí bảo hiểm</th>
+                            <th>Chi phí khác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {Service.bolsObjectToList(bols).map((bol, index) => (
+                            <tr key={index}>
+                                <td>{index + 1}</td>
+                                <td>{bol.uid}</td>
+                                <td>{Tools.numberFormat(bol.vnd_delivery_fee)}</td>
+                                <td>{Tools.numberFormat(bol.vnd_insurance_fee)}</td>
+                                <td>{Tools.numberFormat(bol.vnd_sub_fee)}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colSpan="2">
+                                <span>Tổng:</span>
+                                &nbsp;
+                                <strong>
+                                    {Tools.numberFormat(
+                                        bolsSum.vnd_delivery_fee + bolsSum.vnd_insurance_fee + bolsSum.vnd_sub_fee
+                                    )}
+                                </strong>
+                            </td>
+                            <td>{bolsSum.vnd_delivery_fee}</td>
+                            <td>{bolsSum.vnd_insurance_fee}</td>
+                            <td>{bolsSum.vnd_sub_fee}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+                <br />
                 <div>
                     <span>Phí giao hàng: </span>
                     <span>{Tools.numberFormat(vnd_delivery_fee)}₫</span>
                 </div>
                 <div>
                     <span>Tổng cộng: </span>
-                    <span>{Tools.numberFormat(parseInt(vnd_total) + parseInt(vnd_delivery_fee))}₫</span>
+                    <span>{Tools.numberFormat(parseInt(vnd_total))}₫</span>
                 </div>
                 <div className="row">
-                    <div className="col-sm-3">
+                    <div className="col-3">
                         <span>Ghi chú: </span>
                     </div>
-                    <div className="col-sm-9">
+                    <div className="col-9">
                         <div className="dot-underline">{note}</div>
                         <div className="dot-underline">&nbsp;</div>
                         <div className="dot-underline">&nbsp;</div>

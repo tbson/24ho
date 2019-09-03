@@ -265,6 +265,7 @@ class BolUtils:
         result = {}
         for bol in bols:
             result[str(bol.pk)] = {
+                'uid': bol.uid,
                 'vnd_delivery_fee': bol.vnd_delivery_fee,
                 'vnd_insurance_fee': int(bol.cny_insurance_fee * bol.rate),
                 'vnd_sub_fee': int((bol.cny_sub_fee + bol.cny_shockproof_fee + bol.cny_wooden_box_fee) * bol.rate)
@@ -290,19 +291,15 @@ class BolUtils:
             fee_obj = transport_bol_fee[str(bol.pk)]
 
             vnd_delivery_fee = fee_obj['vnd_delivery_fee']
-            if vnd_delivery_fee:
-                total = total + vnd_delivery_fee
-                TransactionUtils.charge_bol_delivery_fee(vnd_delivery_fee, customer, staff, receipt, bol)
+            TransactionUtils.charge_bol_delivery_fee(vnd_delivery_fee, customer, staff, receipt, bol)
 
             vnd_insurance_fee = fee_obj['vnd_insurance_fee']
-            if vnd_insurance_fee:
-                total = total + vnd_insurance_fee
-                TransactionUtils.charge_bol_insurance_fee(vnd_insurance_fee, customer, staff, receipt, bol)
+            TransactionUtils.charge_bol_insurance_fee(vnd_insurance_fee, customer, staff, receipt, bol)
 
             vnd_sub_fee = fee_obj['vnd_sub_fee']
-            if vnd_sub_fee:
-                total = total + vnd_sub_fee
-                TransactionUtils.charge_bol_other_sub_fee(vnd_sub_fee, customer, staff, receipt, bol)
+            TransactionUtils.charge_bol_other_sub_fee(vnd_sub_fee, customer, staff, receipt, bol)
+
+            total = total + vnd_delivery_fee + vnd_insurance_fee + vnd_sub_fee
         return total
 
     @staticmethod

@@ -138,6 +138,9 @@ class TransactionUtils:
         from .models import Type, MoneyType
         from .models import Transaction
 
+        if amount == 0:
+            return ''
+
         transaction = Transaction(
             customer=customer,
             staff=staff,
@@ -162,6 +165,9 @@ class TransactionUtils:
         from .models import Type, MoneyType
         from .models import Transaction
 
+        if amount == 0:
+            return ''
+
         transaction = Transaction(
             customer=customer,
             staff=staff,
@@ -185,6 +191,9 @@ class TransactionUtils:
     ) -> str:
         from .models import Type, MoneyType
         from .models import Transaction
+
+        if amount == 0:
+            return ''
 
         transaction = Transaction(
             customer=customer,
