@@ -13,10 +13,11 @@ import ExportForm from './ExportForm';
 import {Service as ExportFormService} from './ExportForm';
 
 type Props = {
-    match: Object
+    match: Object,
+    history: Object
 };
 
-const Component = ({match}: Props) => {
+const Component = ({match, history}: Props) => {
     const [list, setList] = useState([]);
     const [prepareList, setPrepareList] = useState([]);
     const [resultList, setResultList] = useState([]);
@@ -91,7 +92,8 @@ const Component = ({match}: Props) => {
                     <ResultTable list={resultList} move={moveLeft} />
                 </div>
             </div>
-            <ExportForm onChange={console.log} ids={resultList.map(item => item.id)}/>
+
+            <ExportForm onChange={() => Tools.navigateTo(history)('/receipt')} ids={resultList.map(item => item.id)} />
         </NavWrapper>
     );
 };

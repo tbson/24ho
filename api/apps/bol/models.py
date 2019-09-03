@@ -88,7 +88,7 @@ class Bol(TimeStampedModel):
         (DeliveryFeeType.VOLUME, '6. Đơn giá mét khối'),
     )
 
-    receipt = models.ForeignKey(Receipt, models.PROTECT, related_name='receipt_bols', null=True)
+    receipt = models.ForeignKey(Receipt, models.SET_NULL, related_name='receipt_bols', null=True)
 
     bag = models.ForeignKey(Bag, models.SET_NULL, related_name='bag_bols', null=True)
     bol_date = models.ForeignKey(BolDate, models.SET_NULL, related_name='date_bols', null=True)

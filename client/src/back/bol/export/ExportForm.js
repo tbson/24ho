@@ -34,6 +34,7 @@ export class Service {
         return (values: Object) =>
             Tools.apiClient(apiUrls.export, {...values, ids: ids.join(',')}).then(resp => {
                 closeOnSubmit && Service.toggleForm(false);
+                onChange();
             });
     }
 }

@@ -21,12 +21,12 @@ export class Service {
         return Tools.apiClient(apiUrls.print + id);
     }
 
-    static bolsObjectToList(bols: Object): Array<Object> {
+    static objectToList(bols: Object): Array<Object> {
         return Object.values(bols);
     }
 
     static bolsSum(bols: Object): Object {
-        const listBol = Service.bolsObjectToList(bols);
+        const listBol = Service.objectToList(bols);
         return listBol.reduce(
             (sumObj, bol) => {
                 const vnd_delivery_fee = sumObj.vnd_delivery_fee + bol.vnd_delivery_fee;
@@ -35,6 +35,17 @@ export class Service {
                 return {vnd_delivery_fee, vnd_insurance_fee, vnd_sub_fee};
             },
             {vnd_delivery_fee: 0, vnd_insurance_fee: 0, vnd_sub_fee: 0}
+        );
+    }
+
+    static ordersSum(orders: Object): Object {
+        const listOrder = Service.objectToList(orders);
+        return listOrder.reduce(
+            (sumObj, order) => {
+                const remain = sumObj.remain + order.remain;
+                return {remain};
+            },
+            {remain: 0}
         );
     }
 }
@@ -102,10 +113,10 @@ class Content extends React.Component<ContentProps> {
             note,
             address,
             customer,
-            staff,
-            bols
+            staff
         } = data;
-        const bolsSum = Service.bolsSum(bols);
+        const bols = data.bols;
+        const orders = data.orders;
         return (
             <div style={{padding: 10, paddingTop: 40}}>
                 <div className="row">
@@ -153,44 +164,7 @@ class Content extends React.Component<ContentProps> {
                     <strong>{address.uid}</strong>
                 </div>
                 <br />
-                <table className="table">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Mã vận đơn</th>
-                            <th>Phí vận chuyển</th>
-                            <th>Phí bảo hiểm</th>
-                            <th>Chi phí khác</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {Service.bolsObjectToList(bols).map((bol, index) => (
-                            <tr key={index}>
-                                <td>{index + 1}</td>
-                                <td>{bol.uid}</td>
-                                <td>{Tools.numberFormat(bol.vnd_delivery_fee)}</td>
-                                <td>{Tools.numberFormat(bol.vnd_insurance_fee)}</td>
-                                <td>{Tools.numberFormat(bol.vnd_sub_fee)}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <td colSpan="2">
-                                <span>Tổng:</span>
-                                &nbsp;
-                                <strong>
-                                    {Tools.numberFormat(
-                                        bolsSum.vnd_delivery_fee + bolsSum.vnd_insurance_fee + bolsSum.vnd_sub_fee
-                                    )}
-                                </strong>
-                            </td>
-                            <td>{bolsSum.vnd_delivery_fee}</td>
-                            <td>{bolsSum.vnd_insurance_fee}</td>
-                            <td>{bolsSum.vnd_sub_fee}</td>
-                        </tr>
-                    </tfoot>
-                </table>
+                {bols ? <BolTable bols={bols} /> : <OrderTable orders={orders} />}
                 <br />
                 <div>
                     <span>Phí giao hàng: </span>
@@ -232,3 +206,87 @@ class Content extends React.Component<ContentProps> {
         );
     }
 }
+
+type BolTableProps = {
+    bols: Object
+};
+const BolTable = ({bols}: BolTableProps) => {
+    const bolsSum = Service.bolsSum(bols);
+    return (
+        <table className="table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Mã vận đơn</th>
+                    <th>Phí vận chuyển</th>
+                    <th>Phí bảo hiểm</th>
+                    <th>Chi phí khác</th>
+                </tr>
+            </thead>
+            <tbody>
+                {Service.objectToList(bols).map((bol, index) => (
+                    <tr key={index}>
+                        <td>{index + 1}</td>
+                        <td>{bol.uid}</td>
+                        <td>{Tools.numberFormat(bol.vnd_delivery_fee)}</td>
+                        <td>{Tools.numberFormat(bol.vnd_insurance_fee)}</td>
+                        <td>{Tools.numberFormat(bol.vnd_sub_fee)}</td>
+                    </tr>
+                ))}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colSpan="2">
+                        <span>Tổng:</span>
+                        &nbsp;
+                        <strong>
+                            {Tools.numberFormat(
+                                bolsSum.vnd_delivery_fee + bolsSum.vnd_insurance_fee + bolsSum.vnd_sub_fee
+                            )}
+                        </strong>
+                    </td>
+                    <td>{Tools.numberFormat(bolsSum.vnd_delivery_fee)}</td>
+                    <td>{Tools.numberFormat(bolsSum.vnd_insurance_fee)}</td>
+                    <td>{Tools.numberFormat(bolsSum.vnd_sub_fee)}</td>
+                </tr>
+            </tfoot>
+        </table>
+    );
+};
+
+type OrderTableProps = {
+    orders: Object
+};
+const OrderTable = ({orders}: OrderTableProps) => {
+    const ordersSum = Service.ordersSum(orders);
+    return (
+        <table className="table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Mã đơn hàng</th>
+                    <th>Tiền còn thiếu</th>
+                </tr>
+            </thead>
+            <tbody>
+                {Service.objectToList(orders).map((order, index) => (
+                    <tr key={index}>
+                        <td>{index + 1}</td>
+                        <td>{order.uid}</td>
+                        <td>{Tools.numberFormat(order.remain)}</td>
+                    </tr>
+                ))}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colSpan="2">
+                        <span>Tổng:</span>
+                        &nbsp;
+                        <strong>{Tools.numberFormat(ordersSum.remain)}</strong>
+                    </td>
+                    <td>{Tools.numberFormat(ordersSum.remain)}</td>
+                </tr>
+            </tfoot>
+        </table>
+    );
+};

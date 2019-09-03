@@ -273,6 +273,18 @@ class BolUtils:
         return result
 
     @staticmethod
+    def calculate_order_remain(orders: models.QuerySet) -> dict:
+        from apps.order.utils import OrderUtils
+
+        result = {}
+        for order in orders:
+            result[str(order.pk)] = {
+                'uid': order.uid,
+                'remain': OrderUtils.get_vnd_total_obj(order) - OrderUtils.get_deposit_amount(order),
+            }
+        return result
+
+    @staticmethod
     def export_transport_bols(
         bols: models.QuerySet,
         receipt: models.QuerySet,
@@ -319,9 +331,14 @@ class BolUtils:
             bol.exporter = staff
             bol.save()
         orders = OrderUtils.get_orders_from_bols(bols)
+        order_remain = BolUtils.calculate_order_remain(orders)
         for order in orders:
-            remain = OrderUtils.get_vnd_total_obj(order) - OrderUtils.get_deposit_amount(order)
+            remain_obj = order_remain[str(order.pk)]
+            remain = remain_obj['remain']
             total = total + remain
+            order.receipt = receipt
+            order.do_not_check_exported = True
+            order.save()
             TransactionUtils.charge_order_remain(remain, customer, staff, receipt, order)
         return total
 

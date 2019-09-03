@@ -55,7 +55,7 @@ class Order(TimeStampedModel):
 
     uid = models.CharField(max_length=50, unique=True)
 
-    receipt = models.ForeignKey(Receipt, models.PROTECT, related_name='receipt_orders', null=True)
+    receipt = models.ForeignKey(Receipt, models.SET_NULL, related_name='receipt_orders', null=True)
 
     address = models.ForeignKey(Address, models.PROTECT, related_name='address_orders')
     customer = models.ForeignKey(Customer, models.PROTECT, related_name='customer_orders')

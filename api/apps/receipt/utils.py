@@ -60,6 +60,18 @@ class ReceiptUtils:
             item.save()
 
     @staticmethod
+    def retrieve_to_print(receipt: models.QuerySet) -> dict:
+        from .models import Type
+        common = ReceiptUtils.retrieve_to_print_common(receipt)
+        if receipt.type == Type.TRANSPORT:
+            transport_data = ReceiptUtils.retrieve_to_print_transport(receipt)
+            return {**common, **transport_data}
+        if receipt.type == Type.ORDER:
+            order_data = ReceiptUtils.retrieve_to_print_order(receipt)
+            return {**common, **order_data}
+        return common
+
+    @staticmethod
     def retrieve_to_print_common(receipt: models.QuerySet) -> dict:
         from apps.variable.utils import VariableUtils
         from apps.address.serializers import AddressBaseSr
@@ -82,8 +94,16 @@ class ReceiptUtils:
 
     @staticmethod
     def retrieve_to_print_transport(receipt: models.QuerySet) -> dict:
-        return {}
+        from apps.bol.utils import BolUtils
+        bols = BolUtils.calculate_transport_bol_fee(receipt.receipt_bols.all())
+        return {
+            'bols': bols
+        }
 
     @staticmethod
     def retrieve_to_print_order(receipt: models.QuerySet) -> dict:
-        return {}
+        from apps.bol.utils import BolUtils
+        orders = BolUtils.calculate_order_remain(receipt.receipt_orders.all())
+        return {
+            'orders': orders
+        }
