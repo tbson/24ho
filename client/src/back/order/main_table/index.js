@@ -9,6 +9,7 @@ import OnlyAdmin from 'src/utils/components/OnlyAdmin';
 import Row from './Row.js';
 import ApproveForm from '../ApproveForm';
 import {Service as ApproveFormService} from '../ApproveForm';
+import FilterForm from '../FilterForm';
 
 export class Service {
     static listRequest(url?: string, params?: Object): Promise<Object> {
@@ -120,6 +121,9 @@ export default ({status, pending = false}: Props) => {
             <OnlyAdmin>
                 <BulkApprove status={status} onApprove={onApprove} />
             </OnlyAdmin>
+            <div>
+                <FilterForm onChange={console.log} />
+            </div>
             <table className="table table-striped">
                 <thead className="thead-light">
                     <tr>

@@ -239,11 +239,14 @@ button {
     border-radius: 0 !important;
 }
 input.form-control {
-    height: 38px;
+    height: 29px;
 }
 button.btn {
-    height: 38px;
+    height: 29px;
 }
 .dot-underline {
     border-bottom: 1px dotted #000;
+}
+.react-daterange-picker__wrapper {
+    border: thin solid #D6DBE0 !important;
 }
