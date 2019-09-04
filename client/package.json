@@ -80,6 +80,7 @@
         "webpack-merge": "4.2.2"
     },
     "dependencies": {
+        "@wojtekmaj/react-daterange-picker": "^2.4.0",
         "bootstrap": "4.3.1",
         "fingerprintjs2": "^2.1.0",
         "formdata-polyfill": "3.0.19",
