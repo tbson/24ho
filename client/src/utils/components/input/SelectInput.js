@@ -17,6 +17,7 @@ type Props = {
     label?: string,
     options: SelectOptions,
     isMulti?: boolean,
+    isClearable?: boolean,
     disabled?: boolean,
     autoFocus?: boolean,
     required?: boolean
@@ -29,11 +30,12 @@ export default ({
     autoFocus = false,
     isMulti = false,
     disabled = false,
+    isClearable = true,
     required = false
 }: Props) => {
     const handleChange = (setFieldValue: Function, isMulti: boolean) => {
         return item => {
-            const value = isMulti ? item.map(i => i.value) : item.value;
+            const value = isMulti ? item.map(i => i.value) : item?.value;
             setFieldValue(name, value);
         };
     };
@@ -60,6 +62,7 @@ export default ({
                                 value={value}
                                 isMulti={isMulti}
                                 isSearchable={true}
+                                isClearable={isClearable}
                                 disabled={disabled}
                                 autoFocus={autoFocus}
                                 onChange={handleChange(form.setFieldValue, isMulti)}
