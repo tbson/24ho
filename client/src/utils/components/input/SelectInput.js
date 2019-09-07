@@ -16,6 +16,7 @@ type Props = {
     name: string,
     label?: string,
     options: SelectOptions,
+    blankLabel?: string,
     isMulti?: boolean,
     isClearable?: boolean,
     disabled?: boolean,
@@ -27,6 +28,7 @@ export default ({
     name,
     label,
     options,
+    blankLabel = '',
     autoFocus = false,
     isMulti = false,
     disabled = false,
@@ -55,6 +57,11 @@ export default ({
                         if (!form.touched[field.name] || !form.errors[field.name]) return null;
                         return <div className="red">{form.errors[field.name]}</div>;
                     };
+                    const blankOption = {value: '', label: `--- ${blankLabel} ---`};
+                    const optionsWithBlankValue = () => {
+                        if (isMulti || !blankLabel) return options;
+                        return [blankOption, ...options];
+                    };
                     return (
                         <>
                             <Select
@@ -66,7 +73,7 @@ export default ({
                                 disabled={disabled}
                                 autoFocus={autoFocus}
                                 onChange={handleChange(form.setFieldValue, isMulti)}
-                                options={options}
+                                options={optionsWithBlankValue()}
                             />
                             {renderErrorMessage()}
                         </>
