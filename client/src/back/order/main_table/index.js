@@ -51,6 +51,15 @@ export class Service {
         }
         return options;
     }
+
+    static processFilterInput(filterInput: Object): Object {
+        let values = {...filterInput};
+        const created_at = Tools.rangeToCondition('created_at', values.created_at);
+        values = Tools.mergeCondition(values, created_at);
+        values = Tools.removeEmptyKey(values);
+        delete values.created_at;
+        return values;
+    }
 }
 
 type Props = {
@@ -66,6 +75,7 @@ export default ({status, pending = false}: Props) => {
 
     const [modalId, setModalId] = useState(0);
     const [links, setLinks] = useState({next: '', previous: ''});
+    let searchCondition = {};
 
     const listAction = ListTools.actions(list);
 
@@ -93,7 +103,7 @@ export default ({status, pending = false}: Props) => {
         r && Service.handleBulkRemove(ids).then(data => setList(listAction(data).bulkRemove()));
     };
 
-    const searchList = (keyword: string) => getList('', keyword ? {search: keyword} : {});
+    const searchList = (condition: Object) => getList('', condition);
 
     const onSelectSale = (sale: number) => {
         const ids = ListTools.getChecked(list);
@@ -112,6 +122,11 @@ export default ({status, pending = false}: Props) => {
         ApproveFormService.toggleForm(true);
     };
 
+    const handleFilter = (rawValue: Object) => {
+        searchCondition = Service.processFilterInput(rawValue);
+        searchList(searchCondition);
+    };
+
     useEffect(() => {
         getList();
     }, []);
@@ -122,7 +137,7 @@ export default ({status, pending = false}: Props) => {
                 <BulkApprove status={status} onApprove={onApprove} />
             </OnlyAdmin>
             <div>
-                <FilterForm onChange={console.log} />
+                <FilterForm onChange={handleFilter} />
             </div>
             <table className="table table-striped">
                 <thead className="thead-light">
@@ -137,6 +152,7 @@ export default ({status, pending = false}: Props) => {
                     </tr>
                 </thead>
 
+                {/*
                 <tbody>
                     <tr>
                         <td colSpan="99" style={{padding: 15, paddingBottom: 0}}>
@@ -144,6 +160,7 @@ export default ({status, pending = false}: Props) => {
                         </td>
                     </tr>
                 </tbody>
+                */}
 
                 <tbody>
                     {list.map((data, key) => (
@@ -151,7 +168,7 @@ export default ({status, pending = false}: Props) => {
                             className="table-row"
                             options={options}
                             data={data}
-                            key={key}
+                            key={data.id}
                             onCheck={onCheck}
                             onRemove={onRemove}
                         />

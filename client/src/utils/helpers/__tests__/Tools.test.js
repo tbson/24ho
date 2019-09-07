@@ -1253,3 +1253,140 @@ describe('nullToDefault', () => {
         expect(eput).toEqual(output);
     });
 });
+
+describe('rangeToCondition', () => {
+    it('Normal case', () => {
+        const key = 'hello';
+        const range = ['a', 'b'];
+
+        const eput = {
+            hello__gte: 'a',
+            hello__lte: 'b'
+        };
+
+        const output = Tools.rangeToCondition(key, range);
+
+        expect(eput).toEqual(output);
+    });
+
+    it('no equal', () => {
+        const key = 'hello';
+        const range = ['a', 'b'];
+
+        const eput = {
+            hello__gt: 'a',
+            hello__lt: 'b'
+        };
+
+        const isEqual = false;
+
+        const output = Tools.rangeToCondition(key, range, isEqual);
+
+        expect(eput).toEqual(output);
+    });
+
+    it('no key', () => {
+        const key = '';
+        const range = ['a', 'b'];
+
+        const eput = {};
+
+        const output = Tools.rangeToCondition(key, range);
+
+        expect(eput).toEqual(output);
+    });
+
+    it('empty range', () => {
+        const key = 'hello';
+        const range = [];
+
+        const eput = {hello: ''};
+
+        const output = Tools.rangeToCondition(key, range);
+
+        expect(eput).toEqual(output);
+    });
+
+    it('invalid range', () => {
+        const key = 'hello';
+        const range = {};
+
+        const eput = {hello: ''};
+
+        const output = Tools.rangeToCondition(key, range);
+
+        expect(eput).toEqual(output);
+    });
+
+    it('range with 1 element', () => {
+        const key = 'hello';
+        const range = ['a'];
+
+        const eput = {
+            hello: 'a'
+        };
+
+        const output = Tools.rangeToCondition(key, range);
+
+        expect(eput).toEqual(output);
+    });
+
+    it('range with 3 element', () => {
+        const key = 'hello';
+        const range = ['a', 'b', 'c'];
+
+        const eput = {
+            hello__gte: 'a',
+            hello__lte: 'b'
+        };
+
+        const output = Tools.rangeToCondition(key, range);
+
+        expect(eput).toEqual(output);
+    });
+
+    it('null range', () => {
+        const key = 'hello';
+        const range = [null, null];
+
+        const eput = {hello: ''};
+
+        const output = Tools.rangeToCondition(key, range);
+
+        expect(eput).toEqual(output);
+    });
+
+    it('undefined range', () => {
+        const key = 'hello';
+        const range = [undefined, undefined];
+
+        const eput = {hello: ''};
+
+        const output = Tools.rangeToCondition(key, range);
+
+        expect(eput).toEqual(output);
+    });
+});
+
+describe('mergeCondition', () => {
+    it('Normal case', () => {
+        const condition = {
+            key1: 'value 1',
+            key2: 'value 2',
+        };
+        const subCondition = {
+            key1: '',
+            key2: 'value 2.1',
+            key3: 'value 3',
+            key4: ''
+        }
+        const eput = {
+            key2: 'value 2.1',
+            key3: 'value 3'
+        };
+
+        const output = Tools.mergeCondition(condition, subCondition);
+
+        expect(eput).toEqual(output);
+    });
+});

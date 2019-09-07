@@ -1,4 +1,5 @@
 from django.db import models
+from django_filters import rest_framework as filters
 from django.contrib.postgres.fields import JSONField
 from utils.models.model import TimeStampedModel
 from apps.staff.models import Staff
@@ -167,3 +168,18 @@ class Order(TimeStampedModel):
             ("check_order", "Can check order"),
             ("complaint_resolve_order", "Can resolve complaint"),
         )
+
+
+class OrderFilter(filters.FilterSet):
+    bol = filters.CharFilter(field_name='order_bols__uid', lookup_expr='exact')
+
+    class Meta:
+        model = Order
+        fields = {
+            'uid': ['exact'],
+            'status': ['exact'],
+            'pending': ['exact'],
+            'purchase_code': ['exact'],
+            'bol': ['exact'],
+            'created_at': ['exact', 'lt', 'gt', 'lte', 'gte']
+        }

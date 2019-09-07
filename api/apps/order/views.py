@@ -5,7 +5,7 @@ from rest_framework.decorators import action
 from rest_framework.viewsets import (GenericViewSet, )
 from rest_framework.serializers import ValidationError
 from rest_framework import status
-from .models import Order
+from .models import Order, OrderFilter
 from apps.staff.models import Staff
 from apps.address.models import Address
 from .serializers import OrderBaseSr
@@ -25,7 +25,7 @@ class OrderViewSet(GenericViewSet):
     serializer_class = OrderBaseSr
     permission_classes = (CustomPermission, )
     search_fields = ('uid', 'value')
-    filterset_fields = ('status', 'pending', )
+    filterset_class = OrderFilter
 
     def list(self, request):
         queryset = Order.objects.all()

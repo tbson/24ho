@@ -747,7 +747,8 @@ export default class Tools {
         return typeof input !== 'number' && !input;
     }
 
-    static removeEmptyKey(obj: Object = {}): Object {
+    static removeEmptyKey(_obj: Object = {}): Object {
+        const obj = {..._obj};
         for (let key in obj) {
             const value = obj[key];
             Tools.isBlank(value) && delete obj[key];
@@ -804,4 +805,41 @@ export default class Tools {
             window.document.dispatchEvent(event);
         }
     };
+
+    static rangeToCondition(key: string, range: Array<any>, isEqual: boolean = true): Object {
+        const defaultResult = {[key]: ''};
+        if (!key) return {};
+        if (!range || !Array.isArray(range)) return defaultResult;
+
+        if (!range.length) return defaultResult;
+        if (range.length == 1) return {[key]: range[0]};
+
+        const startValue = range[0];
+        const endValue = range[1];
+
+        if (startValue === null && endValue === null) return defaultResult;
+        if (startValue === undefined && endValue === undefined) return defaultResult;
+
+        const startKey = `${key}__gt${isEqual ? 'e' : ''}`;
+        const endKey = `${key}__lt${isEqual ? 'e' : ''}`;
+
+        return {
+            [startKey]: startValue,
+            [endKey]: endValue
+        };
+    }
+
+    static mergeCondition(_condition: Object, subCondition: Object): Object {
+        let condition = {..._condition};
+        if (Tools.isEmpty(subCondition)) return condition;
+        for (let key in subCondition) {
+            const value = subCondition[key];
+            if (typeof value !== 'number' && !value) {
+                delete condition[key];
+            } else {
+                condition = {...condition, [key]: value};
+            }
+        }
+        return condition;
+    }
 }
