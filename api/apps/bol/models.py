@@ -243,8 +243,6 @@ class Bol(TimeStampedModel):
 
 
 class BolFilter(filters.FilterSet):
-    cn_date__isnull = filters.BooleanFilter(field_name="cn_date", lookup_expr='isnull')
-    vn_date__isnull = filters.BooleanFilter(field_name="vn_date", lookup_expr='isnull')
     order_id = filters.NumberFilter(field_name="order_id", lookup_expr='exact')
     bol_date_id = filters.NumberFilter(field_name="bol_date_id", lookup_expr='exact')
     bag_id = filters.NumberFilter(field_name="bag_id", lookup_expr='exact')
@@ -252,4 +250,11 @@ class BolFilter(filters.FilterSet):
 
     class Meta:
         model = Bol
-        fields = ['order_id', 'bol_date_id', 'bag_id', 'bag_uid', 'cn_date__isnull', 'vn_date__isnull']
+        fields = {
+            'order_id': ['exact'],
+            'bol_date_id': ['exact'],
+            'bag_id': ['exact'],
+            'bag_uid': ['exact'],
+            'cn_date': ['exact', 'isnull', 'lt', 'gt', 'lte', 'gte'],
+            'vn_date': ['exact', 'isnull', 'lt', 'gt', 'lte', 'gte']
+        }
