@@ -176,8 +176,8 @@ class OrderFilter(filters.FilterSet):
     customer = filters.NumberFilter(field_name='customer_id', lookup_expr='exact')
     sale = filters.NumberFilter(field_name='sale_id', lookup_expr='exact')
     cust_care = filters.NumberFilter(field_name='cust_care_id', lookup_expr='exact')
-    approver = filters.NumberFilter(field_name='approver_id', lookup_expr='exact')
-    checker = filters.NumberFilter(field_name='checker_id', lookup_expr='exact')
+    # approver = filters.NumberFilter(field_name='approver_id', lookup_expr='exact')
+    # checker = filters.NumberFilter(field_name='checker_id', lookup_expr='exact')
 
     class Meta:
         model = Order
@@ -192,8 +192,8 @@ class OrderFilter(filters.FilterSet):
             'customer': ['exact'],
             'sale': ['exact'],
             'cust_care': ['exact'],
-            'approver': ['exact'],
-            'checker': ['exact'],
+            # 'approver': ['exact'],
+            # 'checker': ['exact'],
             'approved_date': ['exact', 'lt', 'gt', 'lte', 'gte'],
             'checked_date': ['exact', 'lt', 'gt', 'lte', 'gte'],
             'created_at': ['exact', 'lt', 'gt', 'lte', 'gte'],

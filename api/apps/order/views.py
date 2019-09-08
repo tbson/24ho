@@ -6,10 +6,8 @@ from rest_framework.viewsets import (GenericViewSet, )
 from rest_framework.serializers import ValidationError
 from rest_framework import status
 from .models import Order, OrderFilter
-from apps.staff.models import Staff
 from apps.address.models import Address
 from .serializers import OrderBaseSr
-from apps.staff.serializers import StaffSelectSr
 from apps.address.serializers import AddressBaseSr
 from .utils import OrderUtils, ComplaintDecide
 from .move_status_utils import MoveStatusUtils
@@ -28,6 +26,11 @@ class OrderViewSet(GenericViewSet):
     filterset_class = OrderFilter
 
     def list(self, request):
+        from apps.staff.models import Staff
+        from apps.staff.serializers import StaffSelectSr
+        from apps.customer.models import Customer
+        from apps.customer.serializers import CustomerSelectSr
+
         queryset = Order.objects.all()
         if hasattr(request.user, 'customer'):
             queryset = queryset.filter(customer=request.user.customer)
@@ -40,7 +43,8 @@ class OrderViewSet(GenericViewSet):
             'extra': {
                 'options': {
                     'sale': StaffSelectSr(Staff.objects.getListSale(), many=True).data,
-                    'cust_care': StaffSelectSr(Staff.objects.getListCustCare(), many=True).data
+                    'cust_care': StaffSelectSr(Staff.objects.getListCustCare(), many=True).data,
+                    'customer': CustomerSelectSr(Customer.objects.all(), many=True).data
                 }
             }
         }

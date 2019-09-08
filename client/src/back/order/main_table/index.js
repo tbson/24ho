@@ -51,15 +51,6 @@ export class Service {
         }
         return options;
     }
-
-    static processFilterInput(filterInput: Object): Object {
-        let values = {...filterInput};
-        const created_at = Tools.rangeToCondition('created_at', values.created_at);
-        values = Tools.mergeCondition(values, created_at);
-        values = Tools.removeEmptyKey(values);
-        delete values.created_at;
-        return values;
-    }
 }
 
 type Props = {
@@ -70,7 +61,8 @@ export default ({status, pending = false}: Props) => {
     const [list, setList] = useState([]);
     const [options, setOptions] = useState({
         sale: [],
-        cust_care: []
+        cust_care: [],
+        customer: []
     });
 
     const [modalId, setModalId] = useState(0);
@@ -122,9 +114,8 @@ export default ({status, pending = false}: Props) => {
         ApproveFormService.toggleForm(true);
     };
 
-    const handleFilter = (rawValue: Object) => {
-        searchCondition = Service.processFilterInput(rawValue);
-        searchList(searchCondition);
+    const handleFilter = (conditions: Object) => {
+        searchList(conditions);
     };
 
     useEffect(() => {
@@ -137,7 +128,7 @@ export default ({status, pending = false}: Props) => {
                 <BulkApprove status={status} onApprove={onApprove} />
             </OnlyAdmin>
             <div>
-                <FilterForm onChange={handleFilter} />
+                <FilterForm onChange={handleFilter} options={options} />
             </div>
             <table className="table table-striped">
                 <thead className="thead-light">

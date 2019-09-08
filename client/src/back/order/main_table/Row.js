@@ -118,7 +118,7 @@ const Staffs = ({data: _data, options}: StaffsType) => {
     return (
         <>
             <div>
-                <span>Đặt hàng: </span>
+                <span>Mua hàng: </span>
                 <Editable
                     disabled={!Tools.isAdmin()}
                     onChange={setData}
