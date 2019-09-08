@@ -13,7 +13,7 @@ from .models import Customer
 from apps.staff.models import Staff
 from utils.serializers.user import UserSr
 from .serializers import CustomerBaseSr
-from apps.staff.serializers import StaffCompactSr
+from apps.staff.serializers import StaffSelectSr
 from utils.common_classes.custom_permission import CustomPermission
 from django.http.request import QueryDict
 from django.contrib.auth.hashers import make_password, check_password
@@ -40,8 +40,8 @@ class CustomerViewSet(GenericViewSet):
         result = {
             'items': serializer.data,
             'extra': {
-                'list_sale': StaffCompactSr(Staff.objects.getListSale(), many=True).data,
-                'list_cust_care': StaffCompactSr(Staff.objects.getListCustCare(), many=True).data
+                'list_sale': StaffSelectSr(Staff.objects.getListSale(), many=True).data,
+                'list_cust_care': StaffSelectSr(Staff.objects.getListCustCare(), many=True).data
             }
         }
         return self.get_paginated_response(result)

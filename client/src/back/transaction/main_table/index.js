@@ -175,7 +175,7 @@ export default ({}: Props) => {
             </table>
 
             <MainForm
-                listCustomer={listCustomer.map(item => ({value: item.id, label: item.username}))}
+                listCustomer={listCustomer}
                 listBank={Service.getBankOptions(listBank)}
                 listType={Service.objToOptions(listType)}
                 listMoneyType={Service.objToOptions(listMoneyType)}

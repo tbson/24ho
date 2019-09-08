@@ -85,7 +85,7 @@ export default ({status, pending = false}: Props) => {
         const data = await Service.handleGetList(url, _params);
         if (!data) return;
         setList(ListTools.prepare(data.items));
-        setOptions(Service.prepareOptions(data.extra.options));
+        setOptions(data.extra.options);
         setLinks(data.links);
     };
 

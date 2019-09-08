@@ -4,6 +4,7 @@ from rest_framework.serializers import SerializerMethodField
 from .models import Staff
 from utils.serializers.user import UserRetrieveSr
 from utils.serializers.group import GroupBaseSr
+from utils.helpers.tools import Tools
 
 
 class StaffBaseSr(ModelSerializer):
@@ -32,12 +33,19 @@ class StaffBaseSr(ModelSerializer):
         return map(lambda group: group['id'], groups)
 
 
-class StaffCompactSr(StaffBaseSr):
+class StaffSelectSr(StaffBaseSr):
+
+    value = SerializerMethodField()
+    label = SerializerMethodField()
 
     class Meta(StaffBaseSr.Meta):
-        fields = ('id', 'fullname')
+        fields = [
+            'value',
+            'label'
+        ]
 
-    fullname = SerializerMethodField()
+    def get_value(self, obj):
+        return obj.pk
 
-    def get_fullname(self, obj):
-        return "{} {}".format(obj.user.last_name, obj.user.first_name)
+    def get_label(self, obj):
+        return "{} / {}".format(obj.pk, Tools.get_fullname(obj))

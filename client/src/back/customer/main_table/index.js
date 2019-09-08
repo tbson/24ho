@@ -88,8 +88,8 @@ export default ({}: Props) => {
     const getList = async (url?: string, params?: Object) => {
         const data = await Service.handleGetList(url, params);
         if (!data) return;
-        const _listSale = Service.staffToOptions(data.extra.list_sale);
-        const _listCustCare = Service.staffToOptions(data.extra.list_cust_care);
+        const _listSale = data.extra.list_sale || [];
+        const _listCustCare = data.extra.list_cust_care || [];
         setList(Service.prepareList(data.items, _listSale, _listCustCare));
         setLinks(data.links);
         setListSale(_listSale);

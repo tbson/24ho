@@ -9,7 +9,7 @@ from .models import Order, OrderFilter
 from apps.staff.models import Staff
 from apps.address.models import Address
 from .serializers import OrderBaseSr
-from apps.staff.serializers import StaffCompactSr
+from apps.staff.serializers import StaffSelectSr
 from apps.address.serializers import AddressBaseSr
 from .utils import OrderUtils, ComplaintDecide
 from .move_status_utils import MoveStatusUtils
@@ -39,8 +39,8 @@ class OrderViewSet(GenericViewSet):
             'items': serializer.data,
             'extra': {
                 'options': {
-                    'sale': StaffCompactSr(Staff.objects.filter(is_sale=True), many=True).data,
-                    'cust_care': StaffCompactSr(Staff.objects.filter(is_cust_care=True), many=True).data
+                    'sale': StaffSelectSr(Staff.objects.getListSale(), many=True).data,
+                    'cust_care': StaffSelectSr(Staff.objects.getListCustCare(), many=True).data
                 }
             }
         }

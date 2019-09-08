@@ -3,6 +3,7 @@ from rest_framework.serializers import SerializerMethodField
 from .models import Customer
 from apps.staff.utils import StaffUtils
 from utils.serializers.user import UserRetrieveSr
+from utils.helpers.tools import Tools
 
 
 class CustomerBaseSr(ModelSerializer):
@@ -48,13 +49,17 @@ class CustomerRetrieveSr(CustomerBaseSr):
 
 class CustomerSelectSr(CustomerBaseSr):
 
-    username = SerializerMethodField()
+    value = SerializerMethodField()
+    label = SerializerMethodField()
 
     class Meta(CustomerBaseSr.Meta):
         fields = [
-            'id',
-            'username'
+            'value',
+            'label'
         ]
 
-    def get_username(self, obj):
-        return obj.user.username
+    def get_value(self, obj):
+        return obj.pk
+
+    def get_label(self, obj):
+        return "{} / {}".format(obj.pk, Tools.get_fullname(obj))
