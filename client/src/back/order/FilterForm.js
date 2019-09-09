@@ -20,6 +20,9 @@ export class Service {
         sale: '',
         cust_care: '',
         customer: '',
+        shockproof: '',
+        wooden_box: '',
+        count_check: '',
         created_at: [null, null],
         updated_at: [null, null],
         approved_date: [null, null],
@@ -33,11 +36,16 @@ export class Service {
         sale: Yup.number(),
         cust_care: Yup.number(),
         customer: Yup.number(),
+        shockproof: Yup.boolean(),
+        wooden_box: Yup.boolean(),
+        count_check: Yup.boolean(),
         created_at: Yup.array(Yup.object().nullable()),
         updated_at: Yup.array(Yup.object().nullable()),
         approved_date: Yup.array(Yup.object().nullable()),
         checked_date: Yup.array(Yup.object().nullable())
     });
+
+    static booleanOptions = [{value: 1, label: 'Có'}, {value: 0, label: 'Không'}];
 
     static processFilterInput(filterInput: Object): Object {
         let values = {...filterInput};
@@ -49,11 +57,14 @@ export class Service {
         values = Tools.mergeCondition(values, updated_at);
         values = Tools.mergeCondition(values, approved_date);
         values = Tools.mergeCondition(values, checked_date);
-        values = Tools.removeEmptyKey(values);
+
         delete values.created_at;
         delete values.updated_at;
         delete values.approved_date;
         delete values.checked_date;
+
+        values = Tools.removeEmptyKey(values);
+
         return values;
     }
 }
@@ -63,7 +74,7 @@ type Props = {
     onChange: Function
 };
 export default ({onChange, options = {sale: [], cust_care: [], customer: []}}: Props) => {
-    const {initialValues, validationSchema, processFilterInput} = Service;
+    const {initialValues, validationSchema, processFilterInput, booleanOptions} = Service;
     return (
         <div style={{padding: 15}}>
             <Formik
@@ -93,6 +104,32 @@ export default ({onChange, options = {sale: [], cust_care: [], customer: []}}: P
                                 </div>
                                 <div className="col">
                                     <SelectInput name="cust_care" options={options.sale} label="Nhân viên chăm sóc" />
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="col">
+                                    <SelectInput
+                                        options={booleanOptions}
+                                        blankLabel="Chọn giá trị"
+                                        name="shockproof"
+                                        label="Chống sốc"
+                                    />
+                                </div>
+                                <div className="col">
+                                    <SelectInput
+                                        options={booleanOptions}
+                                        blankLabel="Chọn giá trị"
+                                        name="wooden_box"
+                                        label="Đóng gỗ"
+                                    />
+                                </div>
+                                <div className="col">
+                                    <SelectInput
+                                        options={booleanOptions}
+                                        blankLabel="Chọn giá trị"
+                                        name="count_check"
+                                        label="Kiểm đếm"
+                                    />
                                 </div>
                             </div>
                             <div className="row">
