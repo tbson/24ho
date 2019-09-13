@@ -156,6 +156,9 @@ class Bol(TimeStampedModel):
             if bag and not bag.bol_date:
                 bag.bol_date = date.id
                 bag.save()
+            if self.order:
+                self.shockproof = self.order.shockproof
+                self.wooden_box = self.order.wooden_box
 
         if self.uid:
             self.uid = self.uid.strip().upper()

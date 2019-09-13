@@ -627,30 +627,55 @@ class UtilsCalCountCheckFee(TestCase):
         orderItems = OrderItemUtils.seeding(5)
 
         item = orderItems[0].order
+        item.count_check = True
         item.count_check_fee_input = 0
         item.save()
 
-        self.assertEqual(OrderUtils.cal_count_check_fee(item), settings.DEFAULT_COUNT_CHECK_PRICE)
+        output = OrderUtils.cal_count_check_fee(item)
+        eput = settings.DEFAULT_COUNT_CHECK_PRICE
+
+        self.assertEqual(output, eput)
 
     def test_no_manual_input_in_range(self):
         CountCheckUtils.seeding(5)
         orderItems = OrderItemUtils.seeding(15)
 
         item = orderItems[0].order
+        item.count_check = True
         item.count_check_fee_input = 0
         item.save()
 
-        self.assertEqual(OrderUtils.cal_count_check_fee(item), 21)
+        output = OrderUtils.cal_count_check_fee(item)
+        eput = 21
+
+        self.assertEqual(output, eput)
 
     def test_manual_input(self):
         CountCheckUtils.seeding(5)
         orderItems = OrderItemUtils.seeding(5)
 
-        order = orderItems[0].order
-        order.count_check_fee_input = 5
-        order.save()
+        item = orderItems[0].order
+        item.count_check = True
+        item.count_check_fee_input = 5
+        item.save()
 
-        self.assertEqual(OrderUtils.cal_count_check_fee(order), 5)
+        output = OrderUtils.cal_count_check_fee(item)
+        eput = 5
+
+        self.assertEqual(output, eput)
+
+    def test_count_check(self):
+        CountCheckUtils.seeding(5)
+        orderItems = OrderItemUtils.seeding(15)
+
+        item = orderItems[0].order
+        item.count_check = False
+        item.save()
+
+        output = OrderUtils.cal_count_check_fee(item)
+        eput = 0
+
+        self.assertEqual(output, eput)
 
 
 class UtilsCalShockproofFee(TestCase):

@@ -132,10 +132,18 @@ class Order(TimeStampedModel):
             else:
                 self.deposit_factor = self.customer.deposit_factor
 
+        if self._state.adding and self.address:
+            customer = self.address.customer
+            if not self.sale:
+                self.sale = customer.sale
+            if not self.cust_care:
+                self.cust_care = customer.cust_care
+
         if self.purchase_code:
             self.purchase_code = self.purchase_code.strip()
 
         self.customer = self.address.customer
+
         if not Tools.is_testing():
             self.__dict__.update(OrderUtils.cal_all(self))
         super(Order, self).save(*args, **kwargs)

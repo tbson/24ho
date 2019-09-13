@@ -196,6 +196,8 @@ class OrderUtils:
     @staticmethod
     def cal_count_check_fee(item: models.QuerySet) -> float:
         from apps.count_check.utils import CountCheckUtils
+        if not item.count_check:
+            return 0
 
         result = CountCheckUtils.get_matched_fee(item.order_items.count())
         if item.count_check_fee_input:
