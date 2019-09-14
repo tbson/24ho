@@ -15,7 +15,7 @@ import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
 
 export class Service {
     static initialValues = {
-        address: null,
+        address: 0,
         note: '',
         count_check: false,
         wooden_box: false,
@@ -37,6 +37,7 @@ export class Service {
 
 type Props = {
     id: number,
+    defaultAddress: number,
     listOrder: Object,
     listAddress: SelectOptions,
     open: boolean,
@@ -45,7 +46,7 @@ type Props = {
     children?: React.Node,
     submitTitle?: string
 };
-export default ({id, listOrder, listAddress, open, close, onChange, children, submitTitle = 'Save'}: Props) => {
+export default ({id, listOrder, defaultAddress, listAddress, open, close, onChange, children, submitTitle = 'Save'}: Props) => {
     const firstInputSelector = "[name='note']";
     const {handleSubmit} = Service;
 
@@ -54,7 +55,7 @@ export default ({id, listOrder, listAddress, open, close, onChange, children, su
 
     useEffect(() => {
         setOpenModal(open);
-        setInitialValues(listOrder[id] || Service.initialValues);
+        setInitialValues(listOrder[id] || {...Service.initialValues, address: defaultAddress || null});
     }, [open]);
 
     const focusFirstInput = () => {

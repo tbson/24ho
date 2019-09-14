@@ -266,6 +266,7 @@ export default ({}: Props) => {
     const [list, setList] = useState([]);
     const [listOrder, setListOrder] = useState({});
     const [listAddress, setListAddress] = useState([]);
+    const [defaultAddress, setDefaultAddress] = useState(0);
     const [formOpen, setFormOpen] = useState<FormOpenType>({
         main: false,
         order: false
@@ -381,7 +382,11 @@ export default ({}: Props) => {
         Service.getCartRequest()
             .then(getList)
             .then(Service.requestData);
-        Service.listAddressRequest().then(resp => setListAddress(Service.addressesToOptions(resp.data.items)));
+        Service.listAddressRequest().then(resp => {
+            const _defaultAddress = resp.data.items.find(item => item.default);
+            setDefaultAddress(_defaultAddress ? _defaultAddress.id : 0);
+            setListAddress(Service.addressesToOptions(resp.data.items));
+        });
         events.subscribe();
         return () => events.unsubscribe();
     }, []);
@@ -453,6 +458,7 @@ export default ({}: Props) => {
             <OrderForm
                 id={formId}
                 listOrder={listOrder}
+                defaultAddress={defaultAddress}
                 listAddress={listAddress}
                 open={formOpen.order}
                 close={() => toggleForm(false, 'order')}
