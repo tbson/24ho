@@ -150,6 +150,30 @@ class OrderViewSet(GenericViewSet):
         return res(serializer.data)
 
     @transaction.atomic
+    @action(methods=['put'], detail=True)
+    def change_shockproof(self, request, pk=None):
+        obj = get_object_or_404(Order, pk=pk)
+        value = request.data.get('value', obj.shockproof)
+        serializer = OrderUtils.partial_update(obj, 'shockproof', value)
+        return res(serializer.data)
+
+    @transaction.atomic
+    @action(methods=['put'], detail=True)
+    def change_wooden_box(self, request, pk=None):
+        obj = get_object_or_404(Order, pk=pk)
+        value = request.data.get('value', obj.wooden_box)
+        serializer = OrderUtils.partial_update(obj, 'wooden_box', value)
+        return res(serializer.data)
+
+    @transaction.atomic
+    @action(methods=['put'], detail=True)
+    def change_count_check(self, request, pk=None):
+        obj = get_object_or_404(Order, pk=pk)
+        value = request.data.get('value', obj.count_check)
+        serializer = OrderUtils.partial_update(obj, 'count_check', value)
+        return res(serializer.data)
+
+    @transaction.atomic
     @action(methods=['put'], detail=False)
     def bulk_approve(self, request):
         from .utils import OrderUtils

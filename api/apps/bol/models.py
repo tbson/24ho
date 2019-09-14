@@ -126,6 +126,7 @@ class Bol(TimeStampedModel):
 
     shockproof = models.BooleanField(default=False)
     wooden_box = models.BooleanField(default=False)
+    count_check = models.BooleanField(default=False)
 
     cny_sub_fee = models.FloatField(default=0)
     cny_shockproof_fee = models.FloatField(default=0)
@@ -156,9 +157,10 @@ class Bol(TimeStampedModel):
             if bag and not bag.bol_date:
                 bag.bol_date = date.id
                 bag.save()
-            if self.order:
-                self.shockproof = self.order.shockproof
-                self.wooden_box = self.order.wooden_box
+        if self.order:
+            self.shockproof = self.order.shockproof
+            self.wooden_box = self.order.wooden_box
+            self.count_check = self.order.count_check
 
         if self.uid:
             self.uid = self.uid.strip().upper()

@@ -119,8 +119,14 @@ class Order(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         from .utils import OrderUtils
+        from apps.bol.utils import BolUtils
+
         if not self._state.adding:
             self = OrderUtils.check_order_for_frozen(self)
+
+            current_obj = Order.objects.get(pk=self.pk)
+            if OrderUtils.is_order_service_change(current_obj, self):
+                BolUtils.update_order_service(self)
 
         if self._state.adding and self.address and not self.uid:
             self.uid = OrderUtils.get_next_uid(self.address)
@@ -171,6 +177,9 @@ class Order(TimeStampedModel):
             ("change_order_fee_factor_order", "Can change order fee factor"),
             ("change_purchase_code_order", "Can change purchase code"),
             ("change_status_order", "Can change status"),
+            ("change_shockproof_order", "Can change shockproof"),
+            ("change_wooden_box_order", "Can change wooden box"),
+            ("change_count_check_order", "Can change count check"),
             ("bulk_approve_order", "Can bulk approve"),
             ("get_order_items_for_checking_order", "Can get order items for checking from bol"),
             ("check_order", "Can check order"),

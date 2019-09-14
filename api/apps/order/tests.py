@@ -507,6 +507,93 @@ class PartialUpdates(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['status'], value)
 
+    def test_shockproof(self):
+        value = 1
+
+        # Update not exist
+        response = self.client.put(
+            "/api/v1/order/{}/change-shockproof/".format(0),
+            {},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 404)
+
+        # Update normal value
+        response = self.client.put(
+            "/api/v1/order/{}/change-shockproof/".format(self.item.pk),
+            {"value": value},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['shockproof'], True)
+
+        # Update missing value -> do nothing
+        response = self.client.put(
+            "/api/v1/order/{}/change-shockproof/".format(self.item.pk),
+            {},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['shockproof'], value)
+
+    def test_wooden_box(self):
+        value = 1
+
+        # Update not exist
+        response = self.client.put(
+            "/api/v1/order/{}/change-wooden-box/".format(0),
+            {},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 404)
+
+        # Update normal value
+        response = self.client.put(
+            "/api/v1/order/{}/change-wooden-box/".format(self.item.pk),
+            {"value": value},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['wooden_box'], True)
+
+        # Update missing value -> do nothing
+        response = self.client.put(
+            "/api/v1/order/{}/change-wooden-box/".format(self.item.pk),
+            {},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['wooden_box'], value)
+
+    def test_count_check(self):
+        value = 1
+
+        # Update not exist
+        response = self.client.put(
+            "/api/v1/order/{}/change-count-check/".format(0),
+            {},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 404)
+
+        # Update normal value
+        response = self.client.put(
+            "/api/v1/order/{}/change-count-check/".format(self.item.pk),
+            {"value": value},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count_check'], True)
+
+        # Update missing value -> do nothing
+        response = self.client.put(
+            "/api/v1/order/{}/change-count-check/".format(self.item.pk),
+            {},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count_check'], value)
+
 
 class UtilsSumCny(TestCase):
     def test_normal_case(self):
@@ -682,9 +769,10 @@ class UtilsCalShockproofFee(TestCase):
     def test_without_register(self):
         bols = BolUtils.seeding(3)
         order = OrderUtils.seeding(1, True)
+        order.shockproof = False
+        order.save()
         for bol in bols:
             bol.order = order
-            bol.shockproof = False
             bol.cny_shockproof_fee = 2
             bol.save()
         self.assertEqual(order.cny_shockproof_fee, 0)
@@ -693,22 +781,39 @@ class UtilsCalShockproofFee(TestCase):
     def test_with_register(self):
         bols = BolUtils.seeding(3)
         order = OrderUtils.seeding(1, True)
+        order.shockproof = True
+        order.save()
         for bol in bols:
             bol.order = order
-            bol.shockproof = True
             bol.cny_shockproof_fee = 2
             bol.save()
         self.assertEqual(order.cny_shockproof_fee, 6)
         self.assertEqual(OrderUtils.cal_shockproof_fee(order), 6)
+
+    def test_transport_without_register(self):
+        bols = BolUtils.seeding(3)
+        for bol in bols:
+            bol.cny_shockproof_fee = 2
+            bol.save()
+            self.assertEqual(BolUtils.cal_shockproof_fee(bol), 0)
+
+    def test_transport_register(self):
+        bols = BolUtils.seeding(3)
+        for bol in bols:
+            bol.shockproof = True
+            bol.cny_shockproof_fee = 2
+            bol.save()
+            self.assertEqual(BolUtils.cal_shockproof_fee(bol), 2)
 
 
 class UtilsCalWoodenBoxFee(TestCase):
     def test_without_register(self):
         bols = BolUtils.seeding(3)
         order = OrderUtils.seeding(1, True)
+        order.wooden_box = False
+        order.save()
         for bol in bols:
             bol.order = order
-            bol.wooden_box = False
             bol.cny_wooden_box_fee = 2
             bol.save()
         self.assertEqual(order.cny_wooden_box_fee, 0)
@@ -717,13 +822,29 @@ class UtilsCalWoodenBoxFee(TestCase):
     def test_with_register(self):
         bols = BolUtils.seeding(3)
         order = OrderUtils.seeding(1, True)
+        order.wooden_box = True
+        order.save()
         for bol in bols:
             bol.order = order
-            bol.wooden_box = True
             bol.cny_wooden_box_fee = 2
             bol.save()
         self.assertEqual(order.cny_wooden_box_fee, 6)
         self.assertEqual(OrderUtils.cal_wooden_box_fee(order), 6)
+
+    def test_transport_without_register(self):
+        bols = BolUtils.seeding(3)
+        for bol in bols:
+            bol.cny_wooden_box_fee = 2
+            bol.save()
+            self.assertEqual(BolUtils.cal_wooden_box_fee(bol), 0)
+
+    def test_transport_register(self):
+        bols = BolUtils.seeding(3)
+        for bol in bols:
+            bol.wooden_box = True
+            bol.cny_wooden_box_fee = 2
+            bol.save()
+            self.assertEqual(BolUtils.cal_wooden_box_fee(bol), 2)
 
 
 class UtilsCalSubFee(TestCase):
@@ -1376,3 +1497,28 @@ class UtilsApprove(TestCase):
             deposit_transaction.amount,
             OrderUtils.get_deposit_amount(self.order)
         )
+
+
+class UtilsUpdateOrderService(TestCase):
+    def test_update_shockproof(self):
+        order = OrderUtils.seeding(1, True)
+        order.shockproof = True
+        order.wooden_box = True
+        order.count_check = True
+        order.save()
+
+        bols = BolUtils.seeding(3)
+
+        for bol in bols:
+            self.assertEqual(bol.shockproof, False)
+            self.assertEqual(bol.wooden_box, False)
+            self.assertEqual(bol.shockproof, False)
+
+        for bol in bols:
+            bol.order = order
+            bol.save()
+
+        for bol in bols:
+            self.assertEqual(bol.shockproof, True)
+            self.assertEqual(bol.wooden_box, True)
+            self.assertEqual(bol.shockproof, True)

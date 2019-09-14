@@ -150,12 +150,20 @@ class BolUtils:
 
     @staticmethod
     def cal_shockproof_fee(item: models.QuerySet) -> float:
+        if item.order:
+            if item.order.shockproof:
+                return item.cny_shockproof_fee
+            return 0
         if item.shockproof:
             return item.cny_shockproof_fee
         return 0
 
     @staticmethod
     def cal_wooden_box_fee(item: models.QuerySet) -> float:
+        if item.order:
+            if item.order.wooden_box:
+                return item.cny_wooden_box_fee
+            return 0
         if item.wooden_box:
             return item.cny_wooden_box_fee
         return 0
@@ -347,3 +355,12 @@ class BolUtils:
         from apps.bol.serializers import BolBaseSr
         bols = receipt.receipt_bols.all()
         return BolBaseSr(bols, many=True).data
+
+    @staticmethod
+    def update_order_service(order: models.QuerySet):
+        bols = order.order_bols.all()
+        for bol in bols:
+            bol.shockproof = order.shockproof
+            bol.wooden_box = order.wooden_box
+            bol.count_check = order.count_check
+            bol.save()

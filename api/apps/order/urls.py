@@ -52,6 +52,18 @@ change_status = OrderViewSet.as_view({
     'put': 'change_status',
 })
 
+change_shockproof = OrderViewSet.as_view({
+    'put': 'change_shockproof',
+})
+
+change_wooden_box = OrderViewSet.as_view({
+    'put': 'change_wooden_box',
+})
+
+change_count_check = OrderViewSet.as_view({
+    'put': 'change_count_check',
+})
+
 bulk_approve = OrderViewSet.as_view({
     'put': 'bulk_approve',
 })
@@ -81,6 +93,9 @@ urlpatterns = (
     path('<int:pk>/change-order-fee-factor/', change_order_fee_factor),
     path('<int:pk>/change-purchase-code/', change_purchase_code),
     path('<int:pk>/change-status/', change_status),
+    path('<int:pk>/change-shockproof/', change_shockproof),
+    path('<int:pk>/change-wooden-box/', change_wooden_box),
+    path('<int:pk>/change-count-check/', change_count_check),
     path('bulk-approve/', bulk_approve),
     path('get-order-items-for-checking/<str:uid>', get_order_items_for_checking),
     path('check/', check),
