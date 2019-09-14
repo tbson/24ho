@@ -566,13 +566,3 @@ class OrderUtils:
         transactions = order.order_transactions.all()
         for item in transactions:
             item.delete()
-
-    @staticmethod
-    def is_order_service_change(old_item: models.QuerySet, new_item: models.QuerySet) -> bool:
-        if old_item.shockproof != new_item.shockproof:
-            return True
-        if old_item.wooden_box != new_item.wooden_box:
-            return True
-        if old_item.count_check != new_item.count_check:
-            return True
-        return False

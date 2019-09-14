@@ -124,9 +124,7 @@ class Order(TimeStampedModel):
         if not self._state.adding:
             self = OrderUtils.check_order_for_frozen(self)
 
-            current_obj = Order.objects.get(pk=self.pk)
-            if OrderUtils.is_order_service_change(current_obj, self):
-                BolUtils.update_order_service(self)
+            BolUtils.update_order_service(self)
 
         if self._state.adding and self.address and not self.uid:
             self.uid = OrderUtils.get_next_uid(self.address)

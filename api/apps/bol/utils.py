@@ -358,9 +358,8 @@ class BolUtils:
 
     @staticmethod
     def update_order_service(order: models.QuerySet):
-        bols = order.order_bols.all()
-        for bol in bols:
-            bol.shockproof = order.shockproof
-            bol.wooden_box = order.wooden_box
-            bol.count_check = order.count_check
-            bol.save()
+        order.order_bols.all().update(
+            shockproof=order.shockproof,
+            wooden_box=order.wooden_box,
+            count_check=order.count_check
+        )
