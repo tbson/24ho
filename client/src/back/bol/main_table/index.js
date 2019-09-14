@@ -3,6 +3,7 @@ import * as React from 'react';
 import {useState, useEffect} from 'react';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
+import OnlyAdmin from 'src/utils/components/OnlyAdmin';
 import {apiUrls} from '../_data';
 import type {TRow, DbRow, ListItem, FormOpenType, FormOpenKeyType} from '../_data';
 import {Pagination, SearchInput} from 'src/utils/components/TableUtils';
@@ -99,16 +100,27 @@ export default ({order_id = 0, bol_date_id = 0, bag_id = 0, notifyChange}: Props
                 <thead className="thead-light">
                     <tr>
                         <th className="row25">
-                            <span className="fas fa-check text-info pointer check-all-button" onClick={onCheckAll} />
+                            <OnlyAdmin>
+                                <span
+                                    className="fas fa-check text-info pointer check-all-button"
+                                    onClick={onCheckAll}
+                                />
+                            </OnlyAdmin>
                         </th>
                         <th scope="col">Ngày</th>
                         <th scope="col">Mã vận đơn</th>
                         <th scope="col">Mã địa chỉ</th>
                         <th scope="col">Bao</th>
                         <th scope="col">Trạng thái</th>
-                        <th scope="col" className="right">P.vận Chuyển</th>
-                        <th scope="col" className="right">Bảo hiểm</th>
-                        <th scope="col" className="right">P.Phí khác</th>
+                        <th scope="col" className="right">
+                            P.vận Chuyển
+                        </th>
+                        <th scope="col" className="right">
+                            Bảo hiểm
+                        </th>
+                        <th scope="col" className="right">
+                            P.Phí khác
+                        </th>
                         <th scope="col" className="right">
                             Khối lượng
                         </th>
@@ -120,10 +132,14 @@ export default ({order_id = 0, bol_date_id = 0, bag_id = 0, notifyChange}: Props
                         </th>
                         <th scope="col">Ghi chú</th>
                         <th scope="col" style={{padding: 8}} className="row80">
-                            <button className="btn btn-primary btn-sm btn-block add-button" onClick={() => showForm(0)}>
-                                <span className="fas fa-plus" />
-                                &nbsp; Add
-                            </button>
+                            <OnlyAdmin>
+                                <button
+                                    className="btn btn-primary btn-sm btn-block add-button"
+                                    onClick={() => showForm(0)}>
+                                    <span className="fas fa-plus" />
+                                    &nbsp; Add
+                                </button>
+                            </OnlyAdmin>
                         </th>
                     </tr>
                 </thead>
@@ -152,10 +168,12 @@ export default ({order_id = 0, bol_date_id = 0, bag_id = 0, notifyChange}: Props
                 <tfoot className="thead-light">
                     <tr>
                         <th className="row25">
-                            <span
-                                className="fas fa-trash-alt text-danger pointer bulk-remove-button"
-                                onClick={onBulkRemove}
-                            />
+                            <OnlyAdmin>
+                                <span
+                                    className="fas fa-trash-alt text-danger pointer bulk-remove-button"
+                                    onClick={onBulkRemove}
+                                />
+                            </OnlyAdmin>
                         </th>
                         <th className="row25 right" colSpan="99">
                             <Pagination next={links.next} prev={links.previous} onNavigate={getList} />
@@ -164,7 +182,12 @@ export default ({order_id = 0, bol_date_id = 0, bag_id = 0, notifyChange}: Props
                 </tfoot>
             </table>
 
-            <MainForm order_id={order_id} id={modalId} open={formOpen.main} close={() => toggleForm(false)} onChange={onChange}>
+            <MainForm
+                order_id={order_id}
+                id={modalId}
+                open={formOpen.main}
+                close={() => toggleForm(false)}
+                onChange={onChange}>
                 <button type="button" className="btn btn-light" action="close" onClick={() => toggleForm(false)}>
                     Cancel
                 </button>

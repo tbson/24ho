@@ -2,6 +2,7 @@
 import * as React from 'react';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
+import OnlyAdmin from 'src/utils/components/OnlyAdmin';
 import {apiUrls} from '../_data';
 import type {TRow} from '../_data';
 import {BoolOutput} from 'src/utils/components/TableUtils';
@@ -42,7 +43,15 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
     return (
         <tr>
             <th className="row25">
-                <input id={id} className="check" type="checkbox" checked={data.checked} onChange={() => onCheck(id)} />
+                <OnlyAdmin>
+                    <input
+                        id={id}
+                        className="check"
+                        type="checkbox"
+                        checked={data.checked}
+                        onChange={() => onCheck(id)}
+                    />
+                </OnlyAdmin>
             </th>
             <td>{Tools.dateTimeFormat(data.created_at)}</td>
             <td>{data.uid}</td>
@@ -61,13 +70,17 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
             <td className="mono right">{data.packages}</td>
             <td>{data.note}</td>
             <td className="center">
-                <a className="editBtn" onClick={() => showForm(data.id)}>
-                    <span className="fas fa-edit text-info pointer" />
-                </a>
-                <span>&nbsp;&nbsp;&nbsp;</span>
-                <a className="removeBtn" onClick={() => _onRemove(id)}>
-                    <span className="fas fa-trash-alt text-danger pointer" />
-                </a>
+                <OnlyAdmin>
+                    <span>
+                        <a className="editBtn" onClick={() => showForm(data.id)}>
+                            <span className="fas fa-edit text-info pointer" />
+                        </a>
+                        <span>&nbsp;&nbsp;&nbsp;</span>
+                        <a className="removeBtn" onClick={() => _onRemove(id)}>
+                            <span className="fas fa-trash-alt text-danger pointer" />
+                        </a>
+                    </span>
+                </OnlyAdmin>
             </td>
         </tr>
     );
