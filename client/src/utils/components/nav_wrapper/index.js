@@ -49,7 +49,7 @@ const App = ({history, location, children}: Props) => {
     const renderMenu = (menu: string) => {
         switch (menu) {
             case 'profile':
-                return menuItem('', 'Tài khoản', 'fas fa-user');
+                return menuItem('', 'Trang cá nhân', 'fas fa-user');
             case 'admin':
                 if (APP !== 'admin') return null;
                 return menuItem('staff', 'Admin', 'fas fa-user-secret');
@@ -57,7 +57,7 @@ const App = ({history, location, children}: Props) => {
                 if (APP !== 'admin') return null;
                 return menuItem('customer', 'Khách hàng', 'fas fa-user-ninja');
             case 'transaction':
-                return menuItem('transaction', 'Ví điện tử', 'fas fa-wallet');
+                return menuItem('transaction', 'Tài khoản', 'fas fa-wallet');
             case 'order':
                 return menuItem('order', 'Đơn order', 'fas fa-shipping-fast');
             case 'bol':
