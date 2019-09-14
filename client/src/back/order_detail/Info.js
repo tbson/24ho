@@ -5,7 +5,8 @@ import Tools from 'src/utils/helpers/Tools';
 import Editable from 'src/utils/components/Editable';
 import {Service as OrderService} from 'src/back/order/';
 import type {SelectOptions} from 'src/utils/helpers/Tools';
-import {STATUS} from 'src/back/order/_data';
+import {STATUS, booleanOptions} from 'src/back/order/_data';
+import {BoolOutput} from 'src/utils/components/TableUtils';
 
 type Props = {
     pending: boolean,
@@ -13,6 +14,12 @@ type Props = {
     addresses: SelectOptions,
     onPartialChange: Function
 };
+
+export class Service {
+    static boolToStr(input: boolean): string {
+        return input ? 'Có' : 'Không';
+    }
+}
 
 export default ({pending = false, data, addresses, onPartialChange}: Props) => {
     return (
@@ -125,6 +132,53 @@ export default ({pending = false, data, addresses, onPartialChange}: Props) => {
                             endPoint={apiUrls.change_purchase_code.replace('/pk-', `/${data.id}/`)}
                             placeholder="Mã giao dịch">
                             <span>{data.purchase_code || 'Chưa có'}</span>
+                        </Editable>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span>Chống sốc:</span>
+                        &nbsp;
+                        <Editable
+                            disabled={!Tools.isAdmin() || pending}
+                            onChange={onPartialChange}
+                            name="value"
+                            value={data.shockproof}
+                            endPoint={apiUrls.change_shockproof.replace('/pk-', `/${data.id}/`)}
+                            type="select"
+                            options={booleanOptions}
+                            placeholder="Chống sốc">
+                            <span>{Service.boolToStr(!!data.shockproof)}</span>
+                        </Editable>
+                    </td>
+                    <td>
+                        <span>Đóng gỗ:</span>
+                        &nbsp;
+                        <Editable
+                            disabled={!Tools.isAdmin() || pending}
+                            onChange={onPartialChange}
+                            name="value"
+                            value={data.wooden_box}
+                            endPoint={apiUrls.change_wooden_box.replace('/pk-', `/${data.id}/`)}
+                            type="select"
+                            options={booleanOptions}
+                            placeholder="Đóng gỗ">
+                            <span>{Service.boolToStr(!!data.wooden_box)}</span>
+                        </Editable>
+                    </td>
+                    <td>
+                        <span>Kiểm đếm:</span>
+                        &nbsp;
+                        <Editable
+                            disabled={!Tools.isAdmin() || pending}
+                            onChange={onPartialChange}
+                            name="value"
+                            value={data.count_check}
+                            endPoint={apiUrls.change_count_check.replace('/pk-', `/${data.id}/`)}
+                            type="select"
+                            options={booleanOptions}
+                            placeholder="Kiểm đếm">
+                            <span>{Service.boolToStr(!!data.count_check)}</span>
                         </Editable>
                     </td>
                 </tr>

@@ -18,6 +18,9 @@ const rawApiUrls = [
             change_order_fee_factor: 'pk/change-order-fee-factor',
             change_purchase_code: 'pk/change-purchase-code',
             change_status: 'pk/change-status',
+            change_shockproof: 'pk/change-shockproof',
+            change_wooden_box: 'pk/change-wooden-box',
+            change_count_check: 'pk/change-count-check',
             bulk_approve: 'bulk-approve',
             check: 'check',
             complaintResolve: 'pk/complaint-resolve',
@@ -36,6 +39,8 @@ const rawApiUrls = [
         }
     }
 ];
+
+export const booleanOptions = [{value: true, label: 'Có'}, {value: false, label: 'Không'}];
 
 export const apiUrls = Tools.getApiUrls(rawApiUrls);
 
