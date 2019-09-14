@@ -199,7 +199,7 @@ export default ({id, order_id = 0, open, close, onChange, children, submitTitle 
                             </OnlyAdmin>
                             <div className="row">
                                 <div className="col">
-                                    <CheckInput name="shockproof" label="Chống sốc" />
+                                    <CheckInput name="shockproof" label="Chống sốc" disabled={!!order_id}/>
                                     {values.shockproof && (
                                         <OnlyAdmin>
                                             <TextInput
@@ -211,7 +211,7 @@ export default ({id, order_id = 0, open, close, onChange, children, submitTitle 
                                     )}
                                 </div>
                                 <div className="col">
-                                    <CheckInput name="wooden_box" label="Đóng gỗ" />
+                                    <CheckInput name="wooden_box" label="Đóng gỗ" disabled={!!order_id}/>
                                     {values.wooden_box && (
                                         <OnlyAdmin>
                                             <TextInput

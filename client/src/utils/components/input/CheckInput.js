@@ -5,11 +5,12 @@ import {Field, ErrorMessage} from 'formik';
 import Label from './Label';
 
 type Props = {
+    disabled?: boolean,
     name: string,
     label?: string
 };
 
-export default ({name, label}: Props) => {
+export default ({name, label, disabled = false}: Props) => {
     const onChange = (setFieldValue: Function) => (e: Object) => setFieldValue(name, !!e.target.checked);
     return (
         <div className="form-group form-check">
@@ -18,6 +19,7 @@ export default ({name, label}: Props) => {
                     return (
                         <input
                             type="checkbox"
+                            disabled={disabled}
                             id={name}
                             name={name}
                             checked={!!field.value}
