@@ -37,6 +37,7 @@ export class Service {
         packages: 1,
         shockproof: false,
         wooden_box: false,
+        count_check: false,
         cny_shockproof_fee: 0,
         cny_wooden_box_fee: 0,
         cn_date: '',
@@ -54,6 +55,7 @@ export class Service {
         packages: Yup.number(),
         shockproof: Yup.boolean(),
         wooden_box: Yup.boolean(),
+        count_check: Yup.boolean(),
         cny_shockproof_fee: Yup.number(),
         cny_wooden_box_fee: Yup.number(),
         note: Yup.string(),
@@ -94,11 +96,16 @@ export class Service {
         };
     }
 
-    static checkUID(resetForm: Function) {
+    static checkUID(resetForm: Function, setOrderId: Function) {
         return (e: Object) => {
             const uid = e.target.value;
             Service.retrieveRequest(uid).then(resp => {
-                resp.ok && resetForm(Tools.nullToDefault(resp.data, Service.initialValues));
+                if (resp.ok) {
+                    resetForm(Tools.nullToDefault(resp.data, Service.initialValues));
+                }
+                setOrderId(resp.data && resp.data.order || 0);
+            }).catch(() => {
+                setOrderId(0);
             });
         };
     }
@@ -142,6 +149,7 @@ export const BagPart = () => {
 
 export const FormPart = ({onSubmit, initialValues, submitTitle = '', children}: FormPartProps) => {
     const formRef = useRef<FormikProps | null>(null);
+    const [orderId, setOrderId] = useState(0);
     const prepareToEdit = ({detail: uid}) => {
         formRef.current && formRef.current.resetForm({...Service.initialValues, uid});
         Service.focusFirstInput();
@@ -168,15 +176,12 @@ export const FormPart = ({onSubmit, initialValues, submitTitle = '', children}: 
                                     name="uid"
                                     label="Mã vận đơn"
                                     autoFocus={true}
-                                    onBlur={Service.checkUID(resetForm)}
+                                    onBlur={Service.checkUID(resetForm, setOrderId)}
                                     required={true}
                                 />
                             </div>
                             <div className="col">
-                                <TextInput
-                                    name="address_code"
-                                    label="Mã địa chỉ"
-                                />
+                                <TextInput name="address_code" label="Mã địa chỉ" />
                             </div>
                         </div>
                         <TextInput name="mass" label="Khối lượng (KG)" />
@@ -191,10 +196,22 @@ export const FormPart = ({onSubmit, initialValues, submitTitle = '', children}: 
                                 <TextInput name="height" label="Cao (Cm)" />
                             </div>
                         </div>
-                        <CheckInput name="shockproof" label="Chống sốc" />
-                        {values.shockproof && <TextInput name="cny_shockproof_fee" label="Phí chống sốc (CNY)" />}
-                        <CheckInput name="wooden_box" label="Đóng gỗ" />
-                        {values.wooden_box && <TextInput name="cny_wooden_box_fee" label="Phí đóng gỗ (CNY)" />}
+                        <div className="row">
+                            <div className="col">
+                                <CheckInput name="shockproof" label="Chống sốc" disabled={!!orderId}/>
+                                {values.shockproof && (
+                                    <TextInput name="cny_shockproof_fee" label="Phí chống sốc (CNY)" />
+                                )}
+                            </div>
+                            <div className="col">
+                                <CheckInput name="wooden_box" label="Đóng gỗ" disabled={!!orderId}/>
+                                {values.wooden_box && <TextInput name="cny_wooden_box_fee" label="Phí đóng gỗ (CNY)" />}
+                            </div>
+                            <div className="col">
+                                <CheckInput name="count_check" label="Kiểm đếm" disabled/>
+                            </div>
+                        </div>
+
                         <TextInput name="note" label="Ghi chú" />
                         <HiddenInput name="cn_date" />
                         <HiddenInput name="id" />
