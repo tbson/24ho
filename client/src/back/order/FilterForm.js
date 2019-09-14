@@ -11,6 +11,7 @@ import SelectInput from 'src/utils/components/input/SelectInput';
 import DateRangeInput from 'src/utils/components/input/DateRangeInput';
 import ButtonsBar from 'src/utils/components/form/ButtonsBar';
 import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
+import OnlyAdmin from 'src/utils/components/OnlyAdmin';
 
 export class Service {
     static initialValues = {
@@ -95,57 +96,63 @@ export default ({onChange, options = {sale: [], cust_care: [], customer: []}}: P
                                     <TextInput name="bol" label="Mã vận đơn" />
                                 </div>
                             </div>
-                            <div className="row">
-                                <div className="col">
-                                    <SelectInput name="customer" options={options.customer} label="Khách hàng" />
+                            <OnlyAdmin>
+                                <div className="row">
+                                    <div className="col">
+                                        <SelectInput name="customer" options={options.customer} label="Khách hàng" />
+                                    </div>
+                                    <div className="col">
+                                        <SelectInput name="sale" options={options.sale} label="Nhân viên mua hàng" />
+                                    </div>
+                                    <div className="col">
+                                        <SelectInput
+                                            name="cust_care"
+                                            options={options.sale}
+                                            label="Nhân viên chăm sóc"
+                                        />
+                                    </div>
                                 </div>
-                                <div className="col">
-                                    <SelectInput name="sale" options={options.sale} label="Nhân viên mua hàng" />
+                                <div className="row">
+                                    <div className="col">
+                                        <SelectInput
+                                            options={booleanOptions}
+                                            blankLabel="Chọn giá trị"
+                                            name="shockproof"
+                                            label="Chống sốc"
+                                        />
+                                    </div>
+                                    <div className="col">
+                                        <SelectInput
+                                            options={booleanOptions}
+                                            blankLabel="Chọn giá trị"
+                                            name="wooden_box"
+                                            label="Đóng gỗ"
+                                        />
+                                    </div>
+                                    <div className="col">
+                                        <SelectInput
+                                            options={booleanOptions}
+                                            blankLabel="Chọn giá trị"
+                                            name="count_check"
+                                            label="Kiểm đếm"
+                                        />
+                                    </div>
                                 </div>
-                                <div className="col">
-                                    <SelectInput name="cust_care" options={options.sale} label="Nhân viên chăm sóc" />
+                                <div className="row">
+                                    <div className="col">
+                                        <DateRangeInput name="created_at" label="Ngày tạo" />
+                                    </div>
+                                    <div className="col">
+                                        <DateRangeInput name="updated_at" label="Ngày sửa" />
+                                    </div>
+                                    <div className="col">
+                                        <DateRangeInput name="approved_date" label="Ngày duyệt" />
+                                    </div>
+                                    <div className="col">
+                                        <DateRangeInput name="checked_date" label="Ngày kiểm" />
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="row">
-                                <div className="col">
-                                    <SelectInput
-                                        options={booleanOptions}
-                                        blankLabel="Chọn giá trị"
-                                        name="shockproof"
-                                        label="Chống sốc"
-                                    />
-                                </div>
-                                <div className="col">
-                                    <SelectInput
-                                        options={booleanOptions}
-                                        blankLabel="Chọn giá trị"
-                                        name="wooden_box"
-                                        label="Đóng gỗ"
-                                    />
-                                </div>
-                                <div className="col">
-                                    <SelectInput
-                                        options={booleanOptions}
-                                        blankLabel="Chọn giá trị"
-                                        name="count_check"
-                                        label="Kiểm đếm"
-                                    />
-                                </div>
-                            </div>
-                            <div className="row">
-                                <div className="col">
-                                    <DateRangeInput name="created_at" label="Ngày tạo" />
-                                </div>
-                                <div className="col">
-                                    <DateRangeInput name="updated_at" label="Ngày sửa" />
-                                </div>
-                                <div className="col">
-                                    <DateRangeInput name="approved_date" label="Ngày duyệt" />
-                                </div>
-                                <div className="col">
-                                    <DateRangeInput name="checked_date" label="Ngày kiểm" />
-                                </div>
-                            </div>
+                            </OnlyAdmin>
                             <FormLevelErrMsg errors={errors.detail} />
                             <ButtonsBar submitTitle="Search" onClick={handleSubmit} />
                         </Form>
