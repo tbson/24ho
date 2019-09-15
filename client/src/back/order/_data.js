@@ -79,7 +79,6 @@ export type OrderType = {
     approver_name: string,
     approver: number,
     vnd_total: number,
-    vnd_paid: number,
     deposit: number,
     vnd_total_discount: number,
     checked: boolean,
