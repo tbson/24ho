@@ -10,6 +10,8 @@ import Tools from 'src/utils/helpers/Tools';
 import NavWrapper from 'src/utils/components/nav_wrapper';
 import ProfileForm from './Form';
 import ChangePwdForm from '../PwdForm';
+import AddressTable from 'src/back/address/main_table/';
+import OnlyAdmin from 'src/utils/components/OnlyAdmin';
 
 export class Service {
     static async profileRequest() {
@@ -83,6 +85,14 @@ export const Profile = () => {
                     Cancel
                 </button>
             </ProfileForm>
+
+            <OnlyAdmin reverse={true}>
+                <div>
+                    <hr />
+                    <h2>Địa chỉ</h2>
+                    <AddressTable />
+                </div>
+            </OnlyAdmin>
 
             <ChangePwdForm
                 mode="change"

@@ -86,9 +86,11 @@ const App = ({history, location, children}: Props) => {
             case 'area':
                 if (APP !== 'admin') return null;
                 return menuItem('area', 'Vùng', 'fas fa-map-marker-alt');
+            /*
             case 'address':
                 if (APP !== 'user') return null;
                 return menuItem('address', 'Địa chỉ', 'fas fa-map-marker-alt');
+            */
             case 'cart':
                 if (APP !== 'user') return null;
                 return menuItem('cart', 'Giỏ hàng', 'fas fa-shopping-cart');
@@ -126,7 +128,6 @@ const App = ({history, location, children}: Props) => {
                     {renderMenu('bank')}
                     {renderMenu('variable')}
                     {renderMenu('area')}
-                    {renderMenu('address')}
                     {renderMenu('cart')}
                     {renderMenu('rate')}
                     {renderMenu('orderFee')}
