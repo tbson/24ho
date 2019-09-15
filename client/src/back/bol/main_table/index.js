@@ -108,7 +108,7 @@ export default ({order_id = 0, bol_date_id = 0, bag_id = 0, notifyChange}: Props
                             </OnlyAdmin>
                         </th>
                         <th scope="col">Ngày</th>
-                        <th scope="col">Mã vận đơn</th>
+                        <th scope="col">Mã vận đơn / giao dịch</th>
                         <th scope="col">Mã địa chỉ</th>
                         <th scope="col">Bao</th>
                         <th scope="col">Trạng thái</th>

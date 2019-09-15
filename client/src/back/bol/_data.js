@@ -45,6 +45,8 @@ export type FormOpenKeyType = 'main';
 
 export type FormValues = {
     uid: string,
+    purchase_code: string,
+    mass_convert_factor: number,
     address_code: string,
     bag_uid: string,
     bag: number,

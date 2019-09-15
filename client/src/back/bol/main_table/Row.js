@@ -54,7 +54,10 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
                 </OnlyAdmin>
             </th>
             <td>{Tools.dateTimeFormat(data.created_at)}</td>
-            <td>{data.uid}</td>
+            <td>
+                <div>{data.uid}</div>
+                {data.purchase_code && <div className='blue'>{data.purchase_code}</div>}
+            </td>
             <td>{data.address_code}</td>
             <td>{data.bag_uid}</td>
             <td>{getStatus(data)}</td>
@@ -65,7 +68,12 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
             </td>
             <td className="mono right">{data.mass}</td>
             <td className="mono right">
-                {data.length} / {data.width} / {data.height}
+                <div>
+                    {data.length} / {data.width} / {data.height}
+                </div>
+                <div>
+                    {Tools.numberFormat(data.mass_convert_factor)}
+                </div>
             </td>
             <td className="mono right">{data.packages}</td>
             <td>{data.note}</td>
