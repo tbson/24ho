@@ -16,7 +16,7 @@ type Props = {
 };
 
 const App = ({history, location, children}: Props) => {
-    const toggledValue = () => window.innerWidth >= 800 ? true : false;
+    const toggledValue = () => (window.innerWidth >= 800 ? true : false);
     const [toggled, setToggled] = useState(toggledValue());
 
     const logout = Tools.logout(history);
@@ -74,6 +74,9 @@ const App = ({history, location, children}: Props) => {
             case 'bank':
                 if (APP !== 'admin') return null;
                 return menuItem('bank', 'Ngân hàng', 'fas fa-university');
+            case 'customer_bank':
+                if (APP === 'admin') return null;
+                return menuItem('customer-bank', 'Ngân hàng', 'fas fa-university');
             case 'printTransaction':
                 if (APP !== 'admin') return null;
                 return menuItem('print-transaction', 'Phiếu thu', 'fas fa-print');
@@ -126,6 +129,7 @@ const App = ({history, location, children}: Props) => {
                     {renderMenu('receipt')}
                     {renderMenu('printTransaction')}
                     {renderMenu('bank')}
+                    {renderMenu('customer_bank')}
                     {renderMenu('variable')}
                     {renderMenu('area')}
                     {renderMenu('cart')}

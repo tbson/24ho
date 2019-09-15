@@ -71,5 +71,9 @@ urlpatterns = (
     path(
         'bank/',
         include('apps.bank.urls', namespace='bank'),
+    ),
+    path(
+        'customer-bank/',
+        include('apps.customer_bank.urls', namespace='customer-bank'),
     )
 )

@@ -71,6 +71,7 @@ PROJECT_APPS = [
     'apps.transaction',
     'apps.receipt',
     'apps.bank',
+    'apps.customer_bank',
     'apps.sr',
 ]
 
@@ -253,6 +254,11 @@ USER_PERMISSIONS = (
     'change_address',
     'delete_address',
     'view_address',
+
+    'add_customerbank',
+    'change_customerbank',
+    'delete_customerbank',
+    'view_customerbank',
 
     'add_bol',
     'change_bol',
