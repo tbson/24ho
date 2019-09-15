@@ -273,6 +273,7 @@ export default ({}: Props) => {
     });
     const [orderFormOpen, setOrderFormOpen] = useState(false);
     const [formId, setFormId] = useState(0);
+    const [amount, setAmount] = useState(0);
     const [links, setLinks] = useState({next: '', previous: ''});
 
     const toggleForm = (value: boolean, key: FormOpenKeyType = 'main') => setFormOpen({...formOpen, [key]: value});
@@ -335,9 +336,10 @@ export default ({}: Props) => {
         setFormId(id);
     };
 
-    const showOrderForm = (id: number) => {
+    const showOrderForm = (id: number, _amount: number) => {
         toggleForm(true, 'order');
         setFormId(id);
+        setAmount(_amount);
     };
 
     const searchList = (keyword: string) => {
@@ -392,7 +394,6 @@ export default ({}: Props) => {
     }, []);
 
     const groups = Service.group(list, listOrder);
-
     return (
         <div>
             <table className="table table-striped">
@@ -457,6 +458,7 @@ export default ({}: Props) => {
             </MainForm>
             <OrderForm
                 id={formId}
+                amount={amount}
                 listOrder={listOrder}
                 defaultAddress={defaultAddress}
                 listAddress={listAddress}
@@ -564,7 +566,9 @@ export const Group = ({data, sendOrder, showForm, onCheckAll, onBulkRemove, chil
                 </div>
             </td>
             <td className="right">
-                <button className="btn btn-info btn-block" onClick={() => showForm(data.order.shop_nick)}>
+                <button
+                    className="btn btn-info btn-block"
+                    onClick={() => showForm(data.order.shop_nick, data.order.vnd_total)}>
                     <span className="fas fa-edit" />
                 </button>
             </td>

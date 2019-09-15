@@ -11,6 +11,7 @@ from .views import (
     ShoppingCartView,
     ResetPasswordView,
     ChangePasswordView,
+    AccountSummaryView
 )
 
 base_endpoint = CustomerViewSet.as_view({
@@ -36,6 +37,7 @@ urlpatterns = [
 
     path('profile/', ProfileView.as_view(), name='profile'),
     path('shopping-cart/', ShoppingCartView.as_view(), name='shoppingCart'),
+    path('account-summary/', AccountSummaryView.as_view(), name='accountSummary'),
     path('reset-password/', ResetPasswordView.as_view(), name='resetPassword'),
     path('change-password/', ChangePasswordView.as_view(), name='changePassword'),
 ]

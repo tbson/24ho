@@ -7,7 +7,8 @@ const rawApiUrls = [
     {
         controller: 'customer',
         endpoints: {
-            shoppingCart: 'shopping-cart'
+            shoppingCart: 'shopping-cart',
+            accountSummary: 'account-summary'
         }
     },
     {

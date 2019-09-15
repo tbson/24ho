@@ -159,17 +159,36 @@ class ShoppingCartView(APIView):
 
     def get(self, request, format=None):
         try:
-            obj = self.get_object()
-            return res(obj.shopping_cart)
+            customer = self.get_object()
+            return res(customer.shopping_cart)
         except Exception:
             return res({}, status=401)
 
     def post(self, request, format=None):
-        obj = self.get_object()
+        customer = self.get_object()
         shopping_cart = request.data.get('shopping_cart', '{}')
-        obj.shopping_cart = json.loads(shopping_cart)
-        obj.save()
-        return res(obj.shopping_cart)
+        customer.shopping_cart = json.loads(shopping_cart)
+        customer.save()
+        return res(customer.shopping_cart)
+
+
+class AccountSummaryView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get_object(self):
+        return self.request.user.customer
+
+    def get(self, request, format=None):
+        from apps.transaction.utils import TransactionUtils
+        try:
+            customer = self.get_object()
+            data = {
+                "balance": TransactionUtils.get_customer_balance(customer.pk),
+                "deposit_factor": customer.deposit_factor
+            }
+            return res(data)
+        except Exception:
+            return res({}, status=401)
 
 
 class ResetPasswordView(APIView):
