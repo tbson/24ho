@@ -2,6 +2,7 @@
 
 import Tools from 'src/utils/helpers/Tools';
 import {FIELD_TYPE, APP} from 'src/constants';
+import type {SelectOptions} from 'src/utils/helpers/Tools';
 
 const rawApiUrls = [
     {
@@ -40,7 +41,7 @@ const rawApiUrls = [
     }
 ];
 
-export const booleanOptions = [{value: true, label: 'Có'}, {value: false, label: 'Không'}];
+export const booleanOptions: SelectOptions = [{value: true, label: 'Có'}, {value: false, label: 'Không'}];
 
 export const apiUrls = Tools.getApiUrls(rawApiUrls);
 
@@ -79,6 +80,7 @@ export type OrderType = {
     approver: number,
     vnd_total: number,
     vnd_paid: number,
+    deposit: number,
     vnd_total_discount: number,
     checked: boolean,
     pending: boolean

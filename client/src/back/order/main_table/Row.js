@@ -157,7 +157,7 @@ type FinInfoType = {
     data: OrderType
 };
 const FinInfo = ({data}: FinInfoType) => {
-    const missing = data.vnd_total - data.vnd_total_discount - data.vnd_paid;
+    const missing = data.vnd_total - data.vnd_total_discount - data.deposit;
     return (
         <>
             <div className="row">
@@ -166,7 +166,7 @@ const FinInfo = ({data}: FinInfoType) => {
             </div>
             <div className="row">
                 <div className="col">Đã thanh toán:</div>
-                <div className="col mono vnd">{Tools.numberFormat(data.vnd_paid)}</div>
+                <div className="col mono vnd">{Tools.numberFormat(data.deposit)}</div>
             </div>
             <div className="row">
                 <div className="col">Chiết khấu:</div>
