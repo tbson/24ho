@@ -2,6 +2,7 @@ from typing import Optional
 from django.db import models
 from utils.models.model import TimeStampedModel
 from apps.area.models import Area
+from apps.staff.models import Staff
 
 
 class BagManager(models.Manager):
@@ -16,6 +17,7 @@ class BagManager(models.Manager):
 
 
 class Bag(TimeStampedModel):
+    staff = models.ForeignKey(Staff, models.SET_NULL, related_name='staff_bags', null=True)
     area = models.ForeignKey(Area, models.PROTECT, related_name='area_bags')
     bol_date = models.IntegerField(null=True)
     uid = models.CharField(max_length=128, unique=True)

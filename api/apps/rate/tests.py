@@ -122,7 +122,7 @@ class RateTestCase(TestCase):
 
         # Get default rate
         response = self.client.get(
-            "/api/v1/rate/latest"
+            "/api/v1/rate/latest/"
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['value'], settings.DEFAULT_RATE)
@@ -130,14 +130,14 @@ class RateTestCase(TestCase):
         # Get rate from variables
         Variable.objects.create(uid='rate', value=1234)
         response = self.client.get(
-            "/api/v1/rate/latest"
+            "/api/v1/rate/latest/"
         )
         self.assertEqual(response.data['value'], 1234)
 
         # Get latest rate
         latest_rate = RateUtils.seeding(1, True)
         response = self.client.get(
-            "/api/v1/rate/latest"
+            "/api/v1/rate/latest/"
         )
         self.assertEqual(response.data['value'], latest_rate.rate + latest_rate.order_delta)
 

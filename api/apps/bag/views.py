@@ -45,6 +45,8 @@ class BagViewSet(GenericViewSet):
 
     @action(methods=['post'], detail=True)
     def add(self, request):
+        if 'staff' not in request.data:
+            request.data['staff'] = self.request.user.staff.pk
         data = request.data
         serializer = BagBaseSr(data=data)
         if serializer.is_valid(raise_exception=True):

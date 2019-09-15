@@ -2,6 +2,7 @@ from django.utils import timezone
 from django.db import models
 from utils.helpers.tools import Tools
 from apps.area.utils import AreaUtils
+from apps.staff.utils import StaffUtils
 
 
 class BagUtils:
@@ -14,11 +15,13 @@ class BagUtils:
             raise Exception('Indext must be start with 1.')
 
         area = AreaUtils.seeding(1, True)
+        staff = StaffUtils.seeding(1, True)
 
         def get_data(i: int) -> dict:
 
             data = {
-                'area': area.pk
+                'area': area.pk,
+                'staff': staff.pk,
             }
             if save is False:
                 return data
