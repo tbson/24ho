@@ -3,6 +3,7 @@ import * as React from 'react';
 import {useState, useEffect} from 'react';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
+import ShowWhen from 'src/utils/components/ShowWhen';
 import {apiUrls} from '../_data';
 import type {TRow, DbRow, ListItem, FormOpenType, FormOpenKeyType} from '../_data';
 import {Pagination, SearchInput} from 'src/utils/components/TableUtils';
@@ -11,6 +12,7 @@ import Row from './Row.js';
 import {Service as AreaService} from 'src/back/area/';
 
 type Props = {
+    readonly?: boolean,
     bol_date: number
 };
 
@@ -36,7 +38,7 @@ export class Service {
     }
 }
 
-export default ({bol_date = 0}: Props) => {
+export default ({readonly = false, bol_date = 0}: Props) => {
     const [list, setList] = useState([]);
     const [listArea, setListArea] = useState([]);
     const [formOpen, setFormOpen] = useState<FormOpenType>({
@@ -97,15 +99,24 @@ export default ({bol_date = 0}: Props) => {
                 <thead className="thead-light">
                     <tr>
                         <th className="row25">
-                            <span className="fas fa-check text-info pointer check-all-button" onClick={onCheckAll} />
+                            <ShowWhen value={!readonly}>
+                                <span
+                                    className="fas fa-check text-info pointer check-all-button"
+                                    onClick={onCheckAll}
+                                />
+                            </ShowWhen>
                         </th>
                         <th scope="col">Mã bao</th>
                         <th scope="col">Vùng</th>
                         <th scope="col" style={{padding: 8}} className="row80">
-                            <button className="btn btn-primary btn-sm btn-block add-button" onClick={() => showForm(0)}>
-                                <span className="fas fa-plus" />
-                                &nbsp; Add
-                            </button>
+                            <ShowWhen value={!readonly}>
+                                <button
+                                    className="btn btn-primary btn-sm btn-block add-button"
+                                    onClick={() => showForm(0)}>
+                                    <span className="fas fa-plus" />
+                                    &nbsp; Add
+                                </button>
+                            </ShowWhen>
                         </th>
                     </tr>
                 </thead>
@@ -121,6 +132,7 @@ export default ({bol_date = 0}: Props) => {
                 <tbody>
                     {list.map((data, key) => (
                         <Row
+                            readonly={readonly}
                             className="table-row"
                             data={data}
                             key={key}
@@ -134,10 +146,12 @@ export default ({bol_date = 0}: Props) => {
                 <tfoot className="thead-light">
                     <tr>
                         <th className="row25">
-                            <span
-                                className="fas fa-trash-alt text-danger pointer bulk-remove-button"
-                                onClick={onBulkRemove}
-                            />
+                            <ShowWhen value={!readonly}>
+                                <span
+                                    className="fas fa-trash-alt text-danger pointer bulk-remove-button"
+                                    onClick={onBulkRemove}
+                                />
+                            </ShowWhen>
                         </th>
                         <th className="row25 right" colSpan="99">
                             <Pagination next={links.next} prev={links.previous} onNavigate={getList} />
@@ -146,7 +160,12 @@ export default ({bol_date = 0}: Props) => {
                 </tfoot>
             </table>
 
-            <MainForm id={modalId} listArea={listArea} open={formOpen.main} close={() => toggleForm(false)} onChange={onChange}>
+            <MainForm
+                id={modalId}
+                listArea={listArea}
+                open={formOpen.main}
+                close={() => toggleForm(false)}
+                onChange={onChange}>
                 <button type="button" className="btn btn-light" action="close" onClick={() => toggleForm(false)}>
                     Cancel
                 </button>

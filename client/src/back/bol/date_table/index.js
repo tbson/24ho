@@ -56,7 +56,7 @@ export default ({}: Props) => {
                             <AccordionItemButton>{item.date}</AccordionItemButton>
                         </AccordionItemHeading>
                         <AccordionItemPanel>
-                            <MainTable bol_date={item.id} />
+                            <MainTable bol_date={item.id} readonly={true}/>
                         </AccordionItemPanel>
                     </AccordionItem>
                 ))}
