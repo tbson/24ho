@@ -19,7 +19,7 @@ import ButtonsBar from 'src/utils/components/form/ButtonsBar';
 import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
 
 export class Service {
-    static firstInputSelector = "[name='uid']";
+    static firstInputSelector = "#uid";
 
     static focusFirstInput() {
         const firstInput = document.querySelector(`form ${Service.firstInputSelector}`);
