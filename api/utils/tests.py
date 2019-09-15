@@ -87,3 +87,23 @@ class ToolsIsSemiContain(TestCase):
         output = Tools.is_semi_contain(parent, child)
         eput = False
         self.assertEqual(output, eput)
+
+
+class ToolsRemoveSpecialChars(TestCase):
+    def test_normal_case(self):
+        input = 'abc'
+        output = Tools.remove_special_chars(input)
+        eput = 'abc'
+        self.assertEqual(output, eput)
+
+    def test_special_case(self):
+        input = ' abc* '
+        output = Tools.remove_special_chars(input)
+        eput = 'abc'
+        self.assertEqual(output, eput)
+
+    def test_special_case_upper(self):
+        input = ' abc* '
+        output = Tools.remove_special_chars(input, True)
+        eput = 'ABC'
+        self.assertEqual(output, eput)

@@ -135,6 +135,7 @@ class OrderViewSet(GenericViewSet):
         from apps.bol.models import Bol
         obj = get_object_or_404(Order, pk=pk)
         value = request.data.get('value', obj.purchase_code)
+        value = Tools.remove_special_chars(value)
         serializer = OrderUtils.partial_update(obj, 'purchase_code', value)
         data = serializer.data
         Bol.objects.filter(purchase_code=data.get('purchase_code')).update(order=obj)

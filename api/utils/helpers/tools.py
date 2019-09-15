@@ -9,6 +9,7 @@ from PIL import Image
 from rest_framework_jwt.serializers import VerifyJSONWebTokenSerializer
 from django.core.mail import EmailMultiAlternatives
 from django.conf import settings
+from django.utils.text import slugify
 
 
 loop = asyncio.new_event_loop()
@@ -279,9 +280,15 @@ class Tools:
         return int(re.split('[A-L]', uid)[-1]) + 1 if uid else 1
 
     @staticmethod
-    def upper_key(obj: dict, key: str) -> dict:
+    def clean_key(obj: dict, key: str) -> dict:
         if key in obj:
-            obj[key] = str(obj[key]).strip().upper()
+            obj[key] = Tools.remove_special_chars(str(obj[key]))
+        return obj
+
+    @staticmethod
+    def clean_and_upper_key(obj: dict, key: str) -> dict:
+        if key in obj:
+            obj[key] = Tools.remove_special_chars(str(obj[key]), True)
         return obj
 
     @staticmethod
@@ -291,3 +298,10 @@ class Tools:
         if child.isdisjoint(parent) or child.issubset(parent):
             return False
         return True
+
+    @staticmethod
+    def remove_special_chars(input: str, upper: bool = False) -> str:
+        result = slugify(input).replace('-', '').strip()
+        if upper is True:
+            return result.upper()
+        return result

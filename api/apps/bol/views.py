@@ -138,7 +138,7 @@ class BolViewSet(GenericViewSet):
         return res(serializer.data)
 
     def retrieve_uid(self, request, uid=''):
-        uid = uid.strip().upper()
+        uid = Tools.remove_special_chars(uid, True)
         obj = get_object_or_404(Bol, uid=uid)
         serializer = BolBaseSr(obj)
         return res(serializer.data)
@@ -146,7 +146,8 @@ class BolViewSet(GenericViewSet):
     @transaction.atomic
     @action(methods=['post'], detail=True)
     def add(self, request):
-        data = Tools.upper_key(request.data, 'uid')
+        data = Tools.clean_and_upper_key(request.data, 'uid')
+        data = Tools.clean_key(request.data, 'purchase_code')
         serializer = BolBaseSr(data=data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
@@ -156,7 +157,8 @@ class BolViewSet(GenericViewSet):
     @action(methods=['put'], detail=True)
     def change(self, request, pk=None):
         obj = self.get_object(pk)
-        data = Tools.upper_key(request.data, 'uid')
+        data = Tools.clean_and_upper_key(request.data, 'uid')
+        data = Tools.clean_key(request.data, 'purchase_code')
         serializer = BolBaseSr(obj, data=data, partial=True)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
@@ -165,8 +167,12 @@ class BolViewSet(GenericViewSet):
     @transaction.atomic
     @action(methods=['post'], detail=True)
     def match_vn(self, request):
-        uid = request.data.get('bol_uid', '').strip().upper()
-        bag_uid = request.data.get('bag_uid', '').strip().upper()
+        uid = request.data.get('bol_uid', '')
+        bag_uid = request.data.get('bag_uid', '')
+
+        uid = Tools.remove_special_chars(uid, True)
+        bag_uid = Tools.remove_special_chars(bag_uid, True)
+
         obj = get_object_or_404(Bol, uid=uid, bag__uid=bag_uid)
         if not obj.vn_date:
             obj.vn_date = timezone.now()
