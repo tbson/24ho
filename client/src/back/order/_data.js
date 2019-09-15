@@ -80,6 +80,7 @@ export type OrderType = {
     approver: number,
     vnd_total: number,
     deposit: number,
+    deposit_factor: number,
     vnd_total_discount: number,
     checked: boolean,
     pending: boolean

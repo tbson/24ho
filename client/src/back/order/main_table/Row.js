@@ -169,8 +169,8 @@ const FinInfo = ({data}: FinInfoType) => {
                 <div className="col mono vnd">{Tools.numberFormat(data.deposit)}</div>
             </div>
             <div className="row">
-                <div className="col">Chiết khấu:</div>
-                <div className="col mono vnd">{Tools.numberFormat(data.vnd_total_discount)}</div>
+                <div className="col">Hệ số cọc:</div>
+                <div className="col right mono">{Tools.numberFormat(data.deposit_factor)}%</div>
             </div>
             <div className="row">
                 <div className="col">Còn thiếu:</div>
