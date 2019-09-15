@@ -72,7 +72,7 @@ export const Note = ({note}: Object) => {
     return note;
 };
 
-export const Description = ({title, image, color, size, link}: Object) => {
+export const Description = ({title, image, color, size, url}: Object) => {
     return (
         <table width="100%">
             <tbody>
@@ -82,7 +82,7 @@ export const Description = ({title, image, color, size, link}: Object) => {
                     </td>
                     <td>
                         <div>
-                            <a href={link} target="_blank">
+                            <a href={url} target="_blank">
                                 {title}
                             </a>
                         </div>
