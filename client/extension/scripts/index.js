@@ -18,7 +18,7 @@ const identityClass = '_order_extension_';
 
 const config = {
     rate: 3500,
-    urlGetRate: host + '/api/v1/rate/latest',
+    urlGetRate: host + '/api/v1/rate/latest/',
     currentVer: chrome.runtime.getManifest().version,
     urlCart: host + '/user/cart',
     allowedDomains: ['TMALL', 'TAOBAO', '1688']

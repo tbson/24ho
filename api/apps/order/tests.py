@@ -689,7 +689,7 @@ class UtilsCalOrderFee(TestCase):
         order.customer.save()
 
         OrderFeeUtils.seeding(3)
-        self.assertEqual(OrderUtils.cal_order_fee(order), 1.5)
+        self.assertEqual(OrderUtils.cal_order_fee(order), 3)
 
 
 cal_delivery_fee = {

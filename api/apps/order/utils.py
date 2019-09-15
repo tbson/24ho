@@ -176,6 +176,7 @@ class OrderUtils:
 
     @staticmethod
     def cal_order_fee(item: models.QuerySet) -> float:
+        min_order_fee = 3
         amount = item.cny_amount
 
         if item.order_fee_factor:
@@ -184,8 +185,12 @@ class OrderUtils:
             factor = item.customer.order_fee_factor
         else:
             factor = OrderFeeUtils.get_matched_factor(amount)
+        result = factor * amount / 100
 
-        return factor * amount / 100
+        if result < min_order_fee:
+            return min_order_fee
+
+        return result
 
     @staticmethod
     def cal_delivery_fee(item: models.QuerySet) -> float:

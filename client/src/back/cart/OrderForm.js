@@ -37,6 +37,7 @@ export class Service {
 
 type Props = {
     id: number,
+    rate: number,
     amount: number,
     defaultAddress: number,
     listOrder: Object,
@@ -50,6 +51,7 @@ type Props = {
 export default ({
     id,
     amount,
+    rate,
     listOrder,
     defaultAddress,
     listAddress,
@@ -105,7 +107,7 @@ export default ({
                             </div>
                         </div>
                         <TextInput name="note" label="Note" autoFocus={true} />
-                        <AccountSummary amount={amount} balance={balance} depositFactor={depositFactor} />
+                        <AccountSummary amount={amount} rate={rate} balance={balance} depositFactor={depositFactor} />
                         <br />
                         <FormLevelErrMsg errors={errors.detail} />
                         <ButtonsBar children={children} submitTitle={submitTitle} onClick={onClick(handleSubmit)} />
@@ -118,11 +120,14 @@ export default ({
 
 type AccountSummaryProps = {
     amount: number,
+    rate: number,
     balance: number,
     depositFactor: number
 };
-const AccountSummary = ({amount, balance, depositFactor}: AccountSummaryProps) => {
-    const deposit = parseInt((amount * depositFactor) / 100);
+const AccountSummary = ({amount, rate, balance, depositFactor}: AccountSummaryProps) => {
+    const minDeposit = 3 * rate;
+    const depositByFactor = parseInt((amount * depositFactor) / 100);
+    const deposit = Math.max(minDeposit, depositByFactor);
     const topup = balance - deposit > 0 ? 0 : Math.floor(balance - deposit);
     return (
         <table className="table">

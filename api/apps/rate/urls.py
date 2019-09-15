@@ -22,5 +22,5 @@ app_name = os.getcwd().split(os.sep)[-1]
 urlpatterns = [
     path('', base_endpoint),
     path('<int:pk>', pk_endpoint),
-    path('latest', ExposeView.as_view(), name='latest'),
+    path('latest/', ExposeView.as_view(), name='latest'),
 ]

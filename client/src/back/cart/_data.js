@@ -22,6 +22,12 @@ const rawApiUrls = [
         endpoints: {
             crud: ''
         }
+    },
+    {
+        controller: 'rate',
+        endpoints: {
+            latest: 'latest'
+        }
     }
 ];
 

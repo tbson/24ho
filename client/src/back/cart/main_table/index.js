@@ -263,10 +263,12 @@ export class Service {
 }
 
 export default ({}: Props) => {
+    const defaultRate = 3600;
     const [list, setList] = useState([]);
     const [listOrder, setListOrder] = useState({});
     const [listAddress, setListAddress] = useState([]);
     const [defaultAddress, setDefaultAddress] = useState(0);
+    const [rate, setRate] = useState(defaultRate);
     const [formOpen, setFormOpen] = useState<FormOpenType>({
         main: false,
         order: false
@@ -381,6 +383,9 @@ export default ({}: Props) => {
     const events = Service.events(setList);
 
     useEffect(() => {
+        Tools.apiClient(apiUrls.rateLatest).then(data => {
+            setRate(data.value || defaultRate);
+        });
         Service.getCartRequest()
             .then(getList)
             .then(Service.requestData);
@@ -458,6 +463,7 @@ export default ({}: Props) => {
             </MainForm>
             <OrderForm
                 id={formId}
+                rate={rate}
                 amount={amount}
                 listOrder={listOrder}
                 defaultAddress={defaultAddress}
