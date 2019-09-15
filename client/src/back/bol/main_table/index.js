@@ -3,7 +3,7 @@ import * as React from 'react';
 import {useState, useEffect} from 'react';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
-import OnlyAdmin from 'src/utils/components/OnlyAdmin';
+import ShowWhen from 'src/utils/components/ShowWhen';
 import {apiUrls} from '../_data';
 import type {TRow, DbRow, ListItem, FormOpenType, FormOpenKeyType} from '../_data';
 import {Pagination, SearchInput} from 'src/utils/components/TableUtils';
@@ -11,6 +11,7 @@ import MainForm from '../MainForm';
 import Row from './Row.js';
 
 type Props = {
+    readonly?: boolean,
     order_id?: number,
     bag_id?: number,
     bol_date_id?: number,
@@ -39,7 +40,7 @@ export class Service {
     }
 }
 
-export default ({order_id = 0, bol_date_id = 0, bag_id = 0, notifyChange}: Props) => {
+export default ({readonly = false, order_id = 0, bol_date_id = 0, bag_id = 0, notifyChange}: Props) => {
     const [list, setList] = useState([]);
     const [formOpen, setFormOpen] = useState<FormOpenType>({
         main: false
@@ -100,12 +101,12 @@ export default ({order_id = 0, bol_date_id = 0, bag_id = 0, notifyChange}: Props
                 <thead className="thead-light">
                     <tr>
                         <th className="row25">
-                            <OnlyAdmin>
+                            <ShowWhen value={!readonly}>
                                 <span
                                     className="fas fa-check text-info pointer check-all-button"
                                     onClick={onCheckAll}
                                 />
-                            </OnlyAdmin>
+                            </ShowWhen>
                         </th>
                         <th scope="col">Ngày</th>
                         <th scope="col">Mã vận đơn / giao dịch</th>
@@ -132,14 +133,14 @@ export default ({order_id = 0, bol_date_id = 0, bag_id = 0, notifyChange}: Props
                         </th>
                         <th scope="col">Ghi chú</th>
                         <th scope="col" style={{padding: 8}} className="row80">
-                            <OnlyAdmin>
+                            <ShowWhen value={!readonly}>
                                 <button
                                     className="btn btn-primary btn-sm btn-block add-button"
                                     onClick={() => showForm(0)}>
                                     <span className="fas fa-plus" />
                                     &nbsp; Add
                                 </button>
-                            </OnlyAdmin>
+                            </ShowWhen>
                         </th>
                     </tr>
                 </thead>
@@ -155,6 +156,7 @@ export default ({order_id = 0, bol_date_id = 0, bag_id = 0, notifyChange}: Props
                 <tbody>
                     {list.map((data, key) => (
                         <Row
+                            readonly={readonly}
                             className="table-row"
                             data={data}
                             key={key}
@@ -168,12 +170,12 @@ export default ({order_id = 0, bol_date_id = 0, bag_id = 0, notifyChange}: Props
                 <tfoot className="thead-light">
                     <tr>
                         <th className="row25">
-                            <OnlyAdmin>
+                            <ShowWhen value={!readonly}>
                                 <span
                                     className="fas fa-trash-alt text-danger pointer bulk-remove-button"
                                     onClick={onBulkRemove}
                                 />
-                            </OnlyAdmin>
+                            </ShowWhen>
                         </th>
                         <th className="row25 right" colSpan="99">
                             <Pagination next={links.next} prev={links.previous} onNavigate={getList} />

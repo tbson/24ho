@@ -19,7 +19,7 @@ const Component = ({match}: Props) => {
 
     return (
         <NavWrapper>
-            <Table />
+            <Table readonly={true}/>
         </NavWrapper>
     );
 };
