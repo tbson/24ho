@@ -165,6 +165,29 @@ class BolViewSet(GenericViewSet):
         return res(serializer.data)
 
     @transaction.atomic
+    @action(methods=['put'], detail=True)
+    def mark_cn(self, request, pk=None):
+        obj = self.get_object(pk)
+        if obj.cn_date is not None:
+            raise ValidationError({"uid": "Vận đơn này đã ghi nhận về kho TQ."})
+        data = Tools.clean_and_upper_key(request.data, 'uid')
+        serializer = BolBaseSr(obj, data=data, partial=True)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+        return res(serializer.data)
+
+    @transaction.atomic
+    @action(methods=['put'], detail=True)
+    def unmark_cn(self, request, pk=None):
+        obj = self.get_object(pk)
+        if obj.vn_date is not None:
+            raise ValidationError({"uid": "Vận đơn này đã ghi nhận về kho VN."})
+        obj.cn_date = None
+        obj.save()
+        serializer = BolBaseSr(obj)
+        return res(serializer.data)
+
+    @transaction.atomic
     @action(methods=['post'], detail=True)
     def match_vn(self, request):
         uid = request.data.get('bol_uid', '')

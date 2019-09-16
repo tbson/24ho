@@ -9,12 +9,12 @@ import type {SelectOptions} from 'src/utils/helpers/Tools';
 import Editable from 'src/utils/components/Editable';
 
 export class Service {
-    static removeRequest(id: number): Promise<Object> {
-        return Tools.apiCall(apiUrls.crud + id, {}, 'DELETE');
+    static unmarkRequest(id: number): Promise<Object> {
+        return Tools.apiCall(apiUrls.unmarkCn + id, {}, 'PUT');
     }
 
-    static handleRemove(id: number): Promise<Object> {
-        return Service.removeRequest(id)
+    static handleUnmark(id: number): Promise<Object> {
+        return Service.unmarkRequest(id)
             .then(resp => (resp.ok ? {id} : Promise.reject(resp)))
             .catch(Tools.popMessageOrRedirect);
     }
@@ -38,7 +38,7 @@ export default ({preview = false, listBag=[], item, index = 0, total = 0, onEdit
 
     const _onRemove = id => {
         const r = confirm(ListTools.getDeleteMessage(1));
-        r && Service.handleRemove(id).then(onRemove);
+        r && Service.handleUnmark(id).then(onRemove);
     };
 
     return (
@@ -77,8 +77,12 @@ export default ({preview = false, listBag=[], item, index = 0, total = 0, onEdit
             <td className="mono right">{data.packages}</td>
             <td>{data.note}</td>
             <td className="center">
-                <a className="editBtn" onClick={() => onEdit(preview ? data.uid : data.id)}>
+                <a onClick={() => onEdit(preview ? data.uid : data.id)}>
                     <span className="fas fa-edit text-info pointer" />
+                </a>
+                <span>&nbsp;&nbsp;&nbsp;</span>
+                <a onClick={() => _onRemove(data.id)}>
+                    <span className="fas fa-trash-alt text-danger pointer" />
                 </a>
             </td>
         </tr>

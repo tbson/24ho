@@ -244,6 +244,8 @@ class Bol(TimeStampedModel):
             ("ready_to_export_list_bol", "Can get bol to export"),
             ("export_bol", "Can export"),
             ("export_check_bol", "Can check before export"),
+            ("mark_cn_bol", "Can mark bol arrived to CN store"),
+            ("unmark_cn_bol", "Can unmark bol arrived to CN store"),
         )
 
 

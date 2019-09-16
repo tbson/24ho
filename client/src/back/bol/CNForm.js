@@ -65,7 +65,7 @@ export class Service {
     static changeRequest(params: Object) {
         return !params.id
             ? Tools.apiCall(apiUrls.crud, params, 'POST')
-            : Tools.apiCall(apiUrls.crud + params.id, params, 'PUT');
+            : Tools.apiCall(apiUrls.markCn + params.id, params, 'PUT');
     }
 
     static retrieveRequest(id: number) {

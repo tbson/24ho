@@ -45,6 +45,13 @@ match_vn = BolViewSet.as_view({
     'post': 'match_vn',
 })
 
+mark_cn = BolViewSet.as_view({
+    'put': 'mark_cn',
+})
+unmark_cn = BolViewSet.as_view({
+    'put': 'unmark_cn',
+})
+
 app_name = os.getcwd().split(os.sep)[-1]
 urlpatterns = [
     path('', base_endpoint),
@@ -56,4 +63,6 @@ urlpatterns = [
     path('export-check/', export_check),
     path('export/', export),
     path('date/', get_date),
+    path('mark-cn/<int:pk>', mark_cn),
+    path('unmark-cn/<int:pk>', unmark_cn),
 ]
