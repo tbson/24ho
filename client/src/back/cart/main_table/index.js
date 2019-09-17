@@ -300,7 +300,7 @@ export default ({}: Props) => {
         toggleForm(false, 'order');
         Service.savedOrderList = {...Service.savedOrderList, ...data};
         setListOrder(Service.savedOrderList);
-        Service.syncCartRequest();
+        return Service.syncCartRequest().then(() => [Object.keys(data)[0], Service.savedOrderList]);
     };
 
     const onCheck = id => setList(ListTools.checkOne(id, list));
@@ -399,6 +399,11 @@ export default ({}: Props) => {
     }, []);
 
     const groups = Service.group(list, listOrder);
+
+    const getGroupByShopNick = (shop_nick: string, listOrder: Object): Object => {
+        const result = Service.group(list, listOrder).find(item => item.order.shop_nick === shop_nick);
+        return result;
+    };
     return (
         <div>
             <table className="table table-striped">
@@ -470,7 +475,11 @@ export default ({}: Props) => {
                 listAddress={listAddress}
                 open={formOpen.order}
                 close={() => toggleForm(false, 'order')}
-                onChange={onOrderChange}>
+                onChange={data =>
+                    onOrderChange(data).then(([shop_nick, listOrder]) =>
+                        sendOrder(getGroupByShopNick(shop_nick, listOrder))
+                    )
+                }>
                 <button
                     type="button"
                     className="btn btn-light"
@@ -517,8 +526,7 @@ export const Group = ({data, sendOrder, showForm, onCheckAll, onBulkRemove, chil
                 <button
                     className="btn btn-success"
                     type="button"
-                    disabled={!data.order.address}
-                    onClick={() => sendOrder(data)}>
+                    onClick={() => showForm(data.order.shop_nick, data.order.vnd_total)}>
                     <span className="fas fa-check" />
                     &nbsp; Tạo đơn
                 </button>
@@ -535,6 +543,7 @@ export const Group = ({data, sendOrder, showForm, onCheckAll, onBulkRemove, chil
                     <strong>{Tools.numberFormat(data.order.cny_total)}</strong>
                 </div>
             </td>
+            {/*
             <td>
                 <div>
                     <strong>Địa chỉ: </strong>
@@ -571,13 +580,7 @@ export const Group = ({data, sendOrder, showForm, onCheckAll, onBulkRemove, chil
                     {data.order.note || <em>Chưa có ghi chú...</em>}
                 </div>
             </td>
-            <td className="right">
-                <button
-                    className="btn btn-info btn-block"
-                    onClick={() => showForm(data.order.shop_nick, data.order.vnd_total)}>
-                    <span className="fas fa-edit" />
-                </button>
-            </td>
+            */}
         </tr>
     </tbody>
 );
