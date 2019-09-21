@@ -98,3 +98,7 @@ class TransactionViewSet(GenericViewSet):
             raise Http404
         result.delete()
         return res(status=status.HTTP_204_NO_CONTENT)
+
+    def get_total_statistics(self, request):
+        statistics = TransactionUtils.get_total_statistics()
+        return res(statistics)

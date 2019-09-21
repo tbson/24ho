@@ -10,6 +10,7 @@ class Command(BaseCommand):
 
         list_items = Order.objects.all()
         for item in list_items:
+            item.do_not_check_frozen = True
             Order.objects.re_cal(item)
 
         self.stdout.write(self.style.SUCCESS('Success!'))

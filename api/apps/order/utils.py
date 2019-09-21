@@ -248,6 +248,7 @@ class OrderUtils:
         Frezee after confirm
         '''
         result['cny_amount'] = OrderUtils.cal_amount(item)
+        result['vnd_amount'] = result['cny_amount'] * item.rate
         result['cny_order_fee'] = OrderUtils.cal_order_fee(item)
         # item.cny_inland_delivery_fee
 
@@ -544,6 +545,10 @@ class OrderUtils:
     @staticmethod
     def check_order_for_frozen(order: models.QuerySet, delete_only: bool = False) -> models.QuerySet:
         from .models import Status
+
+        if hasattr(order, 'do_not_check_frozen'):
+            del order.do_not_check_frozen
+            return order
 
         if hasattr(order, 'move_status'):
             del order.move_status

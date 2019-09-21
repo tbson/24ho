@@ -43,8 +43,13 @@ class ReceiptUtils:
 
     @staticmethod
     def cleanup_before_deleting(receipt):
+        from apps.transaction.models import Type
         transactions = receipt.receipt_transactions.all()
         for item in transactions:
+            if item.type == Type.PAY:
+                item.order.do_not_check_frozen = True
+                item.order.charge_remain = False
+                item.order.save()
             item.delete()
 
         bols = receipt.receipt_bols.all()

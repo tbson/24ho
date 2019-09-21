@@ -52,6 +52,12 @@ export default ({}: Props) => {
     const [listBank, setListBank] = useState([]);
     const [balance, setBalance] = useState(0);
     const [links, setLinks] = useState({next: '', previous: ''});
+    const [totalStatistics, setTotalStatistics] = useState({
+        income: 0,
+        outcome: 0,
+        missing: 0,
+        balance: 0
+    });
 
     const listAction = ListTools.actions(list);
 
@@ -92,6 +98,7 @@ export default ({}: Props) => {
 
     useEffect(() => {
         getList();
+        if (Tools.isAdmin()) Tools.apiClient(apiUrls.totalStatistics).then(setTotalStatistics);
     }, []);
 
     return (
@@ -100,6 +107,21 @@ export default ({}: Props) => {
                 <div style={{margin: 10}}>
                     <span>Số dư: </span>
                     <strong className="vnd">{Tools.numberFormat(balance)}</strong>
+                </div>
+            )}
+            {Tools.isAdmin() && (
+                <div style={{margin: 10}}>
+                    <span>Tổng thu: </span>
+                    <strong className="vnd">{Tools.numberFormat(totalStatistics.income)}</strong>
+                    <span>&nbsp;|&nbsp;</span>
+                    <span>Tổng chi: </span>
+                    <strong className="vnd">{Tools.numberFormat(totalStatistics.outcome)}</strong>
+                    <span>&nbsp;|&nbsp;</span>
+                    <span>Còn thiếu: </span>
+                    <strong className="vnd">{Tools.numberFormat(totalStatistics.missing)}</strong>
+                    <span>&nbsp;|&nbsp;</span>
+                    <span>Số dư ví khách: </span>
+                    <strong className="vnd">{Tools.numberFormat(totalStatistics.balance)}</strong>
                 </div>
             )}
             <table className="table table-striped">

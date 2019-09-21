@@ -346,6 +346,7 @@ class BolUtils:
             total = total + remain
             order.receipt = receipt
             order.do_not_check_exported = True
+            order.charge_remain = True
             order.save()
             TransactionUtils.charge_order_remain(remain, customer, staff, receipt, order)
         return total

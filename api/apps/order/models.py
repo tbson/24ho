@@ -85,6 +85,7 @@ class Order(TimeStampedModel):
     real_rate = models.PositiveIntegerField()
 
     cny_amount = models.FloatField(default=0)
+    vnd_amount = models.FloatField(default=0)
     cny_order_fee = models.FloatField(default=0)
     cny_inland_delivery_fee = models.FloatField(default=0)
     cny_count_check_fee = models.FloatField(default=0)
@@ -103,6 +104,7 @@ class Order(TimeStampedModel):
 
     deposit_factor = models.FloatField(default=0)
     deposit = models.PositiveIntegerField(default=0)
+    charge_remain = models.BooleanField(default=False)
 
     mass = models.FloatField(default=0)
     packages = models.PositiveIntegerField(default=0)

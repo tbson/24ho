@@ -73,6 +73,8 @@ class TransactionUtils:
     def get_customer_balance(id: int) -> int:
         from .models import Transaction
         query = Transaction.objects.filter(customer_id=id)
+        if (id == 0):
+            query = Transaction.objects.all()
         assets = query.filter(is_assets=True).aggregate(Sum('amount')).get('amount__sum') or 0
         liabilities = query.filter(is_assets=False).aggregate(Sum('amount')).get('amount__sum') or 0
         return assets - liabilities
@@ -263,3 +265,27 @@ class TransactionUtils:
         )
         transaction.save()
         return transaction.uid
+
+    @staticmethod
+    def get_total_statistics() -> dict:
+        from .models import Transaction
+        from apps.order.models import Order, Status
+
+        tx_query = Transaction.objects.all()
+        income = tx_query.filter(is_assets=True).aggregate(Sum('amount')).get('amount__sum') or 0
+
+        order_query = Order.objects.exclude(status__in=[Status.NEW, Status.DISCARD])
+        outcome = order_query.aggregate(Sum('vnd_amount')).get('vnd_amount__sum') or 0
+
+        missing_query = order_query.filter(charge_remain=False)
+        amount = missing_query.aggregate(Sum('vnd_amount')).get('vnd_amount__sum') or 0
+        deposit = missing_query.aggregate(Sum('deposit')).get('deposit__sum') or 0
+
+        balance = TransactionUtils.get_customer_balance(0)
+        result = {
+            "income": income,
+            "outcome": outcome,
+            "missing": amount - deposit,
+            "balance": balance
+        }
+        return result
