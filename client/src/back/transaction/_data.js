@@ -9,7 +9,8 @@ const rawApiUrls = [
         endpoints: {
             crud: '',
             print: 'print',
-            totalStatistics: 'total-statistics'
+            totalStatistics: 'total-statistics',
+            getGuide: 'get-guide'
         }
     },
     {

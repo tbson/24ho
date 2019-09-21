@@ -8,6 +8,7 @@ class VariableUtils:
         'info_email': 'SAMPLE',
         'info_phone': 'SAMPLE',
         'info_website': 'SAMPLE',
+        'guide_transaction': 'https://google.com',
     }
 
     @staticmethod

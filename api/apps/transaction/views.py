@@ -1,5 +1,7 @@
 from django.http import Http404
 from django.shortcuts import get_object_or_404
+from rest_framework.views import APIView
+from rest_framework.permissions import AllowAny
 from rest_framework.decorators import action
 from rest_framework.viewsets import (GenericViewSet, )
 from rest_framework import status
@@ -102,3 +104,10 @@ class TransactionViewSet(GenericViewSet):
     def get_total_statistics(self, request):
         statistics = TransactionUtils.get_total_statistics()
         return res(statistics)
+
+
+class ExposeView(APIView):
+    permission_classes = (AllowAny, )
+
+    def get(self, request, format=None):
+        return res(TransactionUtils.get_guide_transaction())

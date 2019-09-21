@@ -289,3 +289,17 @@ class TransactionUtils:
             "balance": balance
         }
         return result
+
+    @staticmethod
+    def get_guide_transaction() -> dict:
+        from apps.variable.models import Variable
+        from apps.variable.utils import VariableUtils
+
+        result = {}
+        uid = 'guide_transaction'
+        try:
+            item = Variable.objects.get(uid=uid)
+            result[uid] = item.value
+        except Variable.DoesNotExist:
+            result[uid] = VariableUtils.default_company_info[uid]
+        return result

@@ -2,6 +2,7 @@ import os
 from django.urls import path
 from .views import (
     TransactionViewSet,
+    ExposeView,
 )
 
 
@@ -31,4 +32,5 @@ urlpatterns = [
     path('<int:pk>', pk_endpoint),
     path('print/<int:pk>', retrieve_to_print),
     path('total-statistics/', get_total_statistics),
+    path('get-guide/', ExposeView.as_view(), name='get_guide'),
 ]
