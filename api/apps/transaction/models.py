@@ -86,9 +86,9 @@ class Transaction(TimeStampedModel):
             self.uid = Tools.get_uuid()
 
         if self.customer:
-            self.customer_username = self.customer.user.username
+            self.customer_username = Tools.get_fullname(self.customer.user, True)
         if self.staff:
-            self.staff_username = self.staff.user.username
+            self.staff_username = Tools.get_fullname(self.staff.user, True)
 
         if self.order:
             self.order_uid = self.order.uid

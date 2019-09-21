@@ -114,17 +114,20 @@ export default ({}: Props) => {
                             </th>
                         )}
                         <th scope="col">Ngày</th>
+                        <th scope="col">Mã giao dịch</th>
+                        <th scope="col">Loại giao dịch</th>
                         <th scope="col" className="right">
-                            Số tiền
+                            Ghi có
+                        </th>
+                        <th scope="col" className="right">
+                            Ghi nợ
                         </th>
                         <th scope="col" className="right">
                             Số dư
                         </th>
-                        <th scope="col">Mã giao dịch</th>
-                        <th scope="col">Nhân viên giao dịch</th>
-                        {Tools.isAdmin() && <th scope="col">Khách hàng</th>}
-                        <th scope="col">Loại giao dịch</th>
                         <th scope="col">Loại tiền</th>
+                        {Tools.isAdmin() && <th scope="col">Nhân viên</th>}
+                        {Tools.isAdmin() && <th scope="col">Khách hàng</th>}
                         <th scope="col">Ghi chú</th>
                         {Tools.isAdmin() && (
                             <th scope="col" style={{padding: 8}} className="row80">
@@ -160,21 +163,21 @@ export default ({}: Props) => {
                     ))}
                 </tbody>
 
-                {Tools.isAdmin() && (
-                    <tfoot className="thead-light">
-                        <tr>
+                <tfoot className="thead-light">
+                    <tr>
+                        {Tools.isAdmin() && (
                             <th className="row25">
                                 <span
                                     className="fas fa-trash-alt text-danger pointer bulk-remove-button"
                                     onClick={onBulkRemove}
                                 />
                             </th>
-                            <th className="row25 right" colSpan="99">
-                                <Pagination next={links.next} prev={links.previous} onNavigate={getList} />
-                            </th>
-                        </tr>
-                    </tfoot>
-                )}
+                        )}
+                        <th className="row25 right" colSpan="99">
+                            <Pagination next={links.next} prev={links.previous} onNavigate={getList} />
+                        </th>
+                    </tr>
+                </tfoot>
             </table>
 
             <MainForm

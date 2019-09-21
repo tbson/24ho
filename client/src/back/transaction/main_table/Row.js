@@ -47,13 +47,14 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
             <td className="mono">
                 <span>{Tools.dateTimeFormat(data.created_at)}</span>
             </td>
-            <td className="mono vnd">{Tools.numberFormat(parseInt(data.amount))}</td>
-            <td className="mono vnd">{Tools.numberFormat(parseInt(data.balance))}</td>
             <td className="mono">{Tools.txCodeFormat(data.uid)}</td>
-            <td>{data.staff_username}</td>
-            {Tools.isAdmin() && <td>{data.customer_username}</td>}
             <td>{listType[String(data.type)]}</td>
+            <td className="mono vnd">{Tools.numberFormat(parseInt(data.is_assets ? data.amount : 0))}</td>
+            <td className="mono vnd">{Tools.numberFormat(parseInt(data.is_assets ? 0 : data.amount))}</td>
+            <td className="mono vnd">{Tools.numberFormat(parseInt(data.balance))}</td>
             <td>{listMoneyType[String(data.money_type)]}</td>
+            {Tools.isAdmin() && <td>{data.staff_username}</td>}
+            {Tools.isAdmin() && <td>{data.customer_username}</td>}
             <td>{data.note}</td>
             {Tools.isAdmin() && (
                 <td className="center">
