@@ -30,7 +30,7 @@ export class Service {
         amount: Yup.number().required(ErrMsgs.REQUIRED),
         type: Yup.number().required(ErrMsgs.REQUIRED),
         money_type: Yup.number().required(ErrMsgs.REQUIRED),
-        customer: Yup.number(),
+        customer: Yup.number().required(ErrMsgs.REQUIRED),
         note: Yup.string()
     });
 
@@ -109,7 +109,7 @@ export default ({
                 {({errors, handleSubmit, values}) => {
                     return (
                         <Form>
-                            <TextInput name="amount" type="number" label="Số tiền" required autofocus />
+                            <SelectInput name="customer" options={listCustomer} label="Khách hàng" required/>
                             <div className="row">
                                 <div className="col">
                                     <SelectInput name="type" options={listType} label="Loại giao dịch" required />
@@ -118,7 +118,7 @@ export default ({
                                     <SelectInput name="money_type" options={listMoneyType} label="Loại tiền" required />
                                 </div>
                             </div>
-                            <SelectInput name="customer" options={listCustomer} label="Khách hàng" />
+                            <TextInput name="amount" type="number" label="Số tiền" required autofocus />
                             {values.money_type === 2 && (
                                 <SelectInput name="bank" options={listBank} label="Ngân hàng" />
                             )}
