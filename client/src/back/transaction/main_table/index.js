@@ -4,7 +4,7 @@ import {useState, useEffect} from 'react';
 import type {SelectOptions} from 'src/utils/helpers/Tools';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
-import {apiUrls, listType, listMoneyType} from '../_data';
+import {apiUrls, listTypeSelect, listMoneyTypeSelect} from '../_data';
 import type {TRow, DbRow, ListItem, FormOpenType, FormOpenKeyType} from '../_data';
 import {Pagination, SearchInput} from 'src/utils/components/TableUtils';
 import MainForm from '../MainForm';
@@ -177,8 +177,8 @@ export default ({}: Props) => {
             <MainForm
                 listCustomer={listCustomer}
                 listBank={Service.getBankOptions(listBank)}
-                listType={Service.objToOptions(listType)}
-                listMoneyType={Service.objToOptions(listMoneyType)}
+                listType={Service.objToOptions(listTypeSelect)}
+                listMoneyType={Service.objToOptions(listMoneyTypeSelect)}
                 close={() => MainFormService.toggleForm(false)}
                 onChange={onChange}>
                 <button
