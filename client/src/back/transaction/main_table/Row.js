@@ -48,6 +48,7 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
                 <span>{Tools.dateTimeFormat(data.created_at)}</span>
             </td>
             <td className="mono vnd">{Tools.numberFormat(parseInt(data.amount))}</td>
+            <td className="mono vnd">{Tools.numberFormat(parseInt(data.balance))}</td>
             <td className="mono">{data.uid}</td>
             <td>{data.staff_username}</td>
             {Tools.isAdmin() && <td>{data.customer_username}</td>}

@@ -75,6 +75,7 @@ export type FormValues = {
     customer_username: string,
     type: string,
     money_type: string,
+    balance: number,
     note: string
 };
 

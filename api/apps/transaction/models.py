@@ -71,6 +71,7 @@ class Transaction(TimeStampedModel):
 
     uid = models.CharField(max_length=64, unique=True)
     amount = models.FloatField()
+    balance = models.FloatField(default=0)
     type = models.IntegerField(choices=TYPE_CHOICES)
     money_type = models.IntegerField(choices=MONEY_TYPE_CHOICES)
     is_assets = models.BooleanField(default=True)
@@ -93,6 +94,7 @@ class Transaction(TimeStampedModel):
             self.order_uid = self.order.uid
         if self.bol:
             self.bol_uid = self.bol.uid
+        self.balance = TransactionUtils.get_transaction_balance(self)
 
         super(Transaction, self).save(*args, **kwargs)
 

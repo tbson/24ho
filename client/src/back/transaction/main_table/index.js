@@ -115,7 +115,10 @@ export default ({}: Props) => {
                         )}
                         <th scope="col">Ngày</th>
                         <th scope="col" className="right">
-                            Số lượng
+                            Số tiền
+                        </th>
+                        <th scope="col" className="right">
+                            Số dư
                         </th>
                         <th scope="col">Mã giao dịch</th>
                         <th scope="col">Nhân viên giao dịch</th>

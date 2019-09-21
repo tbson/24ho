@@ -78,6 +78,13 @@ class TransactionUtils:
         return assets - liabilities
 
     @staticmethod
+    def get_transaction_balance(tx: models.QuerySet) -> int:
+        current_balance = TransactionUtils.get_customer_balance(tx.customer_id)
+        if tx.is_assets:
+            return current_balance + tx.amount
+        return current_balance - tx.amount
+
+    @staticmethod
     def recharge(amount: int, money_type: int, customer: models.QuerySet, staff: models.QuerySet) -> str:
         from .models import Type
         from .models import Transaction
