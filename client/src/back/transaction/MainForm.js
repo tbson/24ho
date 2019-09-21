@@ -119,7 +119,7 @@ export default ({
                                 </div>
                             </div>
                             <SelectInput name="customer" options={listCustomer} label="Khách hàng" />
-                            {values.money_type === 1 && (
+                            {values.money_type === 2 && (
                                 <SelectInput name="bank" options={listBank} label="Ngân hàng" />
                             )}
                             <TextInput name="note" label="Ghi chú" />
