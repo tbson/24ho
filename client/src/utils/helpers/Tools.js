@@ -842,4 +842,8 @@ export default class Tools {
         }
         return condition;
     }
+
+    static txCodeFormat(code: string): string {
+        return code.split('-').pop();
+    }
 }
