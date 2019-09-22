@@ -1,9 +1,4 @@
-/*!
- * Start Bootstrap - Simple Sidebar (https://startbootstrap.com/template-overviews/simple-sidebar)
- * Copyright 2013-2017 Start Bootstrap
- * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap-simple-sidebar/blob/master/LICENSE)
- */
-
+/*
 body {
     overflow-x: hidden;
 }
@@ -11,7 +6,6 @@ body {
 #main-heading {
     background-color: #3990F4;
     color: white;
-    /* border-bottom: 1px solid #d1d1d1; */
     height: 40px;
     text-align: right;
     line-height: 40px;
@@ -84,17 +78,12 @@ body {
 #page-content-wrapper {
     width: 100%;
     position: absolute;
-    /*
-  padding: 15px;
-  */
 }
 
 #wrapper.toggled #page-content-wrapper {
     position: absolute;
     margin-right: -200px;
 }
-
-/* Sidebar Styles */
 
 .sidebar-nav {
     top: 0;
@@ -132,7 +121,6 @@ body {
 .sidebar-brand {
     background-color: #3990F4;
     color: white;
-    /* border-bottom: 1px solid #d1d1d1;*/
     height: 40px;
     font-size: 20px;
     line-height: 2.2;
@@ -154,9 +142,6 @@ body {
         width: 200px;
     }
     #page-content-wrapper {
-        /*
-    padding: 20px;
-    */
         position: relative;
     }
     #wrapper.toggled #page-content-wrapper {
@@ -164,3 +149,4 @@ body {
         margin-right: 0;
     }
 }
+*/

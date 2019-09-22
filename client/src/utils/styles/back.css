@@ -1,0 +1,21 @@
+.right {
+    text-align: right;
+}
+.anticon {
+    vertical-align: 1px;
+}
+.red {
+    color: red;
+}
+
+.green {
+    color: green;
+}
+
+.blue {
+    color: blue;
+}
+.red-dot::after {
+    content: ' *';
+    color: red;
+}

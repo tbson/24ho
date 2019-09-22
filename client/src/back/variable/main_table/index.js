@@ -1,6 +1,8 @@
 // @flow
 import * as React from 'react';
 import {useState, useEffect} from 'react';
+// $FlowFixMe: do not complain about formik
+import { Button } from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
 import {apiUrls} from '../_data';
@@ -130,13 +132,10 @@ export default ({}: Props) => {
             </table>
 
             <MainForm close={() => MainFormService.toggleForm(false)} onChange={onChange}>
-                <button
-                    type="button"
-                    className="btn btn-light"
-                    action="close"
-                    onClick={() => MainFormService.toggleForm(false)}>
+                <Button
+                    onClick={() => MainFormService.toggleForm(false)} icon="close">
                     Cancel
-                </button>
+                </Button>
             </MainForm>
         </div>
     );

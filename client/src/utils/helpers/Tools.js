@@ -71,7 +71,7 @@ export type ObjResp = {
     data: Object
 };
 
-export type SelectOptions = Array<{value: string | number | boolean, label: string}>;
+export type SelectOptions = Array<{value: string | number, label: string}>;
 
 export default class Tools {
     static isAdmin(): boolean {

@@ -162,7 +162,7 @@ export default ({readonly = false, bol_date = 0}: Props) => {
 
             <MainForm
                 id={modalId}
-                listArea={listArea}
+                areaOptions={listArea}
                 open={formOpen.main}
                 close={() => toggleForm(false)}
                 onChange={onChange}>

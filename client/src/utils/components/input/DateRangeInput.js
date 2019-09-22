@@ -3,9 +3,12 @@ import * as React from 'react';
 import {useState} from 'react';
 // $FlowFixMe: do not complain about hooks
 import {Field, ErrorMessage} from 'formik';
+// import DateRangePicker from '@wojtekmaj/react-daterange-picker';
 // $FlowFixMe: do not complain about hooks
-import DateRangePicker from '@wojtekmaj/react-daterange-picker';
+import { DatePicker } from 'antd';
 import Label from './Label';
+
+const { RangePicker } = DatePicker;
 
 export class Service {
     static emptyInput = [null, null];
@@ -44,7 +47,7 @@ export default ({name, useIsoString = true, label, required = false}: Props) => 
                 <Field name={name}>
                     {({form}) => {
                         return (
-                            <DateRangePicker onChange={onChange(form.setFieldValue)} value={value} format="d/M/y" />
+                            <RangePicker onChange={onChange(form.setFieldValue)} value={value} />
                         );
                     }}
                 </Field>

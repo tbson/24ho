@@ -1,5 +1,7 @@
 // @flow
 import * as React from 'react';
+// $FlowFixMe: do not complain about formik
+import { Button } from 'antd';
 
 type Props = {
     children?: React.Node,
@@ -12,11 +14,9 @@ export default ({children, submitTitle, onClick}: Props) => {
             <div className="col">{children}</div>
             <div className="col right">
                 <button type="submit" style={{display: 'none'}} />
-                <button type={onClick ? 'button' : 'submit'} className="btn btn-primary" onClick={onClick}>
-                    <span className="fas fa-check" />
-                    &nbsp;
+                <Button htmlType={onClick ? 'button' : 'submit'} type="primary" icon="check" onClick={onClick}>
                     {submitTitle}
-                </button>
+                </Button>
             </div>
         </div>
     );

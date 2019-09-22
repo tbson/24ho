@@ -2,6 +2,8 @@
 import * as React from 'react';
 // $FlowFixMe: do not complain about hooks
 import {Field, ErrorMessage} from 'formik';
+// $FlowFixMe: do not complain about hooks
+import { Checkbox } from 'antd';
 import Label from './Label';
 
 type Props = {
@@ -13,23 +15,20 @@ type Props = {
 export default ({name, label, disabled = false}: Props) => {
     const onChange = (setFieldValue: Function) => (e: Object) => setFieldValue(name, !!e.target.checked);
     return (
-        <div className="form-group form-check">
+        <div className="form-group">
             <Field name={name}>
                 {({field, form}) => {
                     return (
-                        <input
-                            type="checkbox"
+                        <Checkbox
                             disabled={disabled}
                             id={name}
                             name={name}
                             checked={!!field.value}
-                            className="form-check-input"
                             onChange={onChange(form.setFieldValue)}
-                        />
+                        >{label}</Checkbox>
                     );
                 }}
             </Field>
-            <Label name={name} label={label} className="form-check-label no-select" />
             <ErrorMessage name={name} className="red" component="div" />
         </div>
     );

@@ -6,12 +6,16 @@ import Label from './Label';
 import type {SelectOptions} from 'src/utils/helpers/Tools';
 // $FlowFixMe: do not complain about importing node_modules
 import Loadable from 'react-loadable';
+// $FlowFixMe: do not complain about importing node_modules
+import {Select} from 'antd';
+/*
 const Select = Loadable({
     // $FlowFixMe: do not complain about importing node_modules
     loader: () => import('react-select'),
     loading: () => <div>Loading select...</div>
 });
-
+*/
+const {Option} = Select;
 type Props = {
     name: string,
     label?: string,
@@ -35,46 +39,43 @@ export default ({
     isClearable = true,
     required = false
 }: Props) => {
-    const handleChange = (setFieldValue: Function, isMulti: boolean) => {
+    const blankOption = {value: '', label: `--- ${blankLabel} ---`};
+    const optionsWithBlankValue = options => {
+        if (isMulti || !blankLabel) return options;
+        return [blankOption, ...options];
+    };
+
+    const children = optionsWithBlankValue(options).map(item => {
+        const {value, label} = item;
+        return <Option key={value} value={value}>{label}</Option>;
+    });
+
+    const handleChange = (setFieldValue: Function) => {
         return item => {
-            const value = isMulti ? item.map(i => i.value) : item?.value;
-            setFieldValue(name, value);
+            setFieldValue(name, item);
         };
     };
+    
     return (
         <div className={'form-group'}>
             <Label name={name} label={label} required={required} />
             <Field name={name}>
                 {props => {
                     const {field, form} = props;
-                    let value;
-                    if (isMulti) {
-                        value = options.filter(option => (field.value || []).includes(option.value));
-                    } else {
-                        value = options.find(option => option.value === field.value);
-                    }
+                    let value = field.value;
                     const renderErrorMessage = () => {
                         if (!form.touched[field.name] || !form.errors[field.name]) return null;
                         return <div className="red">{form.errors[field.name]}</div>;
                     };
-                    const blankOption = {value: '', label: `--- ${blankLabel} ---`};
-                    const optionsWithBlankValue = () => {
-                        if (isMulti || !blankLabel) return options;
-                        return [blankOption, ...options];
-                    };
                     return (
                         <>
                             <Select
-                                className="select-input"
                                 value={value}
-                                isMulti={isMulti}
-                                isSearchable={true}
-                                isClearable={isClearable}
+                                mode={isMulti ? 'multiple' : 'default'}
                                 disabled={disabled}
-                                autoFocus={autoFocus}
-                                onChange={handleChange(form.setFieldValue, isMulti)}
-                                options={optionsWithBlankValue()}
-                            />
+                                onChange={value => form.setFieldValue(name, value)}>
+                                {children}
+                            </Select>
                             {renderErrorMessage()}
                         </>
                     );

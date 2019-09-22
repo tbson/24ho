@@ -2,6 +2,8 @@
 import * as React from 'react';
 // $FlowFixMe: do not complain about hooks
 import {Field, ErrorMessage} from 'formik';
+// $FlowFixMe: do not complain about hooks
+import { Input } from 'antd';
 import Label from './Label';
 
 type Props = {
@@ -38,7 +40,7 @@ export default ({
             <Field name={name}>
                 {({field, form}) => {
                     return (
-                        <input
+                        <Input
                             id={name}
                             type={type}
                             autoFocus={autoFocus}

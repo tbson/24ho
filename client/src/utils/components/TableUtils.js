@@ -1,16 +1,10 @@
 // @flow
 import * as React from 'react';
+// $FlowFixMe: do not complain about hooks
+import {Input} from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 
-export class Service {
-    static onSearch(callback: Function) {
-        return (e: Object) => {
-            e.preventDefault();
-            const {keyword} = Tools.formDataToObj(new FormData(e.target));
-            if (!keyword || keyword.length > 2) callback(keyword);
-        };
-    }
-}
+const {Search} = Input;
 
 type SearchInputPropTypes = {
     show?: boolean,
@@ -19,18 +13,10 @@ type SearchInputPropTypes = {
 
 export const SearchInput = ({show = true, onSearch}: SearchInputPropTypes) => {
     if (!show) return null;
-    const onSubmit = Service.onSearch(onSearch);
     return (
-        <form onSubmit={onSubmit}>
-            <div className="input-group mb-3">
-                <input type="text" name="keyword" className="form-control" placeholder="Search..." />
-                <div className="input-group-append">
-                    <button className="btn btn-outline-secondary" style={{borderColor: '#C3CAD1'}}>
-                        <span className="fas fa-search" />
-                    </button>
-                </div>
-            </div>
-        </form>
+        <div className="input-group mb-3">
+            <Search name="keyword" placeholder="Search..." onSearch={onSearch} />
+        </div>
     );
 };
 
@@ -156,7 +142,7 @@ type BoolOutputType = {
     value: boolean
 };
 export const BoolOutput = ({value}: BoolOutputType) =>
-    value ? <span className="green fas fa-check"/> : <span className="red fas fa-times"/>;
+    value ? <span className="green fas fa-check" /> : <span className="red fas fa-times" />;
 
 const styles = {
     footer: {

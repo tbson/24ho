@@ -24,11 +24,11 @@ export class Service {
     }
 
     static initialValues = {
-        area: 0,
+        area: 0
     };
 
     static validationSchema = Yup.object().shape({
-        area: Yup.number().required(ErrMsgs.REQUIRED),
+        area: Yup.number().required(ErrMsgs.REQUIRED)
     });
 
     static changeRequest(params: Object) {
@@ -37,8 +37,8 @@ export class Service {
             : Tools.apiCall(apiUrls.crud + params.id, params, 'PUT');
     }
 
-    static retrieveRequest(id: number) {
-        return id ? Tools.apiCall(apiUrls.crud + id) : Promise.resolve({ok: true, data: Service.initialValues});
+    static retrieveRequest(id: number, initialValues: Object) {
+        return id ? Tools.apiCall(apiUrls.crud + id) : Promise.resolve({ok: true, data: initialValues});
     }
 
     static handleSubmit(id: number, onChange: Function) {
@@ -51,21 +51,26 @@ export class Service {
 
 type Props = {
     id: number,
-    listArea: SelectOptions,
+    areaOptions: SelectOptions,
     open: boolean,
     close: Function,
     onChange: Function,
     children?: React.Node,
     submitTitle?: string
 };
-export default ({id, listArea, open, close, onChange, children, submitTitle = 'Save'}: Props) => {
-    const {validationSchema, handleSubmit} = Service;
+export default ({id, areaOptions, open, close, onChange, children, submitTitle = 'Save'}: Props) => {
+    if (!areaOptions.length) return null;
 
+    const {validationSchema, handleSubmit} = Service;
     const [openModal, setOpenModal] = useState(false);
-    const [initialValues, setInitialValues] = useState(Service.initialValues);
+    const _initialValues = {
+        ...Service.initialValues,
+        area: areaOptions[0].value
+    };
+    const [initialValues, setInitialValues] = useState(_initialValues);
 
     const retrieveThenOpen = (id: number) =>
-        Service.retrieveRequest(id).then(resp => {
+        Service.retrieveRequest(id, _initialValues).then(resp => {
             if (!resp.ok) return Tools.popMessage(resp.data.detail, 'error');
             setInitialValues({...resp.data});
             setOpenModal(true);
@@ -76,14 +81,14 @@ export default ({id, listArea, open, close, onChange, children, submitTitle = 'S
     }, [open]);
 
     return (
-        <DefaultModal open={openModal} close={close} title="Variable manager">
+        <DefaultModal open={openModal} close={close} title="Quản lý bao hàng">
             <Formik
                 initialValues={{...initialValues}}
                 validationSchema={validationSchema}
                 onSubmit={handleSubmit(id, onChange)}>
                 {({errors, handleSubmit}) => (
                     <Form>
-                        <SelectInput name="area" label="Area" options={listArea} />
+                        <SelectInput name="area" label="Area" options={areaOptions} />
                         <FormLevelErrMsg errors={errors.detail} />
                         <ButtonsBar children={children} submitTitle={submitTitle} onClick={handleSubmit} />
                     </Form>
