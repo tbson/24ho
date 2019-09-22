@@ -1,12 +1,15 @@
 // @flow
 import * as React from 'react';
 import {useState, useEffect} from 'react';
+// $FlowFixMe: do not complain about importing
+import {Input, Button} from 'antd';
 import NavWrapper from 'src/utils/components/nav_wrapper/';
 import Tools from 'src/utils/helpers/Tools';
 import {apiUrls} from './_data';
 import CheckForm from './CheckForm';
 import {Service as CheckFormService} from './CheckForm';
 
+const {Search} = Input;
 type Props = {};
 type CheckInputProp = {
     id: number,
@@ -178,7 +181,7 @@ export default ({}: Props) => {
             Tools.popMessage('Kiểm hàng thành công, quét vận đơn khác để tiếp tục.');
         });
         CheckFormService.toggleForm(false);
-    }
+    };
 
     return (
         <NavWrapper>
@@ -187,20 +190,19 @@ export default ({}: Props) => {
                     <div className="col-md-3">
                         <div style={{display: 'flex'}}>
                             <div className="form-group" style={{flexGrow: 1}}>
-                                <input
-                                    className="form-control"
+                                <Input
                                     id="bol-input"
                                     value={bolUid}
                                     onChange={handleUidChange}
+                                    onSearch={submitCheck}
                                     placeholder="Mã vận đơn..."
                                 />
                             </div>
+                            &nbsp;
                             <div>
-                                <button type="button" className="btn btn-success" onClick={submitCheck}>
-                                    <span className="fas fa-check" />
-                                    &nbsp;&nbsp;
-                                    <span>Kiểm hoàn tất</span>
-                                </button>
+                                <Button type="primary" icon="check" onClick={submitCheck}>
+                                    Kiểm hoàn tất
+                                </Button>
                             </div>
                         </div>
                     </div>

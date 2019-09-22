@@ -4,6 +4,8 @@ import * as React from 'react';
 import {useState, useEffect} from 'react';
 // $FlowFixMe: do not complain about importing node_modules
 import {withRouter} from 'react-router-dom';
+// $FlowFixMe: do not complain about formik
+import {Button} from 'antd';
 import {APP} from 'src/constants';
 import type {FormOpenType, FormOpenKeyType} from '../_data';
 import Tools from 'src/utils/helpers/Tools';
@@ -72,18 +74,17 @@ export const Profile = () => {
                 </tbody>
             </table>
             <div className="btn-group">
-                <button type="button" onClick={() => toggleForm(true)} className="btn btn-success">
+                <Button type="primary" onClick={() => toggleForm(true)}>
                     Update profile
-                </button>
-                <button type="button" onClick={() => toggleForm(true, 'changePwd')} className="btn btn-primary">
-                    Change password
-                </button>
+                </Button>
+                &nbsp;
+                <Button onClick={() => toggleForm(true, 'changePwd')}>Change password</Button>
             </div>
 
             <ProfileForm open={formOpen.profile} close={() => toggleForm(false)} onChange={onChangeProfile}>
-                <button type="button" className="btn btn-light" action="close" onClick={() => toggleForm(false)}>
+                <Button icon="close" onClick={() => toggleForm(false)}>
                     Cancel
-                </button>
+                </Button>
             </ProfileForm>
 
             <OnlyAdmin reverse={true}>
@@ -99,13 +100,9 @@ export const Profile = () => {
                 open={formOpen.changePwd}
                 close={() => toggleForm(false, 'changePwd')}
                 onChange={onChangePwd}>
-                <button
-                    type="button"
-                    className="btn btn-light"
-                    action="close"
-                    onClick={() => toggleForm(false, 'changePwd')}>
+                <Button icon="close" onClick={() => toggleForm(false, 'changePwd')}>
                     Cancel
-                </button>
+                </Button>
             </ChangePwdForm>
         </NavWrapper>
     );

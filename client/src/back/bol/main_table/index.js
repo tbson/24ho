@@ -1,6 +1,8 @@
 // @flow
 import * as React from 'react';
 import {useState, useEffect} from 'react';
+// $FlowFixMe: do not complain about importing
+import { Button } from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
 import ShowWhen from 'src/utils/components/ShowWhen';
@@ -134,12 +136,12 @@ export default ({readonly = false, order_id = 0, bol_date_id = 0, bag_id = 0, no
                         <th scope="col">Ghi chú</th>
                         <th scope="col" style={{padding: 8}} className="row80">
                             <ShowWhen value={!readonly}>
-                                <button
-                                    className="btn btn-primary btn-sm btn-block add-button"
+                                <Button
+                                    type="primary"
+                                    icon="plus"
                                     onClick={() => showForm(0)}>
-                                    <span className="fas fa-plus" />
-                                    &nbsp; Add
-                                </button>
+                                    Thêm
+                                </Button>
                             </ShowWhen>
                         </th>
                     </tr>
@@ -190,9 +192,9 @@ export default ({readonly = false, order_id = 0, bol_date_id = 0, bag_id = 0, no
                 open={formOpen.main}
                 close={() => toggleForm(false)}
                 onChange={onChange}>
-                <button type="button" className="btn btn-light" action="close" onClick={() => toggleForm(false)}>
-                    Cancel
-                </button>
+                <Button icon="close" onClick={() => toggleForm(false)}>
+                    Thoát
+                </Button>
             </MainForm>
         </div>
     );

@@ -1,7 +1,8 @@
 // @flow
 import * as React from 'react';
 import {useState} from 'react';
-
+// $FlowFixMe: do not complain about importing
+import {Input} from 'antd';
 let inputTimeout;
 
 type Props = {
@@ -22,5 +23,5 @@ export default ({onChange, clearAfterSet = false, placeholder = '', className = 
             clearAfterSet && setValue('');
         }, 500);
     };
-    return <input className={className} value={value} onChange={handleChange} placeholder={placeholder} />;
+    return <Input value={value} onChange={handleChange} placeholder={placeholder} />;
 };

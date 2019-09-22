@@ -1,6 +1,8 @@
 // @flow
 import * as React from 'react';
 import {useState, useEffect} from 'react';
+// $FlowFixMe: do not complain about importing
+import {Button} from 'antd';
 import type {SelectOptions} from 'src/utils/helpers/Tools';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
@@ -153,12 +155,9 @@ export default ({}: Props) => {
                         <th scope="col">Ghi chú</th>
                         {Tools.isAdmin() && (
                             <th scope="col" style={{padding: 8}} className="row80">
-                                <button
-                                    className="btn btn-primary btn-sm btn-block add-button"
-                                    onClick={() => MainFormService.toggleForm(true)}>
-                                    <span className="fas fa-plus" />
-                                    &nbsp; Add
-                                </button>
+                                <Button type="primary" icon="plus" onClick={() => MainFormService.toggleForm(true)}>
+                                    Thêm mới
+                                </Button>
                             </th>
                         )}
                     </tr>
@@ -209,13 +208,9 @@ export default ({}: Props) => {
                 listMoneyType={Service.objToOptions(listMoneyTypeSelect)}
                 close={() => MainFormService.toggleForm(false)}
                 onChange={onChange}>
-                <button
-                    type="button"
-                    className="btn btn-light"
-                    action="close"
-                    onClick={() => MainFormService.toggleForm(false)}>
-                    Cancel
-                </button>
+                <Button icon="close" onClick={() => MainFormService.toggleForm(false)}>
+                    Thoát
+                </Button>
             </MainForm>
         </div>
     );

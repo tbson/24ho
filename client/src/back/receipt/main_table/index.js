@@ -2,6 +2,8 @@
 import * as React from 'react';
 // $FlowFixMe: do not complain about importing node_modules
 import {Link} from 'react-router-dom';
+// $FlowFixMe: do not complain about importing
+import { Button } from 'antd';
 import {useState, useEffect} from 'react';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
@@ -104,10 +106,9 @@ export default ({}: Props) => {
                         <th scope="col">Ghi chú</th>
                         <th scope="col" style={{padding: 8}} className="row80">
                             <Link to="/receipt/export">
-                                <button className="btn btn-primary btn-sm btn-block add-button">
-                                    <span className="fas fa-plus" />
-                                    &nbsp; Add
-                                </button>
+                                <Button type="primary" icon="plus">
+                                    Thêm
+                                </Button>
                             </Link>
                         </th>
                     </tr>
@@ -151,13 +152,11 @@ export default ({}: Props) => {
             </table>
 
             <MainForm close={() => MainFormService.toggleForm(false)} onChange={onChange}>
-                <button
-                    type="button"
-                    className="btn btn-light"
-                    action="close"
+                <Button
+                    icon="close"
                     onClick={() => MainFormService.toggleForm(false)}>
-                    Cancel
-                </button>
+                    Thoát
+                </Button>
             </MainForm>
 
             <Preview close={() => PreviewService.toggleForm(false)} />

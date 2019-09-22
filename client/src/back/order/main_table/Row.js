@@ -5,6 +5,8 @@ import {useState} from 'react';
 import Popover from 'react-popover';
 // $FlowFixMe: do not complain about importing node_modules
 import {Link} from 'react-router-dom';
+// $FlowFixMe: do not complain about importing
+import {Button} from 'antd';
 import Editable from 'src/utils/components/Editable';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
@@ -69,17 +71,17 @@ const OrderInfo = ({data: _data}: OrderInfoType) => {
                                         <a href={data.shop_link}>{data.shop_nick}</a>
                                     </div>
                                     <div>
-                                        <button type="button" className="btn btn-primary btn-sm">
-                                            <strong>{data.statistics.links || 0}</strong> <span>Link</span>
-                                        </button>
+                                        <Button type="primary">
+                                            <strong>{data.statistics.links || 0}</strong>&nbsp;<span>Link</span>
+                                        </Button>
                                         &nbsp;
-                                        <button type="button" className="btn btn-danger btn-sm">
-                                            <strong>{data.statistics.quantity || 0}</strong> <span>SP</span>
-                                        </button>
+                                        <Button type="danger">
+                                            <strong>{data.statistics.quantity || 0}</strong>&nbsp;<span>SP</span>
+                                        </Button>
                                         &nbsp;
-                                        <button type="button" className="btn btn-warning btn-sm">
-                                            <strong>{data.statistics.packages || 0}</strong> <span>Kiện</span>
-                                        </button>
+                                        <Button type="default">
+                                            <strong>{data.statistics.packages || 0}</strong>&nbsp;<span>Kiện</span>
+                                        </Button>
                                     </div>
                                 </div>
                                 <div className="col">

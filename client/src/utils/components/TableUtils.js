@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 // $FlowFixMe: do not complain about hooks
-import {Input} from 'antd';
+import {Input, Button, Icon} from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 
 const {Search} = Input;
@@ -29,21 +29,19 @@ export const Pagination = ({next, prev, onNavigate}: PaginationPropTypes) => {
     const renderPrev = (prev: ?string) => {
         if (!prev) return null;
         return (
-            <button className="btn btn-primary btn-sm" onClick={() => onNavigate(prev)}>
-                <span className="fas fa-chevron-left pointer" />
-                &nbsp; Trang trước
-            </button>
+            <Button type="primary" key={1} icon="left" onClick={() => onNavigate(prev)}>
+                Trang trước
+            </Button>
         );
     };
 
     const renderNext = (next: ?string) => {
         if (!next) return null;
         return [
-            <span key="1">&nbsp;&nbsp;&nbsp;</span>,
-            <button className="btn btn-primary btn-sm" key="2" onClick={() => onNavigate(next)}>
-                Trang tiếp &nbsp;
-                <span className="fas fa-chevron-right pointer" />
-            </button>
+            <Button type="primary" key={1} onClick={() => onNavigate(next)}>
+                Trang tiếp
+                <Icon type="right"/>
+            </Button>
         ];
     };
 

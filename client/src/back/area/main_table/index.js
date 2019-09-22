@@ -1,6 +1,8 @@
 // @flow
 import * as React from 'react';
 import {useState, useEffect} from 'react';
+// $FlowFixMe: do not complain about importing
+import {Button} from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
 import {apiUrls} from '../_data';
@@ -93,12 +95,13 @@ export default ({}: Props) => {
                         </th>
                         <th scope="col">Mã</th>
                         <th scope="col">Vùng</th>
-                        <th scope="col" className="right">Đơn giá vận chuyển</th>
+                        <th scope="col" className="right">
+                            Đơn giá vận chuyển
+                        </th>
                         <th scope="col" style={{padding: 8}} className="row110">
-                            <button className="btn btn-primary btn-sm btn-block add-button" onClick={() => showForm(0)}>
-                                <span className="fas fa-plus" />
-                                &nbsp; Add
-                            </button>
+                            <Button type="primary" icon="plus" onClick={() => showForm(0)}>
+                                Thêm
+                            </Button>
                         </th>
                     </tr>
                 </thead>
@@ -140,9 +143,9 @@ export default ({}: Props) => {
             </table>
 
             <MainForm id={modalId} open={formOpen.main} close={() => toggleForm(false)} onChange={onChange}>
-                <button type="button" className="btn btn-light" action="close" onClick={() => toggleForm(false)}>
+                <Button icon="close" onClick={() => toggleForm(false)}>
                     Cancel
-                </button>
+                </Button>
             </MainForm>
         </div>
     );

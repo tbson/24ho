@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import {useState, useEffect} from 'react';
-// $FlowFixMe: do not complain about formik
+// $FlowFixMe: do not complain about importing
 import { Button } from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
@@ -85,12 +85,12 @@ export default ({}: Props) => {
                         <th scope="col">Key</th>
                         <th scope="col">Value</th>
                         <th scope="col" style={{padding: 8}} className="row80">
-                            <button
-                                className="btn btn-primary btn-sm btn-block add-button"
+                            <Button
+                                type="primary"
+                                icon="plus"
                                 onClick={() => MainFormService.toggleForm(true)}>
-                                <span className="fas fa-plus" />
-                                &nbsp; Add
-                            </button>
+                                Thêm
+                            </Button>
                         </th>
                     </tr>
                 </thead>
@@ -134,7 +134,7 @@ export default ({}: Props) => {
             <MainForm close={() => MainFormService.toggleForm(false)} onChange={onChange}>
                 <Button
                     onClick={() => MainFormService.toggleForm(false)} icon="close">
-                    Cancel
+                    Đóng
                 </Button>
             </MainForm>
         </div>

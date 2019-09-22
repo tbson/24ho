@@ -3,6 +3,8 @@ import * as React from 'react';
 import {useState, useEffect} from 'react';
 // $FlowFixMe: do not complain about importing node_modules
 import {withRouter} from 'react-router-dom';
+// $FlowFixMe: do not complain about importing
+import {Button} from 'antd';
 import NavWrapper from 'src/utils/components/nav_wrapper/';
 import {apiUrls} from '../_data';
 import Tools from 'src/utils/helpers/Tools';
@@ -73,15 +75,9 @@ const Component = ({match, history}: Props) => {
                     <DelayInput onChange={addressFilter} placeholder="Mã địa chỉ..." />
                 </div>
                 <div className="col-md-6">
-                    <button
-                        type="button"
-                        onClick={exportCheck}
-                        className="btn btn-success btn-block"
-                        disabled={!resultList.length}>
-                        <span className="fas fa-dolly" />
-                        &nbsp;
-                        <span>Xuất Hàng</span>
-                    </button>
+                    <Button block type="primary" icon="shopping-cart" onClick={exportCheck} disabled={!resultList.length}>
+                        Xuất Hàng
+                    </Button>
                 </div>
             </div>
             <div className="row">

@@ -19,3 +19,28 @@
     content: ' *';
     color: red;
 }
+
+.row25 {
+    min-width: 25px;
+    width: 25px;
+}
+
+.row50 {
+    min-width: 50px;
+    width: 50px;
+}
+
+.row80 {
+    min-width: 80px;
+    width: 80px;
+}
+
+.row110 {
+    min-width: 110px;
+    width: 110px;
+}
+
+.row150 {
+    min-width: 150px;
+    width: 150px;
+}
