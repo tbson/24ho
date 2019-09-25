@@ -2,18 +2,41 @@
 import * as React from 'react';
 import {useState} from 'react';
 // $FlowFixMe: do not complain about importing node_modules
-import Popover from 'react-popover';
-// $FlowFixMe: do not complain about importing node_modules
 import {Formik, Form, Field, ErrorMessage} from 'formik';
+// $FlowFixMe: do not complain about formik
+import {Button, Input, Popover, Select} from 'antd';
 import type {SelectOptions} from 'src/utils/helpers/Tools';
 import Tools from 'src/utils/helpers/Tools';
-// $FlowFixMe: do not complain about importing node_modules
-import Loadable from 'react-loadable';
-const Select = Loadable({
-    // $FlowFixMe: do not complain about importing node_modules
-    loader: () => import('react-select'),
-    loading: () => <div>Loading select...</div>
-});
+
+
+const {Option} = Select;
+
+type InputProps = {
+    options: SelectOptions,
+    isMulti: boolean,
+    name: string,
+    value: string | number,
+    type: string,
+    placeholder: string
+};
+
+const SelectInput = ({options, isMulti, name, value, type, placeholder}: InputProps) => {
+    const [hiddenValue, setHiddenValue] = useState(value);
+    const children = options.map(item => {
+        const {value, label} = item;
+        return <Option key={value} value={value}>{label}</Option>;
+    });
+    return (
+        <>
+            <input name="value" defaultValue={hiddenValue} type="hidden" />
+            <Select
+                value={value}
+                onChange={data => setHiddenValue(data.value)}
+                placeholder={placeholder + '...'}
+            >{children}</Select>
+        </>
+    );
+};
 
 type Props = {
     children: React.Node,
@@ -30,38 +53,11 @@ type Props = {
     placeholder: string
 };
 
-type InputProps = {
-    options: SelectOptions,
-    isMulti: boolean,
-    name: string,
-    value: string | number,
-    type: string,
-    placeholder: string
-};
-
-const SelectInput = ({options, isMulti, name, value, type, placeholder}: InputProps) => {
-    const [hiddenValue, setHiddenValue] = useState(value);
-    const selectedValue = options.find(item => item.value === hiddenValue);
-    return (
-        <>
-            <input name="value" defaultValue={hiddenValue} type="hidden" />
-            <Select
-                value={selectedValue}
-                onChange={data => setHiddenValue(data.value)}
-                isMulti={isMulti}
-                isSearchable={true}
-                placeholder={placeholder + '...'}
-                options={options}
-            />
-        </>
-    );
-};
-
 type State = {
     isOpen: boolean,
     hiddenValue: string | number
 };
-export default class TextInput extends React.Component<Props, State> {
+export default class Editable extends React.Component<Props, State> {
     static defaultProps = {
         options: [],
         isMulti: false,
@@ -108,16 +104,7 @@ export default class TextInput extends React.Component<Props, State> {
             case 'select':
                 return <SelectInput {...this.props} />;
             default:
-                return (
-                    <input
-                        autoFocus={true}
-                        name={name}
-                        type={type}
-                        placeholder={placeholder}
-                        defaultValue={value}
-                        className="form-control"
-                    />
-                );
+                return <Input name={name} type={type} placeholder={placeholder} defaultValue={value} />;
         }
     }
 
@@ -127,7 +114,9 @@ export default class TextInput extends React.Component<Props, State> {
             <form onSubmit={this.onSubmit.bind(this)}>
                 <div className={'form-group'}>{this.input(name, value, type, placeholder, options, isMulti)}</div>
                 <div className="center">
-                    <button className="btn btn-success btn-sm">Save</button>
+                    <Button type="primary" htmlType="submit" icon="check">
+                        Save
+                    </Button>
                 </div>
             </form>
         );
@@ -137,16 +126,19 @@ export default class TextInput extends React.Component<Props, State> {
         let {disabled, options, type} = this.props;
         if (type === 'select' && !options.length) disabled = true;
         const props = {
-            isOpen: this.state.isOpen,
-            onOuterAction: () => {
-                this.setState({isOpen: false});
-                this.setState({hiddenValue: ''});
+            visible: this.state.isOpen,
+            trigger: 'click',
+            onVisibleChange: isOpen => {
+                if (!isOpen) {
+                    this.setState({isOpen: false});
+                    this.setState({hiddenValue: ''});
+                }
+                this.setState({isOpen});
             },
-            body: this.body()
+            content: this.body()
         };
         // $FlowFixMe: do not complain
         const children = React.cloneElement(this.props.children, {
-            onClick: () => disabled || this.setState({isOpen: true}),
             // $FlowFixMe: do not complain
             className: (this.props.children.props.className || '') + (disabled ? '' : ' editable')
         });
