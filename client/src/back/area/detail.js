@@ -4,18 +4,18 @@ import {useEffect, useState} from 'react';
 // $FlowFixMe: do not complain about importing node_modules
 import {withRouter} from 'react-router-dom';
 // $FlowFixMe: do not complain about importing node_modules
-import {Tab, Tabs, TabList, TabPanel} from 'react-tabs';
-// $FlowFixMe: do not complain about importing node_modules
-import 'react-tabs/style/react-tabs.css';
+import {Tabs} from 'antd';
 import NavWrapper from 'src/utils/components/nav_wrapper/';
 import DeliveryFeeTable from 'src/back/delivery_fee/main_table/';
 import {apiUrls} from './_data';
 import Tools from 'src/utils/helpers/Tools';
 
+const {TabPane} = Tabs;
+
 export class Service {
     static initialValues = {
         title: '',
-        uid: '',
+        uid: ''
     };
 
     static retrieveRequest(id: number) {
@@ -40,46 +40,35 @@ const Detail = ({match}: Props) => {
 
     return (
         <NavWrapper>
-            <Tabs>
-                <TabList>
-                    <Tab>
-                        <span className="fas fa-map-marker-alt icon-margin" />
-                        <span>Vùng</span>
-                    </Tab>
-                    <Tab>
-                        <span className="fas fa-balance-scale icon-margin" />
-                        <span>Đơn giá vận chuyển Kg</span>
-                    </Tab>
-                    <Tab>
-                        <span className="fas fa-balance-scale icon-margin" />
-                        <span>Đơn giá vận chuyển khối</span>
-                    </Tab>
-                </TabList>
-
-                <TabPanel>
+            <Tabs defaultIndex="0">
+                <TabPane tab="Vùng" key="0">
                     <div className="row">
                         <div className="col-md-4">
                             <table className="table">
                                 <tbody>
                                     <tr>
-                                        <td><strong>Vùng</strong></td>
+                                        <td>
+                                            <strong>Vùng</strong>
+                                        </td>
                                         <td>{data.title}</td>
                                     </tr>
                                     <tr>
-                                        <td><strong>Mã vùng</strong></td>
+                                        <td>
+                                            <strong>Mã vùng</strong>
+                                        </td>
                                         <td>{data.uid}</td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
-                </TabPanel>
-                <TabPanel>
+                </TabPane>
+                <TabPane tab="Đơn giá vận chuyển Kg" key="1">
                     <DeliveryFeeTable area={area} type={1} />
-                </TabPanel>
-                <TabPanel>
+                </TabPane>
+                <TabPane tab="Đơn giá vận chuyển khối" key="2">
                     <DeliveryFeeTable area={area} type={2} />
-                </TabPanel>
+                </TabPane>
             </Tabs>
         </NavWrapper>
     );

@@ -2,13 +2,13 @@
 import * as React from 'react';
 import {useEffect} from 'react';
 // $FlowFixMe: do not complain about importing node_modules
-import {Tab, Tabs, TabList, TabPanel} from 'react-tabs';
-// $FlowFixMe: do not complain about importing node_modules
-import 'react-tabs/style/react-tabs.css';
+import {Tabs} from 'antd';
 import type {SelectOptions} from 'src/utils/helpers/Tools';
 import {STATUS} from './_data';
 import NavWrapper from 'src/utils/components/nav_wrapper/';
 import Table from './main_table/';
+
+const {TabPane} = Tabs;
 
 export class Service {
     static getStatusOptions(): SelectOptions {
@@ -22,28 +22,19 @@ export default () => {
     useEffect(() => {
         document.title = 'Order manager';
     }, []);
+    const statusList = Object.entries(STATUS);
     return (
         <NavWrapper>
-            <Tabs>
-                <TabList>
-                    {Object.entries(STATUS).map(([key, value]) => (
-                        <Tab key={key}>
-                            {/* $FlowFixMe: shut up! fuck you nonsense error! */}
-                            <span>{value}</span>
-                        </Tab>
-                    ))}
-                    <Tab>
-                        <span>Kiểm thiếu</span>
-                    </Tab>
-                </TabList>
-                {Object.entries(STATUS).map(([key, value]) => (
-                    <TabPanel key={key}>
+            <Tabs defaultActiveKey={`${statusList[0][0]}`}>
+                {statusList.map(([key, value]) => (
+                    <TabPane tab={value} key={`${key}`}>
                         <Table status={parseInt(key)} />
-                    </TabPanel>
+                    </TabPane>
                 ))}
-                <TabPanel>
+
+                <TabPane tab="Kiểm thiếu" key={`${statusList.length}`}>
                     <Table status={0} pending={true} />
-                </TabPanel>
+                </TabPane>
             </Tabs>
         </NavWrapper>
     );

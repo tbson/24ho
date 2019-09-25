@@ -81,7 +81,7 @@ const Component = ({history, location, children}: Props) => {
                 return menuItem('area', 'Vùng', 'environment');
             case 'cart':
                 if (APP !== 'user') return null;
-                return menuItem('cart', 'Giỏ hàng', 'shoping-cart');
+                return menuItem('cart', 'Giỏ hàng', 'shopping-cart');
             case 'rate':
                 if (APP !== 'admin') return null;
                 return menuItem('rate', 'Tỷ giá', 'money-collect');

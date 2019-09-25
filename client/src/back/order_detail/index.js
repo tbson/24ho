@@ -2,9 +2,8 @@
 import * as React from 'react';
 import {useEffect, useState} from 'react';
 // $FlowFixMe: do not complain about importing node_modules
-import {Tab, Tabs, TabList, TabPanel} from 'react-tabs';
 // $FlowFixMe: do not complain about importing node_modules
-import 'react-tabs/style/react-tabs.css';
+import {Tabs} from 'antd';
 // $FlowFixMe: do not complain about importing node_modules
 import {withRouter} from 'react-router-dom';
 import {STATUS} from 'src/back/order/_data';
@@ -15,6 +14,8 @@ import OrderItemTable from 'src/back/order_item_table';
 import Tools from 'src/utils/helpers/Tools';
 import {apiUrls} from 'src/back/order/_data';
 import BolTable from 'src/back/bol/main_table/';
+
+const {TabPane} = Tabs;
 
 export class Service {
     static retrieveRequest(id: number) {
@@ -67,26 +68,18 @@ const Detail = ({match}) => {
             <div className="row">
                 <div className="col-md-9 no-padding-right">
                     <Info pending={data.pending} data={data} addresses={options.addresses} onPartialChange={setData} />
-                    <Tabs>
-                        <TabList>
-                            <Tab>
-                                <span>Sản Phẩm</span>
-                            </Tab>
-                            <Tab>
-                                <span>Vận Đơn</span>
-                            </Tab>
-                        </TabList>
-                        <TabPanel>
+                    <Tabs defaultActiveKey="0">
+                        <TabPane tab="Sản Phẩm" key="0">
                             <OrderItemTable
                                 order_id={id}
                                 rate={data.rate}
                                 pending={data.pending}
                                 notifyChange={retrieve}
                             />
-                        </TabPanel>
-                        <TabPanel>
+                        </TabPane>
+                        <TabPane tab="Vận Đơn" key="1">
                             <BolTable order_id={id || 0} notifyChange={retrieve} />
-                        </TabPanel>
+                        </TabPane>
                     </Tabs>
                 </div>
                 <div className="col-md-3 no-padding-left">

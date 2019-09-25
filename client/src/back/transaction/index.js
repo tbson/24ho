@@ -2,13 +2,13 @@
 import * as React from 'react';
 import {useState, useEffect} from 'react';
 // $FlowFixMe: do not complain about importing node_modules
-import {Tab, Tabs, TabList, TabPanel} from 'react-tabs';
-// $FlowFixMe: do not complain about importing node_modules
-import 'react-tabs/style/react-tabs.css';
+import {Tabs} from 'antd';
 import NavWrapper from 'src/utils/components/nav_wrapper/';
 import Table from './main_table/';
 import Tools from 'src/utils/helpers/Tools';
 import {apiUrls} from './_data';
+
+const {TabPane} = Tabs;
 
 export default () => {
     const [guideUrl, setGuideUrl] = useState('');
@@ -19,21 +19,13 @@ export default () => {
 
     return (
         <NavWrapper>
-            <Tabs>
-                <TabList>
-                    <Tab>
-                        <span>Tài khoản</span>
-                    </Tab>
-                    <Tab>
-                        <span>Hướng dẫn</span>
-                    </Tab>
-                </TabList>
-                <TabPanel>
+            <Tabs defaultIndex="0">
+                <TabPane tab="Tài khoản" key="0">
                     <Table />
-                </TabPanel>
-                <TabPanel>
-                    <Preview src={guideUrl}/>
-                </TabPanel>
+                </TabPane>
+                <TabPane tab="Hướng dẫn" key="1">
+                    <Preview src={guideUrl} />
+                </TabPane>
             </Tabs>
         </NavWrapper>
     );

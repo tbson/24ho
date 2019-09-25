@@ -4,15 +4,15 @@ import {useEffect} from 'react';
 // $FlowFixMe: do not complain about importing node_modules
 import {withRouter} from 'react-router-dom';
 // $FlowFixMe: do not complain about importing node_modules
-import {Tab, Tabs, TabList, TabPanel} from 'react-tabs';
-// $FlowFixMe: do not complain about importing node_modules
-import 'react-tabs/style/react-tabs.css';
+import {Tabs} from 'antd';
 import NavWrapper from 'src/utils/components/nav_wrapper/';
 import Table from './main_table/';
 import CNTable from './cn_table/';
 import VNTable from './vn_table/';
 import VNAdding from './VNAdding';
 import DateTable from './date_table/';
+
+const {TabPane} = Tabs;
 
 type Props = {
     match: Object
@@ -26,31 +26,17 @@ const Component = ({match}: Props) => {
     const bag_id = match.params.bagId ? parseInt(match.params.bagId) : 0;
     return (
         <NavWrapper>
-            <Tabs defaultIndex={type}>
-                <TabList>
-                    <Tab>
-                        <span>Tất cả vận đơn</span>
-                    </Tab>
-                    <Tab>
-                        <span>Vận đơn theo ngày</span>
-                    </Tab>
-                    <Tab>
-                        <span>Vận đơn TQ</span>
-                    </Tab>
-                    <Tab>
-                        <span>Vận đơn VN</span>
-                    </Tab>
-                </TabList>
-                <TabPanel>
+            <Tabs defaultIndex="0">
+                <TabPane tab="Tất cả vận đơn" key="0">
                     <Table bag_id={bag_id} />
-                </TabPanel>
-                <TabPanel>
+                </TabPane>
+                <TabPane tab="Vận đơn theo ngày" key="1">
                     <DateTable />
-                </TabPanel>
-                <TabPanel>
+                </TabPane>
+                <TabPane tab="Vận đơn TQ" key="2">
                     <CNTable />
-                </TabPanel>
-                <TabPanel>
+                </TabPane>
+                <TabPane tab="Vận đơn VN" key="3">
                     <div className="row">
                         <div className="col">
                             <VNTable />
@@ -59,7 +45,7 @@ const Component = ({match}: Props) => {
                             <VNAdding />
                         </div>
                     </div>
-                </TabPanel>
+                </TabPane>
             </Tabs>
         </NavWrapper>
     );
