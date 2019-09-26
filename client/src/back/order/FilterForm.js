@@ -65,7 +65,6 @@ export class Service {
         delete values.checked_date;
 
         values = Tools.removeEmptyKey(values);
-
         return values;
     }
 }
@@ -76,6 +75,15 @@ type Props = {
 };
 export default ({onChange, options = {sale: [], cust_care: [], customer: []}}: Props) => {
     const {initialValues, validationSchema, processFilterInput, booleanOptions} = Service;
+    const codeOptions = [
+        {value: 'uid', label: 'Mã đơn hàng'},
+        {value: 'purchase_code', label: 'Mã giao dịch'},
+        {value: 'bol', label: 'Mã vận đơn'},
+    ];
+    const staffOptions = [
+        {value: 'sale', label: 'Nhân viên mua hàng'},
+        {value: 'cust_care', label: 'Nhân viên chăm sóc'},
+    ];
     return (
         <div style={{padding: 15}}>
             <Formik
@@ -143,9 +151,6 @@ export default ({onChange, options = {sale: [], cust_care: [], customer: []}}: P
                                         <DateRangeInput name="created_at" label="Ngày tạo" />
                                     </div>
                                     <div className="col">
-                                        <DateRangeInput name="updated_at" label="Ngày sửa" />
-                                    </div>
-                                    <div className="col">
                                         <DateRangeInput name="approved_date" label="Ngày duyệt" />
                                     </div>
                                     <div className="col">
@@ -154,6 +159,7 @@ export default ({onChange, options = {sale: [], cust_care: [], customer: []}}: P
                                 </div>
                             </OnlyAdmin>
                             <FormLevelErrMsg errors={errors.detail} />
+                            <br/>
                             <ButtonsBar submitTitle="Search" onClick={handleSubmit} />
                         </Form>
                     );

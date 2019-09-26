@@ -47,7 +47,11 @@ export default ({
 
     const children = optionsWithBlankValue(options).map(item => {
         const {value, label} = item;
-        return <Option key={value} value={value}>{label}</Option>;
+        return (
+            <Option key={value} value={value}>
+                {label}
+            </Option>
+        );
     });
 
     const handleChange = (setFieldValue: Function) => {
@@ -55,7 +59,7 @@ export default ({
             setFieldValue(name, item);
         };
     };
-    
+
     return (
         <div className={'form-group'}>
             <Label name={name} label={label} required={required} />
@@ -70,10 +74,14 @@ export default ({
                     return (
                         <>
                             <Select
+                                showSearch
                                 value={value}
                                 mode={isMulti ? 'multiple' : 'default'}
                                 disabled={disabled}
-                                onChange={value => form.setFieldValue(name, value)}>
+                                onChange={value => form.setFieldValue(name, value)}
+                                filterOption={(input, option) =>
+                                    option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                }>
                                 {children}
                             </Select>
                             {renderErrorMessage()}

@@ -814,8 +814,11 @@ export default class Tools {
         if (!range.length) return defaultResult;
         if (range.length == 1) return {[key]: range[0]};
 
-        const startValue = range[0];
-        const endValue = range[1];
+        let startValue = range[0];
+        if (startValue) startValue = startValue.replace('T', ' ').split('.')[0];
+
+        let endValue = range[1];
+        if (endValue) endValue = endValue.replace('T', ' ').split('.')[0];
 
         if (startValue === null && endValue === null) return defaultResult;
         if (startValue === undefined && endValue === undefined) return defaultResult;
