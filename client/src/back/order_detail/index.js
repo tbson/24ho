@@ -78,7 +78,7 @@ const Detail = ({match}) => {
                             />
                         </TabPane>
                         <TabPane tab="Vận Đơn" key="1">
-                            <BolTable order_id={id || 0} notifyChange={retrieve} />
+                            <BolTable order_id={id || 0} notifyChange={retrieve} readonly={!Tools.isAdmin()}/>
                         </TabPane>
                     </Tabs>
                 </div>
