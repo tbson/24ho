@@ -64,3 +64,24 @@
 .Popover-tipShape {
     fill: hsl(0, 0%, 27%);
 }
+
+.mono {
+    font-family: 'Lucida Console', monospace;
+    font-weight: bold;
+}
+
+.vnd {
+    text-align: right;
+}
+.vnd::after {
+    content: ' ₫';
+    color: blue;
+}
+
+.cny {
+    text-align: right;
+}
+.cny::after {
+    content: ' ¥';
+    color: green;
+}
