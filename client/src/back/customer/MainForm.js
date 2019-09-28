@@ -32,6 +32,7 @@ export class Service {
         complaint_days: 2,
         sale: null,
         cust_care: null,
+        group: null,
         is_lock: false
     };
 
@@ -89,13 +90,24 @@ type Props = {
     id: number,
     listSale: SelectOptions,
     listCustCare: SelectOptions,
+    listGroup: SelectOptions,
     open: boolean,
     close: Function,
     onChange: Function,
     children?: React.Node,
     submitTitle?: string
 };
-export default ({id, listSale, listCustCare, open, close, onChange, children, submitTitle = 'Save'}: Props) => {
+export default ({
+    id,
+    listSale,
+    listCustCare,
+    listGroup,
+    open,
+    close,
+    onChange,
+    children,
+    submitTitle = 'Save'
+}: Props) => {
     const firstInputSelector = "[name='email']";
 
     const {validationSchema, handleSubmit} = Service;
@@ -194,6 +206,12 @@ export default ({id, listSale, listCustCare, open, close, onChange, children, su
                         </div>
 
                         <TextInput name="complaint_days" label="Hạn khiếu nại (ngày)" />
+
+                        <div className="row">
+                            <div className="col">
+                                <SelectInput name="customer_group" label="Nhóm" options={listGroup} />
+                            </div>
+                        </div>
 
                         <CheckInput name="is_lock" label="Khoá" />
 

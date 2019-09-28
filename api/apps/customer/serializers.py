@@ -15,13 +15,14 @@ class CustomerBaseSr(ModelSerializer):
             'avatar',
             'phone',
             'company',
+            'sale',
             'cust_care',
+            'customer_group',
             'order_fee_factor',
             'delivery_fee_mass_unit_price',
             'delivery_fee_volume_unit_price',
             'deposit_factor',
             'complaint_days',
-            'sale',
             'is_lock',
             'shopping_cart',
             'user',
@@ -39,12 +40,18 @@ class CustomerRetrieveSr(CustomerBaseSr):
 
     sale_name = SerializerMethodField()
     cust_care_name = SerializerMethodField()
+    customer_group_name = SerializerMethodField()
 
     def get_sale_name(self, obj):
         return StaffUtils.getName(obj.sale)
 
     def get_cust_care_name(self, obj):
         return StaffUtils.getName(obj.cust_care)
+
+    def get_customer_group_name(self, obj):
+        if not obj.customer_group:
+            return ''
+        return obj.customer_group.uid
 
 
 class CustomerSelectSr(CustomerBaseSr):

@@ -44,6 +44,7 @@ import BolCNAdding from './bol/CNAdding';
 import Transaction from './transaction/';
 import Bank from './bank/';
 import CustomerBank from './customer_bank/';
+import CustomerGroup from './customer_group/';
 import PrintTransaction from './print_transaction/';
 import Receipt from './receipt/';
 import BolExport from './bol/export/';
@@ -97,6 +98,7 @@ class App extends React.Component<Props> {
                     <PrivateRoute path="/transaction" component={Transaction} />
                     <PrivateRoute path="/bank" component={Bank} />
                     <PrivateRoute path="/customer-bank" component={CustomerBank} />
+                    <PrivateRoute path="/customer-group" component={CustomerGroup} />
                     <PrivateRoute path="/print-transaction" component={PrintTransaction} />
                     <PrivateRoute exact path="/receipt" component={Receipt} />
                     <PrivateRoute exact path="/receipt/export" component={BolExport} />

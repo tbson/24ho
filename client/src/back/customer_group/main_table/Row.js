@@ -2,7 +2,6 @@
 import * as React from 'react';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
-import {BoolOutput} from 'src/utils/components/TableUtils';
 import {apiUrls} from '../_data';
 import type {TRow} from '../_data';
 
@@ -37,18 +36,7 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
             <th className="row25">
                 <input id={id} className="check" type="checkbox" checked={data.checked} onChange={() => onCheck(id)} />
             </th>
-            <td>{data.customer_group_name}</td>
-            <td>{data.user_data.email}</td>
-            <td>{data.phone}</td>
-            <td>{data.user_data.fullname}</td>
-            <td>{data.sale_name}</td>
-            <td>{data.cust_care_name}</td>
-            <td className="percent mono">{data.order_fee_factor}</td>
-            <td className="vnd mono">{Tools.numberFormat(data.delivery_fee_mass_unit_price)}</td>
-            <td className="percent mono">{data.deposit_factor}</td>
-            <td>
-                <BoolOutput value={!data.is_lock} />
-            </td>
+            <td>{data.uid}</td>
             <td className="center">
                 <a className="editBtn" onClick={() => showForm(data.id)}>
                     <span className="fas fa-edit text-info pointer" />

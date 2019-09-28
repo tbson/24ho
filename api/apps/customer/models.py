@@ -4,6 +4,7 @@ from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.conf import settings
 from apps.staff.models import Staff
+from apps.customer_group.models import CustomerGroup
 from utils.helpers.tools import Tools
 
 # Create your models here.
@@ -31,6 +32,8 @@ class Customer(models.Model):
 
     sale = models.ForeignKey(Staff, models.SET_NULL, related_name='sale', blank=True, null=True)
     cust_care = models.ForeignKey(Staff, models.SET_NULL, related_name='cust_care', blank=True, null=True)
+    customer_group = models.ForeignKey(CustomerGroup, models.SET_NULL,
+                                       related_name='customer_group', blank=True, null=True)
 
     order_fee_factor = models.FloatField(default=10)
     delivery_fee_mass_unit_price = models.IntegerField(default=0)

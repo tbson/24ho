@@ -48,6 +48,8 @@ export type TRow = DbRow & {
     sale_name?: string,
     cust_care: number,
     cust_care_name?: string,
+    customer_group: number,
+    customer_group_name: number,
     phone: string,
     order_fee_factor: number,
     delivery_fee_mass_unit_price: number,

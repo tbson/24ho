@@ -72,6 +72,7 @@ PROJECT_APPS = [
     'apps.receipt',
     'apps.bank',
     'apps.customer_bank',
+    'apps.customer_group',
     'apps.sr',
 ]
 

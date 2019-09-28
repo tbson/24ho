@@ -64,7 +64,7 @@ const Component = ({history, location, children}: Props) => {
             case 'bank':
                 if (APP !== 'admin') return null;
                 return menuItem('bank', 'Ngân hàng', 'bank');
-            case 'customer_bank':
+            case 'customerBank':
                 if (APP === 'admin') return null;
                 return menuItem('customer-bank', 'Ngân hàng', 'bank');
             case 'printTransaction':
@@ -91,6 +91,9 @@ const Component = ({history, location, children}: Props) => {
             case 'countCheck':
                 if (APP !== 'admin') return null;
                 return menuItem('count-check', 'Kiểm đếm', 'ordered-list');
+            case 'customerGroup':
+                if (APP !== 'admin') return null;
+                return menuItem('customer-group', 'Nhóm khách hàng', 'usergroup-add');
         }
     };
 
@@ -102,6 +105,7 @@ const Component = ({history, location, children}: Props) => {
                     {renderMenu('profile')}
                     {renderMenu('admin')}
                     {renderMenu('customer')}
+                    {renderMenu('customerGroup')}
                     {renderMenu('role')}
                     {renderMenu('transaction')}
                     {renderMenu('bag')}
@@ -111,7 +115,7 @@ const Component = ({history, location, children}: Props) => {
                     {renderMenu('receipt')}
                     {renderMenu('printTransaction')}
                     {renderMenu('bank')}
-                    {renderMenu('customer_bank')}
+                    {renderMenu('customerBank')}
                     {renderMenu('variable')}
                     {renderMenu('area')}
                     {renderMenu('cart')}
