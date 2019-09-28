@@ -2,8 +2,6 @@
 import * as React from 'react';
 import {useEffect, useState} from 'react';
 // $FlowFixMe: do not complain about importing node_modules
-import Popover from 'react-popover';
-// $FlowFixMe: do not complain about importing node_modules
 import {Link} from 'react-router-dom';
 // $FlowFixMe: do not complain about importing
 import {Button} from 'antd';
