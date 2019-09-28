@@ -80,6 +80,18 @@ complaint_resolve = OrderViewSet.as_view({
     'post': 'complaint_resolve',
 })
 
+discard = OrderViewSet.as_view({
+    'post': 'discard',
+})
+
+early_discard = OrderViewSet.as_view({
+    'post': 'early_discard',
+})
+
+renew_discard = OrderViewSet.as_view({
+    'post': 'renew_discard',
+})
+
 app_name = os.getcwd().split(os.sep)[-1]
 urlpatterns = (
     path('', base),
@@ -100,4 +112,7 @@ urlpatterns = (
     path('get-order-items-for-checking/<str:uid>', get_order_items_for_checking),
     path('check/', check),
     path('<int:pk>/complaint-resolve/', complaint_resolve),
+    path('<int:pk>/discard/', discard),
+    path('<int:pk>/early-discard/', early_discard),
+    path('<int:pk>/renew-discard/', renew_discard),
 )

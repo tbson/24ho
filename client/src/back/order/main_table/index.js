@@ -1,6 +1,8 @@
 // @flow
 import * as React from 'react';
 import {useState, useEffect} from 'react';
+// $FlowFixMe: do not complain about importing
+import {Button} from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
 import {apiUrls} from '../_data';
@@ -87,6 +89,10 @@ export default ({status, pending = false}: Props) => {
 
     const onRemove = data => setList(listAction(data).remove());
 
+    const onDiscard = data => {
+        setList(listAction(data).update())
+    };
+
     const onBulkRemove = () => {
         const ids = ListTools.getChecked(list);
         if (!ids.length) return;
@@ -162,6 +168,7 @@ export default ({status, pending = false}: Props) => {
                             key={data.id}
                             onCheck={onCheck}
                             onRemove={onRemove}
+                            onDiscard={onDiscard}
                         />
                     ))}
                 </tbody>
@@ -185,13 +192,9 @@ export default ({status, pending = false}: Props) => {
                 listSale={options.sale}
                 close={() => ApproveFormService.toggleForm(false)}
                 onChange={onSelectSale}>
-                <button
-                    type="button"
-                    className="btn btn-light"
-                    action="close"
-                    onClick={() => ApproveFormService.toggleForm(false)}>
+                <Button icon="close" onClick={() => ApproveFormService.toggleForm(false)}>
                     Cancel
-                </button>
+                </Button>
             </ApproveForm>
         </div>
     );
@@ -203,11 +206,9 @@ type BulkApproveType = {
 };
 const BulkApprove = ({status, onApprove}: BulkApproveType) =>
     status === 1 ? (
-        <div>
-            <button type="button" className="btn btn-success" onClick={onApprove}>
-                <i className="fas fa-check" />
-                &nbsp;&nbsp;
-                <span>Duyệt đơn</span>
-            </button>
+        <div style={{paddingLeft: 15}}>
+            <Button type="primary" icon="check" onClick={onApprove}>
+                Duyệt đơn
+            </Button>
         </div>
     ) : null;

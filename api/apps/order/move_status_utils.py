@@ -11,6 +11,10 @@ class MoveStatusUtils:
         if abs(item.status - status) > 1:
             if status == Status.PAID and item.status > Status.PAID:
                 pass
+            print(status)
+            print(item.status)
+            if status == Status.DISCARD or item.status == Status.DISCARD:
+                item.do_not_check_frozen = True
             else:
                 raise ValidationError("Đơn hàng chuyển trạng thái không hợp lệ.")
 
@@ -48,7 +52,8 @@ class MoveStatusUtils:
         new_status = Status.NEW
 
         def prepare():
-            TransactionUtils.undeposit(item)
+            if item.status != Status.DISCARD:
+                TransactionUtils.undeposit(item)
 
         def move():
             return MoveStatusUtils.save(item, new_status)
@@ -163,10 +168,15 @@ class MoveStatusUtils:
 
     @staticmethod
     def discard(item: models.QuerySet, **context) -> models.QuerySet:
+        from apps.transaction.utils import TransactionUtils
         new_status = Status.DISCARD
 
         def prepare():
-            pass
+            staff = context.get('staff', None)
+            if item.deposit and staff:
+                # Create a transaction that same amount with deposit
+                TransactionUtils.discard_order(item, staff)
+                item.deposit = 0
 
         def move():
             return MoveStatusUtils.save(item, new_status)

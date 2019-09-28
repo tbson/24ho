@@ -182,6 +182,7 @@ class Order(TimeStampedModel):
             ("get_order_items_for_checking_order", "Can get order items for checking from bol"),
             ("check_order", "Can check order"),
             ("complaint_resolve_order", "Can resolve complaint"),
+            ("discard_order", "Can discard"),
         )
 
 

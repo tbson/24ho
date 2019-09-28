@@ -38,7 +38,7 @@ TYPE_CHOICES = (
     (Type.VN_DELIVERY_FEE, 'Phí vận chuyển nội địa VN'),
     (Type.INSURANCE_FEE, 'Phí bảo hiểm'),
     (Type.COMPLAINT_REFUND, 'Hoàn tiền khiếu nại'),
-    (Type.DISCARD_REFUND, 'Hoàn tiền chiết khấu'),
+    (Type.DISCOUNT_REFUND, 'Hoàn tiền chiết khấu'),
     (Type.DISCARD_REFUND, 'Hoàn tiền huỷ đơn'),
     (Type.OTHER_SUB_FEE, 'Phụ phí khác'),  # For transport bols
 )

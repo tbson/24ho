@@ -5,6 +5,7 @@ from rest_framework.decorators import action
 from rest_framework.viewsets import (GenericViewSet, )
 from rest_framework.serializers import ValidationError
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from .models import Order, OrderFilter
 from apps.address.models import Address
 from apps.staff.models import Staff
@@ -173,6 +174,40 @@ class OrderViewSet(GenericViewSet):
         value = request.data.get('value', obj.count_check)
         serializer = OrderUtils.partial_update(obj, 'count_check', value)
         return res(serializer.data)
+
+    @transaction.atomic
+    @action(methods=['post'], detail=True, permission_classes=[IsAuthenticated])
+    def early_discard(self, request, pk=None):
+        from apps.order.serializers import OrderBaseSr
+        from apps.order.models import Status
+        order = get_object_or_404(Order, pk=pk)
+        staff = None
+        if hasattr(request.user, 'customer') and order.customer != request.user.customer:
+            raise ValidationError("Bạn không thể huỷ đơn hàng của người khác.")
+        if hasattr(request.user, 'staff'):
+            staff = request.user.staff
+        order = MoveStatusUtils.move(order, Status.DISCARD, staff=staff)
+        return res(OrderBaseSr(order).data)
+
+    @transaction.atomic
+    @action(methods=['post'], detail=True)
+    def discard(self, request, pk=None):
+        from apps.order.serializers import OrderBaseSr
+        from apps.order.models import Status
+        order = get_object_or_404(Order, pk=pk)
+        order = MoveStatusUtils.move(order, Status.DISCARD, staff=request.user.staff)
+        return res(OrderBaseSr(order).data)
+
+    @transaction.atomic
+    @action(methods=['post'], detail=True, permission_classes=[IsAuthenticated])
+    def renew_discard(self, request, pk=None):
+        from apps.order.serializers import OrderBaseSr
+        from apps.order.models import Status
+        order = get_object_or_404(Order, pk=pk)
+        if hasattr(request.user, 'customer') and order.customer != request.user.customer:
+            raise ValidationError("Bạn không thể khởi tạo lại đơn hàng của người khác.")
+        order = MoveStatusUtils.move(order, Status.NEW)
+        return res(OrderBaseSr(order).data)
 
     @transaction.atomic
     @action(methods=['put'], detail=False)

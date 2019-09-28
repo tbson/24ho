@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import {useEffect} from 'react';
+import {useEffect, useState} from 'react';
 // $FlowFixMe: do not complain about importing node_modules
 import {Tabs} from 'antd';
 import type {SelectOptions} from 'src/utils/helpers/Tools';
@@ -19,13 +19,14 @@ export class Service {
 }
 
 export default () => {
+    const [currentIndex, setCurrentIndex] = useState(0);
     useEffect(() => {
         document.title = 'Order manager';
     }, []);
     const statusList = Object.entries(STATUS);
     return (
         <NavWrapper>
-            <Tabs defaultActiveKey={`${statusList[0][0]}`}>
+            <Tabs defaultActiveKey={`${statusList[0][0]}`} type="card" destroyInactiveTabPane={true}>
                 {statusList.map(([key, value]) => (
                     <TabPane tab={value} key={`${key}`}>
                         <Table status={parseInt(key)} />

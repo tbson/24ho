@@ -103,6 +103,23 @@ class TransactionUtils:
         return transaction.uid
 
     @staticmethod
+    def discard_order(order: models.QuerySet, staff: models.QuerySet) -> str:
+        from .models import Type, MoneyType
+        from .models import Transaction
+
+        transaction = Transaction(
+            customer=order.customer,
+            staff=staff,
+            amount=order.deposit,
+            type=Type.DISCARD_REFUND,
+            money_type=MoneyType.INDIRECT,
+            order=order,
+            note="Hoàn tiền huỷ đơn {}".format(order.uid)
+        )
+        transaction.save()
+        return transaction.uid
+
+    @staticmethod
     def deposit(order: models.QuerySet, staff: models.QuerySet):
         from .models import Type, MoneyType
         from .models import Transaction

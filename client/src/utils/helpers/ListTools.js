@@ -65,9 +65,9 @@ export default class ListTools {
         return [...list];
     }
 
-    static getDeleteMessage(total: number): string {
+    static getDeleteMessage(total: number, action: string = 'xoá', item: string = 'mục'): string {
         if (!total) return '';
-        return total === 1 ? 'Do you want to remove this item ?' : 'Do you want to remove these items ?';
+        return total === 1 ? `Bạn muốn ${action} ${item} này ?` : `Bạn muốn ${action} các ${item} này ?`;
     }
 
     static getChecked(list: List): Array<number> {

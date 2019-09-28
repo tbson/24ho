@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 // $FlowFixMe: do not complain about importing node_modules
 import Popover from 'react-popover';
 // $FlowFixMe: do not complain about importing node_modules
@@ -30,6 +30,19 @@ export class Service {
             .then(resp => (resp.ok ? {id} : Promise.reject(resp)))
             .catch(Tools.popMessageOrRedirect);
     }
+
+    static handleDiscard(id: number, status: number): Promise<Object> {
+        let url = apiUrls.early_discard;
+        if (status > 1) {
+            url = apiUrls.discard;
+        }
+        if (status === 10) {
+            url = apiUrls.renew_discard;
+        }
+        return Tools.apiClient(url.replace('pk-', `${id}/`), {}, 'POST').finally(() => {
+            Tools.popMessage(`${status === 10 ? 'Phục hồi' : 'Huỷ'} đơn hàng thành công.`);
+        });
+    }
 }
 
 type OptionsType = {
@@ -41,7 +54,11 @@ type OrderInfoType = {
     data: OrderType
 };
 const OrderInfo = ({data: _data}: OrderInfoType) => {
-    const [data, setData] = useState(_data);
+    const [data, setData] = useState({});
+    useEffect(() => {
+        setData(_data);
+    }, [_data]);
+    if (Tools.isEmpty(data)) return null;
     return (
         <>
             <table style={{width: '100%'}}>
@@ -184,10 +201,12 @@ const FinInfo = ({data}: FinInfoType) => {
 
 type ControlTypes = {
     id: number,
+    status: number,
     pending: boolean,
-    onRemove: Function
+    onRemove: Function,
+    onDiscard: Function
 };
-const Control = ({id, pending, onRemove}: ControlTypes) => {
+const Control = ({id, status, pending, onRemove, onDiscard}: ControlTypes) => {
     if (pending) {
         return (
             <div>
@@ -209,13 +228,16 @@ const Control = ({id, pending, onRemove}: ControlTypes) => {
     }
     return (
         <div>
-            <Link className="editBtn" to={`/order/${id}`}>
-                <span className="fas fa-eye text-info pointer" />
-            </Link>
-            <span>&nbsp;&nbsp;&nbsp;</span>
-            <a className="removeBtn" onClick={() => onRemove(id)}>
-                <span className="fas fa-trash-alt text-danger pointer" />
-            </a>
+            <div style={{marginBottom: 10}}>
+                <Button block type="default" icon="issues-close" onClick={() => onDiscard(id)}>
+                    {status === 10 ? 'Dùng' : 'Huỷ'}
+                </Button>
+            </div>
+            <div>
+                <Button block type="danger" icon="delete" onClick={() => onRemove(id)}>
+                    Xoá
+                </Button>
+            </div>
         </div>
     );
 };
@@ -224,16 +246,23 @@ type RowPropTypes = {
     data: OrderType,
     options: OptionsType,
     onCheck: Function,
-    onRemove: Function
+    onRemove: Function,
+    onDiscard: Function
 };
-export default ({data, options = {}, onCheck, onRemove}: RowPropTypes) => {
+export default ({data, options = {}, onCheck, onRemove, onDiscard}: RowPropTypes) => {
     const id = parseInt(data.id);
+    const status = parseInt(data.status);
     const pending = !!data.pending;
 
     const _onRemove = (id, complaintResolve = false) => {
         if (complaintResolve) return onRemove({id});
-        const r = confirm(ListTools.getDeleteMessage(1));
+        const r = confirm(ListTools.getDeleteMessage(1, 'xoá', 'đơn order'));
         r && Service.handleRemove(id).then(onRemove);
+    };
+
+    const _onDiscard = (status: number) => (id: number) => {
+        const r = confirm(ListTools.getDeleteMessage(1, status === 10 ? 'phục hồi' : 'huỷ', 'đơn order'));
+        r && Service.handleDiscard(id, status).then(onDiscard);
     };
 
     return (
@@ -251,7 +280,13 @@ export default ({data, options = {}, onCheck, onRemove}: RowPropTypes) => {
                 <FinInfo data={data} />
             </td>
             <td className="center">
-                <Control id={id} pending={pending} onRemove={_onRemove} />
+                <Control
+                    id={id}
+                    status={status}
+                    pending={pending}
+                    onRemove={_onRemove}
+                    onDiscard={_onDiscard(status)}
+                />
             </td>
         </tr>
     );
