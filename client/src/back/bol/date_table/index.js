@@ -7,16 +7,9 @@ import {apiUrls} from '../_data';
 import {Pagination, SearchInput} from 'src/utils/components/TableUtils';
 import MainTable from 'src/back/bag/main_table/';
 
-import {
-    Accordion,
-    AccordionItem,
-    AccordionItemHeading,
-    AccordionItemButton,
-    AccordionItemPanel
-    // $FlowFixMe: do not complain about importing node_modules
-} from 'react-accessible-accordion';
 // $FlowFixMe: do not complain about importing node_modules
-import 'react-accessible-accordion/dist/fancy-example.css';
+import { Collapse } from 'antd';
+const { Panel } = Collapse;
 
 type Props = {};
 
@@ -49,18 +42,13 @@ export default ({}: Props) => {
 
     return (
         <div>
-            <Accordion allowZeroExpanded={true}>
+            <Collapse accordion className="bol-date">
                 {list.map(item => (
-                    <AccordionItem key={item.id}>
-                        <AccordionItemHeading>
-                            <AccordionItemButton>{item.date}</AccordionItemButton>
-                        </AccordionItemHeading>
-                        <AccordionItemPanel>
-                            <MainTable bol_date={item.id} readonly={true}/>
-                        </AccordionItemPanel>
-                    </AccordionItem>
+                    <Panel header={item.date} key={item.id} style={{padding: 0}}>
+                        <MainTable bol_date={item.id} readonly={true}/>
+                    </Panel>
                 ))}
-            </Accordion>
+            </Collapse>
             <div className="right">
                 <Pagination next={links.next} prev={links.previous} onNavigate={getList} />
             </div>

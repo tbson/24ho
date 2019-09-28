@@ -6,8 +6,6 @@ import {Switch, Route} from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 // $FlowFixMe: do not complain about importing node_modules
 import(/* webpackPreload: true */ '@fortawesome/fontawesome-free/css/all.css');
-// $FlowFixMe: do not complain about importing node_modules
-import {ToastContainer} from 'react-toastify';
 
 import {PUBLIC_URL} from 'src/constants';
 
@@ -33,7 +31,6 @@ class App extends React.Component<Props> {
         return (
             <div>
                 <Spinner />
-                <ToastContainer autoClose={5000} />
                 <Switch>
                     <Route exact path="/" component={Home} />
                 </Switch>

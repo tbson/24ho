@@ -85,3 +85,7 @@
     content: ' ¥';
     color: green;
 }
+
+.bol-date .ant-collapse-content-box {
+    padding: 0
+}

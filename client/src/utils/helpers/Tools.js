@@ -3,15 +3,13 @@ import React from 'react';
 // $FlowFixMe: do not complain about importing node_modules
 import Fingerprint2 from 'fingerprintjs2';
 // $FlowFixMe: do not complain about importing node_modules
+import { notification } from 'antd';
+// $FlowFixMe: do not complain about importing node_modules
 import kebabCase from 'lodash/kebabCase';
 // $FlowFixMe: do not complain about importing node_modules
 import isPlainObject from 'lodash/isPlainObject';
 // $FlowFixMe: do not complain about importing node_modules
 import flattenDeep from 'lodash/flattenDeep';
-// $FlowFixMe: do not complain about importing node_modules
-import {toast} from 'react-toastify';
-// $FlowFixMe: do not complain about importing node_modules
-import 'react-toastify/dist/ReactToastify.css';
 // $FlowFixMe: do not complain about importing node_modules
 import camelCase from 'lodash/camelCase';
 // $FlowFixMe: do not complain about importing node_modules
@@ -305,16 +303,15 @@ export default class Tools {
     }
 
     static popMessage(description: string | Object, type: string = 'success'): void {
-        const toastConfig = {
-            position: toast.POSITION.BOTTOM_RIGHT
+        const formatedDescription = this.errorMessageProcessing(description);
+        if (!formatedDescription) return;
+        const options = {
+            description: formatedDescription
         };
-        const messages = this.errorMessageProcessing(description);
-        if (!messages) return;
-
         if (type === 'success') {
-            toast.success(messages ? messages : 'Success!', toastConfig);
+            notification.success({...options, message: 'Thành công'});
         } else {
-            toast.error(messages ? messages : 'Error!', toastConfig);
+            notification.error({...options, message: 'Lỗi'});
         }
     }
 

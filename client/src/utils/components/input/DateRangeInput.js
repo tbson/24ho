@@ -3,7 +3,6 @@ import * as React from 'react';
 import {useState} from 'react';
 // $FlowFixMe: do not complain about hooks
 import {Field, ErrorMessage} from 'formik';
-// import DateRangePicker from '@wojtekmaj/react-daterange-picker';
 // $FlowFixMe: do not complain about hooks
 import { DatePicker } from 'antd';
 import Label from './Label';

@@ -7,12 +7,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 // $FlowFixMe: do not complain about importing node_modules
 import(/* webpackPreload: true */ '@fortawesome/fontawesome-free/css/all.css');
 // $FlowFixMe: do not complain about importing node_modules
-import {ToastContainer} from 'react-toastify';
-// $FlowFixMe: do not complain about importing node_modules
-import(/* webpackPreload: true */ 'rummernote/build/bs4/style.css');
-// $FlowFixMe: do not complain about importing node_modules
-import(/* webpackPreload: true */ 'bootstrap/dist/js/bootstrap');
-// $FlowFixMe: do not complain about importing node_modules
 import 'antd/dist/antd.css';
 // $FlowFixMe: do not complain about importing node_modules
 import 'src/utils/styles/back.css';
@@ -69,7 +63,6 @@ class App extends React.Component<Props> {
         return (
             <div>
                 <Spinner />
-                <ToastContainer autoClose={5000} />
                 <Switch>
                     <Route path="/login" component={Login} />
                     <Route path="/reset-password/:token" component={ResetPwd} />

@@ -70,10 +70,6 @@ const common = {
             inject: false,
             version: new Date().getTime(),
             template: './src/index.html'
-        }),
-        new webpack.ProvidePlugin({
-            $: 'jquery',
-            jQuery: 'jquery'
         })
     ]
 };
