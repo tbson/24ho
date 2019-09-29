@@ -106,8 +106,8 @@ export default ({onChange, submitTitle = 'Lưu'}: Props) => {
                     return (
                         <Form>
                             <button className="hide" />
-                            <TextInput name="uid" label="Key" autoFocus={true} required={true} />
-                            <TextInput name="value" label="Value" required={true} />
+                            <TextInput name="uid" label="Tên cấu hình" autoFocus={true} required={true} />
+                            <TextInput name="value" label="Giá trị" required={true} />
                             <FormLevelErrMsg errors={errors.detail} />
                         </Form>
                     );

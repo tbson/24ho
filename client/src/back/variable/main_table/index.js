@@ -82,8 +82,8 @@ export default ({}: Props) => {
                         <th className="row25">
                             <span className="fas fa-check text-info pointer check-all-button" onClick={onCheckAll} />
                         </th>
-                        <th scope="col">Key</th>
-                        <th scope="col">Value</th>
+                        <th scope="col">Tên cấu hình</th>
+                        <th scope="col">Giá trị</th>
                         <th scope="col" style={{padding: 8}} className="row80">
                             <Button type="primary" icon="plus" onClick={() => MainFormService.toggleForm(true)}>
                                 Thêm
