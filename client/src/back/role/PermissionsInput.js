@@ -3,6 +3,8 @@ import * as React from 'react';
 import {useState} from 'react';
 // $FlowFixMe: do not complain about hooks
 import {Field, ErrorMessage} from 'formik';
+// $FlowFixMe: do not complain about hooks
+import { Checkbox } from 'antd';
 import {pemGroupTrans, excludeGroups} from './_data';
 
 export class Service {
@@ -129,18 +131,7 @@ const Pem = ({id, title, checked, onChange}: PemProps) => {
 
     return (
         <div className="col-md-3">
-            <div className="form-group form-check">
-                <input
-                    type="checkbox"
-                    className="form-check-input"
-                    id={`pem-${id}`}
-                    checked={checked}
-                    onChange={handeChange(id)}
-                />
-                <label className="form-check-label no-select" htmlFor={`pem-${id}`}>
-                    {title}
-                </label>
-            </div>
+            <Checkbox checked={checked} onChange={handeChange(id)}>{title}</Checkbox>
         </div>
     );
 };

@@ -5,11 +5,12 @@ import {useState, useEffect, useRef} from 'react';
 import {Formik, Form} from 'formik';
 // $FlowFixMe: do not complain about Yup
 import * as Yup from 'yup';
+// $FlowFixMe: do not complain about Yup
+import {Modal} from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import ErrMsgs from 'src/utils/helpers/ErrMsgs';
 import {apiUrls} from './_data';
 import TextInput from 'src/utils/components/input/TextInput';
-import DefaultModal from 'src/utils/components/modal/DefaultModal';
 import ButtonsBar from 'src/utils/components/form/ButtonsBar';
 import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
 import PermissionsInput from './PermissionsInput';
@@ -56,13 +57,12 @@ export class Service {
 }
 
 type Props = {
-    close: Function,
     onChange: Function,
     permissions: Object,
-    children?: React.Node,
     submitTitle?: string
 };
-export default ({close, onChange, permissions = {}, children, submitTitle = 'Save'}: Props) => {
+export default ({onChange, permissions = {}, submitTitle = 'Save'}: Props) => {
+    const formName = 'Quyền';
     const {validationSchema, handleSubmit} = Service;
 
     const [open, setOpen] = useState(false);
@@ -88,25 +88,37 @@ export default ({close, onChange, permissions = {}, children, submitTitle = 'Sav
         };
     }, []);
 
+    let handleOk = Tools.emptyFunction;
     return (
-        <DefaultModal open={open} close={close} title="Role manager">
+        <Modal
+            width="80%"
+            destroyOnClose={true}
+            visible={open}
+            onOk={() => handleOk()}
+            onCancel={() => Service.toggleForm(false)}
+            okText={submitTitle}
+            cancelText="Thoát"
+            title={Tools.getFormTitle(id, formName)}>
             <Formik
                 initialValues={{...initialValues}}
                 validationSchema={validationSchema}
                 onSubmit={handleSubmit(id, onChange)}>
-                {({errors, handleSubmit}) => (
-                    <Form>
-                        <TextInput name="name" label="Nhóm" autoFocus={true} required={true} />
-                        <PermissionsInput
-                            grouped_permissions={permissions}
-                            permissions={initialValues.permissions}
-                            name="permissions"
-                        />
-                        <FormLevelErrMsg errors={errors.detail} />
-                        <ButtonsBar children={children} submitTitle={submitTitle} onClick={handleSubmit} />
-                    </Form>
-                )}
+                {({errors, handleSubmit}) => {
+                    if (handleOk === Tools.emptyFunction) handleOk = handleSubmit;
+                    return (
+                        <Form>
+                            <button className="hide" />
+                            <TextInput name="name" label="Nhóm" autoFocus={true} required={true} />
+                            <PermissionsInput
+                                grouped_permissions={permissions}
+                                permissions={initialValues.permissions}
+                                name="permissions"
+                            />
+                            <FormLevelErrMsg errors={errors.detail} />
+                        </Form>
+                    );
+                }}
             </Formik>
-        </DefaultModal>
+        </Modal>
     );
 };
