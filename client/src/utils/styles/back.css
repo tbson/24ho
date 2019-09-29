@@ -1,3 +1,7 @@
+.hide {
+    display: none;
+}
+
 .right {
     text-align: right;
 }
@@ -87,5 +91,5 @@
 }
 
 .bol-date .ant-collapse-content-box {
-    padding: 0
+    padding: 0;
 }

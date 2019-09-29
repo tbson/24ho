@@ -3,7 +3,7 @@ import React from 'react';
 // $FlowFixMe: do not complain about importing node_modules
 import Fingerprint2 from 'fingerprintjs2';
 // $FlowFixMe: do not complain about importing node_modules
-import { notification } from 'antd';
+import {notification} from 'antd';
 // $FlowFixMe: do not complain about importing node_modules
 import kebabCase from 'lodash/kebabCase';
 // $FlowFixMe: do not complain about importing node_modules
@@ -72,6 +72,8 @@ export type ObjResp = {
 export type SelectOptions = Array<{value: string | number, label: string}>;
 
 export default class Tools {
+    static emptyFunction() {}
+
     static isAdmin(): boolean {
         return APP === 'admin';
     }
@@ -845,5 +847,9 @@ export default class Tools {
 
     static txCodeFormat(code: string): string {
         return code.split('-').pop();
+    }
+
+    static getFormTitle(id: number, formName: string) {
+        return `${!id ? 'Thêm' : 'Sửa'} ${formName}`;
     }
 }

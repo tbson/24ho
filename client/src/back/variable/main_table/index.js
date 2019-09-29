@@ -131,12 +131,7 @@ export default ({}: Props) => {
                 </tfoot>
             </table>
 
-            <MainForm close={() => MainFormService.toggleForm(false)} onChange={onChange}>
-                <Button
-                    onClick={() => MainFormService.toggleForm(false)} icon="close">
-                    Đóng
-                </Button>
-            </MainForm>
+            <MainForm onChange={onChange}/>
         </div>
     );
 };
