@@ -10,6 +10,7 @@ import {apiUrls} from '../_data';
 import type {TRow, DbRow, ListItem, FormOpenType, FormOpenKeyType} from '../_data';
 import {Pagination, SearchInput} from 'src/utils/components/TableUtils';
 import MainForm from '../MainForm';
+import {Service as MainFormService} from '../MainForm';
 import Row from './Row.js';
 import {Service as AreaService} from 'src/back/area/';
 
@@ -66,7 +67,7 @@ export default ({readonly = false, bol_date = 0}: Props) => {
 
     const onChange = (data: TRow, type: string) => {
         data = AreaService.prepareItem(data, listArea);
-        toggleForm(false);
+        MainFormService.toggleForm(false);
         setList(listAction(data)[type]());
     };
 
@@ -82,11 +83,6 @@ export default ({readonly = false, bol_date = 0}: Props) => {
 
         const r = confirm(ListTools.getConfirmMessage(ids.length));
         r && Service.handleBulkRemove(ids).then(data => setList(listAction(data).bulkRemove()));
-    };
-
-    const showForm = (id: number) => {
-        toggleForm(true);
-        setModalId(id);
     };
 
     const searchList = (keyword: string) => getList('', keyword ? {search: keyword} : {});
@@ -112,7 +108,7 @@ export default ({readonly = false, bol_date = 0}: Props) => {
                         <th scope="col">Vùng</th>
                         <th scope="col" style={{padding: 8}} className="row80">
                             <ShowWhen value={!readonly}>
-                                <Button type="primary" icon="plus" onClick={() => showForm(0)}>
+                                <Button type="primary" icon="plus" onClick={() => MainFormService.toggleForm(true)}>
                                     Thêm mới
                                 </Button>
                             </ShowWhen>
@@ -137,7 +133,7 @@ export default ({readonly = false, bol_date = 0}: Props) => {
                             key={key}
                             onCheck={onCheck}
                             onRemove={onRemove}
-                            showForm={showForm}
+                            showForm={id => MainFormService.toggleForm(true, id)}
                         />
                     ))}
                 </tbody>
@@ -159,16 +155,7 @@ export default ({readonly = false, bol_date = 0}: Props) => {
                 </tfoot>
             </table>
 
-            <MainForm
-                id={modalId}
-                areaOptions={listArea}
-                open={formOpen.main}
-                close={() => toggleForm(false)}
-                onChange={onChange}>
-                <Button icon="close" onClick={() => toggleForm(false)}>
-                    Cancel
-                </Button>
-            </MainForm>
+            <MainForm areaOptions={listArea} onChange={onChange} />
         </div>
     );
 };

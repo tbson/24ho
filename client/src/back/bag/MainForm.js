@@ -5,6 +5,8 @@ import {useState, useEffect, useRef} from 'react';
 import {Formik, Form} from 'formik';
 // $FlowFixMe: do not complain about Yup
 import * as Yup from 'yup';
+// $FlowFixMe: do not complain about Yup
+import {Modal} from 'antd';
 import type {SelectOptions} from 'src/utils/helpers/Tools';
 import Tools from 'src/utils/helpers/Tools';
 import ErrMsgs from 'src/utils/helpers/ErrMsgs';
@@ -16,11 +18,9 @@ import ButtonsBar from 'src/utils/components/form/ButtonsBar';
 import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
 
 export class Service {
-    static firstInputSelector = "[name='uid']";
-
-    static focusFirstInput() {
-        const firstInput = document.querySelector(`form ${Service.firstInputSelector}`);
-        firstInput && firstInput.focus();
+    static toggleEvent = 'TOGGLE_BAG_MAIN_FORM';
+    static toggleForm(open: boolean, id: number = 0) {
+        Tools.event.dispatch(Service.toggleEvent, {open, id});
     }
 
     static initialValues = {
@@ -50,50 +50,70 @@ export class Service {
 }
 
 type Props = {
-    id: number,
     areaOptions: SelectOptions,
-    open: boolean,
-    close: Function,
     onChange: Function,
-    children?: React.Node,
     submitTitle?: string
 };
-export default ({id, areaOptions, open, close, onChange, children, submitTitle = 'Save'}: Props) => {
+export default ({areaOptions, onChange, submitTitle = 'Lưu'}: Props) => {
+    const formName = 'Bao hàng';
     if (!areaOptions.length) return null;
 
     const {validationSchema, handleSubmit} = Service;
-    const [openModal, setOpenModal] = useState(false);
+
+    const [open, setOpen] = useState(false);
+    const [id, setId] = useState(0);
+
     const _initialValues = {
         ...Service.initialValues,
         area: areaOptions[0].value
     };
     const [initialValues, setInitialValues] = useState(_initialValues);
 
+    const handleToggle = ({detail: {open, id}}) => {
+        open ? retrieveThenOpen(id) : setOpen(false);
+    };
+
     const retrieveThenOpen = (id: number) =>
         Service.retrieveRequest(id, _initialValues).then(resp => {
             if (!resp.ok) return Tools.popMessage(resp.data.detail, 'error');
             setInitialValues({...resp.data});
-            setOpenModal(true);
+            setOpen(true);
+            setId(id);
         });
 
     useEffect(() => {
-        open ? retrieveThenOpen(id) : setOpenModal(false);
-    }, [open]);
+        Tools.event.listen(Service.toggleEvent, handleToggle);
+        return () => {
+            Tools.event.remove(Service.toggleEvent, handleToggle);
+        };
+    }, []); 
+
+    let handleOk = Tools.emptyFunction;
 
     return (
-        <DefaultModal open={openModal} close={close} title="Quản lý bao hàng">
+        <Modal
+            destroyOnClose={true}
+            visible={open}
+            onOk={() => handleOk()}
+            onCancel={() => Service.toggleForm(false)}
+            okText={submitTitle}
+            cancelText="Thoát"
+            title={Tools.getFormTitle(id, formName)}>
             <Formik
                 initialValues={{...initialValues}}
                 validationSchema={validationSchema}
                 onSubmit={handleSubmit(id, onChange)}>
-                {({errors, handleSubmit}) => (
-                    <Form>
-                        <SelectInput name="area" label="Area" options={areaOptions} />
-                        <FormLevelErrMsg errors={errors.detail} />
-                        <ButtonsBar children={children} submitTitle={submitTitle} onClick={handleSubmit} />
-                    </Form>
-                )}
+                {({errors, handleSubmit}) => {
+                    if (handleOk === Tools.emptyFunction) handleOk = handleSubmit;
+                    return (
+                        <Form>
+                            <button className="hide" />
+                            <SelectInput name="area" label="Vùng" options={areaOptions} />
+                            <FormLevelErrMsg errors={errors.detail} />
+                        </Form>
+                    );
+                }}
             </Formik>
-        </DefaultModal>
+        </Modal>
     );
 };
