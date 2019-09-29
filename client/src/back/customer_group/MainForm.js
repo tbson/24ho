@@ -5,11 +5,12 @@ import {useState, useEffect, useRef} from 'react';
 import {Formik, Form} from 'formik';
 // $FlowFixMe: do not complain about Yup
 import * as Yup from 'yup';
+// $FlowFixMe: do not complain about Yup
+import {Modal} from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import ErrMsgs from 'src/utils/helpers/ErrMsgs';
 import {apiUrls} from './_data';
 import TextInput from 'src/utils/components/input/TextInput';
-import DefaultModal from 'src/utils/components/modal/DefaultModal';
 import ButtonsBar from 'src/utils/components/form/ButtonsBar';
 import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
 
@@ -23,11 +24,11 @@ export class Service {
     }
 
     static initialValues = {
-        uid: '',
+        uid: ''
     };
 
     static validationSchema = Yup.object().shape({
-        uid: Yup.string().required(ErrMsgs.REQUIRED),
+        uid: Yup.string().required(ErrMsgs.REQUIRED)
     });
 
     static changeRequest(params: Object) {
@@ -59,6 +60,7 @@ type Props = {
     submitTitle?: string
 };
 export default ({close, onChange, children, submitTitle = 'Save'}: Props) => {
+    const formName = 'Nhóm khách hàng';
     const {validationSchema, handleSubmit} = Service;
 
     const [open, setOpen] = useState(false);
@@ -84,20 +86,31 @@ export default ({close, onChange, children, submitTitle = 'Save'}: Props) => {
         };
     }, []);
 
+    let handleOk = Tools.emptyFunction;
     return (
-        <DefaultModal open={open} close={close} title="CustomerGroup manager">
+        <Modal
+            destroyOnClose={true}
+            visible={open}
+            onOk={() => handleOk()}
+            onCancel={() => Service.toggleForm(false)}
+            okText={submitTitle}
+            cancelText="Thoát"
+            title={Tools.getFormTitle(id, formName)}>
             <Formik
                 initialValues={{...initialValues}}
                 validationSchema={validationSchema}
                 onSubmit={handleSubmit(id, onChange)}>
-                {({errors, handleSubmit}) => (
-                    <Form>
-                        <TextInput name="uid" label="Key" autoFocus={true} required={true} />
-                        <FormLevelErrMsg errors={errors.detail} />
-                        <ButtonsBar children={children} submitTitle={submitTitle} onClick={handleSubmit} />
-                    </Form>
-                )}
+                {({errors, handleSubmit}) => {
+                    if (handleOk === Tools.emptyFunction) handleOk = handleSubmit;
+                    return (
+                        <Form>
+                            <button className="hide" />
+                            <TextInput name="uid" label="Tên nhóm khách hàng" autoFocus={true} required={true} />
+                            <FormLevelErrMsg errors={errors.detail} />
+                        </Form>
+                    );
+                }}
             </Formik>
-        </DefaultModal>
+        </Modal>
     );
 };
