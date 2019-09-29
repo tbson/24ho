@@ -206,12 +206,8 @@ export default ({}: Props) => {
                 listBank={Service.getBankOptions(listBank)}
                 listType={Service.objToOptions(listTypeSelect)}
                 listMoneyType={Service.objToOptions(listMoneyTypeSelect)}
-                close={() => MainFormService.toggleForm(false)}
-                onChange={onChange}>
-                <Button icon="close" onClick={() => MainFormService.toggleForm(false)}>
-                    Thoát
-                </Button>
-            </MainForm>
+                onChange={onChange}
+            />
         </div>
     );
 };

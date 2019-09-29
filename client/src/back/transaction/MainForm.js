@@ -5,6 +5,8 @@ import {useState, useEffect, useRef} from 'react';
 import {Formik, Form} from 'formik';
 // $FlowFixMe: do not complain about Yup
 import * as Yup from 'yup';
+// $FlowFixMe: do not complain about Yup
+import {Modal} from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import type {SelectOptions} from 'src/utils/helpers/Tools';
 import ErrMsgs from 'src/utils/helpers/ErrMsgs';
@@ -61,9 +63,7 @@ type Props = {
     listBank: SelectOptions,
     listType: SelectOptions,
     listMoneyType: SelectOptions,
-    close: Function,
     onChange: Function,
-    children?: React.Node,
     submitTitle?: string
 };
 export default ({
@@ -71,11 +71,10 @@ export default ({
     listBank,
     listType,
     listMoneyType,
-    close,
     onChange,
-    children,
     submitTitle = 'Save'
 }: Props) => {
+    const formName = 'Giao dịch';
     const {validationSchema, handleSubmit} = Service;
     const [open, setOpen] = useState(false);
     const [id, setId] = useState(0);
@@ -100,15 +99,26 @@ export default ({
         };
     }, []);
 
+    let handleOk = Tools.emptyFunction;
+
     return (
-        <DefaultModal open={open} close={close} title="Transaction manager">
+        <Modal
+            destroyOnClose={true}
+            visible={open}
+            onOk={() => handleOk()}
+            onCancel={() => Service.toggleForm(false)}
+            okText={submitTitle}
+            cancelText="Thoát"
+            title={Tools.getFormTitle(id, formName)}>
             <Formik
                 initialValues={{...initialValues}}
                 validationSchema={validationSchema}
                 onSubmit={handleSubmit(id, onChange)}>
                 {({errors, handleSubmit, values}) => {
+                    if (handleOk === Tools.emptyFunction) handleOk = handleSubmit;
                     return (
                         <Form>
+                            <button className="hide" />
                             <SelectInput name="customer" options={listCustomer} label="Khách hàng" required/>
                             <div className="row">
                                 <div className="col">
@@ -124,11 +134,10 @@ export default ({
                             )}
                             <TextInput name="note" label="Ghi chú" />
                             <FormLevelErrMsg errors={errors.detail} />
-                            <ButtonsBar children={children} submitTitle={submitTitle} onClick={handleSubmit} />
                         </Form>
                     );
                 }}
             </Formik>
-        </DefaultModal>
+        </Modal>
     );
 };
