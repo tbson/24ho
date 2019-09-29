@@ -16,11 +16,8 @@ import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
 
 export class Service {
     static toggleEvent = 'TOGGLE_VARIABLE_MAIN_FORM';
-    static firstInputSelector = "[name='uid']";
-
-    static focusFirstInput() {
-        const firstInput = document.querySelector(`form ${Service.firstInputSelector}`);
-        firstInput && firstInput.focus();
+    static toggleForm(open: boolean, id: number = 0) {
+        Tools.event.dispatch(Service.toggleEvent, {open, id});
     }
 
     static initialValues = {
@@ -50,10 +47,6 @@ export class Service {
             );
         };
     }
-
-    static toggleForm(open: boolean, id: number = 0) {
-        Tools.event.dispatch(Service.toggleEvent, {open, id});
-    }
 }
 
 type Props = {
@@ -61,10 +54,12 @@ type Props = {
     submitTitle?: string
 };
 export default ({onChange, submitTitle = 'Lưu'}: Props) => {
+    const formName = 'Cấu hình';
     const {validationSchema, handleSubmit} = Service;
 
     const [open, setOpen] = useState(false);
     const [id, setId] = useState(0);
+
     const [initialValues, setInitialValues] = useState(Service.initialValues);
 
     const retrieveThenOpen = (id: number) =>
@@ -96,7 +91,7 @@ export default ({onChange, submitTitle = 'Lưu'}: Props) => {
             onCancel={() => Service.toggleForm(false)}
             okText={submitTitle}
             cancelText="Thoát"
-            title={Tools.getFormTitle(id, 'cấu hình')}>
+            title={Tools.getFormTitle(id, formName)}>
             <Formik
                 initialValues={{...initialValues}}
                 validationSchema={validationSchema}

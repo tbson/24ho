@@ -11,7 +11,9 @@ import type {FormOpenType, FormOpenKeyType} from '../_data';
 import Tools from 'src/utils/helpers/Tools';
 import NavWrapper from 'src/utils/components/nav_wrapper';
 import ProfileForm from './Form';
+import {Service as ProfileFormService} from './Form';
 import ChangePwdForm from '../PwdForm';
+import {Service as ChangePwdFormService} from '../PwdForm';
 import AddressTable from 'src/back/address/main_table/';
 import OnlyAdmin from 'src/utils/components/OnlyAdmin';
 
@@ -37,8 +39,6 @@ export const Profile = () => {
         profile: false
     });
 
-    const toggleForm = (value: boolean, key: FormOpenKeyType = 'profile') => setFormOpen({...formOpen, [key]: value});
-
     useEffect(() => {
         document.title = 'Profile manager';
         Service.handleProfileRequest().then(data => {
@@ -47,12 +47,12 @@ export const Profile = () => {
     }, []);
 
     const onChangeProfile = (data: Object) => {
-        toggleForm(false);
+        ProfileFormService.toggleForm(false);
         setProfile(Tools.prepareUserData(data));
     };
 
     const onChangePwd = () => {
-        toggleForm(false, 'changePwd');
+        ChangePwdFormService.toggleForm(false);
     };
 
     return (
@@ -64,28 +64,22 @@ export const Profile = () => {
                         <td>{profile.email}</td>
                     </tr>
                     <tr>
-                        <td>Username</td>
+                        <td>Tên đăng nhập</td>
                         <td>{profile.username}</td>
                     </tr>
                     <tr>
-                        <td>Fullname</td>
+                        <td>Tên đầy đủ</td>
                         <td>{profile.fullname}</td>
                     </tr>
                 </tbody>
             </table>
             <div className="btn-group">
-                <Button type="primary" onClick={() => toggleForm(true)}>
-                    Update profile
+                <Button type="primary" onClick={() => ProfileFormService.toggleForm(true)}>
+                    Cập nhật thông tin cá nhân
                 </Button>
                 &nbsp;
-                <Button onClick={() => toggleForm(true, 'changePwd')}>Change password</Button>
+                <Button onClick={() => ChangePwdFormService.toggleForm(true)}>Đổi mật khẩu</Button>
             </div>
-
-            <ProfileForm open={formOpen.profile} close={() => toggleForm(false)} onChange={onChangeProfile}>
-                <Button icon="close" onClick={() => toggleForm(false)}>
-                    Cancel
-                </Button>
-            </ProfileForm>
 
             <OnlyAdmin reverse={true}>
                 <div>
@@ -95,15 +89,9 @@ export const Profile = () => {
                 </div>
             </OnlyAdmin>
 
-            <ChangePwdForm
-                mode="change"
-                open={formOpen.changePwd}
-                close={() => toggleForm(false, 'changePwd')}
-                onChange={onChangePwd}>
-                <Button icon="close" onClick={() => toggleForm(false, 'changePwd')}>
-                    Cancel
-                </Button>
-            </ChangePwdForm>
+            <ProfileForm onChange={onChangeProfile}/>
+            <ChangePwdForm mode="change" onChange={onChangePwd}/>
+
         </NavWrapper>
     );
 };

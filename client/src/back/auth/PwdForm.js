@@ -3,15 +3,21 @@ import * as React from 'react';
 import {useState, useEffect} from 'react';
 // $FlowFixMe: do not complain about formik
 import {Formik, Form} from 'formik';
+// $FlowFixMe: do not complain about Yup
+import {Modal} from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import {apiUrls} from './_data';
 import type {ObjResp, TupleResp} from 'src/utils/helpers/Tools';
-import DefaultModal from 'src/utils/components/modal/DefaultModal';
 import ButtonsBar from 'src/utils/components/form/ButtonsBar';
 import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
 import TextInput from 'src/utils/components/input/TextInput';
 
 export class Service {
+    static toggleEvent = 'TOGGLE_CHANGE_PASSWORD_FORM';
+    static toggleForm(open: boolean) {
+        Tools.event.dispatch(Service.toggleEvent, {open});
+    }
+
     static initialValues = {username: '', password: '', passwordAgain: '', oldPassword: ''};
 
     static prepareParams(params: Object, mode: string): Object {
@@ -54,30 +60,50 @@ export class Service {
 
 type FormProps = {
     mode?: string,
-    open: boolean,
-    close: Function,
-    onChange: Function,
-    children?: React.Node,
-    submitTitle?: string
+    onChange: Function
 };
-export default ({mode = 'reset', open, close, onChange, children, submitTitle = 'Reset password'}: FormProps) => {
+export default ({mode = 'reset', onChange}: FormProps) => {
+    const [open, setOpen] = useState(false);
     const {initialValues, validate, handleSubmit} = Service;
+
+    const handleToggle = ({detail: {open}}) => {
+        setOpen(open);
+    };
+
+    useEffect(() => {
+        Tools.event.listen(Service.toggleEvent, handleToggle);
+        return () => {
+            Tools.event.remove(Service.toggleEvent, handleToggle);
+        };
+    }, []);
+
+    let handleOk = Tools.emptyFunction;
     return (
-        <DefaultModal open={open} close={close} title={submitTitle}>
+        <Modal
+            destroyOnClose={true}
+            visible={open}
+            onOk={() => handleOk()}
+            onCancel={() => Service.toggleForm(false)}
+            okText={mode === 'reset' ? 'Reset' : 'Đổi'}
+            cancelText="Thoát"
+            title={`${mode === 'reset' ? 'Reset' : 'Đổi'} mật khẩu`}>
             <Formik initialValues={initialValues} validate={validate(mode)} onSubmit={handleSubmit(onChange, mode)}>
-                {({errors, handleSubmit}) => (
-                    <Form>
-                        <TextInput name="username" label="Username" autoFocus={true} required={true} />
-                        <TextInput name="password" type="password" label="Password" required={true} />
-                        <TextInput name="passwordAgain" type="password" label="Password again" required={true} />
-                        {mode === 'change' && (
-                            <TextInput name="oldPassword" type="password" label="Old password" required={true} />
-                        )}
-                        <FormLevelErrMsg errors={errors.detail} />
-                        <ButtonsBar children={children} submitTitle={submitTitle} onClick={handleSubmit}/>
-                    </Form>
-                )}
+                {({errors, handleSubmit}) => {
+                    if (handleOk === Tools.emptyFunction) handleOk = handleSubmit;
+                    return (
+                        <Form>
+                            <button className="hide" />
+                            <TextInput name="username" label="Tên đăng nhập" autoFocus={true} required={true} />
+                            <TextInput name="password" type="password" label="Mật khẩu" required={true} />
+                            <TextInput name="passwordAgain" type="password" label="Nhập lại mật khẩu" required={true} />
+                            {mode === 'change' && (
+                                <TextInput name="oldPassword" type="password" label="Mật khẩu cũ" required={true} />
+                            )}
+                            <FormLevelErrMsg errors={errors.detail} />
+                        </Form>
+                    );
+                }}
             </Formik>
-        </DefaultModal>
+        </Modal>
     );
 };

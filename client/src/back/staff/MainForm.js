@@ -5,6 +5,8 @@ import {useState, useEffect, useRef} from 'react';
 import {Formik, Form} from 'formik';
 // $FlowFixMe: do not complain about formik
 import * as Yup from 'yup';
+// $FlowFixMe: do not complain about Yup
+import {Modal} from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import ErrMsgs from 'src/utils/helpers/ErrMsgs';
 import {apiUrls, Context} from './_data';
@@ -12,11 +14,15 @@ import type {SelectOptions} from 'src/utils/helpers/Tools';
 import TextInput from 'src/utils/components/input/TextInput';
 import CheckInput from 'src/utils/components/input/CheckInput';
 import SelectInput from 'src/utils/components/input/SelectInput';
-import DefaultModal from 'src/utils/components/modal/DefaultModal';
 import ButtonsBar from 'src/utils/components/form/ButtonsBar';
 import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
 
 export class Service {
+    static toggleEvent = 'TOGGLE_ADMIN_MAIN_FORM';
+    static toggleForm(open: boolean, id: number = 0) {
+        Tools.event.dispatch(Service.toggleEvent, {open, id});
+    }
+
     static initialValues = {
         email: '',
         username: '',
@@ -49,91 +55,105 @@ export class Service {
         return id ? Tools.apiCall(apiUrls.crud + id) : Promise.resolve({ok: true, data: Service.initialValues});
     }
 
-    static handleSubmit(id: number, onChange: Function, reOpenDialog: boolean) {
-        return (values: Object, {setErrors}: Object) =>
-            Service.changeRequest(id ? {...values, id} : values).then(({ok, data}) =>
-                ok
-                    ? onChange({...data, checked: false}, id ? 'update' : 'add', reOpenDialog)
-                    : setErrors(Tools.setFormErrors(data))
+    static handleSubmit(id: number, onChange: Function) {
+        return (values: Object, {setErrors}: Object) => {
+            return Service.changeRequest(id ? {...values, id} : values).then(({ok, data}) =>
+                ok ? onChange({...data, checked: false}, id ? 'update' : 'add') : setErrors(Tools.setFormErrors(data))
             );
+        };
     }
 }
 
 type Props = {
-    id: number,
     listGroup: SelectOptions,
-    open: boolean,
-    close: Function,
     onChange: Function,
-    children?: React.Node,
     submitTitle?: string
 };
-export default ({id, listGroup, open, close, onChange, children, submitTitle = 'Save'}: Props) => {
-    const firstInputSelector = "[name='email']";
-
+export default ({listGroup, onChange, submitTitle = 'Lưu'}: Props) => {
+    const formName = 'Admin';
     const {validationSchema, handleSubmit} = Service;
 
-    const [openModal, setOpenModal] = useState(false);
-    const [reOpenDialog, setReOpenDialog] = useState(true);
+    const [open, setOpen] = useState(false);
+    const [id, setId] = useState(0);
+
     const [initialValues, setInitialValues] = useState(Service.initialValues);
 
     const retrieveThenOpen = (id: number) =>
         Service.retrieveRequest(id).then(resp => {
             if (!resp.ok) return Tools.popMessage(resp.data.detail, 'error');
             setInitialValues({...Tools.prepareUserData(resp.data), password: ''});
-            setOpenModal(true);
+            setOpen(true);
+            setId(id);
         });
 
+    const handleToggle = ({detail: {open, id}}) => {
+        open ? retrieveThenOpen(id) : setOpen(false);
+    };
+
     useEffect(() => {
-        open ? retrieveThenOpen(id) : setOpenModal(false);
-        setReOpenDialog(id ? false : true);
-    }, [open]);
+        Tools.event.listen(Service.toggleEvent, handleToggle);
+        return () => {
+            Tools.event.remove(Service.toggleEvent, handleToggle);
+        };
+    }, []);
 
-    const focusFirstInput = () => {
-        const firstInput = document.querySelector(`form ${firstInputSelector}`);
-        firstInput && firstInput.focus();
-    };
-
-    const onClick = (handleSubmit: Function) => () => {
-        setReOpenDialog(false);
-        focusFirstInput();
-        handleSubmit();
-    };
-
+    let handleOk = Tools.emptyFunction;
     return (
-        <DefaultModal open={openModal} close={close} title="Staff manager">
+        <Modal
+            destroyOnClose={true}
+            visible={open}
+            onOk={() => handleOk()}
+            onCancel={() => Service.toggleForm(false)}
+            okText={submitTitle}
+            cancelText="Thoát"
+            title={Tools.getFormTitle(id, formName)}>
             <Formik
                 initialValues={{...initialValues}}
                 validationSchema={validationSchema}
-                onSubmit={handleSubmit(id, onChange, reOpenDialog)}>
-                {({errors, handleSubmit}) => (
-                    <Form>
-                        <div className="row">
-                            <div className="col">
-                                <TextInput name="email" type="email" label="Email" required={true} autoFocus={true} />
+                onSubmit={handleSubmit(id, onChange)}>
+                {({errors, handleSubmit}) => {
+                    if (handleOk === Tools.emptyFunction) handleOk = handleSubmit;
+                    return (
+                        <Form>
+                            <button className="hide" />
+                            <div className="row">
+                                <div className="col">
+                                    <TextInput
+                                        name="email"
+                                        type="email"
+                                        label="Email"
+                                        required={true}
+                                        autoFocus={true}
+                                    />
+                                </div>
+                                <div className="col">
+                                    <TextInput name="username" label="Tên đăng nhập" required={true} />
+                                </div>
                             </div>
-                            <div className="col">
-                                <TextInput name="username" label="Tên đăng nhập" required={true} />
+                            <div className="row">
+                                <div className="col">
+                                    <TextInput name="last_name" label="Họ và tên lót" required={true} />
+                                </div>
+                                <div className="col">
+                                    <TextInput name="first_name" label="Tên" required={true} />
+                                </div>
                             </div>
-                        </div>
-                        <div className="row">
-                            <div className="col">
-                                <TextInput name="last_name" label="Họ và tên lót" required={true} />
-                            </div>
-                            <div className="col">
-                                <TextInput name="first_name" label="Tên" required={true} />
-                            </div>
-                        </div>
-                        <TextInput name="password" type="password" label="Password" />
-                        <SelectInput isMulti={true} name="groups" label="Quyền" options={listGroup} required={true} />
-                        <CheckInput name="is_sale" label="Nhân viên mua hàng" />
-                        <CheckInput name="is_cust_care" label="Chăm sóc khách hàng" />
-                        <CheckInput name="is_lock" label="Khoá" />
-                        <FormLevelErrMsg errors={errors.detail} />
-                        <ButtonsBar children={children} submitTitle={submitTitle} onClick={onClick(handleSubmit)} />
-                    </Form>
-                )}
+                            <TextInput name="password" type="password" label="Password" />
+                            <SelectInput
+                                isMulti={true}
+                                name="groups"
+                                label="Quyền"
+                                options={listGroup}
+                                required={true}
+                            />
+                            <CheckInput name="is_sale" label="Nhân viên mua hàng" />
+                            <CheckInput name="is_cust_care" label="Chăm sóc khách hàng" />
+                            <CheckInput name="is_lock" label="Khoá" />
+                            <FormLevelErrMsg errors={errors.detail} />
+                        </Form>
+                    );
+                }}
             </Formik>
-        </DefaultModal>
+        </Modal>
     );
 };

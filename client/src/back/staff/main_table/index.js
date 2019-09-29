@@ -2,7 +2,7 @@
 import * as React from 'react';
 import {useState, useEffect} from 'react';
 // $FlowFixMe: do not complain about importing
-import { Button } from 'antd';
+import {Button} from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
 import {apiUrls} from '../_data';
@@ -10,6 +10,7 @@ import type {TRow, DbRow, ListItem, FormOpenType, FormOpenKeyType} from '../_dat
 import type {SelectOptions} from 'src/utils/helpers/Tools';
 import {Pagination, SearchInput} from 'src/utils/components/TableUtils';
 import MainForm from '../MainForm';
+import {Service as MainFormService} from '../MainForm';
 import Row from './Row.js';
 
 type Props = {};
@@ -57,13 +58,8 @@ export class Service {
 export default ({}: Props) => {
     const [list, setList] = useState([]);
     const [listGroup, setListGroup] = useState([]);
-    const [formOpen, setFormOpen] = useState<FormOpenType>({
-        main: false
-    });
-    const [modalId, setModalId] = useState(0);
-    const [links, setLinks] = useState({next: '', previous: ''});
 
-    const toggleForm = (value: boolean, key: FormOpenKeyType = 'main') => setFormOpen({...formOpen, [key]: value});
+    const [links, setLinks] = useState({next: '', previous: ''});
 
     const listAction = ListTools.actions(list);
 
@@ -76,11 +72,10 @@ export default ({}: Props) => {
         setListGroup(_listGroup);
     };
 
-    const onChange = (data: TRow, type: string, reOpenDialog: boolean) => {
-        toggleForm(false);
+    const onChange = (data: TRow, type: string) => {
+        MainFormService.toggleForm(false);
         data.group_names = Service.groupIdToName(data.groups, listGroup);
         setList(listAction(data)[type]());
-        reOpenDialog && toggleForm(true);
     };
 
     const onCheck = id => setList(ListTools.checkOne(id, list));
@@ -95,11 +90,6 @@ export default ({}: Props) => {
 
         const r = confirm(ListTools.getConfirmMessage(ids.length));
         r && Service.handleBulkRemove(ids).then(data => setList(listAction(data).bulkRemove()));
-    };
-
-    const showForm = (id: number) => {
-        toggleForm(true);
-        setModalId(id);
     };
 
     const searchList = (keyword: string) => getList('', keyword ? {search: keyword} : {});
@@ -124,7 +114,7 @@ export default ({}: Props) => {
                         <th scope="col">Quyền</th>
                         <th scope="col">Trạng thái</th>
                         <th scope="col" style={{padding: 8}} className="row80">
-                            <Button type="primary" icon="plus" onClick={() => showForm(0)}>
+                            <Button type="primary" icon="plus" onClick={() => MainFormService.toggleForm(true)}>
                                 Thêm mới
                             </Button>
                         </th>
@@ -147,7 +137,7 @@ export default ({}: Props) => {
                             key={key}
                             onCheck={onCheck}
                             onRemove={onRemove}
-                            showForm={showForm}
+                            showForm={id => MainFormService.toggleForm(true, id)}
                         />
                     ))}
                 </tbody>
@@ -167,16 +157,7 @@ export default ({}: Props) => {
                 </tfoot>
             </table>
 
-            <MainForm
-                id={modalId}
-                listGroup={listGroup}
-                open={formOpen.main}
-                close={() => toggleForm(false)}
-                onChange={onChange}>
-                <Button icon="close" onClick={() => toggleForm(false)}>
-                    Đóng
-                </Button>
-            </MainForm>
+            <MainForm listGroup={listGroup} onChange={onChange} />
         </div>
     );
 };
