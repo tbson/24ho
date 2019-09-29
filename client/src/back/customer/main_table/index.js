@@ -9,6 +9,7 @@ import {apiUrls} from '../_data';
 import type {TRow, DbRow, ListItem, FormOpenType, FormOpenKeyType} from '../_data';
 import {Pagination, SearchInput} from 'src/utils/components/TableUtils';
 import MainForm from '../MainForm';
+import {Service as MainFormService} from '../MainForm';
 import Row from './Row.js';
 
 type Props = {};
@@ -96,8 +97,6 @@ export default ({}: Props) => {
     const [modalId, setModalId] = useState(0);
     const [links, setLinks] = useState({next: '', previous: ''});
 
-    const toggleForm = (value: boolean, key: FormOpenKeyType = 'main') => setFormOpen({...formOpen, [key]: value});
-
     const listAction = ListTools.actions(list);
 
     const getList = async (url?: string, params?: Object) => {
@@ -113,11 +112,10 @@ export default ({}: Props) => {
         setListGroup(_listGroup);
     };
 
-    const onChange = (data: TRow, type: string, reOpenDialog: boolean) => {
-        toggleForm(false);
+    const onChange = (data: TRow, type: string) => {
         const _data = Service.prepareItem(data, listSale, listCustCare, listGroup);
         setList(listAction(_data)[type]());
-        reOpenDialog && toggleForm(true);
+        MainFormService.toggleForm(false);
     };
 
     const onCheck = id => setList(ListTools.checkOne(id, list));
@@ -135,7 +133,7 @@ export default ({}: Props) => {
     };
 
     const showForm = (id: number) => {
-        toggleForm(true);
+        MainFormService.toggleForm(true);
         setModalId(id);
     };
 
@@ -170,7 +168,7 @@ export default ({}: Props) => {
                         </th>
                         <th scope="col">Trạng thái</th>
                         <th scope="col" style={{padding: 8}} className="row80">
-                            <Button type="primary" icon="plus" onClick={() => showForm(0)}>
+                            <Button type="primary" icon="plus" onClick={() => MainFormService.toggleForm(true)}>
                                 Thêm mới
                             </Button>
                         </th>
@@ -193,7 +191,7 @@ export default ({}: Props) => {
                             key={key}
                             onCheck={onCheck}
                             onRemove={onRemove}
-                            showForm={showForm}
+                            showForm={id => MainFormService.toggleForm(true, id)}
                         />
                     ))}
                 </tbody>
@@ -213,18 +211,7 @@ export default ({}: Props) => {
                 </tfoot>
             </table>
 
-            <MainForm
-                id={modalId}
-                listSale={listSale}
-                listCustCare={listCustCare}
-                listGroup={listGroup}
-                open={formOpen.main}
-                close={() => toggleForm(false)}
-                onChange={onChange}>
-                <Button icon="close" onClick={() => toggleForm(false)}>
-                    Thoát
-                </Button>
-            </MainForm>
+            <MainForm listSale={listSale} listCustCare={listCustCare} listGroup={listGroup} onChange={onChange} />
         </div>
     );
 };
