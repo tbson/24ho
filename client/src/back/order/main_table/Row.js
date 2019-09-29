@@ -254,12 +254,12 @@ export default ({data, options = {}, onCheck, onRemove, onDiscard}: RowPropTypes
 
     const _onRemove = (id, complaintResolve = false) => {
         if (complaintResolve) return onRemove({id});
-        const r = confirm(ListTools.getDeleteMessage(1, 'xoá', 'đơn order'));
+        const r = confirm(ListTools.getConfirmMessage(1, 'xoá', 'đơn order'));
         r && Service.handleRemove(id).then(onRemove);
     };
 
     const _onDiscard = (status: number) => (id: number) => {
-        const r = confirm(ListTools.getDeleteMessage(1, status === 10 ? 'phục hồi' : 'huỷ', 'đơn order'));
+        const r = confirm(ListTools.getConfirmMessage(1, status === 10 ? 'phục hồi' : 'huỷ', 'đơn order'));
         r && Service.handleDiscard(id, status).then(onDiscard);
     };
 

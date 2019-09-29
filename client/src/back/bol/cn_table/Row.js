@@ -37,7 +37,7 @@ export default ({preview = false, listBag=[], item, index = 0, total = 0, onEdit
     const id = parseInt(data.id);
 
     const _onRemove = id => {
-        const r = confirm(ListTools.getDeleteMessage(1));
+        const r = confirm(ListTools.getConfirmMessage(1));
         r && Service.handleUnmark(id).then(onRemove);
     };
 

@@ -65,7 +65,7 @@ export default class ListTools {
         return [...list];
     }
 
-    static getDeleteMessage(total: number, action: string = 'xoá', item: string = 'mục'): string {
+    static getConfirmMessage(total: number, action: string = 'xoá', item: string = 'mục'): string {
         if (!total) return '';
         return total === 1 ? `Bạn muốn ${action} ${item} này ?` : `Bạn muốn ${action} các ${item} này ?`;
     }

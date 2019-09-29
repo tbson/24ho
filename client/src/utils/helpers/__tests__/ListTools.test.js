@@ -258,21 +258,21 @@ describe('prepare', () => {
     it('Zero', () => {
         const input = 0;
         const eput = '';
-        const output = ListTools.getDeleteMessage(input);
+        const output = ListTools.getConfirmMessage(input);
         expect(output).toEqual(eput);
     });
 
     it('Single', () => {
         const input = 1;
         const eput = 'Do you want to remove this item ?';
-        const output = ListTools.getDeleteMessage(input);
+        const output = ListTools.getConfirmMessage(input);
         expect(output).toEqual(eput);
     });
 
     it('Multiple', () => {
         const input = 2;
         const eput = 'Do you want to remove these items ?';
-        const output = ListTools.getDeleteMessage(input);
+        const output = ListTools.getConfirmMessage(input);
         expect(output).toEqual(eput);
     });
 });

@@ -80,7 +80,7 @@ export default ({readonly = false, bol_date = 0}: Props) => {
         const ids = ListTools.getChecked(list);
         if (!ids.length) return;
 
-        const r = confirm(ListTools.getDeleteMessage(ids.length));
+        const r = confirm(ListTools.getConfirmMessage(ids.length));
         r && Service.handleBulkRemove(ids).then(data => setList(listAction(data).bulkRemove()));
     };
 

@@ -82,7 +82,7 @@ export default ({readonly = false, order_id = 0, bol_date_id = 0, bag_id = 0, no
         const ids = ListTools.getChecked(list);
         if (!ids.length) return;
 
-        const r = confirm(ListTools.getDeleteMessage(ids.length));
+        const r = confirm(ListTools.getConfirmMessage(ids.length));
         r && Service.handleBulkRemove(ids).then(data => setList(listAction(data).bulkRemove()));
     };
 

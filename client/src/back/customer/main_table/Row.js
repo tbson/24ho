@@ -28,7 +28,7 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
     const id = parseInt(data.id);
 
     const _onRemove = id => {
-        const r = confirm(ListTools.getDeleteMessage(1));
+        const r = confirm(ListTools.getConfirmMessage(1));
         r && Service.handleRemove(id).then(onRemove);
     };
 
