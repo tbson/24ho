@@ -5,6 +5,8 @@ import {useState, useEffect, useRef} from 'react';
 import {Formik, Form} from 'formik';
 // $FlowFixMe: do not complain about Yup
 import * as Yup from 'yup';
+// $FlowFixMe: do not complain about Yup
+import {Modal} from 'antd';
 import {APP} from 'src/constants';
 import OnlyAdmin from 'src/utils/components/OnlyAdmin';
 import {DeliveryFeeTypeOptions} from './_data';
@@ -20,6 +22,11 @@ import ButtonsBar from 'src/utils/components/form/ButtonsBar';
 import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
 
 export class Service {
+    static toggleEvent = 'TOGGLE_BOL_MAIN_FORM';
+    static toggleForm(open: boolean, id: number = 0) {
+        Tools.event.dispatch(Service.toggleEvent, {open, id});
+    }
+
     static initialValues = {
         uid: '',
         address_code: '',
@@ -74,15 +81,13 @@ export class Service {
             : Promise.resolve({ok: true, data: initialValues || Service.initialValues});
     }
 
-    static handleSubmit(id: number, order_id: number, onChange: Function, reOpenDialog: boolean) {
+    static handleSubmit(id: number, order_id: number, onChange: Function) {
         return (values: Object, {setErrors}: Object) => {
             let params = {...values};
             if (id) params = {...params, id};
             if (order_id) params = {...params, order: parseInt(order_id)};
             return Service.changeRequest(params).then(({ok, data}) =>
-                ok
-                    ? onChange({...data, checked: false}, id ? 'update' : 'add', reOpenDialog)
-                    : setErrors(Tools.setFormErrors(data))
+                ok ? onChange({...data, checked: false}, id ? 'update' : 'add') : setErrors(Tools.setFormErrors(data))
             );
         };
     }
@@ -94,19 +99,16 @@ export class Service {
 
 type Props = {
     order_id?: number,
-    id: number,
-    open: boolean,
-    close: Function,
     onChange: Function,
-    children?: React.Node,
     submitTitle?: string
 };
-export default ({id, order_id = 0, open, close, onChange, children, submitTitle = 'Save'}: Props) => {
-    const firstInputSelector = "[name='uid']";
+export default ({order_id = 0, onChange, submitTitle = 'Lưu'}: Props) => {
+    const formName = 'Vận đơn';
     const {validationSchema, handleSubmit} = Service;
 
-    const [openModal, setOpenModal] = useState(false);
-    const [reOpenDialog, setReOpenDialog] = useState(true);
+    const [open, setOpen] = useState(false);
+    const [id, setId] = useState(0);
+
     const [initialValues, setInitialValues] = useState(Service.initialValues);
     const [addressOptions, setAddressOptions] = useState([]);
 
@@ -114,8 +116,13 @@ export default ({id, order_id = 0, open, close, onChange, children, submitTitle 
         Service.retrieveRequest(id, id ? initialValues : Service.initialValues).then(resp => {
             if (!resp.ok) return Tools.popMessage(resp.data.detail, 'error');
             setInitialValues({...resp.data});
-            setOpenModal(true);
+            setOpen(true);
+            setId(id);
         });
+
+    const handleToggle = ({detail: {open, id}}) => {
+        open ? retrieveThenOpen(id) : setOpen(false);
+    };
 
     useEffect(() => {
         if (!Tools.isAdmin()) {
@@ -129,30 +136,32 @@ export default ({id, order_id = 0, open, close, onChange, children, submitTitle 
             });
         }
 
-        open ? retrieveThenOpen(id) : setOpenModal(false);
-        setReOpenDialog(id ? false : true);
-    }, [open]);
+        Tools.event.listen(Service.toggleEvent, handleToggle);
+        return () => {
+            Tools.event.remove(Service.toggleEvent, handleToggle);
+        };
+    }, []);
 
-    const focusFirstInput = () => {
-        const firstInput = document.querySelector(`form ${firstInputSelector}`);
-        firstInput && firstInput.focus();
-    };
-
-    const onClick = (handleSubmit: Function) => () => {
-        setReOpenDialog(false);
-        focusFirstInput();
-        handleSubmit();
-    };
+    let handleOk = Tools.emptyFunction;
 
     return (
-        <DefaultModal open={openModal} close={close} title="Bol manager">
+        <Modal
+            destroyOnClose={true}
+            visible={open}
+            onOk={() => handleOk()}
+            onCancel={() => Service.toggleForm(false)}
+            okText={submitTitle}
+            cancelText="Thoát"
+            title={Tools.getFormTitle(id, formName)}>
             <Formik
                 initialValues={{...initialValues}}
                 validationSchema={validationSchema}
-                onSubmit={handleSubmit(id, order_id, onChange, reOpenDialog)}>
+                onSubmit={handleSubmit(id, order_id, onChange)}>
                 {({errors, values, handleSubmit}) => {
+                    if (handleOk === Tools.emptyFunction) handleOk = handleSubmit;
                     return (
                         <Form>
+                            <button className="hide" />
                             <div className="row">
                                 <div className="col">
                                     <TextInput name="uid" label="Mã vận đơn" autoFocus={true} required={true} />
@@ -199,7 +208,7 @@ export default ({id, order_id = 0, open, close, onChange, children, submitTitle 
                             </OnlyAdmin>
                             <div className="row">
                                 <div className="col">
-                                    <CheckInput name="shockproof" label="Chống sốc" disabled={!!order_id}/>
+                                    <CheckInput name="shockproof" label="Chống sốc" disabled={!!order_id} />
                                     {values.shockproof && (
                                         <OnlyAdmin>
                                             <TextInput
@@ -211,7 +220,7 @@ export default ({id, order_id = 0, open, close, onChange, children, submitTitle 
                                     )}
                                 </div>
                                 <div className="col">
-                                    <CheckInput name="wooden_box" label="Đóng gỗ" disabled={!!order_id}/>
+                                    <CheckInput name="wooden_box" label="Đóng gỗ" disabled={!!order_id} />
                                     {values.wooden_box && (
                                         <OnlyAdmin>
                                             <TextInput
@@ -245,11 +254,10 @@ export default ({id, order_id = 0, open, close, onChange, children, submitTitle 
                             </OnlyAdmin>
                             <TextInput name="note" label="Ghi chú" />
                             <FormLevelErrMsg errors={errors.detail} />
-                            <ButtonsBar children={children} submitTitle={submitTitle} onClick={onClick(handleSubmit)} />
                         </Form>
                     );
                 }}
             </Formik>
-        </DefaultModal>
+        </Modal>
     );
 };

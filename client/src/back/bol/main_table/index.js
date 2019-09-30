@@ -2,7 +2,7 @@
 import * as React from 'react';
 import {useState, useEffect} from 'react';
 // $FlowFixMe: do not complain about importing
-import { Button } from 'antd';
+import {Button} from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
 import ShowWhen from 'src/utils/components/ShowWhen';
@@ -10,6 +10,7 @@ import {apiUrls} from '../_data';
 import type {TRow, DbRow, ListItem, FormOpenType, FormOpenKeyType} from '../_data';
 import {Pagination, SearchInput} from 'src/utils/components/TableUtils';
 import MainForm from '../MainForm';
+import {Service as MainFormService} from '../MainForm';
 import Row from './Row.js';
 
 type Props = {
@@ -50,8 +51,6 @@ export default ({readonly = false, order_id = 0, bol_date_id = 0, bag_id = 0, no
     const [modalId, setModalId] = useState(0);
     const [links, setLinks] = useState({next: '', previous: ''});
 
-    const toggleForm = (value: boolean, key: FormOpenKeyType = 'main') => setFormOpen({...formOpen, [key]: value});
-
     const listAction = ListTools.actions(list);
 
     const getList = async (url?: string, params?: Object = {}) => {
@@ -66,9 +65,8 @@ export default ({readonly = false, order_id = 0, bol_date_id = 0, bag_id = 0, no
     };
 
     const onChange = (data: TRow, type: string, reOpenDialog: boolean) => {
-        toggleForm(false);
+        MainFormService.toggleForm(false);
         setList(listAction(data)[type]());
-        reOpenDialog && toggleForm(true);
         notifyChange && notifyChange();
     };
 
@@ -84,11 +82,6 @@ export default ({readonly = false, order_id = 0, bol_date_id = 0, bag_id = 0, no
 
         const r = confirm(ListTools.getConfirmMessage(ids.length));
         r && Service.handleBulkRemove(ids).then(data => setList(listAction(data).bulkRemove()));
-    };
-
-    const showForm = (id: number) => {
-        toggleForm(true);
-        setModalId(id);
     };
 
     const searchList = (keyword: string) => getList('', keyword ? {search: keyword} : {});
@@ -136,10 +129,7 @@ export default ({readonly = false, order_id = 0, bol_date_id = 0, bag_id = 0, no
                         <th scope="col">Ghi chú</th>
                         <th scope="col" style={{padding: 8}} className="row80">
                             <ShowWhen value={!readonly}>
-                                <Button
-                                    type="primary"
-                                    icon="plus"
-                                    onClick={() => showForm(0)}>
+                                <Button type="primary" icon="plus" onClick={() => MainFormService.toggleForm(true)}>
                                     Thêm
                                 </Button>
                             </ShowWhen>
@@ -164,7 +154,7 @@ export default ({readonly = false, order_id = 0, bol_date_id = 0, bag_id = 0, no
                             key={key}
                             onCheck={onCheck}
                             onRemove={onRemove}
-                            showForm={showForm}
+                            showForm={id => MainFormService.toggleForm(true, id)}
                         />
                     ))}
                 </tbody>
@@ -186,16 +176,7 @@ export default ({readonly = false, order_id = 0, bol_date_id = 0, bag_id = 0, no
                 </tfoot>
             </table>
 
-            <MainForm
-                order_id={order_id}
-                id={modalId}
-                open={formOpen.main}
-                close={() => toggleForm(false)}
-                onChange={onChange}>
-                <Button icon="close" onClick={() => toggleForm(false)}>
-                    Thoát
-                </Button>
-            </MainForm>
+            <MainForm order_id={order_id} onChange={onChange} />
         </div>
     );
 };

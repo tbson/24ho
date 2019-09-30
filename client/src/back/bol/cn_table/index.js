@@ -9,6 +9,7 @@ import {apiUrls} from '../_data';
 import type {TRow, DbRow, ListItem, FormOpenType, FormOpenKeyType} from '../_data';
 import {Pagination, SearchInput} from 'src/utils/components/TableUtils';
 import CNForm from '../CNForm';
+import {Service as CNFormService} from '../CNForm.js';
 import GetOrCreateForm from 'src/back/bag/GetOrCreateForm';
 import {Service as GetOrCreateService} from 'src/back/bag/GetOrCreateForm';
 import Row from './Row.js';
@@ -45,10 +46,7 @@ const Component = ({history}: Props) => {
     const [formOpen, setFormOpen] = useState<FormOpenType>({
         main: false
     });
-    const [modalId, setModalId] = useState(0);
     const [links, setLinks] = useState({next: '', previous: ''});
-
-    const toggleForm = (value: boolean, key: FormOpenKeyType = 'main') => setFormOpen({...formOpen, [key]: value});
 
     const listAction = ListTools.actions(list);
 
@@ -61,7 +59,7 @@ const Component = ({history}: Props) => {
     };
 
     const onChange = (data: TRow, type: string) => {
-        toggleForm(false);
+        CNFormService.toggleForm(false);
         setList(listAction(data)[type]());
     };
 
@@ -80,8 +78,7 @@ const Component = ({history}: Props) => {
     };
 
     const onEdit = (id: number) => {
-        toggleForm(true);
-        setModalId(id);
+        CNFormService.toggleForm(true, id);
     };
 
     const searchList = (keyword: string) => getList('', keyword ? {search: keyword} : {});
@@ -172,20 +169,8 @@ const Component = ({history}: Props) => {
                 </tfoot>
             </table>
 
-            <CNForm id={modalId} open={formOpen.main} close={() => toggleForm(false)} onChange={onChange}>
-                <button type="button" className="btn btn-light" action="close" onClick={() => toggleForm(false)}>
-                    Cancel
-                </button>
-            </CNForm>
-            <GetOrCreateForm onChange={bagSelectHandle}>
-                <button
-                    type="button"
-                    className="btn btn-light"
-                    action="close"
-                    onClick={() => GetOrCreateService.toggleForm(false)}>
-                    Cancel
-                </button>
-            </GetOrCreateForm>
+            <GetOrCreateForm onChange={bagSelectHandle}/>
+            <CNForm onChange={onChange}/>
         </div>
     );
 };

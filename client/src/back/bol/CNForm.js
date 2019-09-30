@@ -7,6 +7,8 @@ import {Formik, Form} from 'formik';
 import type {FormikProps} from 'formik';
 // $FlowFixMe: do not complain about Yup
 import * as Yup from 'yup';
+// $FlowFixMe: do not complain about Yup
+import {Modal} from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import ErrMsgs from 'src/utils/helpers/ErrMsgs';
 import {apiUrls} from './_data';
@@ -19,7 +21,12 @@ import ButtonsBar from 'src/utils/components/form/ButtonsBar';
 import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
 
 export class Service {
-    static firstInputSelector = "#uid";
+    static toggleEvent = 'TOGGLE_BOL_CN_FORM_FORM';
+    static toggleForm(open: boolean, id: number = 0) {
+        Tools.event.dispatch(Service.toggleEvent, {open, id});
+    }
+
+    static firstInputSelector = '#uid';
 
     static focusFirstInput() {
         const firstInput = document.querySelector(`form ${Service.firstInputSelector}`);
@@ -90,7 +97,9 @@ export class Service {
                     resetForm(Service.initialValues);
                     Service.focusFirstInput();
                 } else {
-                    setErrors(Tools.setFormErrors(data));
+                    const erorrMessages = Tools.setFormErrors(data)
+                    setErrors(erorrMessages);
+                    Tools.popMessage(Object.values(erorrMessages)[0], 'error');
                 }
             });
         };
@@ -99,14 +108,16 @@ export class Service {
     static checkUID(resetForm: Function, setOrderId: Function) {
         return (e: Object) => {
             const uid = e.target.value;
-            Service.retrieveRequest(uid).then(resp => {
-                if (resp.ok) {
-                    resetForm(Tools.nullToDefault(resp.data, Service.initialValues));
-                }
-                setOrderId(resp.data && resp.data.order || 0);
-            }).catch(() => {
-                setOrderId(0);
-            });
+            Service.retrieveRequest(uid)
+                .then(resp => {
+                    if (resp.ok) {
+                        resetForm(Tools.nullToDefault(resp.data, Service.initialValues));
+                    }
+                    setOrderId((resp.data && resp.data.order) || 0);
+                })
+                .catch(() => {
+                    setOrderId(0);
+                });
         };
     }
 
@@ -116,18 +127,15 @@ export class Service {
 }
 
 type Props = {
-    id: number,
-    open: boolean,
-    close: Function,
     onChange: Function,
-    children?: React.Node,
     submitTitle?: string
 };
 
 type FormPartProps = {
+    handleOk: Function,
+    binHandleSubmit: Function,
     initialValues?: Object,
     onSubmit: Function,
-    children?: React.Node,
     submitTitle?: string
 };
 
@@ -147,13 +155,14 @@ export const BagPart = () => {
     );
 };
 
-export const FormPart = ({onSubmit, initialValues, submitTitle = '', children}: FormPartProps) => {
+export const FormPart = ({handleOk, binHandleSubmit, initialValues, onSubmit, submitTitle = ''}: FormPartProps) => {
     const formRef = useRef<FormikProps | null>(null);
     const [orderId, setOrderId] = useState(0);
     const prepareToEdit = ({detail: uid}) => {
         formRef.current && formRef.current.resetForm({...Service.initialValues, uid});
         Service.focusFirstInput();
     };
+
     useEffect(() => {
         window.document.addEventListener('PREPARE_TO_EDIT', prepareToEdit, false);
         return () => {
@@ -168,8 +177,10 @@ export const FormPart = ({onSubmit, initialValues, submitTitle = '', children}: 
             validationSchema={Service.validationSchema}
             onSubmit={onSubmit}>
             {({errors, values, handleSubmit, resetForm}) => {
+                if (handleOk === Tools.emptyFunction) binHandleSubmit(handleSubmit);
                 return (
                     <Form>
+                        <button className="hide"/>
                         <div className="row">
                             <div className="col">
                                 <TextInput
@@ -198,17 +209,17 @@ export const FormPart = ({onSubmit, initialValues, submitTitle = '', children}: 
                         </div>
                         <div className="row">
                             <div className="col">
-                                <CheckInput name="shockproof" label="Chống sốc" disabled={!!orderId}/>
+                                <CheckInput name="shockproof" label="Chống sốc" disabled={!!orderId} />
                                 {values.shockproof && (
                                     <TextInput name="cny_shockproof_fee" label="Phí chống sốc (CNY)" />
                                 )}
                             </div>
                             <div className="col">
-                                <CheckInput name="wooden_box" label="Đóng gỗ" disabled={!!orderId}/>
+                                <CheckInput name="wooden_box" label="Đóng gỗ" disabled={!!orderId} />
                                 {values.wooden_box && <TextInput name="cny_wooden_box_fee" label="Phí đóng gỗ (CNY)" />}
                             </div>
                             <div className="col">
-                                <CheckInput name="count_check" label="Kiểm đếm" disabled/>
+                                <CheckInput name="count_check" label="Kiểm đếm" disabled />
                             </div>
                         </div>
 
@@ -216,7 +227,6 @@ export const FormPart = ({onSubmit, initialValues, submitTitle = '', children}: 
                         <HiddenInput name="cn_date" />
                         <HiddenInput name="id" />
                         <FormLevelErrMsg errors={errors.detail} />
-                        <ButtonsBar children={children} submitTitle={submitTitle} />
                     </Form>
                 );
             }}
@@ -224,31 +234,55 @@ export const FormPart = ({onSubmit, initialValues, submitTitle = '', children}: 
     );
 };
 
-export default ({id, open, close, onChange, children, submitTitle = 'Save'}: Props) => {
+export default ({onChange, submitTitle = 'Lưu'}: Props) => {
+    const formName = 'Vận đơn TQ';
     const {validationSchema, handleSubmit} = Service;
 
-    const [openModal, setOpenModal] = useState(false);
+    const [open, setOpen] = useState(false);
+    const [id, setId] = useState(0);
+
     const [initialValues, setInitialValues] = useState(Service.initialValues);
 
     const retrieveThenOpen = (id: number) =>
         Service.retrieveRequest(id).then(resp => {
             if (!resp.ok) return Tools.popMessage(resp.data.detail, 'error');
             setInitialValues({...resp.data});
-            setOpenModal(true);
+            setOpen(true);
         });
 
+    const handleToggle = ({detail: {open, id}}) => {
+        open ? retrieveThenOpen(id) : setOpen(false);
+    };
+
     useEffect(() => {
-        open ? retrieveThenOpen(id) : setOpenModal(false);
-    }, [open]);
+        Tools.event.listen(Service.toggleEvent, handleToggle);
+        return () => {
+            Tools.event.remove(Service.toggleEvent, handleToggle);
+        };
+    }, []);
+
+    let handleOk = Tools.emptyFunction;
+
+    const binHandleSubmit = method => {
+        handleOk = method;
+    };
 
     return (
-        <DefaultModal open={openModal} close={close} title="Bol manager">
+        <Modal
+            destroyOnClose={true}
+            visible={open}
+            onOk={() => handleOk()}
+            onCancel={() => Service.toggleForm(false)}
+            okText={submitTitle}
+            cancelText="Thoát"
+            title={Tools.getFormTitle(id, formName)}>
             <FormPart
+                handleOk={handleOk}
+                binHandleSubmit={binHandleSubmit}
                 initialValues={initialValues}
-                children={children}
                 onSubmit={handleSubmit(onChange)}
                 submitTitle={submitTitle}
             />
-        </DefaultModal>
+        </Modal>
     );
 };

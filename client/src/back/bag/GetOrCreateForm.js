@@ -5,12 +5,13 @@ import {useState, useEffect, useRef} from 'react';
 import {Formik, Form} from 'formik';
 // $FlowFixMe: do not complain about Yup
 import * as Yup from 'yup';
+// $FlowFixMe: do not complain about Yup
+import {Modal} from 'antd';
 import type {SelectOptions} from 'src/utils/helpers/Tools';
 import Tools from 'src/utils/helpers/Tools';
 import ErrMsgs from 'src/utils/helpers/ErrMsgs';
 import {apiUrls} from './_data';
 import TextInput from 'src/utils/components/input/TextInput';
-import DefaultModal from 'src/utils/components/modal/DefaultModal';
 import SelectInput from 'src/utils/components/input/SelectInput';
 import ButtonsBar from 'src/utils/components/form/ButtonsBar';
 import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
@@ -55,6 +56,7 @@ type Props = {
     submitTitle?: string
 };
 export default ({onChange, children, submitTitle = 'Save'}: Props) => {
+    const formName = 'Bao hàng';
     const {validationSchema} = Service;
 
     const [open, setOpen] = useState(false);
@@ -74,11 +76,8 @@ export default ({onChange, children, submitTitle = 'Save'}: Props) => {
             }));
             setListBag(listBag);
             setListArea(listArea);
-            handleOpen();
+            setOpen(true);
         });
-
-    const handleClose = () => setOpen(false);
-    const handleOpen = () => setOpen(true);
 
     const handleAddBag = bag => {
         const newListBag = [{value: bag.id, label: bag.uid}, ...listBag];
@@ -86,7 +85,7 @@ export default ({onChange, children, submitTitle = 'Save'}: Props) => {
     };
 
     const handleToggle = ({detail: open}) => {
-        open ? retrieveThenOpen() : handleClose();
+        open ? retrieveThenOpen() : setOpen(false);
     };
 
     useEffect(() => {
@@ -96,36 +95,51 @@ export default ({onChange, children, submitTitle = 'Save'}: Props) => {
         };
     }, []);
 
+    let handleOk = Tools.emptyFunction;
+
     return (
-        <DefaultModal open={open} close={handleClose} title="Selec or create bag">
+        <Modal
+            destroyOnClose={true}
+            visible={open}
+            onOk={() => handleOk()}
+            onCancel={() => Service.toggleForm(false)}
+            okText={submitTitle}
+            cancelText="Thoát"
+            title={formName}>
             <Formik initialValues={{...initialValues}} validationSchema={validationSchema} onSubmit={onChange}>
-                {({errors, handleSubmit}) => (
-                    <Form>
-                        <div style={{display: 'flex'}}>
-                            <div style={{flexGrow: 1}}>
-                                <SelectInput name="bag" label="Bag" options={listBag} />
+                {({errors, handleSubmit}) => {
+                    if (handleOk === Tools.emptyFunction) handleOk = handleSubmit;
+                    return (
+                        <Form>
+                            <button className="hide" />
+                            <div style={{display: 'flex'}}>
+                                <div style={{flexGrow: 1}}>
+                                    <SelectInput name="bag" label="Chọn bao hàng" options={listBag} />
+                                </div>
+                                <div style={{alignSelf: 'flex-end'}}>
+                                    <Editable
+                                        onChange={handleAddBag}
+                                        adding={true}
+                                        name="area"
+                                        formater={parseInt}
+                                        endPoint={apiUrls.crud}
+                                        type="select"
+                                        options={listArea}
+                                        placeholder="Vùng...">
+                                        <button
+                                            type="button"
+                                            className="btn btn-link btn-lg"
+                                            style={{marginBottom: 13}}>
+                                            <span className="fas fa-plus" />
+                                        </button>
+                                    </Editable>
+                                </div>
                             </div>
-                            <div style={{alignSelf: 'flex-end'}}>
-                                <Editable
-                                    onChange={handleAddBag}
-                                    adding={true}
-                                    name="area"
-                                    formater={parseInt}
-                                    endPoint={apiUrls.crud}
-                                    type="select"
-                                    options={listArea}
-                                    placeholder="Vùng...">
-                                    <button type="button" className="btn btn-link btn-lg" style={{marginBottom: 13}}>
-                                        <span className="fas fa-plus" />
-                                    </button>
-                                </Editable>
-                            </div>
-                        </div>
-                        <FormLevelErrMsg errors={errors.detail} />
-                        <ButtonsBar children={children} submitTitle={submitTitle} onClick={handleSubmit} />
-                    </Form>
-                )}
+                            <FormLevelErrMsg errors={errors.detail} />
+                        </Form>
+                    );
+                }}
             </Formik>
-        </DefaultModal>
+        </Modal>
     );
 };
