@@ -5,6 +5,8 @@ import {useState, useEffect, useRef} from 'react';
 import {Formik, Form} from 'formik';
 // $FlowFixMe: do not complain about formik
 import * as Yup from 'yup';
+// $FlowFixMe: do not complain about Yup
+import {Modal} from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import ErrMsgs from 'src/utils/helpers/ErrMsgs';
 import {apiUrls} from './_data';
@@ -14,6 +16,11 @@ import ButtonsBar from 'src/utils/components/form/ButtonsBar';
 import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
 
 export class Service {
+    static toggleEvent = 'TOGGLE_AREA_MAIN_FORM';
+    static toggleForm(open: boolean, id: number = 0) {
+        Tools.event.dispatch(Service.toggleEvent, {open, id});
+    }
+
     static initialValues = {
         uid: '',
         title: '',
@@ -39,71 +46,75 @@ export class Service {
         return id ? Tools.apiCall(apiUrls.crud + id) : Promise.resolve({ok: true, data: Service.initialValues});
     }
 
-    static handleSubmit(id: number, onChange: Function, reOpenDialog: boolean) {
-        return (values: Object, {setErrors}: Object) =>
-            Service.changeRequest(id ? {...values, id} : values).then(({ok, data}) =>
-                ok
-                    ? onChange({...data, checked: false}, id ? 'update' : 'add', reOpenDialog)
-                    : setErrors(Tools.setFormErrors(data))
+    static handleSubmit(id: number, onChange: Function) {
+        return (values: Object, {setErrors}: Object) => {
+            return Service.changeRequest(id ? {...values, id} : values).then(({ok, data}) =>
+                ok ? onChange({...data, checked: false}, id ? 'update' : 'add') : setErrors(Tools.setFormErrors(data))
             );
-    }
+        };
+    } 
 }
 
 type Props = {
-    id: number,
-    open: boolean,
-    close: Function,
     onChange: Function,
-    children?: React.Node,
     submitTitle?: string
 };
-export default ({id, open, close, onChange, children, submitTitle = 'Save'}: Props) => {
-    const firstInputSelector = "[name='uid']";
+export default ({onChange, submitTitle = 'Save'}: Props) => {
+    const formName = 'Vùng';
     const {validationSchema, handleSubmit} = Service;
 
-    const [openModal, setOpenModal] = useState(false);
-    const [reOpenDialog, setReOpenDialog] = useState(true);
+    const [open, setOpen] = useState(false);
+    const [id, setId] = useState(0);
+
     const [initialValues, setInitialValues] = useState(Service.initialValues);
 
     const retrieveThenOpen = (id: number) =>
         Service.retrieveRequest(id).then(resp => {
             if (!resp.ok) return Tools.popMessage(resp.data.detail, 'error');
             setInitialValues({...resp.data});
-            setOpenModal(true);
+            setOpen(true);
+            setId(id);
         });
 
+    const handleToggle = ({detail: {open, id}}) => {
+        open ? retrieveThenOpen(id) : setOpen(false);
+    };
+
     useEffect(() => {
-        open ? retrieveThenOpen(id) : setOpenModal(false);
-        setReOpenDialog(id ? false : true);
-    }, [open]);
+        Tools.event.listen(Service.toggleEvent, handleToggle);
+        return () => {
+            Tools.event.remove(Service.toggleEvent, handleToggle);
+        };
+    }, []);
 
-    const focusFirstInput = () => {
-        const firstInput = document.querySelector(`form ${firstInputSelector}`);
-        firstInput && firstInput.focus();
-    };
-
-    const onClick = (handleSubmit: Function) => () => {
-        setReOpenDialog(false);
-        focusFirstInput();
-        handleSubmit();
-    };
+    let handleOk = Tools.emptyFunction;
 
     return (
-        <DefaultModal open={openModal} close={close} title="Area manager">
+        <Modal
+            destroyOnClose={true}
+            visible={open}
+            onOk={() => handleOk()}
+            onCancel={() => Service.toggleForm(false)}
+            okText={submitTitle}
+            cancelText="Thoát"
+            title={Tools.getFormTitle(id, formName)}>
             <Formik
                 initialValues={{...initialValues}}
                 validationSchema={validationSchema}
-                onSubmit={handleSubmit(id, onChange, reOpenDialog)}>
-                {({errors, handleSubmit}) => (
-                    <Form>
-                        <TextInput name="uid" label="Key" autoFocus={true} required={true} />
-                        <TextInput name="title" label="Title" required={true} />
-                        <TextInput type="number" name="unit_price" label="Unit price" required={true} />
-                        <FormLevelErrMsg errors={errors.detail} />
-                        <ButtonsBar children={children} submitTitle={submitTitle} onClick={onClick(handleSubmit)} />
-                    </Form>
-                )}
+                onSubmit={handleSubmit(id, onChange)}>
+                {({errors, handleSubmit}) => {
+                    if (handleOk === Tools.emptyFunction) handleOk = handleSubmit;
+                    return (
+                        <Form>
+                            <button className="hide" />
+                            <TextInput name="uid" label="Mã vùng" autoFocus={true} required={true} />
+                            <TextInput name="title" label="Tên vùng" required={true} />
+                            <TextInput type="number" name="unit_price" label="Đơn giá vận chuyển" required={true} />
+                            <FormLevelErrMsg errors={errors.detail} />
+                        </Form>
+                    );
+                }}
             </Formik>
-        </DefaultModal>
+        </Modal>
     );
 };
