@@ -97,7 +97,7 @@ export class Service {
                     resetForm(Service.initialValues);
                     Service.focusFirstInput();
                 } else {
-                    const erorrMessages = Tools.setFormErrors(data)
+                    const erorrMessages = Tools.setFormErrors(data);
                     setErrors(erorrMessages);
                     Tools.popMessage(Object.values(erorrMessages)[0], 'error');
                 }
@@ -136,6 +136,7 @@ type FormPartProps = {
     binHandleSubmit: Function,
     initialValues?: Object,
     onSubmit: Function,
+    children?: React.Node,
     submitTitle?: string
 };
 
@@ -155,7 +156,14 @@ export const BagPart = () => {
     );
 };
 
-export const FormPart = ({handleOk, binHandleSubmit, initialValues, onSubmit, submitTitle = ''}: FormPartProps) => {
+export const FormPart = ({
+    handleOk,
+    binHandleSubmit,
+    initialValues,
+    onSubmit,
+    children = null,
+    submitTitle = ''
+}: FormPartProps) => {
     const formRef = useRef<FormikProps | null>(null);
     const [orderId, setOrderId] = useState(0);
     const prepareToEdit = ({detail: uid}) => {
@@ -180,7 +188,7 @@ export const FormPart = ({handleOk, binHandleSubmit, initialValues, onSubmit, su
                 if (handleOk === Tools.emptyFunction) binHandleSubmit(handleSubmit);
                 return (
                     <Form>
-                        <button className="hide"/>
+                        <button className="hide" />
                         <div className="row">
                             <div className="col">
                                 <TextInput
@@ -227,6 +235,7 @@ export const FormPart = ({handleOk, binHandleSubmit, initialValues, onSubmit, su
                         <HiddenInput name="cn_date" />
                         <HiddenInput name="id" />
                         <FormLevelErrMsg errors={errors.detail} />
+                        <div>{children}</div>
                     </Form>
                 );
             }}

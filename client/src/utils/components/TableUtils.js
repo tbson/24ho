@@ -38,9 +38,8 @@ export const Pagination = ({next, prev, onNavigate}: PaginationPropTypes) => {
     const renderNext = (next: ?string) => {
         if (!next) return null;
         return [
-            <Button type="primary" key={1} onClick={() => onNavigate(next)}>
+            <Button type="primary" key={1} icon="right" onClick={() => onNavigate(next)}>
                 Trang tiếp
-                <Icon type="right"/>
             </Button>
         ];
     };

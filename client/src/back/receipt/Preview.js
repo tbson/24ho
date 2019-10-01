@@ -5,7 +5,8 @@ import {useState, useEffect, useRef} from 'react';
 import ReactToPrint from 'react-to-print';
 // $FlowFixMe: do not complain about importing node_modules
 import Barcode from 'react-barcode';
-import DefaultModal from 'src/utils/components/modal/DefaultModal';
+// $FlowFixMe: do not complain about Yup
+import {Modal, Button} from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import {apiUrls} from 'src/back/receipt/_data';
 import logoUrl from 'src/assets/images/logo.jpg';
@@ -77,26 +78,32 @@ export default ({close}: Props) => {
     }, []);
 
     return (
-        <div>
-            <DefaultModal open={open} close={close} size="lg" title="Phiếu giao hàng">
-                <div>
-                    <Content data={data} ref={contentRef} />
-                    <hr />
-                    <ReactToPrint
-                        onAfterPrint={() => Service.toggleForm(false)}
-                        trigger={() => (
-                            <div className="right">
-                                <button className="btn btn-primary">
-                                    <span className="fas fa-print" />
-                                    &nbsp;&nbsp;<span>In phiếu thu</span>
-                                </button>
-                            </div>
-                        )}
-                        content={() => contentRef.current}
-                    />
-                </div>
-            </DefaultModal>
-        </div>
+        <Modal
+            width="90%"
+            destroyOnClose={true}
+            visible={open}
+            onOk={() => handleOk()}
+            onCancel={() => Service.toggleForm(false)}
+            footer={null}
+            okText="Phiếu giao hàng"
+            cancelText="Thoát"
+            title="In phiếu giao hàng">
+            <div>
+                <Content data={data} ref={contentRef} />
+                <hr />
+                <ReactToPrint
+                    onAfterPrint={() => Service.toggleForm(false)}
+                    trigger={() => (
+                        <div className="right">
+                            <Button type="primary" icon="printer">
+                                In phiếu thu
+                            </Button>
+                        </div>
+                    )}
+                    content={() => contentRef.current}
+                />
+            </div>
+        </Modal>
     );
 };
 

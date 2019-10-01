@@ -49,10 +49,12 @@ export default ({data, showForm, onPrint, onCheck, onRemove}: RowPropTypes) => {
                 <a className="printBtn" onClick={() => onPrint(data.id)}>
                     <span className="fas fa-print text-success pointer" />
                 </a>
+                {/*
                 <span>&nbsp;&nbsp;&nbsp;</span>
                 <a className="editBtn" onClick={() => showForm(data.id)}>
                     <span className="fas fa-edit text-info pointer" />
                 </a>
+                */}
                 <span>&nbsp;&nbsp;&nbsp;</span>
                 <a className="removeBtn" onClick={() => _onRemove(id)}>
                     <span className="fas fa-trash-alt text-danger pointer" />

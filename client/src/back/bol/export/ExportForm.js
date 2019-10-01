@@ -5,6 +5,8 @@ import {useState, useEffect, useRef} from 'react';
 import {Formik, Form} from 'formik';
 // $FlowFixMe: do not complain about Yup
 import * as Yup from 'yup';
+// $FlowFixMe: do not complain about Yup
+import {Modal} from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import ErrMsgs from 'src/utils/helpers/ErrMsgs';
 import {apiUrls} from '../_data';
@@ -15,6 +17,9 @@ import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
 
 export class Service {
     static toggleEvent = 'TOGGLE_BOL_EXPORT_FORM';
+    static toggleForm(open: boolean) {
+        Tools.event.dispatch(Service.toggleEvent, {open});
+    }
 
     static initialValues = {
         vnd_sub_fee: 0,
@@ -25,10 +30,6 @@ export class Service {
         vnd_sub_fee: Yup.number().required(ErrMsgs.REQUIRED),
         note: Yup.string()
     });
-
-    static toggleForm(open: boolean) {
-        Tools.event.dispatch(Service.toggleEvent, {open});
-    }
 
     static handleSubmit(onChange: Function, closeOnSubmit: boolean, ids: Array<number>) {
         return (values: Object) =>
@@ -45,6 +46,7 @@ type Props = {
     closeOnSubmit?: boolean
 };
 export default ({onChange, closeOnSubmit = true, ids}: Props) => {
+    const formName = 'Xuất hàng';
     const {validationSchema, handleSubmit} = Service;
 
     const [open, setOpen] = useState(false);
@@ -59,35 +61,39 @@ export default ({onChange, closeOnSubmit = true, ids}: Props) => {
         };
     }, []);
 
+    let handleOk = Tools.emptyFunction;
+
     return (
-        <DefaultModal open={open} close={() => Service.toggleForm(false)} title="Variable manager">
+        <Modal
+            destroyOnClose={true}
+            visible={open}
+            onOk={() => handleOk()}
+            onCancel={() => Service.toggleForm(false)}
+            okText="Xuất"
+            cancelText="Thoát"
+            title="Xuất hàng">
             <Formik
                 initialValues={{...initialValues}}
                 validationSchema={validationSchema}
                 onSubmit={handleSubmit(onChange, closeOnSubmit, ids)}>
-                {({errors}) => (
-                    <Form>
-                        <TextInput
-                            name="vnd_sub_fee"
-                            type="number"
-                            label="Phí giao hàng VND"
-                            autoFocus={true}
-                            required={true}
-                        />
-                        <TextInput name="note" label="Ghi chú" />
-                        <FormLevelErrMsg errors={errors.detail} />
-                        <ButtonsBar submitTitle="Xuất hàng">
-                            <button
-                                type="button"
-                                className="btn btn-light"
-                                action="close"
-                                onClick={() => Service.toggleForm(false)}>
-                                Cancel
-                            </button>
-                        </ButtonsBar>
-                    </Form>
-                )}
+                {({errors, handleSubmit}) => {
+                    if (handleOk === Tools.emptyFunction) handleOk = handleSubmit;
+                    return (
+                        <Form>
+                            <button className="hide" />
+                            <TextInput
+                                name="vnd_sub_fee"
+                                type="number"
+                                label="Phí giao hàng VND"
+                                autoFocus={true}
+                                required={true}
+                            />
+                            <TextInput name="note" label="Ghi chú" />
+                            <FormLevelErrMsg errors={errors.detail} />
+                        </Form>
+                    );
+                }}
             </Formik>
-        </DefaultModal>
+        </Modal>
     );
 };

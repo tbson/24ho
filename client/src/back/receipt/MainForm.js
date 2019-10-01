@@ -5,6 +5,8 @@ import {useState, useEffect, useRef} from 'react';
 import {Formik, Form} from 'formik';
 // $FlowFixMe: do not complain about Yup
 import * as Yup from 'yup';
+// $FlowFixMe: do not complain about Yup
+import {Modal} from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import ErrMsgs from 'src/utils/helpers/ErrMsgs';
 import {apiUrls} from './_data';
@@ -15,11 +17,8 @@ import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
 
 export class Service {
     static toggleEvent = 'TOGGLE_RECEIPT_MAIN_FORM';
-    static firstInputSelector = "[name='uid']";
-
-    static focusFirstInput() {
-        const firstInput = document.querySelector(`form ${Service.firstInputSelector}`);
-        firstInput && firstInput.focus();
+    static toggleForm(open: boolean, id: number = 0) {
+        Tools.event.dispatch(Service.toggleEvent, {open, id});
     }
 
     static initialValues = {
@@ -48,10 +47,6 @@ export class Service {
                 ok ? onChange({...data, checked: false}, id ? 'update' : 'add') : setErrors(Tools.setFormErrors(data))
             );
     }
-
-    static toggleForm(open: boolean, id: number = 0) {
-        Tools.event.dispatch(Service.toggleEvent, {open, id});
-    }
 }
 
 type Props = {
@@ -61,6 +56,7 @@ type Props = {
     submitTitle?: string
 };
 export default ({close, onChange, children, submitTitle = 'Save'}: Props) => {
+    const formName = 'Phiếu thu';
     const {validationSchema, handleSubmit} = Service;
 
     const [open, setOpen] = useState(false);
@@ -86,21 +82,32 @@ export default ({close, onChange, children, submitTitle = 'Save'}: Props) => {
         };
     }, []);
 
+    let handleOk = Tools.emptyFunction;
+
     return (
-        <DefaultModal open={open} close={close} title="Receipt manager">
+        <Modal
+            destroyOnClose={true}
+            visible={open}
+            onOk={() => handleOk()}
+            onCancel={() => Service.toggleForm(false)}
+            okText={submitTitle}
+            cancelText="Thoát"
+            title={Tools.getFormTitle(id, formName)}>
             <Formik
                 initialValues={{...initialValues}}
                 validationSchema={validationSchema}
                 onSubmit={handleSubmit(id, onChange)}>
-                {({errors, handleSubmit}) => (
-                    <Form>
-                        <TextInput name="uid" label="Key" autoFocus={true} required={true} />
-                        <TextInput name="value" label="Value" required={true} />
-                        <FormLevelErrMsg errors={errors.detail} />
-                        <ButtonsBar children={children} submitTitle={submitTitle} onClick={handleSubmit} />
-                    </Form>
-                )}
+                {({errors, handleSubmit}) => {
+                    if (handleOk === Tools.emptyFunction) handleOk = handleSubmit;
+                    return (
+                        <Form>
+                            <TextInput name="uid" label="Key" autoFocus={true} required={true} />
+                            <TextInput name="value" label="Value" required={true} />
+                            <FormLevelErrMsg errors={errors.detail} />
+                        </Form>
+                    );
+                }}
             </Formik>
-        </DefaultModal>
+        </Modal>
     );
 };
