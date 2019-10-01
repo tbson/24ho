@@ -131,13 +131,7 @@ export default ({}: Props) => {
                 </tfoot>
             </table>
 
-            <MainForm close={() => MainFormService.toggleForm(false)} onChange={onChange}>
-                <Button
-                    icon="close"
-                    onClick={() => MainFormService.toggleForm(false)}>
-                    Thoát
-                </Button>
-            </MainForm>
+            <MainForm onChange={onChange}/>
         </div>
     );
 };
