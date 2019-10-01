@@ -79,6 +79,9 @@ const Component = ({history, location, children}: Props) => {
             case 'area':
                 if (APP !== 'admin') return null;
                 return menuItem('area', 'Vùng', 'environment');
+            case 'address':
+                if (APP === 'admin') return null;
+                return menuItem('address', 'Địa chỉ', 'environment');
             case 'cart':
                 if (APP !== 'user') return null;
                 return menuItem('cart', 'Giỏ hàng', 'shopping-cart');
@@ -108,6 +111,7 @@ const Component = ({history, location, children}: Props) => {
                     {renderMenu('customerGroup')}
                     {renderMenu('role')}
                     {renderMenu('transaction')}
+                    {renderMenu('address')}
                     {renderMenu('bag')}
                     {renderMenu('order')}
                     {renderMenu('bol')}

@@ -1,12 +1,15 @@
 // @flow
 import * as React from 'react';
 import {useState, useEffect} from 'react';
+// $FlowFixMe: do not complain about importing
+import {Button} from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
 import {apiUrls} from '../_data';
 import type {TRow, DbRow, ListItem, FormOpenType, FormOpenKeyType} from '../_data';
 import {Pagination, SearchInput} from 'src/utils/components/TableUtils';
 import MainForm from '../MainForm';
+import {Service as MainFormService} from '../MainForm';
 import Row from './Row.js';
 import {Service as AreaService} from 'src/back/area/';
 
@@ -43,8 +46,6 @@ export default ({}: Props) => {
     const [modalId, setModalId] = useState(0);
     const [links, setLinks] = useState({next: '', previous: ''});
 
-    const toggleForm = (value: boolean, key: FormOpenKeyType = 'main') => setFormOpen({...formOpen, [key]: value});
-
     const listAction = ListTools.actions(list);
 
     const getList = async (url?: string, params?: Object) => {
@@ -56,13 +57,12 @@ export default ({}: Props) => {
         setLinks(data.links);
     };
 
-    const onChange = (data: TRow, type: string, reOpenDialog: boolean) => {
-        toggleForm(false);
+    const onChange = (data: TRow, type: string) => {
+        MainFormService.toggleForm(false);
         data = AreaService.prepareItem(data, listArea);
         let newList = [...list];
         if (data.default) newList = list.map(item => ({...item, default: false}));
         setList(listAction(data)[type](newList));
-        reOpenDialog && toggleForm(true);
     };
 
     const onCheck = id => setList(ListTools.checkOne(id, list));
@@ -80,7 +80,7 @@ export default ({}: Props) => {
     };
 
     const showForm = (id: number) => {
-        toggleForm(true);
+        MainFormService.toggleForm(true);
         setModalId(id);
     };
 
@@ -98,17 +98,16 @@ export default ({}: Props) => {
                         <th className="row25">
                             <span className="fas fa-check text-info pointer check-all-button" onClick={onCheckAll} />
                         </th>
-                        <th scope="col">Area</th>
-                        <th scope="col">Code</th>
-                        <th scope="col">Address</th>
-                        <th scope="col">Phone</th>
-                        <th scope="col">Fullname</th>
+                        <th scope="col">Vùng</th>
+                        <th scope="col">Mã vùng</th>
+                        <th scope="col">Địa chỉ</th>
+                        <th scope="col">Số điện thoại</th>
+                        <th scope="col">Họ và tên</th>
                         <th scope="col">Mặc định</th>
                         <th scope="col" style={{padding: 8}} className="row80">
-                            <button className="btn btn-primary btn-sm btn-block add-button" onClick={() => showForm(0)}>
-                                <span className="fas fa-plus" />
-                                &nbsp; Add
-                            </button>
+                            <Button type="primary" icon="plus" onClick={() => MainFormService.toggleForm(true)}>
+                                Thêm
+                            </Button>
                         </th>
                     </tr>
                 </thead>
@@ -129,7 +128,7 @@ export default ({}: Props) => {
                             key={key}
                             onCheck={onCheck}
                             onRemove={onRemove}
-                            showForm={showForm}
+                            showForm={id => MainFormService.toggleForm(true, id)}
                         />
                     ))}
                 </tbody>
@@ -148,16 +147,7 @@ export default ({}: Props) => {
                     </tr>
                 </tfoot>
             </table>
-            <MainForm
-                id={modalId}
-                listArea={listArea}
-                open={formOpen.main}
-                close={() => toggleForm(false)}
-                onChange={onChange}>
-                <button type="button" className="btn btn-light" action="close" onClick={() => toggleForm(false)}>
-                    Cancel
-                </button>
-            </MainForm>
+            <MainForm listArea={listArea} onChange={onChange} />
         </div>
     );
 };
