@@ -74,6 +74,13 @@
     font-weight: bold;
 }
 
+.percent {
+    text-align: right;
+}
+.percent::after {
+    content: '%';
+}
+
 .vnd {
     text-align: right;
 }
