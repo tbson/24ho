@@ -83,7 +83,7 @@ if (TARGET === 'start' || !TARGET) {
         watchOptions: {
             ignored: /node_modules/
         },
-        devtool: 'inline-source-map',
+        devtool: 'cheap-module-eval-source-map',
         devServer: {
             disableHostCheck: true,
             contentBase: PATHS.build,
