@@ -67,7 +67,7 @@ type Props = {
     submitTitle?: string
 };
 export default ({onChange, submitTitle = 'Lưu'}: Props) => {
-    const formName = 'Cấu hình';
+    const formName = 'Giá phí dịch vụ';
     const {validate, validationSchema, handleSubmit} = Service;
 
     const [open, setOpen] = useState(false);

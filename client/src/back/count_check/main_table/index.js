@@ -2,13 +2,14 @@
 import * as React from 'react';
 import {useState, useEffect} from 'react';
 // $FlowFixMe: do not complain about importing
-import { Button } from 'antd';
+import {Button} from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
 import {apiUrls} from '../_data';
 import type {TRow, DbRow, ListItem, FormOpenType, FormOpenKeyType} from '../_data';
 import {Pagination, SearchInput} from 'src/utils/components/TableUtils';
 import MainForm from '../MainForm';
+import {Service as MainFormService} from '../MainForm';
 import Row from './Row.js';
 
 type Props = {};
@@ -43,8 +44,6 @@ export default ({}: Props) => {
     const [modalId, setModalId] = useState(0);
     const [links, setLinks] = useState({next: '', previous: ''});
 
-    const toggleForm = (value: boolean, key: FormOpenKeyType = 'main') => setFormOpen({...formOpen, [key]: value});
-
     const listAction = ListTools.actions(list);
 
     const getList = async (url?: string, params?: Object) => {
@@ -54,10 +53,9 @@ export default ({}: Props) => {
         setLinks(data.links);
     };
 
-    const onChange = (data: TRow, type: string, reOpenDialog: boolean) => {
-        toggleForm(false);
+    const onChange = (data: TRow, type: string) => {
+        MainFormService.toggleForm(false);
         setList(listAction(data)[type]());
-        reOpenDialog && toggleForm(true);
     };
 
     const onCheck = id => setList(ListTools.checkOne(id, list));
@@ -75,7 +73,7 @@ export default ({}: Props) => {
     };
 
     const showForm = (id: number) => {
-        toggleForm(true);
+        MainFormService.toggleForm(true);
         setModalId(id);
     };
 
@@ -93,11 +91,17 @@ export default ({}: Props) => {
                         <th className="row25">
                             <span className="fas fa-check text-info pointer check-all-button" onClick={onCheckAll} />
                         </th>
-                        <th scope="col" className="right">Từ (Cái)</th>
-                        <th scope="col" className="right">Đến (Cái)</th>
-                        <th scope="col" className="right">Phí (CNY)</th>
+                        <th scope="col" className="right">
+                            Từ (Cái)
+                        </th>
+                        <th scope="col" className="right">
+                            Đến (Cái)
+                        </th>
+                        <th scope="col" className="right">
+                            Phí (CNY)
+                        </th>
                         <th scope="col" style={{padding: 8}} className="row80">
-                            <Button type="primary" icon="plus" onClick={() => showForm(0)}>
+                            <Button type="primary" icon="plus" onClick={() => MainFormService.toggleForm(true)}>
                                 Thêm
                             </Button>
                         </th>
@@ -120,7 +124,7 @@ export default ({}: Props) => {
                             key={key}
                             onCheck={onCheck}
                             onRemove={onRemove}
-                            showForm={showForm}
+                            showForm={id => MainFormService.toggleForm(true, id)}
                         />
                     ))}
                 </tbody>
@@ -140,11 +144,7 @@ export default ({}: Props) => {
                 </tfoot>
             </table>
 
-            <MainForm id={modalId} open={formOpen.main} close={() => toggleForm(false)} onChange={onChange}>
-                <Button icon="close" onClick={() => toggleForm(false)}>
-                    Thoát
-                </Button>
-            </MainForm>
+            <MainForm onChange={onChange} />
         </div>
     );
 };
