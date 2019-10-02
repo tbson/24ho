@@ -88,7 +88,7 @@ export default ({}: Props) => {
                     </tfoot>
                 )}
             </table>
-            <Preview close={() => PreviewService.toggleForm(false)} />
+            <Preview/>
         </div>
     );
 };

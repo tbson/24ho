@@ -5,15 +5,21 @@ import {useState, useEffect, useRef} from 'react';
 import {Formik, Form} from 'formik';
 // $FlowFixMe: do not complain about Yup
 import * as Yup from 'yup';
+// $FlowFixMe: do not complain about Yup
+import {Modal} from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import ErrMsgs from 'src/utils/helpers/ErrMsgs';
 import {apiUrls} from './_data';
 import TextInput from 'src/utils/components/input/TextInput';
-import DefaultModal from 'src/utils/components/modal/DefaultModal';
 import ButtonsBar from 'src/utils/components/form/ButtonsBar';
 import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
 
 export class Service {
+    static toggleEvent = 'TOGGLE_DELIVERY_FEE_MAIN_FORM';
+    static toggleForm(open: boolean, id: number = 0) {
+        Tools.event.dispatch(Service.toggleEvent, {open, id});
+    }
+
     static initialValues = {
         start: 0,
         stop: 0,
@@ -52,12 +58,12 @@ export class Service {
         return id ? Tools.apiCall(apiUrls.crud + id) : Promise.resolve({ok: true, data: Service.initialValues});
     }
 
-    static handleSubmit(id: number, onChange: Function, reOpenDialog: boolean, extraParams: Object = {}) {
+    static handleSubmit(id: number, onChange: Function, extraParams: Object = {}) {
         return (values: Object, {setErrors}: Object) =>
             Service.changeRequest(id ? {...values, ...extraParams, id} : {...values, ...extraParams}).then(
                 ({ok, data}) =>
                     ok
-                        ? onChange({...data, checked: false}, id ? 'update' : 'add', reOpenDialog)
+                        ? onChange({...data, checked: false}, id ? 'update' : 'add')
                         : setErrors(Tools.setFormErrors(data))
             );
     }
@@ -66,69 +72,73 @@ export class Service {
 type Props = {
     type: number,
     area: number,
-    id: number,
-    open: boolean,
-    close: Function,
     onChange: Function,
-    children?: React.Node,
     submitTitle?: string
 };
-export default ({type, area, id, open, close, onChange, children, submitTitle = 'Save'}: Props) => {
-    const firstInputSelector = "[name='uid']";
+export default ({type, area, onChange, submitTitle = 'Lưu'}: Props) => {
+    const formName = 'Phí vận chuyển';
     const {validate, validationSchema, handleSubmit} = Service;
 
-    const [openModal, setOpenModal] = useState(false);
-    const [reOpenDialog, setReOpenDialog] = useState(true);
+    const [open, setOpen] = useState(false);
+    const [id, setId] = useState(0);
     const [initialValues, setInitialValues] = useState(Service.initialValues);
 
     const retrieveThenOpen = (id: number) =>
         Service.retrieveRequest(id).then(resp => {
             if (!resp.ok) return Tools.popMessage(resp.data.detail, 'error');
             setInitialValues({...resp.data});
-            setOpenModal(true);
+            setOpen(true);
+            setId(id);
         });
 
+    const handleToggle = ({detail: {open, id}}) => {
+        open ? retrieveThenOpen(id) : setOpen(false);
+    };
+
     useEffect(() => {
-        open ? retrieveThenOpen(id) : setOpenModal(false);
-        setReOpenDialog(id ? false : true);
-    }, [open]);
+        Tools.event.listen(Service.toggleEvent, handleToggle);
+        return () => {
+            Tools.event.remove(Service.toggleEvent, handleToggle);
+        };
+    }, []);
+
+    let handleOk = Tools.emptyFunction;
 
     const unit = Tools.deliveryFeeUnitLabel(type);
 
-    const focusFirstInput = () => {
-        const firstInput = document.querySelector(`form ${firstInputSelector}`);
-        firstInput && firstInput.focus();
-    };
-
-    const onClick = (handleSubmit: Function) => () => {
-        setReOpenDialog(false);
-        focusFirstInput();
-        handleSubmit();
-    };
-
     return (
-        <DefaultModal open={openModal} close={close} title="Delivery fee manager">
+        <Modal
+            destroyOnClose={true}
+            visible={open}
+            onOk={() => handleOk()}
+            onCancel={() => Service.toggleForm(false)}
+            okText={submitTitle}
+            cancelText="Thoát"
+            title={Tools.getFormTitle(id, formName)}>
             <Formik
                 initialValues={{...initialValues}}
                 validate={validate}
                 validationSchema={validationSchema}
-                onSubmit={handleSubmit(id, onChange, reOpenDialog, {type, area})}>
-                {({errors, handleSubmit}) => (
-                    <Form>
-                        <TextInput
-                            name="start"
-                            type="number"
-                            label={`Từ (${unit})`}
-                            autoFocus={true}
-                            required={true}
-                        />
-                        <TextInput name="stop" type="number" label={`Đến (${unit})`} required={true} />
-                        <TextInput name="vnd_unit_price" type="number" label="Phí (VND)" required={true} />
-                        <FormLevelErrMsg errors={errors.detail} />
-                        <ButtonsBar children={children} submitTitle={submitTitle} onClick={onClick(handleSubmit)} />
-                    </Form>
-                )}
+                onSubmit={handleSubmit(id, onChange, {type, area})}>
+                {({errors, handleSubmit}) => {
+                    if (handleOk === Tools.emptyFunction) handleOk = handleSubmit;
+                    return (
+                        <Form>
+                            <button className="hide" />
+                            <TextInput
+                                name="start"
+                                type="number"
+                                label={`Từ (${unit})`}
+                                autoFocus={true}
+                                required={true}
+                            />
+                            <TextInput name="stop" type="number" label={`Đến (${unit})`} required={true} />
+                            <TextInput name="vnd_unit_price" type="number" label="Phí (VND)" required={true} />
+                            <FormLevelErrMsg errors={errors.detail} />
+                        </Form>
+                    );
+                }}
             </Formik>
-        </DefaultModal>
+        </Modal>
     );
 };

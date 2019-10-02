@@ -2,7 +2,7 @@
 import * as React from 'react';
 import {useState, useEffect} from 'react';
 // $FlowFixMe: do not complain about importing
-import { Button } from 'antd';
+import {Button} from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
 import {apiUrls} from '../_data';
@@ -86,10 +86,7 @@ export default ({}: Props) => {
                         <th scope="col">Tên tài khoản</th>
                         <th scope="col">Số tài khoản</th>
                         <th scope="col" style={{padding: 8}} className="row80">
-                            <Button
-                                type="primary"
-                                icon="plus"
-                                onClick={() => MainFormService.toggleForm(true)}>
+                            <Button type="primary" icon="plus" onClick={() => MainFormService.toggleForm(true)}>
                                 Thêm
                             </Button>
                         </th>
@@ -132,13 +129,7 @@ export default ({}: Props) => {
                 </tfoot>
             </table>
 
-            <MainForm close={() => MainFormService.toggleForm(false)} onChange={onChange}>
-                <Button
-                    icon="close"
-                    onClick={() => MainFormService.toggleForm(false)}>
-                    Thoát
-                </Button>
-            </MainForm>
+            <MainForm onChange={onChange} />
         </div>
     );
 };

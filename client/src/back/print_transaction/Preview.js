@@ -5,7 +5,8 @@ import {useState, useEffect, useRef} from 'react';
 import ReactToPrint from 'react-to-print';
 // $FlowFixMe: do not complain about importing node_modules
 import Barcode from 'react-barcode';
-import DefaultModal from 'src/utils/components/modal/DefaultModal';
+// $FlowFixMe: do not complain about Yup
+import {Button, Modal} from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import {apiUrls} from 'src/back/transaction/_data';
 import logoUrl from 'src/assets/images/logo.jpg';
@@ -22,11 +23,10 @@ export class Service {
     }
 }
 
-type Props = {
-    close: Function
-};
+type Props = {};
 
-export default ({close}: Props) => {
+export default ({}: Props) => {
+    const formName = 'Phiếu thu';
     const contentRef = useRef();
     const [data, setData] = useState({});
     const [open, setOpen] = useState(false);
@@ -50,7 +50,13 @@ export default ({close}: Props) => {
 
     return (
         <div>
-            <DefaultModal open={open} close={close} size="lg" title="Phiếu thu">
+            <Modal
+                destroyOnClose={true}
+                visible={open}
+                onCancel={() => Service.toggleForm(false)}
+                footer={null}
+                width="80%"
+                title={formName}>
                 <div>
                     <Content data={data} ref={contentRef} />
                     <hr />
@@ -58,16 +64,15 @@ export default ({close}: Props) => {
                         onAfterPrint={() => Service.toggleForm(false)}
                         trigger={() => (
                             <div className="right">
-                                <button className="btn btn-primary">
-                                    <span className="fas fa-print" />
-                                    &nbsp;&nbsp;<span>In phiếu thu</span>
-                                </button>
+                                <Button type="primary" icon="printer">
+                                    In phiếu thu
+                                </Button>
                             </div>
                         )}
                         content={() => contentRef.current}
                     />
                 </div>
-            </DefaultModal>
+            </Modal>
         </div>
     );
 };
@@ -128,7 +133,7 @@ class Content extends React.Component<ContentProps> {
                     <span>Lý do nộp: </span>
                     <span>{note}</span>
                 </div>
-                <br/>
+                <br />
                 <div className="row">
                     <div className="col center">
                         <strong>Người nộp</strong>

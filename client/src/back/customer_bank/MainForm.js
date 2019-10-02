@@ -5,27 +5,25 @@ import {useState, useEffect, useRef} from 'react';
 import {Formik, Form} from 'formik';
 // $FlowFixMe: do not complain about Yup
 import * as Yup from 'yup';
+// $FlowFixMe: do not complain about Yup
+import {Modal} from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import ErrMsgs from 'src/utils/helpers/ErrMsgs';
 import {apiUrls} from './_data';
 import TextInput from 'src/utils/components/input/TextInput';
-import DefaultModal from 'src/utils/components/modal/DefaultModal';
 import ButtonsBar from 'src/utils/components/form/ButtonsBar';
 import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
 
 export class Service {
     static toggleEvent = 'TOGGLE_CUSTOMER_BANK_MAIN_FORM';
-    static firstInputSelector = "[name='uid']";
-
-    static focusFirstInput() {
-        const firstInput = document.querySelector(`form ${Service.firstInputSelector}`);
-        firstInput && firstInput.focus();
+    static toggleForm(open: boolean, id: number = 0) {
+        Tools.event.dispatch(Service.toggleEvent, {open, id});
     }
 
     static initialValues = {
         bank_name: '',
         account_name: '',
-        account_number: '',
+        account_number: ''
     };
 
     static validationSchema = Yup.object().shape({
@@ -50,19 +48,14 @@ export class Service {
                 ok ? onChange({...data, checked: false}, id ? 'update' : 'add') : setErrors(Tools.setFormErrors(data))
             );
     }
-
-    static toggleForm(open: boolean, id: number = 0) {
-        Tools.event.dispatch(Service.toggleEvent, {open, id});
-    }
 }
 
 type Props = {
-    close: Function,
     onChange: Function,
-    children?: React.Node,
     submitTitle?: string
 };
-export default ({close, onChange, children, submitTitle = 'Save'}: Props) => {
+export default ({onChange, submitTitle = 'Save'}: Props) => {
+    const formName = 'Ngân hàng';
     const {validationSchema, handleSubmit} = Service;
 
     const [open, setOpen] = useState(false);
@@ -88,22 +81,34 @@ export default ({close, onChange, children, submitTitle = 'Save'}: Props) => {
         };
     }, []);
 
+    let handleOk = Tools.emptyFunction;
+
     return (
-        <DefaultModal open={open} close={close} title="CustomerBank manager">
+        <Modal
+            destroyOnClose={true}
+            visible={open}
+            onOk={() => handleOk()}
+            onCancel={() => Service.toggleForm(false)}
+            okText={submitTitle}
+            cancelText="Thoát"
+            title={Tools.getFormTitle(id, formName)}>
             <Formik
                 initialValues={{...initialValues}}
                 validationSchema={validationSchema}
                 onSubmit={handleSubmit(id, onChange)}>
-                {({errors, handleSubmit}) => (
-                    <Form>
-                        <TextInput name="bank_name" label="Tên ngân hàng" autoFocus={true} required={true} />
-                        <TextInput name="account_name" label="Tên tài khoản" required={true} />
-                        <TextInput name="account_number" label="Số tài khoản" required={true} />
-                        <FormLevelErrMsg errors={errors.detail} />
-                        <ButtonsBar children={children} submitTitle={submitTitle} onClick={handleSubmit} />
-                    </Form>
-                )}
+                {({errors, handleSubmit}) => {
+                    if (handleOk === Tools.emptyFunction) handleOk = handleSubmit;
+                    return (
+                        <Form>
+                            <button className="hide" />
+                            <TextInput name="bank_name" label="Tên ngân hàng" autoFocus={true} required={true} />
+                            <TextInput name="account_name" label="Tên tài khoản" required={true} />
+                            <TextInput name="account_number" label="Số tài khoản" required={true} />
+                            <FormLevelErrMsg errors={errors.detail} />
+                        </Form>
+                    );
+                }}
             </Formik>
-        </DefaultModal>
+        </Modal>
     );
 };

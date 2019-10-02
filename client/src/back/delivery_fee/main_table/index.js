@@ -1,12 +1,15 @@
 // @flow
 import * as React from 'react';
 import {useState, useEffect} from 'react';
+// $FlowFixMe: do not complain about importing
+import {Button} from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
 import {apiUrls} from '../_data';
 import type {TRow, DbRow, ListItem, FormOpenType, FormOpenKeyType} from '../_data';
 import {Pagination, SearchInput} from 'src/utils/components/TableUtils';
 import MainForm from '../MainForm';
+import {Service as MainFormService} from '../MainForm';
 import Row from './Row.js';
 
 type Props = {
@@ -46,8 +49,6 @@ export default ({area, type}: Props) => {
 
     const unit = Tools.deliveryFeeUnitLabel(type);
 
-    const toggleForm = (value: boolean, key: FormOpenKeyType = 'main') => setFormOpen({...formOpen, [key]: value});
-
     const listAction = ListTools.actions(list);
 
     const getList = async (url?: string, params?: Object) => {
@@ -57,10 +58,9 @@ export default ({area, type}: Props) => {
         setLinks(data.links);
     };
 
-    const onChange = (data: TRow, type: string, reOpenDialog: boolean) => {
-        toggleForm(false);
+    const onChange = (data: TRow, type: string) => {
+        MainFormService.toggleForm(false);
         setList(listAction(data)[type]());
-        reOpenDialog && toggleForm(true);
     };
 
     const onCheck = id => setList(ListTools.checkOne(id, list));
@@ -78,7 +78,7 @@ export default ({area, type}: Props) => {
     };
 
     const showForm = (id: number) => {
-        toggleForm(true);
+        MainFormService.toggleForm(true);
         setModalId(id);
     };
 
@@ -106,10 +106,9 @@ export default ({area, type}: Props) => {
                             Phí (VND)
                         </th>
                         <th scope="col" style={{padding: 8}} className="row80">
-                            <button className="btn btn-primary btn-sm btn-block add-button" onClick={() => showForm(0)}>
-                                <span className="fas fa-plus" />
-                                &nbsp; Add
-                            </button>
+                            <Button type="primary" icon="plus" onClick={() => MainFormService.toggleForm(true)}>
+                                Thêm
+                            </Button>
                         </th>
                     </tr>
                 </thead>
@@ -131,7 +130,7 @@ export default ({area, type}: Props) => {
                             key={key}
                             onCheck={onCheck}
                             onRemove={onRemove}
-                            showForm={showForm}
+                            showForm={id => MainFormService.toggleForm(true, id)}
                         />
                     ))}
                 </tbody>
@@ -151,11 +150,7 @@ export default ({area, type}: Props) => {
                 </tfoot>
             </table>
 
-            <MainForm id={modalId} type={type} area={area} open={formOpen.main} close={() => toggleForm(false)} onChange={onChange}>
-                <button type="button" className="btn btn-light" action="close" onClick={() => toggleForm(false)}>
-                    Cancel
-                </button>
-            </MainForm>
+            <MainForm type={type} area={area} onChange={onChange} />
         </div>
     );
 };
