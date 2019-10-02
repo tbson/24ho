@@ -1,13 +1,17 @@
 // @flow
 import * as React from 'react';
 import {useState, useEffect} from 'react';
+// $FlowFixMe: do not complain about Yup
+import {Button} from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
 import {apiUrls} from '../_data';
 import type {TRow, DbRow, ListItem, FormOpenType, FormOpenKeyType} from '../_data';
 import {Pagination, SearchInput, BoolOutput} from 'src/utils/components/TableUtils';
 import MainForm from '../MainForm';
+import {Service as MainFormService} from '../MainForm';
 import OrderForm from '../OrderForm';
+import {Service as OrderFormService} from '../OrderForm';
 import Row from './Row.js';
 
 type CartGroup = {
@@ -278,8 +282,6 @@ export default ({}: Props) => {
     const [amount, setAmount] = useState(0);
     const [links, setLinks] = useState({next: '', previous: ''});
 
-    const toggleForm = (value: boolean, key: FormOpenKeyType = 'main') => setFormOpen({...formOpen, [key]: value});
-
     const listAction = ListTools.actions(list);
 
     const getList = () => {
@@ -289,7 +291,7 @@ export default ({}: Props) => {
     };
 
     const onChange = (data: TRow, type: string) => {
-        toggleForm(false);
+        MainFormService.toggleForm(false);
         const items = listAction(data)[type]();
         Service.savedCartItems = items;
         setList(items);
@@ -297,7 +299,7 @@ export default ({}: Props) => {
     };
 
     const onOrderChange = (data: Object) => {
-        toggleForm(false, 'order');
+        OrderFormService.toggleForm(false);
         Service.savedOrderList = {...Service.savedOrderList, ...data};
         setListOrder(Service.savedOrderList);
         return Service.syncCartRequest().then(() => [Object.keys(data)[0], Service.savedOrderList]);
@@ -432,7 +434,7 @@ export default ({}: Props) => {
                             data={group}
                             key={groupKey}
                             sendOrder={sendOrder}
-                            showForm={showOrderForm}
+                            showForm={id => OrderFormService.toggleForm(true, id)}
                             onBulkRemove={onBulkRemove(group.order.shop_nick)}
                             onCheckAll={onCheckAll({shop_nick: group.order.shop_nick})}>
                             {group.items.map((data, key) => (
@@ -442,7 +444,7 @@ export default ({}: Props) => {
                                     key={`${groupKey}${key}`}
                                     onCheck={onCheck}
                                     onRemove={onRemove}
-                                    showForm={showForm}
+                                    showForm={id => MainFormService.toggleForm(true, id)}
                                 />
                             ))}
                         </Group>
@@ -456,38 +458,19 @@ export default ({}: Props) => {
                 )}
             </table>
 
-            <MainForm
-                id={formId}
-                listItem={list}
-                open={formOpen.main}
-                close={() => toggleForm(false)}
-                onChange={onChange}>
-                <button type="button" className="btn btn-light" action="close" onClick={() => toggleForm(false)}>
-                    Cancel
-                </button>
-            </MainForm>
+            <MainForm listItem={list} onChange={onChange} />
             <OrderForm
-                id={formId}
                 rate={rate}
                 amount={amount}
                 listOrder={listOrder}
                 defaultAddress={defaultAddress}
                 listAddress={listAddress}
-                open={formOpen.order}
-                close={() => toggleForm(false, 'order')}
                 onChange={data =>
                     onOrderChange(data).then(([shop_nick, listOrder]) =>
                         sendOrder(getGroupByShopNick(shop_nick, listOrder))
                     )
-                }>
-                <button
-                    type="button"
-                    className="btn btn-light"
-                    action="close"
-                    onClick={() => toggleForm(false, 'order')}>
-                    Cancel
-                </button>
-            </OrderForm>
+                }
+            />
         </div>
     );
 };
@@ -523,13 +506,12 @@ export const Group = ({data, sendOrder, showForm, onCheckAll, onBulkRemove, chil
                 <span className="fas fa-trash-alt text-danger pointer bulk-remove-button" onClick={onBulkRemove} />
             </td>
             <td>
-                <button
-                    className="btn btn-success"
-                    type="button"
+                <Button
+                    icon="check"
+                    type="primary"
                     onClick={() => showForm(data.order.shop_nick, data.order.vnd_total)}>
-                    <span className="fas fa-check" />
-                    &nbsp; Tạo đơn
-                </button>
+                    Tạo đơn
+                </Button>
             </td>
             <td className="right mono">
                 <strong>{data.order.quantity}</strong>

@@ -5,15 +5,20 @@ import {useState, useEffect, useRef} from 'react';
 import {Formik, Form} from 'formik';
 // $FlowFixMe: do not complain about Yup
 import * as Yup from 'yup';
+// $FlowFixMe: do not complain about Yup
+import {Modal} from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import ErrMsgs from 'src/utils/helpers/ErrMsgs';
 import {apiUrls} from './_data';
 import TextInput from 'src/utils/components/input/TextInput';
-import DefaultModal from 'src/utils/components/modal/DefaultModal';
-import ButtonsBar from 'src/utils/components/form/ButtonsBar';
 import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
 
 export class Service {
+    static toggleEvent = 'TOGGLE_CART_MAIN_FORM';
+    static toggleForm(open: boolean, id: number = 0) {
+        Tools.event.dispatch(Service.toggleEvent, {open, id});
+    }
+
     static initialValues = {
         quantity: 0,
         note: ''
@@ -34,56 +39,70 @@ export class Service {
 }
 
 type Props = {
-    id: number,
     listItem: Array<Object>,
-    open: boolean,
-    close: Function,
     onChange: Function,
-    children?: React.Node,
     submitTitle?: string
 };
-export default ({id, listItem, open, close, onChange, children, submitTitle = 'Save'}: Props) => {
-    const firstInputSelector = "[name='quantity']";
+export default ({listItem, onChange, submitTitle = 'Lưu'}: Props) => {
+    const formName = 'Mặt hàng hàng';
     const {validationSchema, handleSubmit} = Service;
 
-    const [openModal, setOpenModal] = useState(false);
+    const [open, setOpen] = useState(false);
+    const [id, setId] = useState(0);
+
     const [initialValues, setInitialValues] = useState(Service.initialValues);
 
     const retrieveThenOpen = (id: number) => {
         const item = listItem.find(item => item.id === id);
         setInitialValues({...item});
-        setOpenModal(true);
+        setOpen(true);
+        setId(id);
+    };
+
+    const handleToggle = ({detail: {open, id}}) => {
+        open ? retrieveThenOpen(id) : setOpen(false);
     };
 
     useEffect(() => {
-        open ? retrieveThenOpen(id) : setOpenModal(false);
-    }, [open]);
+        Tools.event.listen(Service.toggleEvent, handleToggle);
+        return () => {
+            Tools.event.remove(Service.toggleEvent, handleToggle);
+        };
+    }, []);
 
-    const focusFirstInput = () => {
-        const firstInput = document.querySelector(`form ${firstInputSelector}`);
-        firstInput && firstInput.focus();
-    };
-
-    const onClick = (handleSubmit: Function) => () => {
-        focusFirstInput();
-        handleSubmit();
-    };
+    let handleOk = Tools.emptyFunction;
 
     return (
-        <DefaultModal open={openModal} close={close} title="Cart item manager">
+        <Modal
+            destroyOnClose={true}
+            visible={open}
+            onOk={() => handleOk()}
+            onCancel={() => Service.toggleForm(false)}
+            okText={submitTitle}
+            cancelText="Thoát"
+            title={Tools.getFormTitle(id, formName)}>
             <Formik
                 initialValues={{...initialValues}}
                 validationSchema={validationSchema}
                 onSubmit={handleSubmit(id, onChange)}>
-                {({errors, handleSubmit}) => (
-                    <Form>
-                        <TextInput name="quantity" type="number" label="Quantity" autoFocus={true} required={true} />
-                        <TextInput name="note" label="Note" />
-                        <FormLevelErrMsg errors={errors.detail} />
-                        <ButtonsBar children={children} submitTitle={submitTitle} onClick={onClick(handleSubmit)} />
-                    </Form>
-                )}
+                {({errors, handleSubmit}) => {
+                    if (handleOk === Tools.emptyFunction) handleOk = handleSubmit;
+                    return (
+                        <Form>
+                            <button className="hide" />
+                            <TextInput
+                                name="quantity"
+                                type="number"
+                                label="Số lượng"
+                                autoFocus={true}
+                                required={true}
+                            />
+                            <TextInput name="note" label="Ghi chú" />
+                            <FormLevelErrMsg errors={errors.detail} />
+                        </Form>
+                    );
+                }}
             </Formik>
-        </DefaultModal>
+        </Modal>
     );
 };

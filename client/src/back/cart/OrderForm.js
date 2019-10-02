@@ -3,17 +3,22 @@ import * as React from 'react';
 import {useState, useEffect, useRef} from 'react';
 // $FlowFixMe: do not complain about formik
 import {Formik, Form} from 'formik';
+// $FlowFixMe: do not complain about Yup
+import {Modal} from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import type {SelectOptions} from 'src/utils/helpers/Tools';
 import {apiUrls} from './_data';
 import TextInput from 'src/utils/components/input/TextInput';
 import SelectInput from 'src/utils/components/input/SelectInput';
 import CheckInput from 'src/utils/components/input/CheckInput';
-import DefaultModal from 'src/utils/components/modal/DefaultModal';
-import ButtonsBar from 'src/utils/components/form/ButtonsBar';
 import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
 
 export class Service {
+    static toggleEvent = 'TOGGLE_CART_ORDER_FORM';
+    static toggleForm(open: boolean, id: number = 0) {
+        Tools.event.dispatch(Service.toggleEvent, {open, id});
+    }
+
     static initialValues = {
         address: 0,
         note: '',
@@ -36,85 +41,95 @@ export class Service {
 }
 
 type Props = {
-    id: number,
     rate: number,
     amount: number,
     defaultAddress: number,
     listOrder: Object,
     listAddress: SelectOptions,
-    open: boolean,
-    close: Function,
     onChange: Function,
-    children?: React.Node,
     submitTitle?: string
 };
 export default ({
-    id,
     amount,
     rate,
     listOrder,
     defaultAddress,
     listAddress,
-    open,
-    close,
     onChange,
-    children,
-    submitTitle = 'Save'
+    submitTitle = 'Lưu'
 }: Props) => {
-    const firstInputSelector = "[name='note']";
+    const formName = 'Giỏ hàng';
     const {handleSubmit} = Service;
 
-    const [openModal, setOpenModal] = useState(false);
+    const [open, setOpen] = useState(false);
+    const [id, setId] = useState(0);
+
     const [initialValues, setInitialValues] = useState(Service.initialValues);
     const [balance, setBalance] = useState(0);
     const [depositFactor, setDepositFactor] = useState(100);
 
+    const handleToggle = ({detail: {open, id}}) => {
+        setOpen(open);
+        setId(id);
+    };
+
     useEffect(() => {
-        setOpenModal(open);
         setInitialValues(listOrder[id] || {...Service.initialValues, address: defaultAddress || null});
         open &&
             Tools.apiClient(apiUrls.accountSummary).then(({balance, deposit_factor}) => {
                 setBalance(balance);
                 setDepositFactor(deposit_factor);
             });
-    }, [open]);
 
-    const focusFirstInput = () => {
-        const firstInput = document.querySelector(`form ${firstInputSelector}`);
-        firstInput && firstInput.focus();
-    };
+        Tools.event.listen(Service.toggleEvent, handleToggle);
+        return () => {
+            Tools.event.remove(Service.toggleEvent, handleToggle);
+        };
+    }, []);
 
-    const onClick = (handleSubmit: Function) => () => {
-        focusFirstInput();
-        handleSubmit();
-    };
+    let handleOk = Tools.emptyFunction;
 
     return (
-        <DefaultModal open={openModal} close={close} title="Cart order manager">
+        <Modal
+            destroyOnClose={true}
+            visible={open}
+            onOk={() => handleOk()}
+            onCancel={() => Service.toggleForm(false)}
+            okText={submitTitle}
+            cancelText="Thoát"
+            title={formName}>
             <Formik initialValues={{...initialValues}} onSubmit={handleSubmit(id, listAddress, onChange)}>
-                {({errors, handleSubmit}) => (
-                    <Form>
-                        <SelectInput name="address" label="Address" options={listAddress} required={true} />
-                        <div className="row">
-                            <div className="col">
-                                <CheckInput name="count_check" label="Kiểm đếm" />
+                {({errors, handleSubmit}) => {
+                    if (handleOk === Tools.emptyFunction) handleOk = handleSubmit;
+                    return (
+                        <Form>
+                            <button className="hide" />
+                            <SelectInput name="address" label="Địa chỉ" options={listAddress} required={true} />
+                            <div className="row">
+                                <div className="col">
+                                    <CheckInput name="count_check" label="Kiểm đếm" />
+                                </div>
+                                <div className="col">
+                                    <CheckInput name="wooden_box" label="Đóng gỗ" />
+                                </div>
+                                <div className="col">
+                                    <CheckInput name="shockproof" label="Chống sốc" />
+                                </div>
                             </div>
-                            <div className="col">
-                                <CheckInput name="wooden_box" label="Đóng gỗ" />
-                            </div>
-                            <div className="col">
-                                <CheckInput name="shockproof" label="Chống sốc" />
-                            </div>
-                        </div>
-                        <TextInput name="note" label="Note" autoFocus={true} />
-                        <AccountSummary amount={amount} rate={rate} balance={balance} depositFactor={depositFactor} />
-                        <br />
-                        <FormLevelErrMsg errors={errors.detail} />
-                        <ButtonsBar children={children} submitTitle={submitTitle} onClick={onClick(handleSubmit)} />
-                    </Form>
-                )}
+                            <TextInput name="note" label="Note" autoFocus={true} />
+                            <AccountSummary
+                                amount={amount}
+                                rate={rate}
+                                balance={balance}
+                                depositFactor={depositFactor}
+                            />
+                            <br />
+                            <FormLevelErrMsg errors={errors.detail} />
+                        </Form>
+                    );
+                }}
             </Formik>
-        </DefaultModal>
+        </Modal>
     );
 };
 
@@ -128,7 +143,7 @@ const AccountSummary = ({amount, rate, balance, depositFactor}: AccountSummaryPr
     const minDeposit = 3 * rate;
     const depositByFactor = parseInt((amount * depositFactor) / 100);
     const deposit = Math.max(minDeposit, depositByFactor);
-    const topup = balance - deposit > 0 ? 0 : Math.floor(balance - deposit);
+    const topup = balance - deposit > 0 ? 0 : Math.abs(Math.floor(balance - deposit));
     return (
         <table className="table">
             <tbody>
