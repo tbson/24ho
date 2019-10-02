@@ -5,6 +5,8 @@ import {useState, useEffect, useRef} from 'react';
 import {Formik, Form} from 'formik';
 // $FlowFixMe: do not complain about Yup
 import * as Yup from 'yup';
+// $FlowFixMe: do not complain about Yup
+import {Modal} from 'antd';
 import type {SelectOptions} from 'src/utils/helpers/Tools';
 import Tools from 'src/utils/helpers/Tools';
 import ErrMsgs from 'src/utils/helpers/ErrMsgs';
@@ -18,6 +20,10 @@ import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
 export class Service {
     static toggleEvent = 'TOGGLE_ORDER_APPROVE_FORM';
 
+    static toggleForm(open: boolean, id: number = 0) {
+        Tools.event.dispatch(Service.toggleEvent, {open, id});
+    }
+
     static initialValues = {
         sale: ''
     };
@@ -25,20 +31,15 @@ export class Service {
     static validationSchema = Yup.object().shape({
         sale: Yup.string().required(ErrMsgs.REQUIRED)
     });
-
-    static toggleForm(open: boolean, id: number = 0) {
-        Tools.event.dispatch(Service.toggleEvent, {open, id});
-    }
 }
 
 type Props = {
     listSale: SelectOptions,
-    close: Function,
     onChange: Function,
-    children?: React.Node,
     submitTitle?: string
 };
-export default ({listSale, close, onChange, children, submitTitle = 'Save'}: Props) => {
+export default ({listSale, onChange, submitTitle = 'Save'}: Props) => {
+    const formName = 'Duyệt đơn';
     const {validationSchema} = Service;
 
     const [open, setOpen] = useState(false);
@@ -56,20 +57,32 @@ export default ({listSale, close, onChange, children, submitTitle = 'Save'}: Pro
         };
     }, []);
 
+    let handleOk = Tools.emptyFunction;
+
     return (
-        <DefaultModal open={open} close={close} title="Nhân viên mua hàng">
+        <Modal
+            destroyOnClose={true}
+            visible={open}
+            onOk={() => handleOk()}
+            onCancel={() => Service.toggleForm(false)}
+            okText={submitTitle}
+            cancelText="Thoát"
+            title={formName}>
             <Formik
                 initialValues={{...initialValues}}
                 validationSchema={validationSchema}
                 onSubmit={values => onChange(values.sale)}>
-                {({errors, handleSubmit}) => (
-                    <Form>
-                        <SelectInput name="sale" label="Nhân viên mua hàng" required={true} options={listSale} />
-                        <FormLevelErrMsg errors={errors.detail} />
-                        <ButtonsBar children={children} submitTitle={submitTitle} onClick={handleSubmit} />
-                    </Form>
-                )}
+                {({errors, handleSubmit}) => {
+                    if (handleOk === Tools.emptyFunction) handleOk = handleSubmit;
+                    return (
+                        <Form>
+                            <button className="hide" />
+                            <SelectInput name="sale" label="Nhân viên mua hàng" required={true} options={listSale} />
+                            <FormLevelErrMsg errors={errors.detail} />
+                        </Form>
+                    );
+                }}
             </Formik>
-        </DefaultModal>
+        </Modal>
     );
 };

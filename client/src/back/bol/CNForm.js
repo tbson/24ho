@@ -16,7 +16,6 @@ import {apiUrls as bagApiUrl} from 'src/back/bag/_data';
 import TextInput from 'src/utils/components/input/TextInput';
 import HiddenInput from 'src/utils/components/input/HiddenInput';
 import CheckInput from 'src/utils/components/input/CheckInput';
-import DefaultModal from 'src/utils/components/modal/DefaultModal';
 import ButtonsBar from 'src/utils/components/form/ButtonsBar';
 import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
 
