@@ -217,9 +217,7 @@ const Control = ({id, status, pending, onRemove, onDiscard}: ControlTypes) => {
                     adding={true}
                     endPoint={apiUrls.complaintResolve.replace('/pk-', `/${id}/`)}
                     placeholder="Xử lý khiếu nại">
-                    <span className="complaint-resolve-btn">
-                        <span className="fas fa-question-circle text-danger pointer" />
-                    </span>
+                    <Button icon="question-circle" />
                 </Editable>
             </div>
         );

@@ -1,5 +1,7 @@
 // @flow
 import * as React from 'react';
+// $FlowFixMe: do not complain about importing
+import {Button, Checkbox} from 'antd';
 import {vnd, cny} from 'src/constants';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
@@ -40,8 +42,8 @@ export default ({pending = false, data, onCheck, onRemove, onPartialChange}: Row
     const vnd_price = cny_price * rate;
     return (
         <tr>
-            <th className="row25">
-                <input id={id} className="check" type="checkbox" checked={data.checked} onChange={() => onCheck(id)} />
+            <th className="row25 center">
+                <Checkbox checked={data.checked} onChange={() => onCheck(id)} />
             </th>
             <td>
                 <Description pending={pending} data={data} onPartialChange={onPartialChange} />
@@ -97,7 +99,7 @@ export default ({pending = false, data, onCheck, onRemove, onPartialChange}: Row
             <td className="center">
                 {pending || (
                     <a className="removeBtn" onClick={() => _onRemove(id)}>
-                        <span className="fas fa-trash-alt text-danger pointer" />
+                        <Button size="small" type="danger" icon="delete" />
                     </a>
                 )}
             </td>

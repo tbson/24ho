@@ -73,73 +73,11 @@ export const LangButtons = ({id, langs, getTranslationToEdit}: LangButtonsProps)
     );
 };
 
-type FrontPaginationPropTypes = {
-    next: ?string,
-    prev: ?string,
-    onNavigate: Function
-};
-export const FrontPagination = ({next, prev, onNavigate}: FrontPaginationPropTypes) => {
-    const renderPrev = (prev: ?string) => {
-        if (!prev) return null;
-        return (
-            <a className="pointer" onClick={() => onNavigate(prev)}>
-                <span className="fas fa-chevron-up pointer" />
-            </a>
-        );
-    };
-
-    const renderNext = (next: ?string) => {
-        if (!next) return null;
-        return (
-            <a className="pointer" onClick={() => onNavigate(next)}>
-                <span className="fas fa-chevron-down" />
-            </a>
-        );
-    };
-
-    if (!prev && !next) return null;
-    return (
-        <div className="container-fluid">
-            <div className="row" style={styles.footer}>
-                <div className="col-xl-12">
-                    {renderPrev(prev)}
-                    {renderNext(next)}
-                </div>
-            </div>
-        </div>
-    );
-};
-
-type CancelButtonType = {
-    onClick: Function,
-    label?: string
-};
-export const CancelButton = ({onClick, label = 'Cancel'}: CancelButtonType) => {
-    return (
-        <button type="button" className="btn btn-light" onClick={onClick}>
-            <span className="fas fa-times" />
-            &nbsp; {label}
-        </button>
-    );
-};
-
-type SubmitButtonType = {
-    label?: string
-};
-export const SubmitButton = ({label = 'Submit'}: SubmitButtonType) => {
-    return (
-        <button className="btn btn-success">
-            <span className="fas fa-check" />
-            &nbsp; {label}
-        </button>
-    );
-};
-
 type BoolOutputType = {
     value: boolean
 };
 export const BoolOutput = ({value}: BoolOutputType) =>
-    value ? <span className="green fas fa-check" /> : <span className="red fas fa-times" />;
+    value ? <Icon type="check" className="green"/> : <Icon type="close" className="red"/>;
 
 const styles = {
     footer: {

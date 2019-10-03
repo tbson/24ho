@@ -4,7 +4,7 @@ import {useState} from 'react';
 // $FlowFixMe: do not complain about hooks
 import {Field, ErrorMessage} from 'formik';
 // $FlowFixMe: do not complain about hooks
-import { Checkbox } from 'antd';
+import { Checkbox, Button } from 'antd';
 import {pemGroupTrans, excludeGroups} from './_data';
 
 export class Service {
@@ -63,9 +63,7 @@ export default ({name, permissions: _permissions, grouped_permissions}: Props) =
                     return (
                         <div>
                             <div className="pointer no-select" onClick={togglePermissions(setFieldValue)}>
-                                <span className="fas fa-check green" />
-                                &nbsp;&nbsp;
-                                <strong>Tất cả quyền</strong>
+                                <Button icon="check">Tất cả quyền</Button>
                                 <hr />
                             </div>
                             {Object.entries(grouped_permissions)
@@ -103,10 +101,8 @@ type PemGroupProps = {
 const PermGroup = ({groupName, pems, pemValues, togglePermissions, onChange}: PemGroupProps) => {
     return (
         <div>
-            <div className="pointer no-select" onClick={togglePermissions}>
-                <span className="fas fa-check green" />
-                &nbsp;&nbsp;
-                <strong>{groupName}</strong>
+            <div className="pointer no-select" onClick={togglePermissions} style={{marginBottom: 15}}>
+                <Button size="small" icon="check">{groupName}</Button>
             </div>
             <div className="row">
                 {pems.map(pem => {

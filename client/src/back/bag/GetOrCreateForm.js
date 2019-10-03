@@ -6,7 +6,7 @@ import {Formik, Form} from 'formik';
 // $FlowFixMe: do not complain about Yup
 import * as Yup from 'yup';
 // $FlowFixMe: do not complain about Yup
-import {Modal} from 'antd';
+import {Button, Modal} from 'antd';
 import type {SelectOptions} from 'src/utils/helpers/Tools';
 import Tools from 'src/utils/helpers/Tools';
 import ErrMsgs from 'src/utils/helpers/ErrMsgs';
@@ -116,7 +116,7 @@ export default ({onChange, children, submitTitle = 'Save'}: Props) => {
                                 <div style={{flexGrow: 1}}>
                                     <SelectInput name="bag" label="Chọn bao hàng" options={listBag} />
                                 </div>
-                                <div style={{alignSelf: 'flex-end'}}>
+                                <div style={{alignSelf: 'flex-end', height: 48}}>
                                     <Editable
                                         onChange={handleAddBag}
                                         adding={true}
@@ -126,12 +126,7 @@ export default ({onChange, children, submitTitle = 'Save'}: Props) => {
                                         type="select"
                                         options={listArea}
                                         placeholder="Vùng...">
-                                        <button
-                                            type="button"
-                                            className="btn btn-link btn-lg"
-                                            style={{marginBottom: 13}}>
-                                            <span className="fas fa-plus" />
-                                        </button>
+                                        <Button icon="plus" />
                                     </Editable>
                                 </div>
                             </div>
