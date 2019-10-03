@@ -46,7 +46,6 @@
         "@babel/preset-flow": "7.0.0",
         "@babel/preset-react": "7.0.0",
         "@babel/runtime-corejs2": "7.6.2",
-        "@fortawesome/fontawesome-free": "^5.11.2",
         "babel-core": "7.0.0-bridge.0",
         "babel-loader": "8.0.6",
         "babel-plugin-dynamic-import-node": "2.3.0",
@@ -81,7 +80,6 @@
     },
     "dependencies": {
         "antd": "^3.23.4",
-        "bootstrap": "4.3.1",
         "fingerprintjs2": "^2.1.0",
         "formdata-polyfill": "3.0.19",
         "formik": "^1.5.8",

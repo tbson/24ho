@@ -3,12 +3,8 @@ import * as React from 'react';
 // $FlowFixMe: do not complain about importing node_modules
 import {Switch, Route} from 'react-router-dom';
 // $FlowFixMe: do not complain about importing node_modules
-import 'bootstrap/dist/css/bootstrap.min.css';
-// $FlowFixMe: do not complain about importing node_modules
-import(/* webpackPreload: true */ '@fortawesome/fontawesome-free/css/all.css');
-// $FlowFixMe: do not complain about importing node_modules
 import 'antd/dist/antd.css';
-// $FlowFixMe: do not complain about importing node_modules
+import 'src/utils/styles/table.css';
 import 'src/utils/styles/back.css';
 
 import Spinner from 'src/utils/components/Spinner';

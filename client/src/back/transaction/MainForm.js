@@ -6,7 +6,7 @@ import {Formik, Form} from 'formik';
 // $FlowFixMe: do not complain about Yup
 import * as Yup from 'yup';
 // $FlowFixMe: do not complain about Yup
-import {Modal} from 'antd';
+import {Modal, Row, Col} from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import type {SelectOptions} from 'src/utils/helpers/Tools';
 import ErrMsgs from 'src/utils/helpers/ErrMsgs';
@@ -119,14 +119,14 @@ export default ({
                         <Form>
                             <button className="hide" />
                             <SelectInput name="customer" options={listCustomer} label="Khách hàng" required/>
-                            <div className="row">
-                                <div className="col">
+                            <Row gutter={16}>
+                                <Col span={12}>
                                     <SelectInput name="type" options={listType} label="Loại giao dịch" required />
-                                </div>
-                                <div className="col">
+                                </Col>
+                                <Col span={12}>
                                     <SelectInput name="money_type" options={listMoneyType} label="Loại tiền" required />
-                                </div>
-                            </div>
+                                </Col>
+                            </Row>
                             <TextInput name="amount" type="number" label="Số tiền" required autofocus />
                             {values.money_type === 2 && (
                                 <SelectInput name="bank" options={listBank} label="Ngân hàng" />

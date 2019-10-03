@@ -2,10 +2,6 @@
 import * as React from 'react';
 // $FlowFixMe: do not complain about importing node_modules
 import {Switch, Route} from 'react-router-dom';
-// $FlowFixMe: do not complain about importing node_modules
-import 'bootstrap/dist/css/bootstrap.min.css';
-// $FlowFixMe: do not complain about importing node_modules
-import(/* webpackPreload: true */ '@fortawesome/fontawesome-free/css/all.css');
 
 import {PUBLIC_URL} from 'src/constants';
 
