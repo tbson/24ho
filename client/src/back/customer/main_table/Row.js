@@ -1,5 +1,7 @@
 // @flow
 import * as React from 'react';
+// $FlowFixMe: do not complain about importing
+import {Button, Icon, Checkbox} from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
 import {BoolOutput} from 'src/utils/components/TableUtils';
@@ -34,8 +36,8 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
 
     return (
         <tr>
-            <th className="row25">
-                <input id={id} className="check" type="checkbox" checked={data.checked} onChange={() => onCheck(id)} />
+            <th className="row25 center">
+                <Checkbox checked={data.checked} onChange={() => onCheck(id)} />
             </th>
             <td>{data.customer_group_name}</td>
             <td>{data.user_data.email}</td>
@@ -50,12 +52,10 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
                 <BoolOutput value={!data.is_lock} />
             </td>
             <td className="center">
-                <a className="editBtn" onClick={() => showForm(data.id)}>
-                    <span className="fas fa-edit text-info pointer" />
-                </a>
+                <Button size="small" icon="edit" />
                 <span>&nbsp;&nbsp;&nbsp;</span>
                 <a className="removeBtn" onClick={() => _onRemove(id)}>
-                    <span className="fas fa-trash-alt text-danger pointer" />
+                    <Button size="small" type="danger" icon="delete" />
                 </a>
             </td>
         </tr>

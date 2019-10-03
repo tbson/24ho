@@ -2,7 +2,7 @@
 import * as React from 'react';
 import {useState, useEffect} from 'react';
 // $FlowFixMe: do not complain about importing
-import {Input, Button} from 'antd';
+import {Input, InputNumber, Button} from 'antd';
 import NavWrapper from 'src/utils/components/nav_wrapper/';
 import Tools from 'src/utils/helpers/Tools';
 import {apiUrls} from './_data';
@@ -48,14 +48,13 @@ export class Service {
 
 const CheckInput = ({id, checked_quantity, onChange}: CheckInputProp) => {
     const [value, setValue] = useState(checked_quantity);
-    const handleChange = e => {
-        const _value = e.target.value;
+    const handleChange = _value => {
         setValue(_value);
         onChange(id, _value);
     };
     return (
         <div className="form-group">
-            <input type="number" className="form-control" value={value} onChange={handleChange} />
+            <InputNumber min={0} max={9999} block defaultValue={value} onChange={handleChange} />
         </div>
     );
 };
@@ -194,7 +193,6 @@ export default ({}: Props) => {
                                     id="bol-input"
                                     value={bolUid}
                                     onChange={handleUidChange}
-                                    onSearch={submitCheck}
                                     placeholder="Mã vận đơn..."
                                 />
                             </div>
@@ -231,15 +229,8 @@ export default ({}: Props) => {
             <CheckForm
                 listBol={listBol.split(', ').map(item => ({value: item, label: item}))}
                 close={() => CheckFormService.toggleForm(false)}
-                onChange={onSelectBol}>
-                <button
-                    type="button"
-                    className="btn btn-light"
-                    action="close"
-                    onClick={() => CheckFormService.toggleForm(false)}>
-                    Cancel
-                </button>
-            </CheckForm>
+                onChange={onSelectBol}
+            />
         </NavWrapper>
     );
 };

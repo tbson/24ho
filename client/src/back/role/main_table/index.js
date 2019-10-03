@@ -2,7 +2,7 @@
 import * as React from 'react';
 import {useState, useEffect} from 'react';
 // $FlowFixMe: do not complain about importing
-import { Button } from 'antd';
+import {Button, Icon} from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
 import {apiUrls} from '../_data';
@@ -82,12 +82,11 @@ export default ({}: Props) => {
                 <thead className="thead-light">
                     <tr>
                         <th className="row25">
-                            <span className="fas fa-check text-info pointer check-all-button" onClick={onCheckAll} />
+                            <Button size="small" icon="check" onClick={onCheckAll} />
                         </th>
                         <th scope="col">Nhóm</th>
                         <th scope="col" style={{padding: 8}} className="row80">
-                            <Button type="primary" icon="plus"
-                                onClick={() => MainFormService.toggleForm(true)}>
+                            <Button type="primary" icon="plus" onClick={() => MainFormService.toggleForm(true)}>
                                 Thêm mới
                             </Button>
                         </th>
@@ -118,10 +117,7 @@ export default ({}: Props) => {
                 <tfoot className="thead-light">
                     <tr>
                         <th className="row25">
-                            <span
-                                className="fas fa-trash-alt text-danger pointer bulk-remove-button"
-                                onClick={onBulkRemove}
-                            />
+                            <Button size="small" type="danger" icon="delete" onClick={onBulkRemove} />
                         </th>
                         <th className="row25 right" colSpan="99">
                             <Pagination next={links.next} prev={links.previous} onNavigate={getList} />
@@ -130,7 +126,7 @@ export default ({}: Props) => {
                 </tfoot>
             </table>
 
-            <MainForm onChange={onChange} permissions={permissions}/>
+            <MainForm onChange={onChange} permissions={permissions} />
         </div>
     );
 };

@@ -490,7 +490,7 @@ export const Group = ({data, sendOrder, showForm, onCheckAll, onBulkRemove, chil
         </tr>
         <tr>
             <td className="order-header">
-                <span className="fas fa-check green pointer" onClick={onCheckAll} />
+                <Button size="small" icon="check" onClick={onCheckAll} />
             </td>
             <td colSpan={99} className="order-header">
                 <strong>[{data.order.site}]</strong>
@@ -503,7 +503,7 @@ export const Group = ({data, sendOrder, showForm, onCheckAll, onBulkRemove, chil
         {children}
         <tr>
             <td>
-                <span className="fas fa-trash-alt text-danger pointer bulk-remove-button" onClick={onBulkRemove} />
+                <Button size="small" type="danger" icon="delete" onClick={onBulkRemove} />
             </td>
             <td>
                 <Button

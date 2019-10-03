@@ -4,7 +4,7 @@ import {useEffect, useState} from 'react';
 // $FlowFixMe: do not complain about importing node_modules
 import {Link} from 'react-router-dom';
 // $FlowFixMe: do not complain about importing
-import {Button} from 'antd';
+import {Button, Icon, Checkbox} from 'antd';
 import Editable from 'src/utils/components/Editable';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
@@ -265,8 +265,8 @@ export default ({data, options = {}, onCheck, onRemove, onDiscard}: RowPropTypes
 
     return (
         <tr>
-            <th className="row25">
-                <input id={id} className="check" type="checkbox" checked={data.checked} onChange={() => onCheck(id)} />
+            <th className="row25 center">
+                <Checkbox checked={data.checked} onChange={() => onCheck(id)} />
             </th>
             <td>
                 <OrderInfo data={data} />

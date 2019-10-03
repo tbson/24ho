@@ -97,10 +97,7 @@ export default ({readonly = false, order_id = 0, bol_date_id = 0, bag_id = 0, no
                     <tr>
                         <th className="row25">
                             <ShowWhen value={!readonly}>
-                                <span
-                                    className="fas fa-check text-info pointer check-all-button"
-                                    onClick={onCheckAll}
-                                />
+                                <Button size="small" icon="check" onClick={onCheckAll} />
                             </ShowWhen>
                         </th>
                         <th scope="col">Ngày</th>
@@ -163,10 +160,7 @@ export default ({readonly = false, order_id = 0, bol_date_id = 0, bag_id = 0, no
                     <tr>
                         <th className="row25">
                             <ShowWhen value={!readonly}>
-                                <span
-                                    className="fas fa-trash-alt text-danger pointer bulk-remove-button"
-                                    onClick={onBulkRemove}
-                                />
+                                <Button size="small" type="danger" icon="delete" onClick={onBulkRemove} />
                             </ShowWhen>
                         </th>
                         <th className="row25 right" colSpan="99">

@@ -2,7 +2,7 @@
 import * as React from 'react';
 import {useState, useEffect} from 'react';
 // $FlowFixMe: do not complain about importing
-import {Button} from 'antd';
+import {Button, Icon} from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
 import ShowWhen from 'src/utils/components/ShowWhen';
@@ -98,10 +98,7 @@ export default ({readonly = false, bol_date = 0}: Props) => {
                     <tr>
                         <th className="row25">
                             <ShowWhen value={!readonly}>
-                                <span
-                                    className="fas fa-check text-info pointer check-all-button"
-                                    onClick={onCheckAll}
-                                />
+                                <Button size="small" icon="check" onClick={onCheckAll} />
                             </ShowWhen>
                         </th>
                         <th scope="col">Mã bao</th>
@@ -142,10 +139,7 @@ export default ({readonly = false, bol_date = 0}: Props) => {
                     <tr>
                         <th className="row25">
                             <ShowWhen value={!readonly}>
-                                <span
-                                    className="fas fa-trash-alt text-danger pointer bulk-remove-button"
-                                    onClick={onBulkRemove}
-                                />
+                                <Button size="small" type="danger" icon="delete" onClick={onBulkRemove} />
                             </ShowWhen>
                         </th>
                         <th className="row25 right" colSpan="99">

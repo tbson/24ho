@@ -1,5 +1,7 @@
 // @flow
 import * as React from 'react';
+// $FlowFixMe: do not complain about importing
+import {Button, Icon, Checkbox} from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
 import ShowWhen from 'src/utils/components/ShowWhen';
@@ -43,15 +45,9 @@ export default ({readonly = false, data, showForm, onCheck, onRemove}: RowPropTy
 
     return (
         <tr>
-            <th className="row25">
+            <th className="row25 center">
                 <ShowWhen value={!readonly}>
-                    <input
-                        id={id}
-                        className="check"
-                        type="checkbox"
-                        checked={data.checked}
-                        onChange={() => onCheck(id)}
-                    />
+                    <Checkbox checked={data.checked} onChange={() => onCheck(id)} />
                 </ShowWhen>
             </th>
             <td>{Tools.dateTimeFormat(data.created_at)}</td>
@@ -79,12 +75,12 @@ export default ({readonly = false, data, showForm, onCheck, onRemove}: RowPropTy
             <td className="center">
                 <ShowWhen value={!readonly}>
                     <span>
-                        <a className="editBtn" onClick={() => showForm(data.id)}>
-                            <span className="fas fa-edit text-info pointer" />
+                        <a onClick={() => showForm(data.id)}>
+                            <Button size="small" icon="edit" />
                         </a>
                         <span>&nbsp;&nbsp;&nbsp;</span>
-                        <a className="removeBtn" onClick={() => _onRemove(id)}>
-                            <span className="fas fa-trash-alt text-danger pointer" />
+                        <a onClick={() => _onRemove(id)}>
+                            <Button size="small" type="danger" icon="delete" />
                         </a>
                     </span>
                 </ShowWhen>

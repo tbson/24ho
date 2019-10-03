@@ -3,6 +3,8 @@ import * as React from 'react';
 import {useState, useEffect} from 'react';
 // $FlowFixMe: do not complain about importing node_modules
 import {withRouter} from 'react-router-dom';
+// $FlowFixMe: do not complain about importing
+import {Button} from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
 import {apiUrls} from '../_data';
@@ -105,7 +107,7 @@ const Component = ({history}: Props) => {
                 <thead className="thead-light">
                     <tr>
                         <th className="row25">
-                            <span className="fas fa-check text-info pointer check-all-button" onClick={onCheckAll} />
+                            <Button size="small" icon="check" onClick={onCheckAll} />
                         </th>
                         <th scope="col">Ngày</th>
                         <th scope="col">Mã vận đơn</th>
@@ -122,12 +124,9 @@ const Component = ({history}: Props) => {
                         </th>
                         <th scope="col">Ghi chú</th>
                         <th scope="col" style={{padding: 8}} className="row80">
-                            <button
-                                className="btn btn-primary btn-sm btn-block add-button"
-                                onClick={toggleSelectBagModal}>
-                                <span className="fas fa-plus" />
-                                &nbsp; Add
-                            </button>
+                            <Button type="primary" icon="plus" onClick={toggleSelectBagModal}>
+                                Thêm
+                            </Button>
                         </th>
                     </tr>
                 </thead>
@@ -157,10 +156,7 @@ const Component = ({history}: Props) => {
                 <tfoot className="thead-light">
                     <tr>
                         <th className="row25">
-                            <span
-                                className="fas fa-trash-alt text-danger pointer bulk-remove-button"
-                                onClick={onBulkRemove}
-                            />
+                            <Button size="small" type="danger" icon="delete" onClick={onBulkRemove} />
                         </th>
                         <th className="row25 right" colSpan="99">
                             <Pagination next={links.next} prev={links.previous} onNavigate={getList} />
@@ -169,8 +165,8 @@ const Component = ({history}: Props) => {
                 </tfoot>
             </table>
 
-            <GetOrCreateForm onChange={bagSelectHandle}/>
-            <CNForm onChange={onChange}/>
+            <GetOrCreateForm onChange={bagSelectHandle} />
+            <CNForm onChange={onChange} />
         </div>
     );
 };

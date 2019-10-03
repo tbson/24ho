@@ -1,7 +1,9 @@
 // @flow
 import * as React from 'react';
 // $FlowFixMe: do not complain about importing node_modules
-import { Link } from "react-router-dom";
+import {Link} from 'react-router-dom';
+// $FlowFixMe: do not complain about importing
+import {Button, Checkbox} from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
 import {apiUrls} from '../_data';
@@ -36,22 +38,22 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
     return (
         <tr>
             <th className="row25">
-                <input id={id} className="check" type="checkbox" checked={data.checked} onChange={() => onCheck(id)} />
+                <Checkbox checked={data.checked} onChange={() => onCheck(id)} />
             </th>
             <td>{data.uid}</td>
             <td>{data.title}</td>
             <td className="vnd mono">{Tools.numberFormat(data.unit_price)}</td>
             <td className="center">
                 <Link className="editBtn" to={`/area/${id}`}>
-                    <span className="fas fa-eye text-dark pointer" />
+                    <Button type="primary" size="small" icon="eye" />
                 </Link>
                 <span>&nbsp;&nbsp;&nbsp;</span>
-                <a className="editBtn" onClick={() => showForm(data.id)}>
-                    <span className="fas fa-edit text-info pointer" />
+                <a onClick={() => showForm(data.id)}>
+                    <Button size="small" icon="edit" />
                 </a>
                 <span>&nbsp;&nbsp;&nbsp;</span>
-                <a className="removeBtn" onClick={() => _onRemove(id)}>
-                    <span className="fas fa-trash-alt text-danger pointer" />
+                <a onClick={() => _onRemove(id)}>
+                    <Button size="small" type="danger" icon="delete" />
                 </a>
             </td>
         </tr>

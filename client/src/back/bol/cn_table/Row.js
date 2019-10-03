@@ -1,6 +1,8 @@
 // @flow
 import * as React from 'react';
 import {useState} from 'react';
+// $FlowFixMe: do not complain about importing
+import {Button, Icon, Checkbox} from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
 import {apiUrls} from '../_data';
@@ -30,8 +32,16 @@ type RowPropTypes = {
     onEdit: Function,
     onRemove: Function
 };
-export default ({preview = false, listBag=[], item, index = 0, total = 0, onEdit, onCheck, onRemove}: RowPropTypes) => {
-
+export default ({
+    preview = false,
+    listBag = [],
+    item,
+    index = 0,
+    total = 0,
+    onEdit,
+    onCheck,
+    onRemove
+}: RowPropTypes) => {
     const [data, setData] = useState(item);
 
     const id = parseInt(data.id);
@@ -44,17 +54,7 @@ export default ({preview = false, listBag=[], item, index = 0, total = 0, onEdit
     return (
         <tr>
             <th className="row25">
-                {preview ? (
-                    total - index
-                ) : (
-                    <input
-                        id={id}
-                        className="check"
-                        type="checkbox"
-                        checked={data.checked}
-                        onChange={() => onCheck && onCheck(id)}
-                    />
-                )}
+                {preview ? total - index : <Checkbox checked={data.checked} onChange={() => onCheck(id)} />}
             </th>
             <td>{Tools.dateTimeFormat(data.created_at)}</td>
             <td>{data.uid}</td>
@@ -73,16 +73,18 @@ export default ({preview = false, listBag=[], item, index = 0, total = 0, onEdit
                 </Editable>
             </td>
             <td className="mono right">{data.mass}</td>
-            <td className="mono right">{data.length} /  {data.width} / {data.height}</td>
+            <td className="mono right">
+                {data.length} / {data.width} / {data.height}
+            </td>
             <td className="mono right">{data.packages}</td>
             <td>{data.note}</td>
             <td className="center">
                 <a onClick={() => onEdit(preview ? data.uid : data.id)}>
-                    <span className="fas fa-edit text-info pointer" />
+                    <Button size="small" icon="edit" />
                 </a>
                 <span>&nbsp;&nbsp;&nbsp;</span>
                 <a onClick={() => _onRemove(data.id)}>
-                    <span className="fas fa-trash-alt text-danger pointer" />
+                    <Button size="small" type="danger" icon="delete" />
                 </a>
             </td>
         </tr>

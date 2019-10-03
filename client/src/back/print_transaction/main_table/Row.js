@@ -1,5 +1,7 @@
 // @flow
 import * as React from 'react';
+// $FlowFixMe: do not complain about importing
+import {Button} from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import {listType} from 'src/back/transaction/_data';
 import type {TRow} from 'src/back/transaction/_data';
@@ -25,7 +27,7 @@ export default ({data, onPrint}: RowPropTypes) => {
             <td>{data.note}</td>
             <td className="center">
                 <a className="editBtn" onClick={() => onPrint(data.id)}>
-                    <span className="fas fa-print text-info pointer" />
+                    <Button size="small" icon="printer" />
                 </a>
             </td>
         </tr>

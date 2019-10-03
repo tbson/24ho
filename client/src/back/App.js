@@ -10,6 +10,7 @@ import(/* webpackPreload: true */ '@fortawesome/fontawesome-free/css/all.css');
 import 'antd/dist/antd.css';
 // $FlowFixMe: do not complain about importing node_modules
 import 'src/utils/styles/back.css';
+
 import Spinner from 'src/utils/components/Spinner';
 import NotMatch from 'src/utils/components/route/NotMatch';
 import PrivateRoute from 'src/utils/components/route/PrivateRoute';

@@ -1,5 +1,7 @@
 // @flow
 import * as React from 'react';
+// $FlowFixMe: do not complain about importing
+import {Button, Icon, Checkbox} from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
 import {apiUrls} from '../_data';
@@ -34,8 +36,8 @@ export default ({data, showForm, onPrint, onCheck, onRemove}: RowPropTypes) => {
 
     return (
         <tr>
-            <th className="row25">
-                <input id={id} className="check" type="checkbox" checked={data.checked} onChange={() => onCheck(id)} />
+            <th className="row25 center">
+                <Checkbox checked={data.checked} onChange={() => onCheck(id)} />
             </th>
             <td>{Tools.dateTimeFormat(data.created_at)}</td>
             <td>{data.uid}</td>
@@ -47,17 +49,11 @@ export default ({data, showForm, onPrint, onCheck, onRemove}: RowPropTypes) => {
             <td>{data.note}</td>
             <td className="center">
                 <a className="printBtn" onClick={() => onPrint(data.id)}>
-                    <span className="fas fa-print text-success pointer" />
+                    <Button size="small" icon="printer" />
                 </a>
-                {/*
-                <span>&nbsp;&nbsp;&nbsp;</span>
-                <a className="editBtn" onClick={() => showForm(data.id)}>
-                    <span className="fas fa-edit text-info pointer" />
-                </a>
-                */}
                 <span>&nbsp;&nbsp;&nbsp;</span>
                 <a className="removeBtn" onClick={() => _onRemove(id)}>
-                    <span className="fas fa-trash-alt text-danger pointer" />
+                    <Button size="small" type="danger" icon="delete" />
                 </a>
             </td>
         </tr>
