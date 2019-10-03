@@ -2,6 +2,8 @@
 import * as React from 'react';
 // $FlowFixMe: do not complain about hooks
 import {Formik, Form} from 'formik';
+// $FlowFixMe: do not complain about importing node_modules
+import {Button, Row, Col} from 'antd';
 import {apiUrls} from '../_data';
 import Tools from 'src/utils/helpers/Tools';
 import type {ObjResp} from 'src/utils/helpers/Tools';
@@ -48,7 +50,14 @@ export default ({onChange, children, submitTitle = 'Submit'}: Props) => {
                     <TextInput name="username" label="Username" autoFocus={true} required={true} />
                     <TextInput name="password" type="password" label="Password" required={true} />
                     <FormLevelErrMsg errors={errors.detail} />
-                    <ButtonsBar children={children} submitTitle={submitTitle} onClick={handleSubmit}/>
+                    <Row>
+                        <Col span={12}>{children}</Col>
+                        <Col span={12} className="right">
+                            <Button type="primary" htmlType="submit" icon="check">
+                                Đăng nhập
+                            </Button>
+                        </Col>
+                    </Row>
                 </Form>
             )}
         </Formik>
