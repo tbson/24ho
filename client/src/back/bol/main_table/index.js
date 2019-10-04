@@ -136,7 +136,7 @@ export default ({readonly = false, order_id = 0, bol_date_id = 0, bag_id = 0, no
 
                 <tbody>
                     <tr>
-                        <td colSpan="99" style={{padding: 15, paddingBottom: 0}}>
+                        <td colSpan="99"  >
                             <SearchInput onSearch={searchList} />
                         </td>
                     </tr>

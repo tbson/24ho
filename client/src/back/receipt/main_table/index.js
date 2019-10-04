@@ -116,7 +116,7 @@ export default ({}: Props) => {
 
                 <tbody>
                     <tr>
-                        <td colSpan="99" style={{padding: 15, paddingBottom: 0}}>
+                        <td colSpan="99"  >
                             <SearchInput onSearch={searchList} />
                         </td>
                     </tr>
