@@ -10,8 +10,10 @@ type labelProps = {
 export default ({name, label, className = '', required}: labelProps) => {
     if (!label) return null;
     return (
-        <label htmlFor={name} className={(required ? 'red-dot ' : ' ') + className}>
-            {label}
-        </label>
+        <div style={{marginBottom: 5}}>
+            <label htmlFor={name} className={(required ? 'red-dot ' : ' ') + className}>
+                {label}
+            </label>
+        </div>
     );
 };
