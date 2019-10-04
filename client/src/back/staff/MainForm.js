@@ -6,7 +6,7 @@ import {Formik, Form} from 'formik';
 // $FlowFixMe: do not complain about formik
 import * as Yup from 'yup';
 // $FlowFixMe: do not complain about Yup
-import {Modal} from 'antd';
+import {Modal, Row, Col} from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import ErrMsgs from 'src/utils/helpers/ErrMsgs';
 import {apiUrls, Context} from './_data';
@@ -116,8 +116,8 @@ export default ({listGroup, onChange, submitTitle = 'Lưu'}: Props) => {
                     return (
                         <Form>
                             <button className="hide" />
-                            <div className="row">
-                                <div className="col">
+                            <Row gutter={20}>
+                                <Col span={12}>
                                     <TextInput
                                         name="email"
                                         type="email"
@@ -125,19 +125,19 @@ export default ({listGroup, onChange, submitTitle = 'Lưu'}: Props) => {
                                         required={true}
                                         autoFocus={true}
                                     />
-                                </div>
-                                <div className="col">
+                                </Col>
+                                <Col span={12}>
                                     <TextInput name="username" label="Tên đăng nhập" required={true} />
-                                </div>
-                            </div>
-                            <div className="row">
-                                <div className="col">
+                                </Col>
+                            </Row>
+                            <Row gutter={20}>
+                                <Col span={12}>
                                     <TextInput name="last_name" label="Họ và tên lót" required={true} />
-                                </div>
-                                <div className="col">
+                                </Col>
+                                <Col span={12}>
                                     <TextInput name="first_name" label="Tên" required={true} />
-                                </div>
-                            </div>
+                                </Col>
+                            </Row>
                             <TextInput name="password" type="password" label="Password" />
                             <SelectInput
                                 isMulti={true}

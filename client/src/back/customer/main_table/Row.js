@@ -52,7 +52,9 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
                 <BoolOutput value={!data.is_lock} />
             </td>
             <td className="center">
-                <Button size="small" icon="edit" />
+                <a onClick={() => showForm(data.id)}>
+                    <Button size="small" icon="edit" />
+                </a>
                 <span>&nbsp;&nbsp;&nbsp;</span>
                 <a className="removeBtn" onClick={() => _onRemove(id)}>
                     <Button size="small" type="danger" icon="delete" />

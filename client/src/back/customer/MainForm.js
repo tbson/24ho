@@ -6,7 +6,7 @@ import {Formik, Form} from 'formik';
 // $FlowFixMe: do not complain about formik
 import * as Yup from 'yup';
 // $FlowFixMe: do not complain about Yup
-import {Modal} from 'antd';
+import {Modal, Row, Col} from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import {apiUrls, Context} from './_data';
 import type {SelectOptions} from 'src/utils/helpers/Tools';
@@ -99,7 +99,7 @@ type Props = {
     submitTitle?: string
 };
 export default ({listSale, listCustCare, listGroup, onChange, submitTitle = 'Lưu'}: Props) => {
-    const formName = 'Cấu hình';
+    const formName = 'Khách hàng';
     const {validationSchema, handleSubmit} = Service;
 
     const [open, setOpen] = useState(false);
@@ -146,8 +146,8 @@ export default ({listSale, listCustCare, listGroup, onChange, submitTitle = 'Lư
                     return (
                         <Form>
                             <button className="hide" />
-                            <div className="row">
-                                <div className="col">
+                            <Row gutter={20}>
+                                <Col span={12}>
                                     <TextInput
                                         name="email"
                                         type="email"
@@ -155,71 +155,67 @@ export default ({listSale, listCustCare, listGroup, onChange, submitTitle = 'Lư
                                         required={true}
                                         autoFocus={true}
                                     />
-                                </div>
-                                <div className="col">
+                                </Col>
+                                <Col span={12}>
                                     <TextInput name="username" label="Tên đăng nhập" required={true} />
-                                </div>
-                            </div>
-                            <div className="row">
-                                <div className="col">
+                                </Col>
+                            </Row>
+                            <Row gutter={20}>
+                                <Col span={12}>
                                     <TextInput name="last_name" label="Họ và tên lót" required={true} />
-                                </div>
-                                <div className="col">
+                                </Col>
+                                <Col span={12}>
                                     <TextInput name="first_name" label="Tên" required={true} />
-                                </div>
-                            </div>
+                                </Col>
+                            </Row>
 
                             <TextInput name="password" type="password" label="Password" />
 
-                            <div className="row">
-                                <div className="col">
+                            <Row gutter={20}>
+                                <Col span={12}>
                                     <TextInput name="phone" label="Số ĐT" required={true} />
-                                </div>
-                                <div className="col">
+                                </Col>
+                                <Col span={12}>
                                     <TextInput name="company" label="Tên cty" />
-                                </div>
-                            </div>
+                                </Col>
+                            </Row>
 
-                            <div className="row">
-                                <div className="col">
+                            <Row gutter={20}>
+                                <Col span={12}>
                                     <SelectInput name="sale" label="NV mua hàng" options={listSale} />
-                                </div>
-                                <div className="col">
+                                </Col>
+                                <Col span={12}>
                                     <SelectInput name="cust_care" label="NV chăm sóc" options={listCustCare} />
-                                </div>
-                            </div>
+                                </Col>
+                            </Row>
 
-                            <div className="row">
-                                <div className="col">
+                            <Row gutter={20}>
+                                <Col span={12}>
                                     <TextInput name="order_fee_factor" label="Phí đặt hàng (%)" />
-                                </div>
-                                <div className="col">
+                                </Col>
+                                <Col span={12}>
                                     <TextInput name="deposit_factor" label="Hệ số cọc (%)" />
-                                </div>
-                            </div>
+                                </Col>
+                            </Row>
 
-                            <div className="row">
-                                <div className="col">
+                            <Row gutter={20}>
+                                <Col span={12}>
                                     <TextInput
                                         name="delivery_fee_mass_unit_price"
                                         label="Đơn giá vận chuyển Kg (VND)"
                                     />
-                                </div>
-                                <div className="col">
+                                </Col>
+                                <Col span={12}>
                                     <TextInput
                                         name="delivery_fee_volume_unit_price"
                                         label="Đơn giá vận chuyển khối (VND)"
                                     />
-                                </div>
-                            </div>
+                                </Col>
+                            </Row>
 
                             <TextInput name="complaint_days" label="Hạn khiếu nại (ngày)" />
 
-                            <div className="row">
-                                <div className="col">
-                                    <SelectInput name="customer_group" label="Nhóm" options={listGroup} />
-                                </div>
-                            </div>
+                            <SelectInput name="customer_group" label="Nhóm" options={listGroup} />
 
                             <CheckInput name="is_lock" label="Khoá" />
 
