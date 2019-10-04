@@ -14,7 +14,7 @@ type SearchInputPropTypes = {
 export const SearchInput = ({show = true, onSearch}: SearchInputPropTypes) => {
     if (!show) return null;
     return (
-        <div className="input-group mb-3">
+        <div>
             <Search name="keyword" placeholder="Search..." onSearch={onSearch} />
         </div>
     );
