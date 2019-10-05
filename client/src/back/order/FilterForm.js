@@ -11,7 +11,6 @@ import ErrMsgs from 'src/utils/helpers/ErrMsgs';
 import TextInput from 'src/utils/components/input/TextInput';
 import SelectInput from 'src/utils/components/input/SelectInput';
 import DateRangeInput from 'src/utils/components/input/DateRangeInput';
-import ButtonsBar from 'src/utils/components/form/ButtonsBar';
 import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
 import OnlyAdmin from 'src/utils/components/OnlyAdmin';
 
