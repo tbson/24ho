@@ -6,7 +6,7 @@ import ReactToPrint from 'react-to-print';
 // $FlowFixMe: do not complain about importing node_modules
 import Barcode from 'react-barcode';
 // $FlowFixMe: do not complain about Yup
-import {Button, Modal} from 'antd';
+import {Button, Modal, Row, Col} from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import {apiUrls} from 'src/back/transaction/_data';
 import logoUrl from 'src/assets/images/logo.jpg';
@@ -91,8 +91,8 @@ class Content extends React.Component<ContentProps> {
         } = data;
         return (
             <div style={{padding: 10, paddingTop: 40}}>
-                <div className="row">
-                    <div className="col">
+                <Row>
+                    <Col span={12}>
                         <br />
                         <div>
                             <strong>{info_ten_cty}</strong>
@@ -101,16 +101,16 @@ class Content extends React.Component<ContentProps> {
                         <div>{info_email}</div>
                         <div>{info_phone}</div>
                         <div>{info_website}</div>
-                    </div>
-                    <div className="col" className="right">
+                    </Col>
+                    <Col span={12} className="right">
                         <div>
                             <img src={logoUrl} height={50} />
                         </div>
                         <div>
                             <Barcode width={1} height={25} value={data.uid} />
                         </div>
-                    </div>
-                </div>
+                    </Col>
+                </Row>
                 <br />
                 <div>
                     <h1 className="center">PHIẾU THU TIỀN</h1>
@@ -134,20 +134,20 @@ class Content extends React.Component<ContentProps> {
                     <span>{note}</span>
                 </div>
                 <br />
-                <div className="row">
-                    <div className="col center">
+                <Row>
+                    <Col span={12} className="center">
                         <strong>Người nộp</strong>
                         <div>
                             <em>(Ký, họ tên)</em>
                         </div>
-                    </div>
-                    <div className="col center">
+                    </Col>
+                    <Col span={12} className="center">
                         <strong>Người nhận</strong>
                         <div>
                             <em>(Ký, họ tên)</em>
                         </div>
-                    </div>
-                </div>
+                    </Col>
+                </Row>
             </div>
         );
     }

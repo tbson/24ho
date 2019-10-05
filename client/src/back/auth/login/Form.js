@@ -7,7 +7,6 @@ import {Button, Row, Col} from 'antd';
 import {apiUrls} from '../_data';
 import Tools from 'src/utils/helpers/Tools';
 import type {ObjResp} from 'src/utils/helpers/Tools';
-import ButtonsBar from 'src/utils/components/form/ButtonsBar';
 import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
 import TextInput from 'src/utils/components/input/TextInput';
 

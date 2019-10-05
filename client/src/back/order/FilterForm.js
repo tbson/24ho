@@ -4,6 +4,8 @@ import * as React from 'react';
 import {Formik, Form} from 'formik';
 // $FlowFixMe: do not complain about Yup
 import * as Yup from 'yup';
+// $FlowFixMe: do not complain about Yup
+import {Row, Col} from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import ErrMsgs from 'src/utils/helpers/ErrMsgs';
 import TextInput from 'src/utils/components/input/TextInput';
@@ -78,11 +80,11 @@ export default ({onChange, options = {sale: [], cust_care: [], customer: []}}: P
     const codeOptions = [
         {value: 'uid', label: 'Mã đơn hàng'},
         {value: 'purchase_code', label: 'Mã giao dịch'},
-        {value: 'bol', label: 'Mã vận đơn'},
+        {value: 'bol', label: 'Mã vận đơn'}
     ];
     const staffOptions = [
         {value: 'sale', label: 'Nhân viên mua hàng'},
-        {value: 'cust_care', label: 'Nhân viên chăm sóc'},
+        {value: 'cust_care', label: 'Nhân viên chăm sóc'}
     ];
     return (
         <div style={{padding: 15}}>
@@ -93,73 +95,73 @@ export default ({onChange, options = {sale: [], cust_care: [], customer: []}}: P
                 {({values, errors, handleSubmit}) => {
                     return (
                         <Form>
-                            <div className="row">
-                                <div className="col">
+                            <Row gutter={20}>
+                                <Col span={8}>
                                     <TextInput name="uid" label="Mã đơn hàng" />
-                                </div>
-                                <div className="col">
+                                </Col>
+                                <Col span={8}>
                                     <TextInput name="purchase_code" label="Mã giao dịch" />
-                                </div>
-                                <div className="col">
+                                </Col>
+                                <Col span={8}>
                                     <TextInput name="bol" label="Mã vận đơn" />
-                                </div>
-                            </div>
+                                </Col>
+                            </Row>
                             <OnlyAdmin>
-                                <div className="row">
-                                    <div className="col">
+                                <Row gutter={20}>
+                                    <Col span={8}>
                                         <SelectInput name="customer" options={options.customer} label="Khách hàng" />
-                                    </div>
-                                    <div className="col">
+                                    </Col>
+                                    <Col span={8}>
                                         <SelectInput name="sale" options={options.sale} label="Nhân viên mua hàng" />
-                                    </div>
-                                    <div className="col">
+                                    </Col>
+                                    <Col span={8}>
                                         <SelectInput
                                             name="cust_care"
                                             options={options.sale}
                                             label="Nhân viên chăm sóc"
                                         />
-                                    </div>
-                                </div>
-                                <div className="row">
-                                    <div className="col">
+                                    </Col>
+                                </Row>
+                                <Row gutter={20}>
+                                    <Col span={8}>
                                         <SelectInput
                                             options={booleanOptions}
                                             blankLabel="Chọn giá trị"
                                             name="shockproof"
                                             label="Chống sốc"
                                         />
-                                    </div>
-                                    <div className="col">
+                                    </Col>
+                                    <Col span={8}>
                                         <SelectInput
                                             options={booleanOptions}
                                             blankLabel="Chọn giá trị"
                                             name="wooden_box"
                                             label="Đóng gỗ"
                                         />
-                                    </div>
-                                    <div className="col">
+                                    </Col>
+                                    <Col span={8}>
                                         <SelectInput
                                             options={booleanOptions}
                                             blankLabel="Chọn giá trị"
                                             name="count_check"
                                             label="Kiểm đếm"
                                         />
-                                    </div>
-                                </div>
-                                <div className="row">
-                                    <div className="col">
+                                    </Col>
+                                </Row>
+                                <Row gutter={20}>
+                                    <Col span={8}>
                                         <DateRangeInput name="created_at" label="Ngày tạo" />
-                                    </div>
-                                    <div className="col">
+                                    </Col>
+                                    <Col span={8}>
                                         <DateRangeInput name="approved_date" label="Ngày duyệt" />
-                                    </div>
-                                    <div className="col">
+                                    </Col>
+                                    <Col span={8}>
                                         <DateRangeInput name="checked_date" label="Ngày kiểm" />
-                                    </div>
-                                </div>
+                                    </Col>
+                                </Row>
                             </OnlyAdmin>
                             <FormLevelErrMsg errors={errors.detail} />
-                            <br/>
+                            <br />
                             <ButtonsBar submitTitle="Search" onClick={handleSubmit} />
                         </Form>
                     );

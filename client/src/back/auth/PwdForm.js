@@ -8,7 +8,6 @@ import {Modal} from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import {apiUrls} from './_data';
 import type {ObjResp, TupleResp} from 'src/utils/helpers/Tools';
-import ButtonsBar from 'src/utils/components/form/ButtonsBar';
 import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
 import TextInput from 'src/utils/components/input/TextInput';
 

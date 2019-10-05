@@ -4,7 +4,7 @@ import {useEffect, useState} from 'react';
 // $FlowFixMe: do not complain about importing node_modules
 import {Link} from 'react-router-dom';
 // $FlowFixMe: do not complain about importing
-import {Button, Icon, Checkbox} from 'antd';
+import {Button, Icon, Checkbox, Row, Col} from 'antd';
 import Editable from 'src/utils/components/Editable';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
@@ -66,8 +66,8 @@ const OrderInfo = ({data: _data}: OrderInfoType) => {
                             <img src={data.thumbnail} style={{width: 83}} />
                         </td>
                         <td>
-                            <div className="row">
-                                <div className="col">
+                            <Row gutter={20}>
+                                <Col span={12}>
                                     <div>
                                         <Link className="editBtn" to={`/order/${data.id}`}>
                                             <strong>{data.uid}</strong>
@@ -98,8 +98,8 @@ const OrderInfo = ({data: _data}: OrderInfoType) => {
                                             <strong>{data.statistics.packages || 0}</strong>&nbsp;<span>Kiện</span>
                                         </Button>
                                     </div>
-                                </div>
-                                <div className="col">
+                                </Col>
+                                <Col span={12}>
                                     <div>
                                         <span>Trạng thái: </span>
                                         <strong>{data.status_name}</strong>
@@ -116,8 +116,8 @@ const OrderInfo = ({data: _data}: OrderInfoType) => {
                                             <span>{data.purchase_code || 'Chưa có'}</span>
                                         </Editable>
                                     </div>
-                                </div>
-                            </div>
+                                </Col>
+                            </Row>
                         </td>
                     </tr>
                 </tbody>
@@ -177,22 +177,22 @@ const FinInfo = ({data}: FinInfoType) => {
     const missing = data.vnd_total - data.vnd_total_discount - data.deposit;
     return (
         <>
-            <div className="row">
-                <div className="col">Tổng tiền đơn:</div>
-                <div className="col mono vnd">{Tools.numberFormat(data.vnd_total)}</div>
-            </div>
-            <div className="row">
-                <div className="col">Đã thanh toán:</div>
-                <div className="col mono vnd">{Tools.numberFormat(data.deposit)}</div>
-            </div>
-            <div className="row">
-                <div className="col">Hệ số cọc:</div>
-                <div className="col right mono">{Tools.numberFormat(data.deposit_factor)}%</div>
-            </div>
-            <div className="row">
-                <div className="col">Còn thiếu:</div>
-                <div className="col mono vnd">{Tools.numberFormat(missing)}</div>
-            </div>
+            <Row gutter={20}>
+                <Col span={12}>Tổng tiền đơn:</Col>
+                <Col span={12} className="mono vnd">{Tools.numberFormat(data.vnd_total)}</Col>
+            </Row>
+            <Row gutter={20}>
+                <Col span={12}>Đã thanh toán:</Col>
+                <Col span={12} className="mono vnd">{Tools.numberFormat(data.deposit)}</Col>
+            </Row>
+            <Row gutter={20}>
+                <Col span={12}>Hệ số cọc:</Col>
+                <Col span={12} className="right mono">{Tools.numberFormat(data.deposit_factor)}%</Col>
+            </Row>
+            <Row gutter={20}>
+                <Col span={12}>Còn thiếu:</Col>
+                <Col span={12} className="mono vnd">{Tools.numberFormat(missing)}</Col>
+            </Row>
         </>
     );
 };

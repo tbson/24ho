@@ -4,7 +4,7 @@ import {useState, useEffect} from 'react';
 // $FlowFixMe: do not complain about importing node_modules
 import {Link} from 'react-router-dom';
 // $FlowFixMe: do not complain about Yup
-import {Button} from 'antd';
+import {Button, Row, Col} from 'antd';
 import ListTools from 'src/utils/helpers/ListTools';
 import type {TRow} from './_data';
 import NavWrapper from 'src/utils/components/nav_wrapper/';
@@ -38,31 +38,31 @@ export default ({}: Props) => {
 
     return (
         <NavWrapper>
-            <div className="row">
-                <div className="col-md-4">
+            <Row>
+                <Col span={8}>
                     <div style={{padding: '15px'}}>
                         <BagPart />
                         <hr />
                         <FormPart submitTitle="OK" onSubmit={CNFormService.handleSubmit(onChange)}>
-                            <div className="row">
-                                <div className="col">
+                            <Row>
+                                <Col span={8}>
                                     <Link to={`/bol/1`}>
                                         <Button icon="left">Quay lại</Button>
                                     </Link>
-                                </div>
-                                <div className="col right">
+                                </Col>
+                                <Col span={8} className="right">
                                     <Button type="primary" htmlType="submit" icon="check">
                                         Thêm
                                     </Button>
-                                </div>
-                            </div>
+                                </Col>
+                            </Row>
                         </FormPart>
                     </div>
-                </div>
-                <div className="col-md-8">
+                </Col>
+                <Col span={16}>
                     <Preview list={list} onEdit={Service.prepareToEdit} onRemove={onRemove} />
-                </div>
-            </div>
+                </Col>
+            </Row>
         </NavWrapper>
     );
 };

@@ -4,7 +4,7 @@ import {useEffect} from 'react';
 // $FlowFixMe: do not complain about importing node_modules
 import {withRouter} from 'react-router-dom';
 // $FlowFixMe: do not complain about importing node_modules
-import {Tabs} from 'antd';
+import {Tabs, Row, Col} from 'antd';
 import NavWrapper from 'src/utils/components/nav_wrapper/';
 import Table from './main_table/';
 import CNTable from './cn_table/';
@@ -37,14 +37,14 @@ const Component = ({match}: Props) => {
                     <CNTable />
                 </TabPane>
                 <TabPane tab="Vận đơn VN" key="3">
-                    <div className="row">
-                        <div className="col">
+                    <Row>
+                        <Col span={12}>
                             <VNTable />
-                        </div>
-                        <div className="col">
+                        </Col>
+                        <Col span={12}>
                             <VNAdding />
-                        </div>
-                    </div>
+                        </Col>
+                    </Row>
                 </TabPane>
             </Tabs>
         </NavWrapper>

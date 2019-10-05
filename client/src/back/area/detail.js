@@ -4,7 +4,7 @@ import {useEffect, useState} from 'react';
 // $FlowFixMe: do not complain about importing node_modules
 import {withRouter} from 'react-router-dom';
 // $FlowFixMe: do not complain about importing node_modules
-import {Tabs} from 'antd';
+import {Tabs, Row, Col} from 'antd';
 import NavWrapper from 'src/utils/components/nav_wrapper/';
 import DeliveryFeeTable from 'src/back/delivery_fee/main_table/';
 import {apiUrls} from './_data';
@@ -42,8 +42,8 @@ const Detail = ({match}: Props) => {
         <NavWrapper>
             <Tabs defaultIndex="0">
                 <TabPane tab="Vùng" key="0">
-                    <div className="row">
-                        <div className="col-md-4">
+                    <Row>
+                        <Col span={8}>
                             <table className="table">
                                 <tbody>
                                     <tr>
@@ -60,8 +60,8 @@ const Detail = ({match}: Props) => {
                                     </tr>
                                 </tbody>
                             </table>
-                        </div>
-                    </div>
+                        </Col>
+                    </Row>
                 </TabPane>
                 <TabPane tab="Đơn giá vận chuyển Kg" key="1">
                     <DeliveryFeeTable area={area} type={1} />

@@ -4,7 +4,7 @@ import {useState, useEffect} from 'react';
 // $FlowFixMe: do not complain about importing node_modules
 import {withRouter} from 'react-router-dom';
 // $FlowFixMe: do not complain about importing
-import {Button} from 'antd';
+import {Button, Row, Col} from 'antd';
 import NavWrapper from 'src/utils/components/nav_wrapper/';
 import {apiUrls} from '../_data';
 import Tools from 'src/utils/helpers/Tools';
@@ -67,27 +67,32 @@ const Component = ({match, history}: Props) => {
 
     return (
         <NavWrapper>
-            <div className="row">
-                <div className="col-md-3">
+            <Row>
+                <Col span={6}>
                     <DelayInput clearAfterSet onChange={moveUid} placeholder="Mã vận đơn..." />
-                </div>
-                <div className="col-md-3">
+                </Col>
+                <Col span={6}>
                     <DelayInput onChange={addressFilter} placeholder="Mã địa chỉ..." />
-                </div>
-                <div className="col-md-6">
-                    <Button block type="primary" icon="shopping-cart" onClick={exportCheck} disabled={!resultList.length}>
+                </Col>
+                <Col span={12}>
+                    <Button
+                        block
+                        type="primary"
+                        icon="shopping-cart"
+                        onClick={exportCheck}
+                        disabled={!resultList.length}>
                         Xuất Hàng
                     </Button>
-                </div>
-            </div>
-            <div className="row">
-                <div className="col">
+                </Col>
+            </Row>
+            <Row>
+                <Col span={12}>
                     <PrepareTable list={prepareList} move={moveRight} />
-                </div>
-                <div className="col">
+                </Col>
+                <Col span={12}>
                     <ResultTable list={resultList} move={moveLeft} />
-                </div>
-            </div>
+                </Col>
+            </Row>
 
             <ExportForm onChange={() => Tools.navigateTo(history)('/receipt')} ids={resultList.map(item => item.id)} />
         </NavWrapper>

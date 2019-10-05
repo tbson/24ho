@@ -6,7 +6,7 @@ import {Formik, Form} from 'formik';
 // $FlowFixMe: do not complain about Yup
 import * as Yup from 'yup';
 // $FlowFixMe: do not complain about Yup
-import {Modal} from 'antd';
+import {Modal, Row, Col} from 'antd';
 import ErrMsgs from 'src/utils/helpers/ErrMsgs';
 import {APP} from 'src/constants';
 import {apiUrls} from '../_data';
@@ -14,7 +14,6 @@ import Tools from 'src/utils/helpers/Tools';
 import type {FormState} from 'src/utils/helpers/Tools';
 import TextInput from 'src/utils/components/input/TextInput';
 import FileInput from 'src/utils/components/input/FileInput';
-import ButtonsBar from 'src/utils/components/form/ButtonsBar';
 import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
 
 export class Service {
@@ -108,32 +107,32 @@ export default ({onChange}: Props) => {
                     return (
                         <Form>
                             <button className="hide" />
-                            <div className="row">
+                            <Row gutter={20}>
                                 {APP !== 'admin' && (
-                                    <div className="col-md-2">
+                                    <Col span={8}>
                                         <FileInput name="avatar" label="" />
-                                    </div>
+                                    </Col>
                                 )}
-                                <div className={`col-md-${APP !== 'admin' ? 10 : 12}`}>
+                                <Col span={APP !== 'admin' ? 16 : 24}>
                                     <TextInput name="username" label="Tên đăng nhập" required={true} autoFocus={true} />
 
                                     <TextInput name="email" type="email" label="Email" required={true} />
 
-                                    <div className="row">
-                                        <div className="col-md-6">
+                                    <Row gutter={20}>
+                                        <Col span={12}>
                                             <TextInput name="first_name" label="Tên" />
-                                        </div>
-                                        <div className="col-md-6">
+                                        </Col>
+                                        <Col span={12}>
                                             <TextInput name="last_name" label="Họ" />
-                                        </div>
-                                    </div>
+                                        </Col>
+                                    </Row>
 
                                     {APP !== 'admin' && (
                                         <TextInput name="phone" label="Số điện thoại" required={true} />
                                     )}
                                     {APP !== 'admin' && <TextInput name="company" label="Tên công ty" />}
-                                </div>
-                            </div>
+                                </Col>
+                            </Row>
 
                             <FormLevelErrMsg errors={errors.detail} />
                         </Form>

@@ -2,7 +2,7 @@
 import * as React from 'react';
 import {useState, useEffect} from 'react';
 // $FlowFixMe: do not complain about importing
-import {Input, InputNumber, Button} from 'antd';
+import {Input, InputNumber, Button, Col, Row} from 'antd';
 import NavWrapper from 'src/utils/components/nav_wrapper/';
 import Tools from 'src/utils/helpers/Tools';
 import {apiUrls} from './_data';
@@ -59,7 +59,7 @@ const CheckInput = ({id, checked_quantity, onChange}: CheckInputProp) => {
     );
 };
 
-const Row = ({data, index, onChange}) => {
+const TableRow = ({data, index, onChange}) => {
     return (
         <tr>
             <td>{index + 1}</td>
@@ -185,8 +185,8 @@ export default ({}: Props) => {
     return (
         <NavWrapper>
             <div style={{padding: 10, paddingBottom: 0}}>
-                <div className="row">
-                    <div className="col-md-3">
+                <Row>
+                    <Col span={6}>
                         <div style={{display: 'flex'}}>
                             <div className="form-group" style={{flexGrow: 1}}>
                                 <Input
@@ -203,8 +203,8 @@ export default ({}: Props) => {
                                 </Button>
                             </div>
                         </div>
-                    </div>
-                    <div className="col-md-9">
+                    </Col>
+                    <Col span={18}>
                         <div>
                             <strong>Đơn hàng: </strong>
                             <span>{orderUid || 'Chưa có...'}</span>
@@ -213,15 +213,15 @@ export default ({}: Props) => {
                             <strong>Vận đơn: </strong>
                             <span>{listBol || 'Chưa có ...'}</span>
                         </div>
-                    </div>
-                </div>
+                    </Col>
+                </Row>
             </div>
 
             <table className="table table-striped">
                 <TableHead />
                 <tbody>
                     {list.map((item, index) => (
-                        <Row data={item} key={item.id} index={index} onChange={handleQuantityChange} />
+                        <TableRow data={item} key={item.id} index={index} onChange={handleQuantityChange} />
                     ))}
                 </tbody>
             </table>

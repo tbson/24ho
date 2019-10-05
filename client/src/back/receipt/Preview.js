@@ -6,7 +6,7 @@ import ReactToPrint from 'react-to-print';
 // $FlowFixMe: do not complain about importing node_modules
 import Barcode from 'react-barcode';
 // $FlowFixMe: do not complain about Yup
-import {Modal, Button} from 'antd';
+import {Modal, Button, Row, Col} from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import {apiUrls} from 'src/back/receipt/_data';
 import logoUrl from 'src/assets/images/logo.jpg';
@@ -126,8 +126,8 @@ class Content extends React.Component<ContentProps> {
         const orders = data.orders;
         return (
             <div style={{padding: 10, paddingTop: 40}}>
-                <div className="row">
-                    <div className="col">
+                <Row>
+                    <Col span={12}>
                         <br />
                         <div>
                             <strong>{info_ten_cty}</strong>
@@ -136,16 +136,16 @@ class Content extends React.Component<ContentProps> {
                         <div>{info_email}</div>
                         <div>{info_phone}</div>
                         <div>{info_website}</div>
-                    </div>
-                    <div className="col" className="right">
+                    </Col>
+                    <Col span={12} className="right">
                         <div>
                             <img src={logoUrl} height={50} />
                         </div>
                         <div>
                             <Barcode width={1} height={25} value={data.uid} />
                         </div>
-                    </div>
-                </div>
+                    </Col>
+                </Row>
                 <br />
                 <div>
                     <h1 className="center">PHIẾU GIAO HÀNG</h1>
@@ -181,34 +181,34 @@ class Content extends React.Component<ContentProps> {
                     <span>Tổng cộng: </span>
                     <span>{Tools.numberFormat(parseInt(vnd_total))}₫</span>
                 </div>
-                <div className="row">
-                    <div className="col-3">
+                <Row>
+                    <Col span={6}>
                         <span>Ghi chú: </span>
-                    </div>
-                    <div className="col-9">
+                    </Col>
+                    <Col span={18}>
                         <div className="dot-underline">{note}</div>
                         <div className="dot-underline">&nbsp;</div>
                         <div className="dot-underline">&nbsp;</div>
-                    </div>
-                </div>
+                    </Col>
+                </Row>
                 <div>
                     <em>Ngày........Tháng........Năm........</em>
                 </div>
                 <br />
-                <div className="row">
-                    <div className="col center">
+                <Row>
+                    <Col span={12} className="center">
                         <strong>Bên giao</strong>
                         <div>
                             <em>(Ký, họ tên)</em>
                         </div>
-                    </div>
-                    <div className="col center">
+                    </Col>
+                    <Col span={12} className="center">
                         <strong>Bên nhận</strong>
                         <div>
                             <em>(Ký, họ tên)</em>
                         </div>
-                    </div>
-                </div>
+                    </Col>
+                </Row>
             </div>
         );
     }

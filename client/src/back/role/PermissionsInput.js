@@ -4,7 +4,7 @@ import {useState} from 'react';
 // $FlowFixMe: do not complain about hooks
 import {Field, ErrorMessage} from 'formik';
 // $FlowFixMe: do not complain about hooks
-import { Checkbox, Button } from 'antd';
+import {Checkbox, Button, Row, Col, Divider} from 'antd';
 import {pemGroupTrans, excludeGroups} from './_data';
 
 export class Service {
@@ -64,7 +64,7 @@ export default ({name, permissions: _permissions, grouped_permissions}: Props) =
                         <div>
                             <div className="pointer no-select" onClick={togglePermissions(setFieldValue)}>
                                 <Button icon="check">Tất cả quyền</Button>
-                                <hr />
+                                <Divider />
                             </div>
                             {Object.entries(grouped_permissions)
                                 .filter(([groupName, _]) => !excludeGroups.includes(groupName))
@@ -102,15 +102,17 @@ const PermGroup = ({groupName, pems, pemValues, togglePermissions, onChange}: Pe
     return (
         <div>
             <div className="pointer no-select" onClick={togglePermissions} style={{marginBottom: 15}}>
-                <Button size="small" icon="check">{groupName}</Button>
+                <Button size="small" icon="check">
+                    {groupName}
+                </Button>
             </div>
-            <div className="row">
+            <Row>
                 {pems.map(pem => {
                     const checked = pemValues.includes(pem.id);
                     return <Pem key={pem.id} id={pem.id} title={pem.title} checked={checked} onChange={onChange} />;
                 })}
-            </div>
-            <hr />
+            </Row>
+            <Divider dashed />
         </div>
     );
 };
@@ -126,8 +128,10 @@ const Pem = ({id, title, checked, onChange}: PemProps) => {
     };
 
     return (
-        <div className="col-md-3">
-            <Checkbox checked={checked} onChange={handeChange(id)}>{title}</Checkbox>
-        </div>
+        <Col span={6}>
+            <Checkbox checked={checked} onChange={handeChange(id)}>
+                {title}
+            </Checkbox>
+        </Col>
     );
 };

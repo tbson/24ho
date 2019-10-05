@@ -1,10 +1,12 @@
 // @flow
 import * as React from 'react';
+// $FlowFixMe: do not complain about importing node_modules
+import {Row, Col} from 'antd';
 import {useState, useEffect} from 'react';
 import NavWrapper from 'src/utils/components/nav_wrapper/';
 import Tools from 'src/utils/helpers/Tools';
 import {apiUrls} from './_data';
-import Row from './vn_table/Row';
+import TableRow from './vn_table/Row';
 
 type Props = {};
 
@@ -70,8 +72,8 @@ export default ({}: Props) => {
     useEffect(() => {}, []);
 
     return (
-        <div className="row">
-            <div className="col">
+        <Row>
+            <Col span={12}>
                 <div className="form-group">
                     <label htmlFor="bag-input">Bao hàng</label>
                     <input
@@ -86,12 +88,12 @@ export default ({}: Props) => {
                     <TableHead />
                     <tbody>
                         {listBol.map((item, index) => (
-                            <Row data={item} key={item.id} index={index}/>
+                            <TableRow data={item} key={item.id} index={index} />
                         ))}
                     </tbody>
                 </table>
-            </div>
-            <div className="col">
+            </Col>
+            <Col span={12}>
                 <div className="form-group">
                     <label htmlFor="bol-input">Vận đơn VN</label>
                     <input
@@ -106,11 +108,11 @@ export default ({}: Props) => {
                     <TableHead />
                     <tbody>
                         {listBolMatched.map((item, index) => (
-                            <Row data={item} key={item.id} index={index}/>
+                            <TableRow data={item} key={item.id} index={index} />
                         ))}
                     </tbody>
                 </table>
-            </div>
-        </div>
+            </Col>
+        </Row>
     );
 };

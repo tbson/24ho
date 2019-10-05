@@ -6,6 +6,8 @@ import {useEffect, useState} from 'react';
 import {Tabs} from 'antd';
 // $FlowFixMe: do not complain about importing node_modules
 import {withRouter} from 'react-router-dom';
+// $FlowFixMe: do not complain about Yup
+import {Row, Col} from 'antd';
 import {STATUS} from 'src/back/order/_data';
 import NavWrapper from 'src/utils/components/nav_wrapper/';
 import Info from './Info';
@@ -65,8 +67,8 @@ const Detail = ({match}) => {
 
     return !data.rate ? null : (
         <NavWrapper>
-            <div className="row">
-                <div className="col-md-9 no-padding-right">
+            <Row>
+                <Col span={16} className="no-padding-right">
                     <Info pending={data.pending} data={data} addresses={options.addresses} onPartialChange={setData} />
                     <Tabs defaultActiveKey="0">
                         <TabPane tab="Sản Phẩm" key="0">
@@ -78,14 +80,14 @@ const Detail = ({match}) => {
                             />
                         </TabPane>
                         <TabPane tab="Vận Đơn" key="1">
-                            <BolTable order_id={id || 0} notifyChange={retrieve} readonly={!Tools.isAdmin()}/>
+                            <BolTable order_id={id || 0} notifyChange={retrieve} readonly={!Tools.isAdmin()} />
                         </TabPane>
                     </Tabs>
-                </div>
-                <div className="col-md-3 no-padding-left">
+                </Col>
+                <Col span={8} className="no-padding-left">
                     <Accounting pending={data.pending} data={data} onPartialChange={setData} />
-                </div>
-            </div>
+                </Col>
+            </Row>
         </NavWrapper>
     );
 };

@@ -8,7 +8,7 @@ import type {FormikProps} from 'formik';
 // $FlowFixMe: do not complain about Yup
 import * as Yup from 'yup';
 // $FlowFixMe: do not complain about Yup
-import {Modal} from 'antd';
+import {Modal, Row, Col} from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import ErrMsgs from 'src/utils/helpers/ErrMsgs';
 import {apiUrls} from './_data';
@@ -16,7 +16,6 @@ import {apiUrls as bagApiUrl} from 'src/back/bag/_data';
 import TextInput from 'src/utils/components/input/TextInput';
 import HiddenInput from 'src/utils/components/input/HiddenInput';
 import CheckInput from 'src/utils/components/input/CheckInput';
-import ButtonsBar from 'src/utils/components/form/ButtonsBar';
 import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
 
 export class Service {
@@ -188,8 +187,8 @@ export const FormPart = ({
                 return (
                     <Form>
                         <button className="hide" />
-                        <div className="row">
-                            <div className="col">
+                        <Row gutter={20}>
+                            <Col span={12}>
                                 <TextInput
                                     name="uid"
                                     label="Mã vận đơn"
@@ -197,38 +196,38 @@ export const FormPart = ({
                                     onBlur={Service.checkUID(resetForm, setOrderId)}
                                     required={true}
                                 />
-                            </div>
-                            <div className="col">
+                            </Col>
+                            <Col span={12}>
                                 <TextInput name="address_code" label="Mã địa chỉ" />
-                            </div>
-                        </div>
+                            </Col>
+                        </Row>
                         <TextInput name="mass" label="Khối lượng (KG)" />
-                        <div className="row">
-                            <div className="col">
+                        <Row gutter={20}>
+                            <Col span={8}>
                                 <TextInput name="length" label="Dài (Cm)" />
-                            </div>
-                            <div className="col">
+                            </Col>
+                            <Col span={8}>
                                 <TextInput name="width" label="Rộng (Cm)" />
-                            </div>
-                            <div className="col">
+                            </Col>
+                            <Col span={8}>
                                 <TextInput name="height" label="Cao (Cm)" />
-                            </div>
-                        </div>
-                        <div className="row">
-                            <div className="col">
+                            </Col>
+                        </Row>
+                        <Row gutter={20}>
+                            <Col span={8}>
                                 <CheckInput name="shockproof" label="Chống sốc" disabled={!!orderId} />
                                 {values.shockproof && (
                                     <TextInput name="cny_shockproof_fee" label="Phí chống sốc (CNY)" />
                                 )}
-                            </div>
-                            <div className="col">
+                            </Col>
+                            <Col span={8}>
                                 <CheckInput name="wooden_box" label="Đóng gỗ" disabled={!!orderId} />
                                 {values.wooden_box && <TextInput name="cny_wooden_box_fee" label="Phí đóng gỗ (CNY)" />}
-                            </div>
-                            <div className="col">
+                            </Col>
+                            <Col span={8}>
                                 <CheckInput name="count_check" label="Kiểm đếm" disabled />
-                            </div>
-                        </div>
+                            </Col>
+                        </Row>
 
                         <TextInput name="note" label="Ghi chú" />
                         <HiddenInput name="cn_date" />

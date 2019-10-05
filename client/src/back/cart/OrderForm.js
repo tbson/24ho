@@ -4,7 +4,7 @@ import {useState, useEffect, useRef} from 'react';
 // $FlowFixMe: do not complain about formik
 import {Formik, Form} from 'formik';
 // $FlowFixMe: do not complain about Yup
-import {Modal} from 'antd';
+import {Modal, Row, Col} from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import type {SelectOptions} from 'src/utils/helpers/Tools';
 import {apiUrls} from './_data';
@@ -49,15 +49,7 @@ type Props = {
     onChange: Function,
     submitTitle?: string
 };
-export default ({
-    amount,
-    rate,
-    listOrder,
-    defaultAddress,
-    listAddress,
-    onChange,
-    submitTitle = 'Lưu'
-}: Props) => {
+export default ({amount, rate, listOrder, defaultAddress, listAddress, onChange, submitTitle = 'Lưu'}: Props) => {
     const formName = 'Giỏ hàng';
     const {handleSubmit} = Service;
 
@@ -105,17 +97,17 @@ export default ({
                         <Form>
                             <button className="hide" />
                             <SelectInput name="address" label="Địa chỉ" options={listAddress} required={true} />
-                            <div className="row">
-                                <div className="col">
+                            <Row>
+                                <Col span={8}>
                                     <CheckInput name="count_check" label="Kiểm đếm" />
-                                </div>
-                                <div className="col">
+                                </Col>
+                                <Col span={8}>
                                     <CheckInput name="wooden_box" label="Đóng gỗ" />
-                                </div>
-                                <div className="col">
+                                </Col>
+                                <Col span={8}>
                                     <CheckInput name="shockproof" label="Chống sốc" />
-                                </div>
-                            </div>
+                                </Col>
+                            </Row>
                             <TextInput name="note" label="Note" autoFocus={true} />
                             <AccountSummary
                                 amount={amount}

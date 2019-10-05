@@ -4,6 +4,8 @@ import * as React from 'react';
 import {useState, useEffect} from 'react';
 // $FlowFixMe: do not complain about importing node_modules
 import {withRouter} from 'react-router-dom';
+// $FlowFixMe: do not complain about Yup
+import {Row, Col} from 'antd';
 import {apiUrls} from '../_data';
 import Tools from 'src/utils/helpers/Tools';
 
@@ -25,7 +27,7 @@ type Props = {
     match: Object
 };
 export const ResetPwd = ({history, match}: Props) => {
-    const [message, setMessage] = useState('Resetting password...');
+    const [message, setMessage] = useState('Đổi mật khẩu...');
     const logout = Tools.logout(history);
     const navigateTo = Tools.navigateTo(history);
 
@@ -34,7 +36,7 @@ export const ResetPwd = ({history, match}: Props) => {
     };
 
     const onError = () => {
-        const message = 'Wrong token or token expired. Login page comming in 4 seconds.';
+        const message = 'Sai link kích hoạt hoặc link kích hoạt đã hết hạn. Trỡ về trang login trong 4 giây.';
         setMessage(message);
         setTimeout(() => {
             navigateTo('/login');
@@ -47,11 +49,9 @@ export const ResetPwd = ({history, match}: Props) => {
     }, []);
 
     return (
-        <div className="container">
-            <div className="row">
-                <div className="col-md-8 offset-md-2">{message}</div>
-            </div>
-        </div>
+        <Row>
+            <Col span={16} offset={4}>{message}</Col>
+        </Row>
     );
 };
 export default withRouter(ResetPwd);

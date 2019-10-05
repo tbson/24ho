@@ -6,7 +6,7 @@ import {Formik, Form} from 'formik';
 // $FlowFixMe: do not complain about Yup
 import * as Yup from 'yup';
 // $FlowFixMe: do not complain about Yup
-import {Modal} from 'antd';
+import {Modal, Row, Col} from 'antd';
 import {APP} from 'src/constants';
 import OnlyAdmin from 'src/utils/components/OnlyAdmin';
 import {DeliveryFeeTypeOptions} from './_data';
@@ -17,7 +17,6 @@ import {apiUrls} from './_data';
 import TextInput from 'src/utils/components/input/TextInput';
 import CheckInput from 'src/utils/components/input/CheckInput';
 import SelectInput from 'src/utils/components/input/SelectInput';
-import ButtonsBar from 'src/utils/components/form/ButtonsBar';
 import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
 
 export class Service {
@@ -161,52 +160,52 @@ export default ({order_id = 0, onChange, submitTitle = 'Lưu'}: Props) => {
                     return (
                         <Form>
                             <button className="hide" />
-                            <div className="row">
-                                <div className="col">
+                            <Row gutter={20}>
+                                <Col span={6}>
                                     <TextInput name="uid" label="Mã vận đơn" autoFocus={true} required={true} />
-                                </div>
+                                </Col>
                                 <OnlyAdmin reverse={true}>
-                                    <div className="col">
+                                    <Col span={6}>
                                         <SelectInput name="address_code" options={addressOptions} label="Mã địa chỉ" />
-                                    </div>
+                                    </Col>
                                 </OnlyAdmin>
                                 <OnlyAdmin>
-                                    <div className="col">
+                                    <Col span={6}>
                                         <TextInput name="address_code" label="Mã địa chỉ" />
-                                    </div>
-                                    <div className="col">
+                                    </Col>
+                                    <Col span={6}>
                                         <TextInput name="purchase_code" label="Mã giao dịch" />
-                                    </div>
+                                    </Col>
                                 </OnlyAdmin>
-                            </div>
+                            </Row>
                             <TextInput name="mass" type="number" label="Khối lượng (KG)" />
-                            <div className="row">
-                                <div className="col">
+                            <Row gutter={20}>
+                                <Col span={8}>
                                     <TextInput name="length" type="number" label="Dài (Cm)" />
-                                </div>
-                                <div className="col">
+                                </Col>
+                                <Col span={8}>
                                     <TextInput name="width" type="number" label="Rộng (Cm)" />
-                                </div>
-                                <div className="col">
+                                </Col>
+                                <Col span={8}>
                                     <TextInput name="height" type="number" label="Cao (Cm)" />
-                                </div>
-                            </div>
+                                </Col>
+                            </Row>
                             <OnlyAdmin>
-                                <div className="row">
-                                    <div className="col">
+                                <Row gutter={20}>
+                                    <Col span={12}>
                                         <TextInput name="mass_unit_price" type="number" label="Đơn giá theo Kg (VND)" />
-                                    </div>
-                                    <div className="col">
+                                    </Col>
+                                    <Col span={12}>
                                         <TextInput
                                             name="volume_unit_price"
                                             type="number"
                                             label="Đơn giá theo Khối (VND)"
                                         />
-                                    </div>
-                                </div>
+                                    </Col>
+                                </Row>
                             </OnlyAdmin>
-                            <div className="row">
-                                <div className="col">
+                            <Row gutter={20}>
+                                <Col span={8}>
                                     <CheckInput name="shockproof" label="Chống sốc" disabled={!!order_id} />
                                     {values.shockproof && (
                                         <OnlyAdmin>
@@ -217,8 +216,8 @@ export default ({order_id = 0, onChange, submitTitle = 'Lưu'}: Props) => {
                                             />
                                         </OnlyAdmin>
                                     )}
-                                </div>
-                                <div className="col">
+                                </Col>
+                                <Col span={8}>
                                     <CheckInput name="wooden_box" label="Đóng gỗ" disabled={!!order_id} />
                                     {values.wooden_box && (
                                         <OnlyAdmin>
@@ -229,9 +228,9 @@ export default ({order_id = 0, onChange, submitTitle = 'Lưu'}: Props) => {
                                             />
                                         </OnlyAdmin>
                                     )}
-                                </div>
+                                </Col>
                                 {!order_id && (
-                                    <div className="col">
+                                    <Col span={8}>
                                         <CheckInput name="insurance" label="Bảo hiểm" />
                                         {values.insurance && (
                                             <TextInput
@@ -240,9 +239,9 @@ export default ({order_id = 0, onChange, submitTitle = 'Lưu'}: Props) => {
                                                 label="Giá trị bảo hiểm (CNY)"
                                             />
                                         )}
-                                    </div>
+                                    </Col>
                                 )}
-                            </div>
+                            </Row>
 
                             <OnlyAdmin>
                                 <SelectInput

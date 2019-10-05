@@ -1,13 +1,13 @@
 // @flow
 import * as React from 'react';
+import {useState, useEffect} from 'react';
 // $FlowFixMe: do not complain about importing
 import {Button} from 'antd';
-import {useState, useEffect} from 'react';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
 import {apiUrls} from 'src/back/order/_data';
 import {SearchInput} from 'src/utils/components/TableUtils';
-import Row from './Row.js';
+import TableRow from './Row.js';
 
 export class Service {
     static listRequest(params: Object = {}): Promise<Object> {
@@ -105,7 +105,7 @@ export default ({pending = false, order_id, rate, notifyChange}: Props) => {
 
                 <tbody>
                     {list.map((data, key) => (
-                        <Row
+                        <TableRow
                             className="table-row"
                             pending={pending}
                             data={data}

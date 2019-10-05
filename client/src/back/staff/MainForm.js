@@ -14,7 +14,6 @@ import type {SelectOptions} from 'src/utils/helpers/Tools';
 import TextInput from 'src/utils/components/input/TextInput';
 import CheckInput from 'src/utils/components/input/CheckInput';
 import SelectInput from 'src/utils/components/input/SelectInput';
-import ButtonsBar from 'src/utils/components/form/ButtonsBar';
 import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
 
 export class Service {
