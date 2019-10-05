@@ -33,6 +33,13 @@ const rawApiUrls = [
 
 export const apiUrls = Tools.getApiUrls(rawApiUrls);
 
+export const siteOptions = [
+    {value: 'TAOBAO', label: 'TAOBAO'},
+    {value: 'TMALL', label: 'TMALL'},
+    {value: '1688', label: '1588'},
+    {value: 'OTHER', label: 'Khác'}
+];
+
 export function seeding(numberOfItems: number, single: boolean = false): any {
     let result = [];
     for (let i = 1; i <= numberOfItems; i++) {
@@ -62,7 +69,7 @@ export type FormValues = {
     color?: string,
     size?: string,
 
-    link: string,
+    url: string,
     image: string,
 
     rate: number,

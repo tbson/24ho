@@ -416,13 +416,17 @@ export default ({}: Props) => {
                         <th className="right">Đơn giá</th>
                         <th className="right">Tiền hàng</th>
                         <th>Ghi chú</th>
-                        <th className="row80" />
+                        <th className="row80">
+                            <Button type="primary" icon="plus" onClick={() => MainFormService.toggleForm(true)}>
+                                Sản phẩm
+                            </Button>
+                        </th>
                     </tr>
                 </thead>
 
                 <tbody>
                     <tr>
-                        <td colSpan="99"  >
+                        <td colSpan="99">
                             <SearchInput onSearch={searchList} />
                         </td>
                     </tr>
@@ -444,7 +448,7 @@ export default ({}: Props) => {
                                     key={`${groupKey}${key}`}
                                     onCheck={onCheck}
                                     onRemove={onRemove}
-                                    showForm={id => MainFormService.toggleForm(true, id)}
+                                    showForm={id => MainFormService.toggleForm(true, list.find(item => item.id === id))}
                                 />
                             ))}
                         </Group>
@@ -457,8 +461,7 @@ export default ({}: Props) => {
                     </tbody>
                 )}
             </table>
-
-            <MainForm listItem={list} onChange={onChange} />
+            <MainForm onChange={onChange} />
             <OrderForm
                 rate={rate}
                 amount={amount}
@@ -525,44 +528,6 @@ export const Group = ({data, sendOrder, showForm, onCheckAll, onBulkRemove, chil
                     <strong>{Tools.numberFormat(data.order.cny_total)}</strong>
                 </div>
             </td>
-            {/*
-            <td>
-                <div>
-                    <strong>Địa chỉ: </strong>
-                    {data.order.address_title || <em className="red">Chưa có địa chỉ nhận hàng...</em>}
-                </div>
-                <hr />
-                <div className="row">
-                    <div className="col-sm">
-                        <strong>Kiểm đếm: </strong>
-                    </div>
-                    <div className="col-sm">
-                        <BoolOutput value={data.order.count_check} />
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col-sm">
-                        <strong>Đóng gỗ: </strong>
-                    </div>
-                    <div className="col-sm">
-                        <BoolOutput value={data.order.wooden_box} />
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col-sm">
-                        <strong>Chống sốc: </strong>
-                    </div>
-                    <div className="col-sm">
-                        <BoolOutput value={data.order.shockproof} />
-                    </div>
-                </div>
-                <hr />
-                <div>
-                    <strong>Ghi chú: </strong>
-                    {data.order.note || <em>Chưa có ghi chú...</em>}
-                </div>
-            </td>
-            */}
         </tr>
     </tbody>
 );

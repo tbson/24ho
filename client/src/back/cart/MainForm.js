@@ -6,28 +6,50 @@ import {Formik, Form} from 'formik';
 // $FlowFixMe: do not complain about Yup
 import * as Yup from 'yup';
 // $FlowFixMe: do not complain about Yup
-import {Modal} from 'antd';
+import {Modal, Row, Col} from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import ErrMsgs from 'src/utils/helpers/ErrMsgs';
-import {apiUrls} from './_data';
+import {apiUrls, siteOptions} from './_data';
 import TextInput from 'src/utils/components/input/TextInput';
+import SelectInput from 'src/utils/components/input/SelectInput';
 import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
 
 export class Service {
     static toggleEvent = 'TOGGLE_CART_MAIN_FORM';
-    static toggleForm(open: boolean, id: number = 0) {
-        Tools.event.dispatch(Service.toggleEvent, {open, id});
+    static toggleForm(open: boolean, item: Object) {
+        Tools.event.dispatch(Service.toggleEvent, {open, item});
     }
 
     static initialValues = {
+        title: '',
+        url: '',
+        shop_link: '',
+        shop_nick: '',
+        image: '',
+        site: '',
         quantity: 0,
+        unit_price: 0,
+        color: '',
+        size: '',
         note: ''
     };
 
     static validationSchema = Yup.object().shape({
+        title: Yup.string().required(ErrMsgs.REQUIRED),
+        url: Yup.string().required(ErrMsgs.REQUIRED),
+        shop_link: Yup.string().required(ErrMsgs.REQUIRED),
+        shop_nick: Yup.string().required(ErrMsgs.REQUIRED),
+        site: Yup.string().required(ErrMsgs.REQUIRED),
         quantity: Yup.number()
             .required(ErrMsgs.REQUIRED)
-            .min(0, ErrMsgs.GT_0)
+            .min(0, ErrMsgs.GT_0),
+        unit_price: Yup.number()
+            .required(ErrMsgs.REQUIRED)
+            .min(0, ErrMsgs.GT_0),
+        image: Yup.string(),
+        color: Yup.string(),
+        size: Yup.string(),
+        note: Yup.string()
     });
 
     static handleSubmit(id: number, onChange: Function) {
@@ -39,11 +61,10 @@ export class Service {
 }
 
 type Props = {
-    listItem: Array<Object>,
     onChange: Function,
     submitTitle?: string
 };
-export default ({listItem, onChange, submitTitle = 'Lưu'}: Props) => {
+export default ({onChange, submitTitle = 'Lưu'}: Props) => {
     const formName = 'Mặt hàng hàng';
     const {validationSchema, handleSubmit} = Service;
 
@@ -52,15 +73,19 @@ export default ({listItem, onChange, submitTitle = 'Lưu'}: Props) => {
 
     const [initialValues, setInitialValues] = useState(Service.initialValues);
 
-    const retrieveThenOpen = (id: number) => {
-        const item = listItem.find(item => item.id === id);
-        setInitialValues({...item});
+    const retrieveThenOpen = (item: Object) => {
         setOpen(true);
-        setId(id);
+        if (item) {
+            setInitialValues({...item});
+            setId(item.id);
+        } else {
+            setInitialValues({...Service.initialValues});
+            setId(0);
+        }
     };
 
-    const handleToggle = ({detail: {open, id}}) => {
-        open ? retrieveThenOpen(id) : setOpen(false);
+    const handleToggle = ({detail: {open, item}}) => {
+        open ? retrieveThenOpen(item) : setOpen(false);
     };
 
     useEffect(() => {
@@ -90,13 +115,53 @@ export default ({listItem, onChange, submitTitle = 'Lưu'}: Props) => {
                     return (
                         <Form>
                             <button className="hide" />
-                            <TextInput
-                                name="quantity"
-                                type="number"
-                                label="Số lượng"
-                                autoFocus={true}
-                                required={true}
-                            />
+
+                            <Row gutter={20}>
+                                <Col span={12}>
+                                    <TextInput name="shop_link" label="Link shop" required />
+                                </Col>
+                                <Col span={12}>
+                                    <TextInput name="shop_nick" label="Tên shop" required />
+                                </Col>
+                            </Row>
+
+                            <SelectInput name="site" options={siteOptions} label="Trang gốc" required />
+
+                            <Row gutter={20}>
+                                <Col span={12}>
+                                    <TextInput name="title" label="Tên sản phẩm" required />
+                                </Col>
+                                <Col span={12}>
+                                    <TextInput name="url" label="Link sản phẩm" requred />
+                                </Col>
+                            </Row>
+
+                            <TextInput name="image" label="Ảnh sản phẩm" requred />
+
+                            <Row gutter={20}>
+                                <Col span={12}>
+                                    <TextInput
+                                        name="quantity"
+                                        type="number"
+                                        label="Số lượng"
+                                        autoFocus={true}
+                                        required
+                                    />
+                                </Col>
+                                <Col span={12}>
+                                    <TextInput name="unit_price" type="number" label="Đơn giá" required />
+                                </Col>
+                            </Row>
+
+                            <Row gutter={20}>
+                                <Col span={12}>
+                                    <TextInput name="color" label="Màu" />
+                                </Col>
+                                <Col span={12}>
+                                    <TextInput name="size" label="Size" />
+                                </Col>
+                            </Row>
+
                             <TextInput name="note" label="Ghi chú" />
                             <FormLevelErrMsg errors={errors.detail} />
                         </Form>
