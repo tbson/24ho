@@ -6,7 +6,7 @@ import ReactToPrint from 'react-to-print';
 // $FlowFixMe: do not complain about importing node_modules
 import Barcode from 'react-barcode';
 // $FlowFixMe: do not complain about Yup
-import {Button, Modal, Row, Col} from 'antd';
+import {Button, Modal, Row, Col, Divider} from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import {apiUrls} from 'src/back/transaction/_data';
 import logoUrl from 'src/assets/images/logo.jpg';
@@ -59,7 +59,7 @@ export default ({}: Props) => {
                 title={formName}>
                 <div>
                     <Content data={data} ref={contentRef} />
-                    <hr />
+                    <Divider />
                     <ReactToPrint
                         onAfterPrint={() => Service.toggleForm(false)}
                         trigger={() => (

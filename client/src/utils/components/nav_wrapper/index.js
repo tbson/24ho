@@ -94,9 +94,6 @@ const Component = ({history, location, children}: Props) => {
             case 'countCheck':
                 if (APP !== 'admin') return null;
                 return menuItem('count-check', 'Kiểm đếm', 'ordered-list');
-            case 'customerGroup':
-                if (APP !== 'admin') return null;
-                return menuItem('customer-group', 'Nhóm khách hàng', 'usergroup-add');
         }
     };
 
@@ -108,7 +105,6 @@ const Component = ({history, location, children}: Props) => {
                     {renderMenu('profile')}
                     {renderMenu('admin')}
                     {renderMenu('customer')}
-                    {renderMenu('customerGroup')}
                     {renderMenu('role')}
                     {renderMenu('transaction')}
                     {renderMenu('address')}

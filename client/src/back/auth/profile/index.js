@@ -5,7 +5,7 @@ import {useState, useEffect} from 'react';
 // $FlowFixMe: do not complain about importing node_modules
 import {withRouter} from 'react-router-dom';
 // $FlowFixMe: do not complain about formik
-import {Button} from 'antd';
+import {Button, Divider} from 'antd';
 import {APP} from 'src/constants';
 import type {FormOpenType, FormOpenKeyType} from '../_data';
 import Tools from 'src/utils/helpers/Tools';
@@ -73,7 +73,7 @@ export const Profile = () => {
                     </tr>
                 </tbody>
             </table>
-            <div className="btn-group">
+            <div style={{paddingLeft: 10}}>
                 <Button type="primary" onClick={() => ProfileFormService.toggleForm(true)}>
                     Cập nhật thông tin cá nhân
                 </Button>
@@ -83,15 +83,14 @@ export const Profile = () => {
 
             <OnlyAdmin reverse={true}>
                 <div>
-                    <hr />
-                    <h2>Địa chỉ</h2>
+                    <Divider />
+                    <h2 style={{paddingLeft: 10}}>Địa chỉ</h2>
                     <AddressTable />
                 </div>
             </OnlyAdmin>
 
-            <ProfileForm onChange={onChangeProfile}/>
-            <ChangePwdForm mode="change" onChange={onChangePwd}/>
-
+            <ProfileForm onChange={onChangeProfile} />
+            <ChangePwdForm mode="change" onChange={onChangePwd} />
         </NavWrapper>
     );
 };

@@ -5,7 +5,7 @@ import {Formik, Form} from 'formik';
 // $FlowFixMe: do not complain about Yup
 import * as Yup from 'yup';
 // $FlowFixMe: do not complain about Yup
-import {Row, Col} from 'antd';
+import {Row, Col, Button} from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import ErrMsgs from 'src/utils/helpers/ErrMsgs';
 import TextInput from 'src/utils/components/input/TextInput';
@@ -162,7 +162,9 @@ export default ({onChange, options = {sale: [], cust_care: [], customer: []}}: P
                             </OnlyAdmin>
                             <FormLevelErrMsg errors={errors.detail} />
                             <br />
-                            <ButtonsBar submitTitle="Search" onClick={handleSubmit} />
+                            <div className="right">
+                                <Button type="primary" icon="search" htmlTyle="submit">Search</Button>
+                            </div>
                         </Form>
                     );
                 }}
