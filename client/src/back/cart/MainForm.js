@@ -38,7 +38,7 @@ export class Service {
     static validationSchema = Yup.object().shape({
         title: Yup.string().required(ErrMsgs.REQUIRED),
         url: Yup.string().required(ErrMsgs.REQUIRED),
-        shop_link: Yup.string().required(ErrMsgs.REQUIRED),
+        shop_link: Yup.string(),
         shop_nick: Yup.string().required(ErrMsgs.REQUIRED),
         site: Yup.string().required(ErrMsgs.REQUIRED),
         quantity: Yup.number()
@@ -119,10 +119,10 @@ export default ({onChange, submitTitle = 'Lưu'}: Props) => {
 
                             <Row gutter={20}>
                                 <Col span={12}>
-                                    <TextInput name="shop_link" label="Link shop" required />
+                                    <TextInput name="shop_nick" label="Tên shop" required />
                                 </Col>
                                 <Col span={12}>
-                                    <TextInput name="shop_nick" label="Tên shop" required />
+                                    <TextInput name="shop_link" label="Link shop" />
                                 </Col>
                             </Row>
 
@@ -137,7 +137,7 @@ export default ({onChange, submitTitle = 'Lưu'}: Props) => {
                                 </Col>
                             </Row>
 
-                            <CartPhotoInput name="image" label="Ảnh sản phẩm"/>
+                            <CartPhotoInput name="image" label="Ảnh sản phẩm" />
 
                             <Row gutter={20}>
                                 <Col span={12}>

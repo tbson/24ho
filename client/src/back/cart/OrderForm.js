@@ -15,8 +15,8 @@ import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
 
 export class Service {
     static toggleEvent = 'TOGGLE_CART_ORDER_FORM';
-    static toggleForm(open: boolean, id: number = 0) {
-        Tools.event.dispatch(Service.toggleEvent, {open, id});
+    static toggleForm(open: boolean, amount: number, shop_nick: string, listAddress: SelectOptions) {
+        Tools.event.dispatch(Service.toggleEvent, {open, amount, shop_nick, listAddress});
     }
 
     static initialValues = {
@@ -32,41 +32,43 @@ export class Service {
         return address ? address.label : '';
     }
 
-    static handleSubmit(id: number, listAddress: SelectOptions, onChange: Function) {
+    static handleSubmit(shop_nick: string, listAddress: SelectOptions, onChange: Function) {
         return (values: Object) => {
             values.address_title = Service.getAddressLabel(values.address, listAddress);
-            onChange({[id]: values});
+            onChange(shop_nick, values);
         };
     }
 }
 
 type Props = {
     rate: number,
-    amount: number,
-    defaultAddress: number,
-    listOrder: Object,
-    listAddress: SelectOptions,
     onChange: Function,
     submitTitle?: string
 };
-export default ({amount, rate, listOrder, defaultAddress, listAddress, onChange, submitTitle = 'Lưu'}: Props) => {
+export default ({rate, onChange, submitTitle = 'Lưu'}: Props) => {
     const formName = 'Giỏ hàng';
     const {handleSubmit} = Service;
 
     const [open, setOpen] = useState(false);
-    const [id, setId] = useState(0);
+    const [amount, setAmount] = useState(0);
+    const [shop_nick, setShopNick] = useState('');
+    const [listAddress, setListAddress] = useState([]);
 
     const [initialValues, setInitialValues] = useState(Service.initialValues);
     const [balance, setBalance] = useState(0);
     const [depositFactor, setDepositFactor] = useState(100);
-
-    const handleToggle = ({detail: {open, id}}) => {
+    const handleToggle = ({detail: {open, amount, shop_nick, listAddress}}) => {
         setOpen(open);
-        setId(id);
+        setShopNick(shop_nick);
+        if (!open) return;
+        setAmount(amount);
+        setListAddress(listAddress);
+        const defaultAddress = listAddress.find(item => item.default);
+        const values = {...Service.initialValues, address: defaultAddress?.value || null};
+        setInitialValues(values);
     };
 
     useEffect(() => {
-        setInitialValues(listOrder[id] || {...Service.initialValues, address: defaultAddress || null});
         open &&
             Tools.apiClient(apiUrls.accountSummary).then(({balance, deposit_factor}) => {
                 setBalance(balance);
@@ -90,7 +92,7 @@ export default ({amount, rate, listOrder, defaultAddress, listAddress, onChange,
             okText={submitTitle}
             cancelText="Thoát"
             title={formName}>
-            <Formik initialValues={{...initialValues}} onSubmit={handleSubmit(id, listAddress, onChange)}>
+            <Formik initialValues={{...initialValues}} onSubmit={handleSubmit(shop_nick, listAddress, onChange)}>
                 {({errors, handleSubmit}) => {
                     if (handleOk === Tools.emptyFunction) handleOk = handleSubmit;
                     return (

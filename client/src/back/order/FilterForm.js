@@ -162,7 +162,7 @@ export default ({onChange, options = {sale: [], cust_care: [], customer: []}}: P
                             <FormLevelErrMsg errors={errors.detail} />
                             <br />
                             <div className="right">
-                                <Button type="primary" icon="search" htmlTyle="submit">Search</Button>
+                                <Button type="primary" icon="search" htmlType="submit">Search</Button>
                             </div>
                         </Form>
                     );

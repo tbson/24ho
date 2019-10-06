@@ -17,7 +17,6 @@ import Row from './Row.js';
 type CartGroup = {
     order: {
         shop_nick: string,
-        shop_link: string,
         site: string
     },
     items: Array<Object>
@@ -35,7 +34,6 @@ export class Service {
         return Tools.apiCall(apiUrls.shoppingCart).then(resp => {
             if (resp.ok) {
                 Service.savedCartItems = resp.data.items || [];
-                Service.savedOrderList = resp.data.orders || {};
             }
             return resp;
         });
@@ -45,7 +43,6 @@ export class Service {
         return Tools.apiCall(apiUrls.shoppingCart, Service.cartPayload, 'POST').then(resp => {
             if (resp.ok) {
                 Service.savedCartItems = resp.data.items;
-                Service.savedOrderList = resp.data.orders;
             }
             return resp;
         });
@@ -57,8 +54,7 @@ export class Service {
 
     static get cartPayload() {
         const payload = {
-            items: Service.savedCartItems,
-            orders: Service.savedOrderList
+            items: Service.savedCartItems
         };
         return {shopping_cart: JSON.stringify(payload)};
     }
@@ -105,14 +101,6 @@ export class Service {
         return Tools.isEmpty(result) ? [] : result;
     }
 
-    static set savedOrderList(items: Object): Object {
-        Tools.setStorage('orders', items);
-        return items;
-    }
-    static get savedOrderList(): Object {
-        return Tools.getStorageObj('orders') || {};
-    }
-
     static calculate(items: Array<Object>): Array<Object> {
         const rate = items.reduce((result, item) => (item.rate > result ? item.rate : result), 0);
         const realRate = items.reduce((result, item) => (item.real_rate > result ? item.real_rate : result), 0);
@@ -130,20 +118,20 @@ export class Service {
         });
     }
 
-    static group(items: Array<Object>, orders: Object): Array<CartGroup> {
+    static group(items: Array<Object>): Array<CartGroup> {
         const groups = [];
         for (let item of Service.calculate(items)) {
             const group = groups.find(group => {
-                const {shop_link, shop_nick, site} = group.order;
-                return shop_link === item.shop_link && shop_nick === item.shop_nick && site === item.site;
+                const {shop_nick, site} = group.order;
+                return shop_nick === item.shop_nick && site === item.site;
             });
-            const _item = {...item};
-            delete _item.real_rate;
-            delete _item.cny_unit_price;
-            delete _item.vnd_unit_price;
-            delete _item.shop_link;
-            delete _item.shop_nick;
-            delete _item.site;
+            const cleanedItem = {...item};
+            delete cleanedItem.real_rate;
+            delete cleanedItem.cny_unit_price;
+            delete cleanedItem.vnd_unit_price;
+            delete cleanedItem.shop_link;
+            delete cleanedItem.shop_nick;
+            delete cleanedItem.site;
             if (!group) {
                 groups.push({
                     order: {
@@ -162,10 +150,10 @@ export class Service {
                         cny_total: 0,
                         vnd_total: 0
                     },
-                    items: [_item]
+                    items: [cleanedItem]
                 });
             } else {
-                group.items.push(_item);
+                group.items.push(cleanedItem);
             }
         }
         return groups.map(group => {
@@ -174,16 +162,6 @@ export class Service {
             );
             group.order.vnd_total = parseInt(group.items.reduce((total, item) => total + item.vnd_price, 0));
             group.order.quantity = parseInt(group.items.reduce((total, item) => total + item.quantity, 0));
-            const order = orders[group.order.shop_nick] || {};
-            const {note, address, address_title, count_check, wooden_box, shockproof} = order;
-            if (note) group.order.note = note;
-            if (address) {
-                group.order.address = address;
-                group.order.address_title = address_title;
-            }
-            group.order.count_check = count_check || false;
-            group.order.wooden_box = wooden_box || false;
-            group.order.shockproof = shockproof || false;
             return group;
         });
     }
@@ -249,29 +227,19 @@ export class Service {
 
     static addressesToOptions(list: Array<Object>): Array<Object> {
         if (!list) return [];
-        return list.map(item => ({value: item.id, label: `${item.uid} - ${item.title}`}));
+        return list.map(item => ({default: item.default, value: item.id, label: `${item.uid} - ${item.title}`}));
     }
 
     static extractShopList(items: Array<Object>): Array<string> {
         const uniqueItems = new Set(items.map(item => item.shop_nick));
         return Array.from(uniqueItems);
     }
-
-    static updateSavedOrderList(listItem: Array<Object>, listOrder: Object): Object {
-        const shopList = Service.extractShopList(listItem);
-        for (let key in listOrder) {
-            if (!shopList.includes(key)) delete listOrder[key];
-        }
-        return listOrder;
-    }
 }
 
 export default ({}: Props) => {
     const defaultRate = 3600;
     const [list, setList] = useState([]);
-    const [listOrder, setListOrder] = useState({});
     const [listAddress, setListAddress] = useState([]);
-    const [defaultAddress, setDefaultAddress] = useState(0);
     const [rate, setRate] = useState(defaultRate);
     const [realRate, setRealRate] = useState(defaultRate);
     const [formOpen, setFormOpen] = useState<FormOpenType>({
@@ -287,7 +255,6 @@ export default ({}: Props) => {
 
     const getList = () => {
         const items = Service.savedCartItems;
-        setListOrder(Service.savedOrderList);
         setList(ListTools.prepare(items));
     };
 
@@ -304,13 +271,6 @@ export default ({}: Props) => {
         Service.syncCartRequest();
     };
 
-    const onOrderChange = (data: Object) => {
-        OrderFormService.toggleForm(false);
-        Service.savedOrderList = {...Service.savedOrderList, ...data};
-        setListOrder(Service.savedOrderList);
-        return Service.syncCartRequest().then(() => [Object.keys(data)[0], Service.savedOrderList]);
-    };
-
     const onCheck = id => setList(ListTools.checkOne(id, list));
 
     const onCheckAll = (condition: Object) => () => setList(ListTools.checkAll(list, condition));
@@ -318,18 +278,14 @@ export default ({}: Props) => {
     const onRemove = data => {
         const items = listAction(data).remove();
         Service.savedCartItems = items;
-        Service.savedOrderList = Service.updateSavedOrderList(items, Service.savedOrderList);
         setList(items);
-        setListOrder(Service.savedOrderList);
         Service.syncCartRequest();
     };
 
     const removeItemsAndSave = (ids: Array<number>) => {
         const items = listAction({ids}).bulkRemove();
         Service.savedCartItems = items;
-        Service.savedOrderList = Service.updateSavedOrderList(items, Service.savedOrderList);
         setList(items);
-        setListOrder(Service.savedOrderList);
         Service.syncCartRequest();
     };
 
@@ -339,17 +295,6 @@ export default ({}: Props) => {
 
         const r = confirm(ListTools.getConfirmMessage(ids.length));
         r && removeItemsAndSave(ids);
-    };
-
-    const showForm = (id: number) => {
-        toggleForm(true);
-        setFormId(id);
-    };
-
-    const showOrderForm = (id: number, _amount: number) => {
-        toggleForm(true, 'order');
-        setFormId(id);
-        setAmount(_amount);
     };
 
     const searchList = (keyword: string) => {
@@ -373,19 +318,21 @@ export default ({}: Props) => {
             order: JSON.stringify(data.order),
             items: JSON.stringify(data.items)
         };
-        Service.sendCartRequest(payload).then(resp => {
-            if (resp.ok) {
-                const ids = list
-                    .filter(item => {
-                        return item.shop_nick === data.order.shop_nick;
-                    })
-                    .map(item => item.id);
-                removeItemsAndSave(ids);
-                Tools.popMessage('Order created successfully!');
-            } else {
-                Tools.popMessage('Can not create order.', 'error');
-            }
-        });
+        Service.sendCartRequest(payload)
+            .then(resp => {
+                if (resp.ok) {
+                    const ids = list
+                        .filter(item => {
+                            return item.shop_nick === data.order.shop_nick;
+                        })
+                        .map(item => item.id);
+                    removeItemsAndSave(ids);
+                    Tools.popMessage('Đơn hàng được tạo thành công!');
+                } else {
+                    Tools.popMessage('Không thể tạo đơn hàng.', 'error');
+                }
+            })
+            .finally(() => OrderFormService.toggleForm(false));
     };
 
     const events = Service.events(setList);
@@ -395,22 +342,21 @@ export default ({}: Props) => {
             setRate(data.value || defaultRate);
             setRealRate(data.real_value || defaultRate);
         });
-        Service.getCartRequest()
-            .then(getList)
-            .then(Service.requestData);
         Service.listAddressRequest().then(resp => {
-            const _defaultAddress = resp.data.items.find(item => item.default);
-            setDefaultAddress(_defaultAddress ? _defaultAddress.id : 0);
             setListAddress(Service.addressesToOptions(resp.data.items));
+            Service.getCartRequest()
+                .then(getList)
+                .then(Service.requestData);
         });
         events.subscribe();
         return () => events.unsubscribe();
     }, []);
 
-    const groups = Service.group(list, listOrder);
+    const groups = Service.group(list);
 
-    const getGroupByShopNick = (shop_nick: string, listOrder: Object): Object => {
-        const result = Service.group(list, listOrder).find(item => item.order.shop_nick === shop_nick);
+    const getGroupByShopNick = (shop_nick: string, order: Object): Object => {
+        const result = Service.group(list).find(item => item.order.shop_nick === shop_nick);
+        result.order = {...result.order, ...order};
         return result;
     };
     return (
@@ -444,8 +390,9 @@ export default ({}: Props) => {
                         <Group
                             data={group}
                             key={groupKey}
-                            sendOrder={sendOrder}
-                            showForm={id => OrderFormService.toggleForm(true, id)}
+                            showForm={(id, vnd_total, shop_nick) => {
+                                OrderFormService.toggleForm(true, vnd_total, shop_nick, listAddress);
+                            }}
                             onBulkRemove={onBulkRemove(group.order.shop_nick)}
                             onCheckAll={onCheckAll({shop_nick: group.order.shop_nick})}>
                             {group.items.map((data, key) => (
@@ -469,31 +416,19 @@ export default ({}: Props) => {
                 )}
             </table>
             <MainForm onChange={onItemChange} />
-            <OrderForm
-                rate={rate}
-                amount={amount}
-                listOrder={listOrder}
-                defaultAddress={defaultAddress}
-                listAddress={listAddress}
-                onChange={data =>
-                    onOrderChange(data).then(([shop_nick, listOrder]) =>
-                        sendOrder(getGroupByShopNick(shop_nick, listOrder))
-                    )
-                }
-            />
+            <OrderForm rate={rate} onChange={(shop_nick, data) => sendOrder(getGroupByShopNick(shop_nick, data))} />
         </div>
     );
 };
 
 type GroupType = {
     data: Object,
-    sendOrder: Function,
     onCheckAll: Function,
     onBulkRemove: Function,
     showForm: Function,
     children: React.Node
 };
-export const Group = ({data, sendOrder, showForm, onCheckAll, onBulkRemove, children}: Object) => (
+export const Group = ({data, showForm, onCheckAll, onBulkRemove, children}: Object) => (
     <tbody>
         <tr>
             <td colSpan={99} className="white-bg" />
@@ -517,9 +452,10 @@ export const Group = ({data, sendOrder, showForm, onCheckAll, onBulkRemove, chil
             </td>
             <td>
                 <Button
+                    size="small"
                     icon="check"
                     type="primary"
-                    onClick={() => showForm(data.order.shop_nick, data.order.vnd_total)}>
+                    onClick={() => showForm(data.order.shop_nick, data.order.vnd_total, data.order.shop_nick)}>
                     Tạo đơn
                 </Button>
             </td>
