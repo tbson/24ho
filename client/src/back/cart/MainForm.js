@@ -11,6 +11,7 @@ import Tools from 'src/utils/helpers/Tools';
 import ErrMsgs from 'src/utils/helpers/ErrMsgs';
 import {apiUrls, siteOptions} from './_data';
 import TextInput from 'src/utils/components/input/TextInput';
+import CartPhotoInput from 'src/utils/components/input/CartPhotoInput';
 import SelectInput from 'src/utils/components/input/SelectInput';
 import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
 
@@ -136,7 +137,7 @@ export default ({onChange, submitTitle = 'Lưu'}: Props) => {
                                 </Col>
                             </Row>
 
-                            <TextInput name="image" label="Ảnh sản phẩm" requred />
+                            <CartPhotoInput name="image" label="Ảnh sản phẩm"/>
 
                             <Row gutter={20}>
                                 <Col span={12}>

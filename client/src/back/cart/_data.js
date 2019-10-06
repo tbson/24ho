@@ -20,7 +20,8 @@ const rawApiUrls = [
     {
         controller: 'order',
         endpoints: {
-            crud: ''
+            crud: '',
+            imgToUrl: 'img-to-url'
         }
     },
     {

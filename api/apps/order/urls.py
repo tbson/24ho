@@ -2,6 +2,7 @@ import os
 from django.urls import path
 from .views import (
     OrderViewSet,
+    OrderViewSetIsAuthenticated
 )
 
 
@@ -84,12 +85,16 @@ discard = OrderViewSet.as_view({
     'post': 'discard',
 })
 
-early_discard = OrderViewSet.as_view({
+renew_discard = OrderViewSet.as_view({
+    'post': 'renew_discard',
+})
+
+early_discard = OrderViewSetIsAuthenticated.as_view({
     'post': 'early_discard',
 })
 
-renew_discard = OrderViewSet.as_view({
-    'post': 'renew_discard',
+img_to_url = OrderViewSetIsAuthenticated.as_view({
+    'post': 'img_to_url',
 })
 
 app_name = os.getcwd().split(os.sep)[-1]
@@ -115,4 +120,5 @@ urlpatterns = (
     path('<int:pk>/discard/', discard),
     path('<int:pk>/early-discard/', early_discard),
     path('<int:pk>/renew-discard/', renew_discard),
+    path('img-to-url/', img_to_url),
 )

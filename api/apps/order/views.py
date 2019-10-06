@@ -176,20 +176,6 @@ class OrderViewSet(GenericViewSet):
         return res(serializer.data)
 
     @transaction.atomic
-    @action(methods=['post'], detail=True, permission_classes=[IsAuthenticated])
-    def early_discard(self, request, pk=None):
-        from apps.order.serializers import OrderBaseSr
-        from apps.order.models import Status
-        order = get_object_or_404(Order, pk=pk)
-        staff = None
-        if hasattr(request.user, 'customer') and order.customer != request.user.customer:
-            raise ValidationError("Bạn không thể huỷ đơn hàng của người khác.")
-        if hasattr(request.user, 'staff'):
-            staff = request.user.staff
-        order = MoveStatusUtils.move(order, Status.DISCARD, staff=staff)
-        return res(OrderBaseSr(order).data)
-
-    @transaction.atomic
     @action(methods=['post'], detail=True)
     def discard(self, request, pk=None):
         from apps.order.serializers import OrderBaseSr
@@ -292,3 +278,29 @@ class OrderViewSet(GenericViewSet):
             obj = get_object_or_404(Order, pk=pk)
             obj.delete()
         return res(status=status.HTTP_204_NO_CONTENT)
+
+
+class OrderViewSetIsAuthenticated(GenericViewSet):
+    _name = 'order'
+    serializer_class = OrderBaseSr
+    permission_classes = (IsAuthenticated, )
+
+    @transaction.atomic
+    @action(methods=['post'], detail=True)
+    def early_discard(self, request, pk=None):
+        from apps.order.serializers import OrderBaseSr
+        from apps.order.models import Status
+        order = get_object_or_404(Order, pk=pk)
+        staff = None
+        if hasattr(request.user, 'customer') and order.customer != request.user.customer:
+            raise ValidationError("Bạn không thể huỷ đơn hàng của người khác.")
+        if hasattr(request.user, 'staff'):
+            staff = request.user.staff
+        order = MoveStatusUtils.move(order, Status.DISCARD, staff=staff)
+        return res(OrderBaseSr(order).data)
+
+    @action(methods=['post'], detail=True)
+    def img_to_url(self, request, pk=None):
+        file = request.data.get('file')
+        path = Tools.write_rile(file, 'order_item')
+        return res({'path': path})

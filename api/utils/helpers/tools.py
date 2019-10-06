@@ -10,6 +10,9 @@ from rest_framework_jwt.serializers import VerifyJSONWebTokenSerializer
 from django.core.mail import EmailMultiAlternatives
 from django.conf import settings
 from django.utils.text import slugify
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
+from django.core.files.uploadedfile import InMemoryUploadedFile
 
 
 loop = asyncio.new_event_loop()
@@ -305,3 +308,10 @@ class Tools:
         if upper is True:
             return result.upper()
         return result
+
+    @staticmethod
+    def write_rile(file: InMemoryUploadedFile, folder: str):
+        ext = file.name.split('.')[-1]
+        filename = "{}.{}".format(Tools.get_uuid(), ext)
+        return default_storage.save("{}/{}".format(folder, filename), ContentFile(file.read()))
+        # return os.path.join(settings.MEDIA_ROOT, path)

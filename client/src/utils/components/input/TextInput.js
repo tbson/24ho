@@ -8,7 +8,7 @@ import Label from './Label';
 
 type Props = {
     name: string,
-    label?: string,
+    label: string,
     type?: string,
     autoFocus?: boolean,
     required?: boolean,
