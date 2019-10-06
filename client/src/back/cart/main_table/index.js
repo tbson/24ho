@@ -2,7 +2,7 @@
 import * as React from 'react';
 import {useState, useEffect} from 'react';
 // $FlowFixMe: do not complain about Yup
-import {Button} from 'antd';
+import {Button, Checkbox} from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
 import {apiUrls} from '../_data';
@@ -250,6 +250,7 @@ export default ({}: Props) => {
     const [formId, setFormId] = useState(0);
     const [amount, setAmount] = useState(0);
     const [links, setLinks] = useState({next: '', previous: ''});
+    const [checkedShops, setCheckedShop] = useState([]);
 
     const listAction = ListTools.actions(list);
 
@@ -274,6 +275,13 @@ export default ({}: Props) => {
     const onCheck = id => setList(ListTools.checkOne(id, list));
 
     const onCheckAll = (condition: Object) => () => setList(ListTools.checkAll(list, condition));
+
+    const onCheckShop = (shop_nick, checked) => {
+        let result = [...checkedShops];
+        if (checked && !list.includes(shop_nick)) result.push(shop_nick);
+        if (!checked) result = result.filter(item => item !== shop_nick);
+        setCheckedShop(result);
+    };
 
     const onRemove = data => {
         const items = listAction(data).remove();
@@ -313,26 +321,30 @@ export default ({}: Props) => {
         setList(filteredList);
     };
 
-    const sendOrder = (data: Object) => {
-        const payload = {
-            order: JSON.stringify(data.order),
-            items: JSON.stringify(data.items)
-        };
-        Service.sendCartRequest(payload)
-            .then(resp => {
-                if (resp.ok) {
-                    const ids = list
-                        .filter(item => {
-                            return item.shop_nick === data.order.shop_nick;
-                        })
-                        .map(item => item.id);
-                    removeItemsAndSave(ids);
-                    Tools.popMessage('Đơn hàng được tạo thành công!');
-                } else {
-                    Tools.popMessage('Không thể tạo đơn hàng.', 'error');
-                }
-            })
-            .finally(() => OrderFormService.toggleForm(false));
+    const sendOrder = async (listData: Array<Object>) => {
+        let ids = [];
+        const failOrder = [];
+        for (const data of listData) {
+            const payload = {
+                order: JSON.stringify(data.order),
+                items: JSON.stringify(data.items)
+            };
+            const resp = await Service.sendCartRequest(payload);
+            if (resp.ok) {
+                ids = ids.concat(data.items.map(item => item.id));
+            } else {
+                failOrder.push(data.order.shop_nick);
+            }
+        }
+        removeItemsAndSave(ids);
+        setCheckedShop([]);
+        if (failOrder.length) {
+            failStr = failOrder.join(', ');
+            Tools.popMessage(`Không thể tạo đơn hàng: ${failStr}`, 'error');
+        } else {
+            Tools.popMessage('Đơn hàng được gửi thành công!');
+        }
+        OrderFormService.toggleForm(false);
     };
 
     const events = Service.events(setList);
@@ -354,11 +366,21 @@ export default ({}: Props) => {
 
     const groups = Service.group(list);
 
-    const getGroupByShopNick = (shop_nick: string, order: Object): Object => {
-        const result = Service.group(list).find(item => item.order.shop_nick === shop_nick);
-        result.order = {...result.order, ...order};
-        return result;
+    const getGroupByShopNick = (shop_nicks: Array<string>, order: Object): Array<Object> => {
+        return Service.group(list)
+            .filter(item => shop_nicks.includes(item.order.shop_nick))
+            .map(result => {
+                result.order = {...result.order, ...order};
+                return result;
+            });
     };
+
+    const getAmount = (shop_nicks: Array<string>, groups: Array<Object>) => {
+        return groups
+            .filter(group => shop_nicks.includes(group.order.shop_nick))
+            .reduce((amount, group) => amount + group.order.vnd_total, 0);
+    };
+
     return (
         <div>
             <table className="table table-striped">
@@ -390,11 +412,17 @@ export default ({}: Props) => {
                         <Group
                             data={group}
                             key={groupKey}
-                            showForm={(id, vnd_total, shop_nick) => {
-                                OrderFormService.toggleForm(true, vnd_total, shop_nick, listAddress);
-                            }}
+                            showForm={(id, vnd_total, shop_nick) =>
+                                OrderFormService.toggleForm(
+                                    true,
+                                    getAmount([shop_nick], groups),
+                                    [shop_nick],
+                                    listAddress
+                                )
+                            }
                             onBulkRemove={onBulkRemove(group.order.shop_nick)}
-                            onCheckAll={onCheckAll({shop_nick: group.order.shop_nick})}>
+                            onCheckAll={onCheckAll({shop_nick: group.order.shop_nick})}
+                            onCheckShop={onCheckShop}>
                             {group.items.map((data, key) => (
                                 <Row
                                     className="table-row"
@@ -415,8 +443,26 @@ export default ({}: Props) => {
                     </tbody>
                 )}
             </table>
+            {!!groups.length && (
+                <Button
+                    type="primary"
+                    icon="check"
+                    disabled={!checkedShops.length}
+                    onClick={() =>
+                        OrderFormService.toggleForm(true, getAmount(checkedShops, groups), checkedShops, listAddress)
+                    }>
+                    Gửi đơn đã chọn
+                </Button>
+            )}
+            <br />
+            <br />
             <MainForm onChange={onItemChange} />
-            <OrderForm rate={rate} onChange={(shop_nick, data) => sendOrder(getGroupByShopNick(shop_nick, data))} />
+            <OrderForm
+                rate={rate}
+                onChange={(shop_nicks, data) => {
+                    sendOrder(getGroupByShopNick(shop_nicks, data));
+                }}
+            />
         </div>
     );
 };
@@ -424,11 +470,12 @@ export default ({}: Props) => {
 type GroupType = {
     data: Object,
     onCheckAll: Function,
+    onCheckShop: Function,
     onBulkRemove: Function,
     showForm: Function,
     children: React.Node
 };
-export const Group = ({data, showForm, onCheckAll, onBulkRemove, children}: Object) => (
+export const Group = ({data, showForm, onCheckAll, onCheckShop, onBulkRemove, children}: Object) => (
     <tbody>
         <tr>
             <td colSpan={99} className="white-bg" />
@@ -438,11 +485,23 @@ export const Group = ({data, showForm, onCheckAll, onBulkRemove, children}: Obje
                 <Button size="small" icon="check" onClick={onCheckAll} />
             </td>
             <td colSpan={99} className="order-header">
-                <strong>[{data.order.site}]</strong>
-                <span>&nbsp;/&nbsp;</span>
-                <a href={data.order.shop_link} target="_blank">
-                    <strong>{data.order.shop_nick}</strong>
-                </a>
+                <Button
+                    size="small"
+                    icon="check"
+                    type="primary"
+                    onClick={() => showForm(data.order.shop_nick, data.order.vnd_total, data.order.shop_nick)}>
+                    Gửi đơn
+                </Button>
+                &nbsp;&nbsp;&nbsp;
+                <Checkbox onChange={e => onCheckShop(data.order.shop_nick, e.target.checked)}>
+                    <span>
+                        <strong>[{data.order.site}]</strong>
+                        <span>&nbsp;/&nbsp;</span>
+                        <a href={data.order.shop_link} target="_blank">
+                            <strong>{data.order.shop_nick}</strong>
+                        </a>
+                    </span>
+                </Checkbox>
             </td>
         </tr>
         {children}
@@ -450,15 +509,7 @@ export const Group = ({data, showForm, onCheckAll, onBulkRemove, children}: Obje
             <td>
                 <Button size="small" type="danger" icon="delete" onClick={onBulkRemove} />
             </td>
-            <td>
-                <Button
-                    size="small"
-                    icon="check"
-                    type="primary"
-                    onClick={() => showForm(data.order.shop_nick, data.order.vnd_total, data.order.shop_nick)}>
-                    Tạo đơn
-                </Button>
-            </td>
+            <td />
             <td className="right mono">
                 <strong>{data.order.quantity}</strong>
             </td>
