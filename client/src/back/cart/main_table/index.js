@@ -273,6 +273,7 @@ export default ({}: Props) => {
     const [listAddress, setListAddress] = useState([]);
     const [defaultAddress, setDefaultAddress] = useState(0);
     const [rate, setRate] = useState(defaultRate);
+    const [realRate, setRealRate] = useState(defaultRate);
     const [formOpen, setFormOpen] = useState<FormOpenType>({
         main: false,
         order: false
@@ -290,8 +291,13 @@ export default ({}: Props) => {
         setList(ListTools.prepare(items));
     };
 
-    const onChange = (data: TRow, type: string) => {
+    const onItemChange = (data: TRow, type: string) => {
         MainFormService.toggleForm(false);
+        if (!data.id) {
+            data.rate = rate;
+            data.real_rate = realRate;
+            data.id = list.length ? Math.max(...list.map(item => item.id)) + 1 : 1;
+        }
         const items = listAction(data)[type]();
         Service.savedCartItems = items;
         setList(items);
@@ -387,6 +393,7 @@ export default ({}: Props) => {
     useEffect(() => {
         Tools.apiClient(apiUrls.rateLatest).then(data => {
             setRate(data.value || defaultRate);
+            setRealRate(data.real_value || defaultRate);
         });
         Service.getCartRequest()
             .then(getList)
@@ -461,7 +468,7 @@ export default ({}: Props) => {
                     </tbody>
                 )}
             </table>
-            <MainForm onChange={onChange} />
+            <MainForm onChange={onItemChange} />
             <OrderForm
                 rate={rate}
                 amount={amount}
