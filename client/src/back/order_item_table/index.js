@@ -130,7 +130,10 @@ export default ({pending = false, order_id, rate, notifyChange}: Props) => {
                             <OnlyAdmin extraCondition={!!ids.length}>
                                 <span style={{paddingLeft: 10}}>
                                     <Editable
-                                        onChange={resp => console.log(resp)}
+                                        onChange={() => {
+                                            notifyChange();
+                                            getList();
+                                        }}
                                         underline={false}
                                         type="number"
                                         formater={parseInt}
@@ -145,7 +148,10 @@ export default ({pending = false, order_id, rate, notifyChange}: Props) => {
                                     <span>&nbsp;&nbsp;&nbsp;</span>
 
                                     <Editable
-                                        onChange={resp => console.log(resp)}
+                                        onChange={() => {
+                                            notifyChange();
+                                            getList();
+                                        }}
                                         underline={false}
                                         type="number"
                                         formater={parseFloat}
