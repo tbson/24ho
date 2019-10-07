@@ -392,7 +392,7 @@ export default ({}: Props) => {
                         <th className="right">Tiền hàng</th>
                         <th>Ghi chú</th>
                         <th className="row80">
-                            <Button type="primary" icon="plus" onClick={() => MainFormService.toggleForm(true)}>
+                            <Button type="primary" size="small" icon="plus" onClick={() => MainFormService.toggleForm(true)}>
                                 Sản phẩm
                             </Button>
                         </th>

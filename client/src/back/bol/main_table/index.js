@@ -126,7 +126,7 @@ export default ({readonly = false, order_id = 0, bol_date_id = 0, bag_id = 0, no
                         <th scope="col">Ghi chú</th>
                         <th scope="col" style={{padding: 8}} className="row80">
                             <ShowWhen value={!readonly}>
-                                <Button type="primary" icon="plus" onClick={() => MainFormService.toggleForm(true)}>
+                                <Button type="primary" size="small" icon="plus" onClick={() => MainFormService.toggleForm(true)}>
                                     Thêm
                                 </Button>
                             </ShowWhen>

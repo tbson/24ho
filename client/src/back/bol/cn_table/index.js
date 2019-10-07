@@ -124,7 +124,7 @@ const Component = ({history}: Props) => {
                         </th>
                         <th scope="col">Ghi chú</th>
                         <th scope="col" style={{padding: 8}} className="row80">
-                            <Button type="primary" icon="plus" onClick={toggleSelectBagModal}>
+                            <Button type="primary" size="small" icon="plus" onClick={toggleSelectBagModal}>
                                 Thêm
                             </Button>
                         </th>

@@ -88,7 +88,7 @@ export default ({}: Props) => {
                             Đơn giá vận chuyển
                         </th>
                         <th scope="col" style={{padding: 8}} className="row110">
-                            <Button type="primary" icon="plus" onClick={() => MainFormService.toggleForm(true)}>
+                            <Button type="primary" size="small" icon="plus" onClick={() => MainFormService.toggleForm(true)}>
                                 Thêm
                             </Button>
                         </th>

@@ -105,8 +105,8 @@ export default ({readonly = false, bol_date = 0}: Props) => {
                         <th scope="col">Vùng</th>
                         <th scope="col" style={{padding: 8}} className="row80">
                             <ShowWhen value={!readonly}>
-                                <Button type="primary" icon="plus" onClick={() => MainFormService.toggleForm(true)}>
-                                    Thêm mới
+                                <Button type="primary" size="small" icon="plus" onClick={() => MainFormService.toggleForm(true)}>
+                                    Thêm
                                 </Button>
                             </ShowWhen>
                         </th>

@@ -106,7 +106,7 @@ export default ({}: Props) => {
                         <th scope="col">Ghi chú</th>
                         <th scope="col" style={{padding: 8}} className="row80">
                             <Link to="/receipt/export">
-                                <Button type="primary" icon="plus">
+                                <Button type="primary" size="small" icon="plus">
                                     Thêm
                                 </Button>
                             </Link>

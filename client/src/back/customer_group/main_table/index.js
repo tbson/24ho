@@ -84,7 +84,7 @@ export default ({}: Props) => {
                         </th>
                         <th scope="col">Nhóm khách hàng</th>
                         <th scope="col" style={{padding: 8}} className="row80">
-                            <Button type="primary" icon="plus" onClick={() => MainFormService.toggleForm(true)}>
+                            <Button type="primary" size="small" icon="plus" onClick={() => MainFormService.toggleForm(true)}>
                                 Thêm
                             </Button>
                         </th>
