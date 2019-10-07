@@ -185,12 +185,13 @@ export default ({}: Props) => {
     return (
         <NavWrapper>
             <div style={{padding: 10, paddingBottom: 0}}>
-                <Row>
+                <Row gutter={20}>
                     <Col span={6}>
                         <div style={{display: 'flex'}}>
                             <div className="form-group" style={{flexGrow: 1}}>
                                 <Input
                                     id="bol-input"
+                                    size="large"
                                     value={bolUid}
                                     onChange={handleUidChange}
                                     placeholder="Mã vận đơn..."
@@ -198,7 +199,7 @@ export default ({}: Props) => {
                             </div>
                             &nbsp;
                             <div>
-                                <Button type="primary" icon="check" onClick={submitCheck}>
+                                <Button type="primary" size="large" icon="check" onClick={submitCheck}>
                                     Kiểm hoàn tất
                                 </Button>
                             </div>

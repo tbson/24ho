@@ -37,7 +37,7 @@ export const apiUrls = Tools.getApiUrls(rawApiUrls);
 export const siteOptions = [
     {value: 'TAOBAO', label: 'TAOBAO'},
     {value: 'TMALL', label: 'TMALL'},
-    {value: '1688', label: '1588'},
+    {value: '1688', label: '1688'},
     {value: 'OTHER', label: 'Khác'}
 ];
 
