@@ -99,6 +99,10 @@
     padding: 0;
 }
 
+.ant-popover-inner-content {
+    min-width: 200px;
+}
+
 .form-group {
     margin-bottom: 15px;
 }

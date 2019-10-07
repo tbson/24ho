@@ -90,7 +90,7 @@ export default ({status, pending = false}: Props) => {
     const onRemove = data => setList(listAction(data).remove());
 
     const onDiscard = data => {
-        setList(listAction(data).update())
+        setList(listAction(data).update());
     };
 
     const onBulkRemove = () => {

@@ -183,6 +183,7 @@ class Order(TimeStampedModel):
             ("check_order", "Can check order"),
             ("complaint_resolve_order", "Can resolve complaint"),
             ("discard_order", "Can discard"),
+            ("batch_update", "Sửa hàng loạt"),
         )
 
 

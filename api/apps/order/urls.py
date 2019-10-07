@@ -89,6 +89,10 @@ renew_discard = OrderViewSet.as_view({
     'post': 'renew_discard',
 })
 
+batch_update = OrderViewSet.as_view({
+    'put': 'batch_update',
+})
+
 early_discard = OrderViewSetIsAuthenticated.as_view({
     'post': 'early_discard',
 })
@@ -113,6 +117,7 @@ urlpatterns = (
     path('<int:pk>/change-shockproof/', change_shockproof),
     path('<int:pk>/change-wooden-box/', change_wooden_box),
     path('<int:pk>/change-count-check/', change_count_check),
+    path('<int:pk>/batch-update/', batch_update),
     path('bulk-approve/', bulk_approve),
     path('get-order-items-for-checking/<str:uid>', get_order_items_for_checking),
     path('check/', check),

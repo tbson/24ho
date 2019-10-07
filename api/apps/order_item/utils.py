@@ -54,3 +54,10 @@ class OrderItemUtils:
             order_item_sr = OrderItemBaseSr(data=item)
             order_item_sr.is_valid(raise_exception=True)
             order_item_sr.save()
+
+    @staticmethod
+    def batch_update(order, ids, params):
+        from apps.order.models import Order
+        order_items = order.order_items.filter(pk__in=ids)
+        order_items.update(**params)
+        Order.objects.re_cal(order)

@@ -3,7 +3,7 @@ import * as React from 'react';
 // $FlowFixMe: do not complain about hooks
 import {Field, ErrorMessage} from 'formik';
 // $FlowFixMe: do not complain about hooks
-import { Input } from 'antd';
+import {Input, InputNumber} from 'antd';
 import Label from './Label';
 
 type Props = {
@@ -27,9 +27,11 @@ export default ({
     onBlur: _onBlur,
     onChange: _onChange
 }: Props) => {
+    const AbstactInput = type === 'number' ? InputNumber : Input;
     const onBlur = typeof _onBlur === 'function' ? _onBlur : () => {};
     const onChange = setFieldValue => e => {
-        const {value} = e.target;
+        let value = e;
+        if (typeof e === 'object') value = e.target.value;
         setFieldValue(name, value);
         typeof _onChange === 'function' && _onChange(value);
     };
@@ -40,12 +42,12 @@ export default ({
             <Field name={name}>
                 {({field, form}) => {
                     return (
-                        <Input
+                        <AbstactInput
                             id={name}
+                            style={{width: '100%'}}
                             type={type}
                             autoFocus={autoFocus}
                             disabled={disabled}
-                            className="form-control"
                             onBlur={onBlur}
                             value={field.value}
                             onChange={onChange(form.setFieldValue)}

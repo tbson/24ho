@@ -22,6 +22,7 @@ const rawApiUrls = [
             change_shockproof: 'pk/change-shockproof',
             change_wooden_box: 'pk/change-wooden-box',
             change_count_check: 'pk/change-count-check',
+            batchUpdate: 'pk/batch-update',
             discard: 'pk/discard',
             early_discard: 'pk/early-discard',
             renew_discard: 'pk/renew-discard',

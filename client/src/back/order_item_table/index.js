@@ -3,10 +3,12 @@ import * as React from 'react';
 import {useState, useEffect} from 'react';
 // $FlowFixMe: do not complain about importing
 import {Button} from 'antd';
+import Editable from 'src/utils/components/Editable';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
 import {apiUrls} from 'src/back/order/_data';
 import {SearchInput} from 'src/utils/components/TableUtils';
+import OnlyAdmin from 'src/utils/components/OnlyAdmin';
 import TableRow from './Row.js';
 
 export class Service {
@@ -74,6 +76,8 @@ export default ({pending = false, order_id, rate, notifyChange}: Props) => {
         notifyChange();
     };
 
+    const ids = ListTools.getChecked(list);
+
     useEffect(() => {
         getList();
     }, []);
@@ -97,7 +101,7 @@ export default ({pending = false, order_id, rate, notifyChange}: Props) => {
 
                 <tbody>
                     <tr>
-                        <td colSpan="99"  >
+                        <td colSpan="99">
                             <SearchInput onSearch={searchList} />
                         </td>
                     </tr>
@@ -119,8 +123,41 @@ export default ({pending = false, order_id, rate, notifyChange}: Props) => {
 
                 <tfoot className="thead-light">
                     <tr>
-                        <th className="row25">
-                            {pending || <Button size="small" type="danger" icon="delete" onClick={onBulkRemove} />}
+                        <th colSpan="2">
+                            <span>
+                                {pending || <Button size="small" type="danger" icon="delete" onClick={onBulkRemove} />}
+                            </span>
+                            <OnlyAdmin extraCondition={!!ids.length}>
+                                <span style={{paddingLeft: 10}}>
+                                    <Editable
+                                        onChange={resp => console.log(resp)}
+                                        underline={false}
+                                        type="number"
+                                        formater={parseInt}
+                                        name="value"
+                                        value={0}
+                                        extra={{ids, field: 'quantity'}}
+                                        endPoint={apiUrls.batchUpdate.replace('/pk-', `/${order_id}/`)}
+                                        placeholder="Số lượng">
+                                        <Button size="small">Sửa số lượng</Button>
+                                    </Editable>
+
+                                    <span>&nbsp;&nbsp;&nbsp;</span>
+
+                                    <Editable
+                                        onChange={resp => console.log(resp)}
+                                        underline={false}
+                                        type="number"
+                                        formater={parseFloat}
+                                        name="value"
+                                        value={0}
+                                        extra={{ids, field: 'unit_price'}}
+                                        endPoint={apiUrls.batchUpdate.replace('/pk-', `/${order_id}/`)}
+                                        placeholder="Số lượng">
+                                        <Button size="small">Sửa đơn giá</Button>
+                                    </Editable>
+                                </span>
+                            </OnlyAdmin>
                         </th>
                         <th className="row25 right" colSpan="99" />
                     </tr>

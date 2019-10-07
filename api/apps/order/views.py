@@ -54,8 +54,8 @@ class OrderViewSet(GenericViewSet):
         return self.get_paginated_response(result)
 
     def retrieve(self, request, pk=None):
-        obj = get_object_or_404(Order, pk=pk)
-        serializer = OrderBaseSr(obj)
+        order = get_object_or_404(Order, pk=pk)
+        serializer = OrderBaseSr(order)
         data = serializer.data
         data['options'] = {
             'addresses': AddressBaseSr(Address.objects.all(), many=True).data
@@ -174,6 +174,19 @@ class OrderViewSet(GenericViewSet):
         value = request.data.get('value', obj.count_check)
         serializer = OrderUtils.partial_update(obj, 'count_check', value)
         return res(serializer.data)
+
+    @transaction.atomic
+    @action(methods=['put'], detail=True)
+    def batch_update(self, request, pk=None):
+        order = get_object_or_404(Order, pk=pk)
+        value = request.data.get('value', 0)
+        extra = request.data.get('extra', [])
+        ids = extra.get('ids', [])
+        field = extra.get('field', '')
+        params = {}
+        params[field] = value
+        OrderItemUtils.batch_update(order, ids, params)
+        return res({})
 
     @transaction.atomic
     @action(methods=['post'], detail=True)

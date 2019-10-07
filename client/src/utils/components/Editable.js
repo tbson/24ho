@@ -4,39 +4,11 @@ import {useState} from 'react';
 // $FlowFixMe: do not complain about importing node_modules
 import {Formik, Form, Field, ErrorMessage} from 'formik';
 // $FlowFixMe: do not complain about formik
-import {Button, Input, Popover, Select} from 'antd';
+import {Button, Input, InputNumber, Popover, Select} from 'antd';
 import type {SelectOptions} from 'src/utils/helpers/Tools';
 import Tools from 'src/utils/helpers/Tools';
 
-
 const {Option} = Select;
-
-type InputProps = {
-    options: SelectOptions,
-    isMulti: boolean,
-    name: string,
-    value: string | number,
-    type: string,
-    placeholder: string
-};
-
-const SelectInput = ({options, isMulti, name, value, type, placeholder}: InputProps) => {
-    const [hiddenValue, setHiddenValue] = useState(value);
-    const children = options.map(item => {
-        const {value, label} = item;
-        return <Option key={value} value={value}>{label}</Option>;
-    });
-    return (
-        <>
-            <input name="value" defaultValue={hiddenValue} type="hidden" />
-            <Select
-                value={value}
-                onChange={data => setHiddenValue(data.value)}
-                placeholder={placeholder + '...'}
-            >{children}</Select>
-        </>
-    );
-};
 
 type Props = {
     children: React.Node,
@@ -44,9 +16,11 @@ type Props = {
     endPoint: string,
     options: SelectOptions,
     disabled: boolean,
+    underline: boolean,
     isMulti: boolean,
     name: string,
     value: string | number,
+    extra: {},
     type: string,
     formater: Function,
     adding: boolean,
@@ -63,9 +37,11 @@ export default class Editable extends React.Component<Props, State> {
         isMulti: false,
         adding: false,
         disabled: false,
+        underline: true,
         placeholder: 'Chọn',
         type: 'text',
         value: '',
+        extra: {},
         formater: (input: any) => input
     };
     state: State = {
@@ -75,9 +51,10 @@ export default class Editable extends React.Component<Props, State> {
 
     onSubmit(e: Object) {
         e.preventDefault();
-        const {name, formater, endPoint, onChange, adding} = this.props;
+        const {name, extra, formater, endPoint, onChange, adding} = this.props;
         const params = Tools.formDataToObj(new FormData(e.target));
         params[name] = formater(params.value);
+        params.extra = extra;
         Tools.apiCall(endPoint, params, adding ? 'POST' : 'PUT')
             .then(resp => {
                 if (!resp.ok) return Promise.reject(resp.data);
@@ -104,7 +81,16 @@ export default class Editable extends React.Component<Props, State> {
             case 'select':
                 return <SelectInput {...this.props} />;
             default:
-                return <Input name={name} type={type} placeholder={placeholder} defaultValue={value} />;
+                const AbstractInput = type === 'number' ? InputNumber : Input;
+                return (
+                    <AbstractInput
+                        style={{width: '100%'}}
+                        name={name}
+                        type={type}
+                        placeholder={placeholder}
+                        defaultValue={value}
+                    />
+                );
         }
     }
 
@@ -123,7 +109,7 @@ export default class Editable extends React.Component<Props, State> {
     }
 
     render() {
-        let {disabled, options, type} = this.props;
+        let {disabled, underline, options, type} = this.props;
         if (type === 'select' && !options.length) disabled = true;
         const props = {
             visible: this.state.isOpen,
@@ -140,8 +126,37 @@ export default class Editable extends React.Component<Props, State> {
         // $FlowFixMe: do not complain
         const children = React.cloneElement(this.props.children, {
             // $FlowFixMe: do not complain
-            className: (this.props.children.props.className || '') + (disabled ? '' : ' editable')
+            className: (this.props.children.props.className || '') + (disabled || !underline ? '' : ' editable')
         });
         return <Popover {...props}>{children}</Popover>;
     }
 }
+
+type InputProps = {
+    options: SelectOptions,
+    isMulti: boolean,
+    name: string,
+    value: string | number,
+    type: string,
+    placeholder: string
+};
+
+const SelectInput = ({options, isMulti, name, value, type, placeholder}: InputProps) => {
+    const [hiddenValue, setHiddenValue] = useState(value);
+    const children = options.map(item => {
+        const {value, label} = item;
+        return (
+            <Option key={value} value={value}>
+                {label}
+            </Option>
+        );
+    });
+    return (
+        <>
+            <input name="value" defaultValue={hiddenValue} type="hidden" />
+            <Select value={value} onChange={data => setHiddenValue(data.value)} placeholder={placeholder + '...'}>
+                {children}
+            </Select>
+        </>
+    );
+};

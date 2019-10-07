@@ -190,29 +190,31 @@ export default ({listSale, listCustCare, listGroup, onChange, submitTitle = 'Lư
 
                             <Row gutter={20}>
                                 <Col span={12}>
-                                    <TextInput name="order_fee_factor" label="Phí đặt hàng (%)" />
+                                    <TextInput type="number" name="order_fee_factor" label="Phí đặt hàng (%)" />
                                 </Col>
                                 <Col span={12}>
-                                    <TextInput name="deposit_factor" label="Hệ số cọc (%)" />
+                                    <TextInput type="number" name="deposit_factor" label="Hệ số cọc (%)" />
                                 </Col>
                             </Row>
 
                             <Row gutter={20}>
                                 <Col span={12}>
                                     <TextInput
+                                        type="number"
                                         name="delivery_fee_mass_unit_price"
                                         label="Đơn giá vận chuyển Kg (VND)"
                                     />
                                 </Col>
                                 <Col span={12}>
                                     <TextInput
+                                        type="number"
                                         name="delivery_fee_volume_unit_price"
                                         label="Đơn giá vận chuyển khối (VND)"
                                     />
                                 </Col>
                             </Row>
 
-                            <TextInput name="complaint_days" label="Hạn khiếu nại (ngày)" />
+                            <TextInput type="number" name="complaint_days" label="Hạn khiếu nại (ngày)" />
 
                             <SelectInput name="customer_group" label="Nhóm" options={listGroup} />
 
