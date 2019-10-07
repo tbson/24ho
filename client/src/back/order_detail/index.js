@@ -68,7 +68,7 @@ const Detail = ({match}) => {
     return !data.rate ? null : (
         <NavWrapper>
             <Row>
-                <Col span={16} className="no-padding-right">
+                <Col span={19} className="no-padding-right">
                     <Info pending={data.pending} data={data} addresses={options.addresses} onPartialChange={setData} />
                     <Tabs defaultActiveKey="0">
                         <TabPane tab="Sản Phẩm" key="0">
@@ -84,7 +84,7 @@ const Detail = ({match}) => {
                         </TabPane>
                     </Tabs>
                 </Col>
-                <Col span={8} className="no-padding-left">
+                <Col span={5} className="no-padding-left">
                     <Accounting pending={data.pending} data={data} onPartialChange={setData} />
                 </Col>
             </Row>
