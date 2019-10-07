@@ -19,7 +19,7 @@ export default () => {
 
     return (
         <NavWrapper>
-            <Tabs defaultIndex="0">
+            <Tabs defaultIndex="0" type="card">
                 <TabPane tab="Tài khoản" key="0">
                     <Table />
                 </TabPane>

@@ -40,7 +40,7 @@ const Detail = ({match}: Props) => {
 
     return (
         <NavWrapper>
-            <Tabs defaultIndex="0">
+            <Tabs defaultIndex="0" type="card">
                 <TabPane tab="Vùng" key="0">
                     <Row>
                         <Col span={8}>
