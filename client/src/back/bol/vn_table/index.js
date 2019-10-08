@@ -53,15 +53,15 @@ export default ({}: Props) => {
                         <th scope="col">Mã vận đơn</th>
                         <th scope="col">Bao</th>
                         <th scope="col">Khớp</th>
-                        <th scope="col" style={{padding: 8}} className="row80">
-                            <Button block type="primary" icon="reload" onClick={() => getList()}/>
+                        <th scope="col" style={{padding: 8}} className="row80 right">
+                            <Button block type="primary" size="small" icon="reload" onClick={() => getList()} />
                         </th>
                     </tr>
                 </thead>
 
                 <tbody>
                     <tr>
-                        <td colSpan="99"  >
+                        <td colSpan="99">
                             <SearchInput onSearch={searchList} />
                         </td>
                     </tr>
@@ -69,12 +69,7 @@ export default ({}: Props) => {
 
                 <tbody>
                     {list.map((data, index) => (
-                        <Row
-                            className="table-row"
-                            data={data}
-                            key={index}
-                            index={index}
-                        />
+                        <Row className="table-row" data={data} key={index} index={index} />
                     ))}
                 </tbody>
 
