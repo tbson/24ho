@@ -4,7 +4,7 @@ import {useState, useEffect} from 'react';
 // $FlowFixMe: do not complain about importing node_modules
 import {Link} from 'react-router-dom';
 // $FlowFixMe: do not complain about Yup
-import {Button, Row, Col} from 'antd';
+import {Button, Row, Col, Divider} from 'antd';
 import ListTools from 'src/utils/helpers/ListTools';
 import type {TRow} from './_data';
 import NavWrapper from 'src/utils/components/nav_wrapper/';
@@ -42,15 +42,15 @@ export default ({}: Props) => {
                 <Col span={8}>
                     <div style={{padding: '15px'}}>
                         <BagPart />
-                        <hr />
+                        <Divider />
                         <FormPart submitTitle="OK" onSubmit={CNFormService.handleSubmit(onChange)}>
                             <Row>
-                                <Col span={8}>
+                                <Col span={12}>
                                     <Link to={`/bol/1`}>
                                         <Button icon="left">Quay lại</Button>
                                     </Link>
                                 </Col>
-                                <Col span={8} className="right">
+                                <Col span={12} className="right">
                                     <Button type="primary" htmlType="submit" icon="check">
                                         Thêm
                                     </Button>

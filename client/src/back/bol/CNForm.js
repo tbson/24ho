@@ -130,8 +130,8 @@ type Props = {
 };
 
 type FormPartProps = {
-    handleOk: Function,
-    binHandleSubmit: Function,
+    handleOk?: Function,
+    binHandleSubmit?: Function,
     initialValues?: Object,
     onSubmit: Function,
     children?: React.Node,
@@ -183,7 +183,7 @@ export const FormPart = ({
             validationSchema={Service.validationSchema}
             onSubmit={onSubmit}>
             {({errors, values, handleSubmit, resetForm}) => {
-                if (handleOk === Tools.emptyFunction) binHandleSubmit(handleSubmit);
+                if (binHandleSubmit && handleOk === Tools.emptyFunction) binHandleSubmit(handleSubmit);
                 return (
                     <Form>
                         <button className="hide" />
