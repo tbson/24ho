@@ -37,7 +37,7 @@ const Component = ({match}: Props) => {
                     <CNTable />
                 </TabPane>
                 <TabPane tab="Vận đơn VN" key="3">
-                    <Row>
+                    <Row gutter={20}>
                         <Col span={12}>
                             <VNTable />
                         </Col>

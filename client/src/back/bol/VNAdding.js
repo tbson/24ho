@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 // $FlowFixMe: do not complain about importing node_modules
-import {Row, Col} from 'antd';
+import {Row, Col, Input} from 'antd';
 import {useState, useEffect} from 'react';
 import NavWrapper from 'src/utils/components/nav_wrapper/';
 import Tools from 'src/utils/helpers/Tools';
@@ -72,12 +72,11 @@ export default ({}: Props) => {
     useEffect(() => {}, []);
 
     return (
-        <Row>
+        <Row gutter={20}>
             <Col span={12}>
                 <div className="form-group">
                     <label htmlFor="bag-input">Bao hàng</label>
-                    <input
-                        className="form-control"
+                    <Input
                         id="bag-input"
                         value={bagUid}
                         onChange={handleBagUidChange}
@@ -96,8 +95,7 @@ export default ({}: Props) => {
             <Col span={12}>
                 <div className="form-group">
                     <label htmlFor="bol-input">Vận đơn VN</label>
-                    <input
-                        className="form-control"
+                    <Input
                         id="bol-input"
                         value={bolUid}
                         onChange={handleBolUidChange}

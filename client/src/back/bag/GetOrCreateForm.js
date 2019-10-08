@@ -115,9 +115,10 @@ export default ({onChange, children, submitTitle = 'Save'}: Props) => {
                                 <div style={{flexGrow: 1}}>
                                     <SelectInput name="bag" label="Chọn bao hàng" options={listBag} />
                                 </div>
-                                <div style={{alignSelf: 'flex-end', height: 48}}>
+                                <div style={{alignSelf: 'flex-end', height: 47}}>
                                     <Editable
                                         onChange={handleAddBag}
+                                        underline={false}
                                         adding={true}
                                         name="area"
                                         formater={parseInt}
