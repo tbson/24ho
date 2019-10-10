@@ -177,6 +177,14 @@ class BolViewSet(GenericViewSet):
         return res(serializer.data)
 
     @transaction.atomic
+    @action(methods=['post'], detail=True)
+    def mark_cn_by_uploading(self, request, pk=None):
+        staff = request.user.staff
+        file = request.data.get('file')
+        result = BolUtils.mark_cn_by_uploading(file, staff)
+        return res(result)
+
+    @transaction.atomic
     @action(methods=['put'], detail=True)
     def unmark_cn(self, request, pk=None):
         obj = self.get_object(pk)

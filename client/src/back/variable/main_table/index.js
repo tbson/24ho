@@ -85,7 +85,11 @@ export default ({}: Props) => {
                         <th scope="col">Tên cấu hình</th>
                         <th scope="col">Giá trị</th>
                         <th scope="col" style={{padding: 8}} className="row80">
-                            <Button type="primary" size="small" icon="plus" onClick={() => MainFormService.toggleForm(true)}>
+                            <Button
+                                type="primary"
+                                size="small"
+                                icon="plus"
+                                onClick={() => MainFormService.toggleForm(true)}>
                                 Thêm
                             </Button>
                         </th>
@@ -94,7 +98,7 @@ export default ({}: Props) => {
 
                 <tbody>
                     <tr>
-                        <td colSpan="99"  >
+                        <td colSpan="99">
                             <SearchInput onSearch={searchList} />
                         </td>
                     </tr>

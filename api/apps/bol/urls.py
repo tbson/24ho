@@ -52,6 +52,10 @@ unmark_cn = BolViewSet.as_view({
     'put': 'unmark_cn',
 })
 
+mark_cn_by_uploading = BolViewSet.as_view({
+    'post': 'mark_cn_by_uploading',
+})
+
 app_name = os.getcwd().split(os.sep)[-1]
 urlpatterns = [
     path('', base_endpoint),
@@ -64,5 +68,6 @@ urlpatterns = [
     path('export/', export),
     path('date/', get_date),
     path('mark-cn/<int:pk>', mark_cn),
+    path('mark-cn-by-uploading/', mark_cn_by_uploading),
     path('unmark-cn/<int:pk>', unmark_cn),
 ]

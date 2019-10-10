@@ -26,7 +26,7 @@ const Component = ({match}: Props) => {
     const bag_id = match.params.bagId ? parseInt(match.params.bagId) : 0;
     return (
         <NavWrapper>
-            <Tabs defaultIndex="0" type="card" destroyInactiveTabPane={true}>
+            <Tabs defaultIndex="2" type="card" destroyInactiveTabPane={true}>
                 <TabPane tab="Tất cả vận đơn" key="0">
                     <Table bag_id={bag_id} />
                 </TabPane>

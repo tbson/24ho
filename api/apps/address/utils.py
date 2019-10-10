@@ -46,6 +46,15 @@ class AddressUtils:
         return "{}{}{}".format(customer_id, area_code, order)
 
     @staticmethod
+    def uid_to_pk(uid: str) -> int:
+        from .models import Address
+        try:
+            item = Address.objects.get(uid=uid)
+            return item.pk
+        except Address.DoesNotExist:
+            return 0
+
+    @staticmethod
     def generate_uid(customer_id: int, area_id: int) -> str:
         from .models import Address
 

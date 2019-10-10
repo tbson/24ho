@@ -31,9 +31,27 @@ class Tools:
     @staticmethod
     def string_to_bool(input: str) -> bool:
         input = input.lower().strip()
-        if input == '' or input == 'false':
+        if not input or input == 'false' or input == '0':
             return False
         return True
+
+    @staticmethod
+    def string_to_int(input: str, default: int = 0) -> int:
+        if type(input) == str:
+            input = input.lower().strip()
+        try:
+            return int(input)
+        except ValueError:
+            return default
+
+    @staticmethod
+    def string_to_float(input: str, default: float = 0.0) -> float:
+        if type(input) == str:
+            input = input.lower().strip()
+        try:
+            return float(input)
+        except ValueError:
+            return default
 
     @staticmethod
     def get_uuid():
@@ -310,7 +328,7 @@ class Tools:
         return result
 
     @staticmethod
-    def write_rile(file: InMemoryUploadedFile, folder: str):
+    def write_file(file: InMemoryUploadedFile, folder: str):
         ext = file.name.split('.')[-1]
         filename = "{}.{}".format(Tools.get_uuid(), ext)
         return default_storage.save("{}/{}".format(folder, filename), ContentFile(file.read()))

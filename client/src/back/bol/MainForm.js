@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import {useState, useEffect, useRef} from 'react';
+import {useState, useEffect} from 'react';
 // $FlowFixMe: do not complain about formik
 import {Formik, Form} from 'formik';
 // $FlowFixMe: do not complain about Yup
@@ -170,15 +170,22 @@ export default ({order_id = 0, onChange, submitTitle = 'Lưu'}: Props) => {
                                     </Col>
                                 </OnlyAdmin>
                                 <OnlyAdmin>
-                                    <Col span={6}>
+                                    <Col span={9}>
                                         <TextInput name="address_code" label="Mã địa chỉ" />
                                     </Col>
-                                    <Col span={6}>
+                                    <Col span={9}>
                                         <TextInput name="purchase_code" label="Mã giao dịch" />
                                     </Col>
                                 </OnlyAdmin>
                             </Row>
-                            <TextInput name="mass" type="number" label="Khối lượng (KG)" />
+                            <Row gutter={20}>
+                                <Col span={12}>
+                                    <TextInput name="mass" type="number" label="Khối lượng (KG)" />
+                                </Col>
+                                <Col span={12}>
+                                    <TextInput name="packages" type="number" label="Số kiện" />
+                                </Col>
+                            </Row>
                             <Row gutter={20}>
                                 <Col span={8}>
                                     <TextInput name="length" type="number" label="Dài (Cm)" />

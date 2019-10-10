@@ -1,10 +1,12 @@
 from django.db import models
 from django.utils import timezone
+import pyexcel
 from apps.address.utils import AddressUtils
 from apps.delivery_fee.models import DeliveryFeeUnitPriceType
 from apps.delivery_fee.utils import DeliveryFeeUtils
 from django.conf import settings
 from utils.helpers.tools import Tools
+from typing import List, Dict
 
 error_messages = {
     "EXPORT_MISSING_ADDRESS": "Có ít nhất 1 vận đơn thiếu mã địa chỉ.",
@@ -364,3 +366,74 @@ class BolUtils:
             wooden_box=order.wooden_box,
             count_check=order.count_check
         )
+
+    @staticmethod
+    def column_to_row(column_dict: Dict, staff: models.QuerySet) -> List[Dict]:
+        from apps.address.utils import AddressUtils
+        from apps.bag.utils import BagUtils
+        from .serializers import BolBaseSr
+        from .models import Bol
+        result: List = []
+        for index in range(len(column_dict['uid'])):
+            bag_uid = column_dict['bag_uid'][index]
+            uid = column_dict['uid'][index]
+            address_code = column_dict['address_code'][index]
+            mass = column_dict['mass'][index]
+            length = column_dict['length'][index]
+            width = column_dict['width'][index]
+            height = column_dict['height'][index]
+            packages = column_dict['packages'][index]
+            count_check = column_dict['count_check'][index]
+            cny_shockproof_fee = column_dict['cny_shockproof_fee'][index]
+            cny_wooden_box_fee = column_dict['cny_wooden_box_fee'][index]
+            note = column_dict['note'][index]
+
+            item = {
+                'bag_uid': BagUtils.uid_to_pk(Tools.remove_special_chars(bag_uid, True)),
+                'uid': Tools.remove_special_chars(uid, True),
+                'address_code': AddressUtils.uid_to_pk(Tools.remove_special_chars(address_code, True)),
+                'mass': Tools.string_to_float(mass),
+                'length': Tools.string_to_float(length),
+                'width': Tools.string_to_float(width),
+                'height': Tools.string_to_float(height),
+                'packages': Tools.string_to_int(packages),
+                'count_check': Tools.string_to_bool(count_check),
+                'cny_shockproof_fee': Tools.string_to_float(cny_shockproof_fee),
+                'cny_wooden_box_fee': Tools.string_to_float(cny_wooden_box_fee),
+                'note': note,
+            }
+            item['shockproof'] = bool(int(item['cny_shockproof_fee']))
+            item['wooden_box'] = bool(int(item['cny_wooden_box_fee']))
+            item['cn_date'] = Tools.now()
+            item['staff_id'] = staff.pk
+            if item['uid']:
+                if item['address_code']:
+                    item['address'] = item['address_code']
+                if item['bag_uid']:
+                    item['bag'] = item['bag_uid']
+                del item['address_code']
+                del item['bag_uid']
+
+                try:
+                    bol = Bol.objects.get(uid=item['uid'])
+                    del item['uid']
+                    print(item)
+                    serializer = BolBaseSr(bol, data=item, partial=True)
+                except Bol.DoesNotExist:
+                    serializer = BolBaseSr(data=item)
+
+                if serializer.is_valid(raise_exception=False):
+                    serializer.save()
+                    result.append(item)
+
+        return result
+
+    @staticmethod
+    def mark_cn_by_uploading(file, staff: models.QuerySet) -> List[Dict]:
+        filename = file.name
+        extension = filename.split(".")[-1]
+        content = file.read()
+        sheet = pyexcel.get_sheet(file_type=extension, file_content=content)
+        sheet.name_columns_by_row(0)
+        obj = dict(sheet.dict)
+        return BolUtils.column_to_row(obj, staff)

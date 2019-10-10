@@ -18,8 +18,9 @@ type Props = {
 };
 
 export default ({name, label}: Props) => {
-    const fileInput = useRef(null);
+    const fileInput = useRef<Element | null>(null);
     const onSelect = () => {
+        // $FlowFixMe: do not complain about clicking
         fileInput.current.click();
     };
     const onFileChange = setFieldValue => e => {

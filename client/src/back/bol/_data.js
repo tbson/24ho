@@ -18,6 +18,7 @@ const rawApiUrls = [
             exportCheck: 'export-check',
             markCn: 'mark-cn',
             unmarkCn: 'unmark-cn',
+            markCnByUploading: 'mark-cn-by-uploading'
         }
     },
     {

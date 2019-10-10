@@ -45,6 +45,15 @@ class BagUtils:
         return "{}{}{}".format(area.uid, date_part, index)
 
     @staticmethod
+    def uid_to_pk(uid: str) -> int:
+        from .models import Bag
+        try:
+            item = Bag.objects.get(uid=uid)
+            return item.pk
+        except Bag.DoesNotExist:
+            return 0
+
+    @staticmethod
     def get_last_uid(date: timezone, area: models.QuerySet) -> str:
         from apps.bag.models import Bag
         year = date.year

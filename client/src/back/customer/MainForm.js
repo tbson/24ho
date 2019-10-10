@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import {useState, useEffect, useContext, useRef} from 'react';
+import {useState, useEffect, useContext} from 'react';
 // $FlowFixMe: do not complain about formik
 import {Formik, Form} from 'formik';
 // $FlowFixMe: do not complain about formik

@@ -315,5 +315,5 @@ class OrderViewSetIsAuthenticated(GenericViewSet):
     @action(methods=['post'], detail=True)
     def img_to_url(self, request, pk=None):
         file = request.data.get('file')
-        path = Tools.write_rile(file, 'order_item')
+        path = Tools.write_file(file, 'order_item')
         return res({'path': path})

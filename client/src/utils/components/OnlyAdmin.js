@@ -3,7 +3,7 @@ import * as React from 'react';
 import {APP} from 'src/constants';
 
 type Props = {
-    extraCondition: boolean,
+    extraCondition?: boolean,
     reverse?: boolean,
     children: React.Node
 };

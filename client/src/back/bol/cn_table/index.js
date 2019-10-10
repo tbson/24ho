@@ -15,6 +15,7 @@ import {Service as CNFormService} from '../CNForm.js';
 import GetOrCreateForm from 'src/back/bag/GetOrCreateForm';
 import {Service as GetOrCreateService} from 'src/back/bag/GetOrCreateForm';
 import Row from './Row.js';
+import UploadExcelButton from './UploadExcelButton';
 
 type Props = {
     history: Object
@@ -133,7 +134,7 @@ const Component = ({history}: Props) => {
 
                 <tbody>
                     <tr>
-                        <td colSpan="99"  >
+                        <td colSpan="99">
                             <SearchInput onSearch={searchList} />
                         </td>
                     </tr>
@@ -158,6 +159,7 @@ const Component = ({history}: Props) => {
                         <th className="row25">
                             <Button size="small" type="danger" icon="delete" onClick={onBulkRemove} />
                         </th>
+                        <th><UploadExcelButton onChange={() => getList()}/></th>
                         <th className="row25 right" colSpan="99">
                             <Pagination next={links.next} prev={links.previous} onNavigate={getList} />
                         </th>
