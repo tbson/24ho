@@ -1,4 +1,5 @@
 from django.db import models
+from django_filters import rest_framework as filters
 from utils.models.model import TimeStampedModel
 from apps.customer.models import Customer
 from apps.staff.models import Staff
@@ -109,3 +110,20 @@ class Transaction(TimeStampedModel):
             ("retrieve_to_print", "Can print transaction"),
             ("get_total_statistics", "Get total statistics"),
         )
+
+
+class TransactionFilter(filters.FilterSet):
+    uid = filters.CharFilter(field_name='uid', lookup_expr='icontains')
+    customer = filters.NumberFilter(field_name='customer_id', lookup_expr='exact')
+    staff = filters.NumberFilter(field_name='staff_id', lookup_expr='exact')
+
+    class Meta:
+        model = Transaction
+        fields = {
+            'created_at': ['exact', 'lt', 'gt', 'lte', 'gte'],
+            'uid': ['exact'],
+            'money_type': ['exact'],
+            'is_assets': ['exact'],
+            'staff': ['exact'],
+            'customer': ['exact'],
+        }

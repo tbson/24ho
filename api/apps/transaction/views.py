@@ -5,7 +5,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.decorators import action
 from rest_framework.viewsets import (GenericViewSet, )
 from rest_framework import status
-from .models import Transaction
+from .models import Transaction, TransactionFilter
 from .serializers import (
     TransactionBaseSr,
 )
@@ -24,9 +24,14 @@ class TransactionViewSet(GenericViewSet):
     serializer_class = TransactionBaseSr
     permission_classes = (CustomPermission, )
     search_fields = ('uid', 'staff_username', 'customer_username')
-    filterset_fields = ('money_type', )
+    filterset_class = TransactionFilter
 
     def list(self, request):
+        from apps.staff.models import Staff
+        from apps.staff.serializers import StaffSelectSr
+        from apps.customer.models import Customer
+        from apps.customer.serializers import CustomerSelectSr
+
         balance = 0
         queryset = Transaction.objects.all()
         if hasattr(request.user, 'customer'):
@@ -42,7 +47,11 @@ class TransactionViewSet(GenericViewSet):
             'extra': {
                 'list_bank': BankBaseSr(Bank.objects.all(), many=True).data,
                 'list_customer': [],
-                'balance': balance
+                'balance': balance,
+                'options': {
+                    'staff': StaffSelectSr(Staff.objects.all(), many=True).data,
+                    'customer': CustomerSelectSr(Customer.objects.all(), many=True).data
+                }
             }
         }
         is_fetch_customers = Tools.string_to_bool(request.query_params.get('customers', 'False'))
