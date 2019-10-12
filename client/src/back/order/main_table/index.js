@@ -2,7 +2,7 @@
 import * as React from 'react';
 import {useState, useEffect} from 'react';
 // $FlowFixMe: do not complain about importing
-import {Button} from 'antd';
+import {Button, Collapse} from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
 import {apiUrls} from '../_data';
@@ -12,6 +12,8 @@ import Row from './Row.js';
 import ApproveForm from '../ApproveForm';
 import {Service as ApproveFormService} from '../ApproveForm';
 import FilterForm from '../FilterForm';
+
+const {Panel} = Collapse;
 
 export class Service {
     static listRequest(url?: string, params?: Object): Promise<Object> {
@@ -134,7 +136,11 @@ export default ({status, pending = false}: Props) => {
                 <BulkApprove status={status} onApprove={onApprove} />
             </OnlyAdmin>
             <div>
-                <FilterForm onChange={handleFilter} options={options} />
+                <Collapse>
+                    <Panel header="Tìm kiếm" key="1">
+                        <FilterForm onChange={handleFilter} options={options} />
+                    </Panel>
+                </Collapse>
             </div>
             <table className="table table-striped">
                 <thead className="thead-light">
