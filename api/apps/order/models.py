@@ -209,8 +209,6 @@ class OrderFilter(filters.FilterSet):
             'customer': ['exact'],
             'sale': ['exact'],
             'cust_care': ['exact'],
-            # 'approver': ['exact'],
-            # 'checker': ['exact'],
             'shockproof': ['exact'],
             'wooden_box': ['exact'],
             'count_check': ['exact'],

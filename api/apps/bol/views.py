@@ -42,6 +42,11 @@ class BolViewSet(GenericViewSet):
         return obj
 
     def list(self, request):
+        from apps.staff.models import Staff
+        from apps.staff.serializers import StaffSelectSr
+        from apps.customer.models import Customer
+        from apps.customer.serializers import CustomerSelectSr
+
         queryset = Bol.objects.all()
         if hasattr(request.user, 'customer'):
             queryset = queryset.filter(customer=request.user.customer)
@@ -57,7 +62,12 @@ class BolViewSet(GenericViewSet):
         result = {
             'items': serializer.data,
             'extra': {
-                'bags': BagListSr(bags, many=True).data
+                'bags': BagListSr(bags, many=True).data,
+                'options': {
+                    'sale': StaffSelectSr(Staff.objects.getListSale(), many=True).data,
+                    'cust_care': StaffSelectSr(Staff.objects.getListCustCare(), many=True).data,
+                    'customer': CustomerSelectSr(Customer.objects.all(), many=True).data
+                }
             }
         }
 

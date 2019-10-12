@@ -251,18 +251,30 @@ class Bol(TimeStampedModel):
 
 
 class BolFilter(filters.FilterSet):
+    order_uid = filters.CharFilter(field_name='order__uid', lookup_expr='exact')
+    purchase_code = filters.CharFilter(field_name='order__purchase_code', lookup_expr='exact')
     order_id = filters.NumberFilter(field_name="order_id", lookup_expr='exact')
     bol_date_id = filters.NumberFilter(field_name="bol_date_id", lookup_expr='exact')
     bag_id = filters.NumberFilter(field_name="bag_id", lookup_expr='exact')
     bag_uid = filters.CharFilter(field_name="bag__uid", lookup_expr='exact')
+    customer = filters.NumberFilter(field_name='customer_id', lookup_expr='exact')
+    sale = filters.NumberFilter(field_name='order__sale_id', lookup_expr='exact')
+    cust_care = filters.NumberFilter(field_name='cust_care__cust_care_id', lookup_expr='exact')
 
     class Meta:
         model = Bol
         fields = {
+            'order_uid': ['exact'],
+            'uid': ['exact'],
+            'purchase_code': ['exact'],
             'order_id': ['exact'],
             'bol_date_id': ['exact'],
             'bag_id': ['exact'],
             'bag_uid': ['exact'],
+            'customer': ['exact'],
+            'sale': ['exact'],
+            'cust_care': ['exact'],
             'cn_date': ['exact', 'isnull', 'lt', 'gt', 'lte', 'gte'],
-            'vn_date': ['exact', 'isnull', 'lt', 'gt', 'lte', 'gte']
+            'vn_date': ['exact', 'isnull', 'lt', 'gt', 'lte', 'gte'],
+            'exported_date': ['exact', 'isnull', 'lt', 'gt', 'lte', 'gte']
         }

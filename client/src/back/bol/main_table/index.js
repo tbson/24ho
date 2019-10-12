@@ -2,7 +2,7 @@
 import * as React from 'react';
 import {useState, useEffect} from 'react';
 // $FlowFixMe: do not complain about importing
-import {Button} from 'antd';
+import {Button, Collapse} from 'antd';
 import Tools from 'src/utils/helpers/Tools';
 import ListTools from 'src/utils/helpers/ListTools';
 import ShowWhen from 'src/utils/components/ShowWhen';
@@ -12,6 +12,9 @@ import {Pagination, SearchInput} from 'src/utils/components/TableUtils';
 import MainForm from '../MainForm';
 import {Service as MainFormService} from '../MainForm';
 import Row from './Row.js';
+import FilterForm from '../FilterForm';
+
+const {Panel} = Collapse;
 
 type Props = {
     readonly?: boolean,
@@ -50,6 +53,11 @@ export default ({readonly = false, order_id = 0, bol_date_id = 0, bag_id = 0, no
     });
     const [modalId, setModalId] = useState(0);
     const [links, setLinks] = useState({next: '', previous: ''});
+    const [options, setOptions] = useState({
+        sale: [],
+        cust_care: [],
+        customer: []
+    });
 
     const listAction = ListTools.actions(list);
 
@@ -61,6 +69,7 @@ export default ({readonly = false, order_id = 0, bol_date_id = 0, bag_id = 0, no
         const data = await Service.handleGetList(url, composedParams);
         if (!data) return;
         setList(ListTools.prepare(data.items));
+        setOptions(data.extra.options);
         setLinks(data.links);
     };
 
@@ -84,7 +93,10 @@ export default ({readonly = false, order_id = 0, bol_date_id = 0, bag_id = 0, no
         r && Service.handleBulkRemove(ids).then(data => setList(listAction(data).bulkRemove()));
     };
 
-    const searchList = (keyword: string) => getList('', keyword ? {search: keyword} : {});
+    const searchList = (condition: Object) => getList('', condition);
+    const handleFilter = (conditions: Object) => {
+        searchList(conditions);
+    };
 
     useEffect(() => {
         getList();
@@ -137,7 +149,11 @@ export default ({readonly = false, order_id = 0, bol_date_id = 0, bag_id = 0, no
                 <tbody>
                     <tr>
                         <td colSpan="99"  >
-                            <SearchInput onSearch={searchList} />
+                            <Collapse>
+                                <Panel header="Tìm kiếm" key="1">
+                                    <FilterForm onChange={handleFilter} options={options} />
+                                </Panel>
+                            </Collapse>
                         </td>
                     </tr>
                 </tbody>

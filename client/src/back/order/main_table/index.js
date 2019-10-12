@@ -71,8 +71,6 @@ export default ({status, pending = false}: Props) => {
 
     const [modalId, setModalId] = useState(0);
     const [links, setLinks] = useState({next: '', previous: ''});
-    let searchCondition = {};
-
     const listAction = ListTools.actions(list);
 
     const getList = async (url?: string, params?: Object) => {
@@ -103,8 +101,6 @@ export default ({status, pending = false}: Props) => {
         r && Service.handleBulkRemove(ids).then(data => setList(listAction(data).bulkRemove()));
     };
 
-    const searchList = (condition: Object) => getList('', condition);
-
     const onSelectSale = (sale: number) => {
         const ids = ListTools.getChecked(list);
         Service.handleBulkApprove(ids, sale)
@@ -122,6 +118,7 @@ export default ({status, pending = false}: Props) => {
         ApproveFormService.toggleForm(true);
     };
 
+    const searchList = (condition: Object) => getList('', condition);
     const handleFilter = (conditions: Object) => {
         searchList(conditions);
     };
