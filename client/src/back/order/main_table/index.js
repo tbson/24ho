@@ -135,13 +135,7 @@ export default ({status, pending = false}: Props) => {
             <OnlyAdmin>
                 <BulkApprove status={status} onApprove={onApprove} />
             </OnlyAdmin>
-            <div>
-                <Collapse>
-                    <Panel header="Tìm kiếm" key="1">
-                        <FilterForm onChange={handleFilter} options={options} />
-                    </Panel>
-                </Collapse>
-            </div>
+
             <table className="table table-striped">
                 <thead className="thead-light">
                     <tr>
@@ -155,15 +149,17 @@ export default ({status, pending = false}: Props) => {
                     </tr>
                 </thead>
 
-                {/*
                 <tbody>
                     <tr>
-                        <td colSpan="99"  >
-                            <SearchInput onSearch={searchList} />
+                        <td colSpan="99">
+                            <Collapse>
+                                <Panel header="Tìm kiếm" key="1">
+                                    <FilterForm onChange={handleFilter} options={options} />
+                                </Panel>
+                            </Collapse>
                         </td>
                     </tr>
                 </tbody>
-                */}
 
                 <tbody>
                     {list.map((data, key) => (
