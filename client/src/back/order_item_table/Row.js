@@ -40,6 +40,7 @@ export default ({pending = false, data, onCheck, onRemove, onPartialChange}: Row
     const vnd_unit_price = unit_price * rate;
     const cny_price = price;
     const vnd_price = cny_price * rate;
+    console.log(data);
     return (
         <tr>
             <th className="row25 center">
@@ -114,7 +115,7 @@ type DescriptionType = {
 };
 export const Description = ({
     pending,
-    data: {id, title, image, color, size, link},
+    data: {id, title, image, color, size, url},
     onPartialChange
 }: DescriptionType) => {
     return (
@@ -126,7 +127,7 @@ export const Description = ({
                     </td>
                     <td>
                         <div>
-                            <a href={link} target="_blank">
+                            <a href={url} target="_blank">
                                 {title}
                             </a>
                         </div>

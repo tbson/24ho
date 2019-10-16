@@ -99,7 +99,7 @@ export type OrderItemType = {
     image: string,
     color: string,
     size: string,
-    link: string,
+    url: string,
     quantity: number,
     checked_quantity: number,
     unit_price: number,
