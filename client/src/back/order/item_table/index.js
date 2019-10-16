@@ -10,6 +10,8 @@ import {apiUrls} from 'src/back/order/_data';
 import {SearchInput} from 'src/utils/components/TableUtils';
 import OnlyAdmin from 'src/utils/components/OnlyAdmin';
 import TableRow from './Row.js';
+import ImagePreviewDialog from '../ImagePreviewDialog'
+import {Service as ImagePreviewDialogService} from '../ImagePreviewDialog';
 
 export class Service {
     static listRequest(params: Object = {}): Promise<Object> {
@@ -114,6 +116,7 @@ export default ({pending = false, order_id, rate, notifyChange}: Props) => {
                             pending={pending}
                             data={data}
                             key={key}
+                            onPreview={ImagePreviewDialogService.toggleForm}
                             onCheck={onCheck}
                             onRemove={onRemove}
                             onPartialChange={partialChangeHandle}
@@ -169,6 +172,7 @@ export default ({pending = false, order_id, rate, notifyChange}: Props) => {
                     </tr>
                 </tfoot>
             </table>
+            <ImagePreviewDialog/>
         </div>
     );
 };

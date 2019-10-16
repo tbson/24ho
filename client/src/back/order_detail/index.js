@@ -12,7 +12,7 @@ import {STATUS} from 'src/back/order/_data';
 import NavWrapper from 'src/utils/components/nav_wrapper/';
 import Info from './Info';
 import Accounting from './Accounting';
-import OrderItemTable from 'src/back/order_item_table';
+import OrderItemTable from 'src/back/order/item_table';
 import Tools from 'src/utils/helpers/Tools';
 import {apiUrls} from 'src/back/order/_data';
 import BolTable from 'src/back/bol/main_table/';

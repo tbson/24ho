@@ -24,11 +24,12 @@ export class Service {
 type RowPropTypes = {
     pending?: boolean,
     data: OrderItemType,
+    onPreview: Function,
     onCheck: Function,
     onRemove: Function,
     onPartialChange: Function
 };
-export default ({pending = false, data, onCheck, onRemove, onPartialChange}: RowPropTypes) => {
+export default ({pending = false, data, onPreview, onCheck, onRemove, onPartialChange}: RowPropTypes) => {
     const id = parseInt(data.id);
 
     const _onRemove = id => {
@@ -40,14 +41,13 @@ export default ({pending = false, data, onCheck, onRemove, onPartialChange}: Row
     const vnd_unit_price = unit_price * rate;
     const cny_price = price;
     const vnd_price = cny_price * rate;
-    console.log(data);
     return (
         <tr>
             <th className="row25 center">
                 <Checkbox checked={data.checked} onChange={() => onCheck(id)} />
             </th>
             <td>
-                <Description pending={pending} data={data} onPartialChange={onPartialChange} />
+                <Description pending={pending} data={data} onPreview={onPreview} onPartialChange={onPartialChange} />
             </td>
             <td className="right mono">
                 {pending && (
@@ -110,11 +110,13 @@ export default ({pending = false, data, onCheck, onRemove, onPartialChange}: Row
 
 type DescriptionType = {
     pending: boolean,
+    onPreview: Function,
     data: OrderItemType,
     onPartialChange: Function
 };
 export const Description = ({
     pending,
+    onPreview,
     data: {id, title, image, color, size, url},
     onPartialChange
 }: DescriptionType) => {
@@ -123,7 +125,7 @@ export const Description = ({
             <tbody>
                 <tr>
                     <td width="72px">
-                        <img src={image} width="100%" />
+                        <img src={image} width="100%" onClick={() => onPreview(true, image)} />
                     </td>
                     <td>
                         <div>
