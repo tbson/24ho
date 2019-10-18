@@ -13,9 +13,8 @@ export class Service {
 }
 
 type Props = {
-    submitTitle?: string
 };
-export default ({submitTitle = 'Lưu'}: Props) => {
+export default ({}: Props) => {
     const formName = 'Ảnh sản phẩm';
     const [open, setOpen] = useState(false);
     const [src, setSrc] = useState('');
@@ -36,6 +35,7 @@ export default ({submitTitle = 'Lưu'}: Props) => {
         <Modal
             destroyOnClose={true}
             visible={open}
+            onOk={() => setOpen(false)}
             onCancel={() => Service.toggleForm(false)}
             cancelText="Thoát"
             title={formName}>
