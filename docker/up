@@ -3,6 +3,6 @@ NGINX=../../../docker/nginx
 cp nginx.conf $NGINX/conf.d/24ho.conf
 docker-compose -f $NGINX/docker-compose.yml restart
 
-docker-compose up -d
+COMPOSE_HTTP_TIMEOUT=180 docker-compose up -d
 
 # docker-compose logs -f
