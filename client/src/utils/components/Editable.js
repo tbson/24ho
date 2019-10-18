@@ -1,8 +1,6 @@
 // @flow
 import * as React from 'react';
 import {useState} from 'react';
-// $FlowFixMe: do not complain about importing node_modules
-import {Formik, Form, Field, ErrorMessage} from 'formik';
 // $FlowFixMe: do not complain about formik
 import {Button, Input, InputNumber, Popover, Select} from 'antd';
 import type {SelectOptions} from 'src/utils/helpers/Tools';
@@ -154,7 +152,13 @@ const SelectInput = ({options, isMulti, name, value, type, placeholder}: InputPr
     return (
         <>
             <input name="value" defaultValue={hiddenValue} type="hidden" />
-            <Select value={value} onChange={data => setHiddenValue(data.value)} placeholder={placeholder + '...'}>
+            <Select
+                defaultValue={value}
+                onChange={data => {
+                    console.log(data);
+                    setHiddenValue(data);
+                }}
+                placeholder={placeholder + '...'}>
                 {children}
             </Select>
         </>

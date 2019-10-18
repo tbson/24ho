@@ -75,7 +75,7 @@ export default ({
                         <>
                             <Select
                                 showSearch
-                                value={value}
+                                defaultValue={value}
                                 mode={isMulti ? 'multiple' : 'default'}
                                 disabled={disabled}
                                 onChange={value => form.setFieldValue(name, value)}

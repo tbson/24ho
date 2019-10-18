@@ -134,8 +134,13 @@ class OrderViewSet(GenericViewSet):
     @action(methods=['put'], detail=True)
     def change_purchase_code(self, request, pk=None):
         from apps.bol.models import Bol
+        from apps.order.models import Status
         obj = get_object_or_404(Order, pk=pk)
         value = request.data.get('value', obj.purchase_code)
+        if value and obj.status == Status.DEBT:
+            obj = MoveStatusUtils.move(obj, Status.PAID)
+        if not value and obj.status == Status.PAID:
+            obj = MoveStatusUtils.move(obj, Status.DEBT)
         value = Tools.remove_special_chars(value)
         serializer = OrderUtils.partial_update(obj, 'purchase_code', value)
         data = serializer.data
