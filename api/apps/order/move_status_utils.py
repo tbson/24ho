@@ -11,8 +11,6 @@ class MoveStatusUtils:
         if abs(item.status - status) > 1:
             if status == Status.PAID and item.status > Status.PAID:
                 pass
-            print(status)
-            print(item.status)
             if status == Status.DISCARD or item.status == Status.DISCARD:
                 item.do_not_check_frozen = True
             else:
