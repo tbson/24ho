@@ -21,8 +21,8 @@ import FormLevelErrMsg from 'src/utils/components/form/FormLevelErrMsg';
 
 export class Service {
     static toggleEvent = 'TOGGLE_BOL_MAIN_FORM';
-    static toggleForm(open: boolean, id: number = 0) {
-        Tools.event.dispatch(Service.toggleEvent, {open, id});
+    static toggleForm(open: boolean, id: number = 0, cnDate: string = '') {
+        Tools.event.dispatch(Service.toggleEvent, {open, id, cnDate});
     }
 
     static initialValues = {
@@ -108,6 +108,7 @@ export default ({order_id = 0, onChange, submitTitle = 'Lưu'}: Props) => {
 
     const [open, setOpen] = useState(false);
     const [id, setId] = useState(0);
+    const [disableEditAttribute, setDisableEditAttribute] = useState(false);
 
     const [initialValues, setInitialValues] = useState(Service.initialValues);
     const [addressOptions, setAddressOptions] = useState([]);
@@ -120,8 +121,13 @@ export default ({order_id = 0, onChange, submitTitle = 'Lưu'}: Props) => {
             setId(id);
         });
 
-    const handleToggle = ({detail: {open, id}}) => {
-        open ? retrieveThenOpen(id) : setOpen(false);
+    const handleToggle = ({detail: {open, id, cnDate}}) => {
+        if (open) {
+            retrieveThenOpen(id);
+            setDisableEditAttribute(!!cnDate);
+        } else {
+            setOpen(false);
+        }
     };
 
     useEffect(() => {
@@ -182,21 +188,46 @@ export default ({order_id = 0, onChange, submitTitle = 'Lưu'}: Props) => {
                             </Row>
                             <Row gutter={20}>
                                 <Col span={12}>
-                                    <TextInput name="mass" type="number" label="Khối lượng (KG)" />
+                                    <TextInput
+                                        disabled={disableEditAttribute}
+                                        name="mass"
+                                        type="number"
+                                        label="Khối lượng (KG)"
+                                    />
                                 </Col>
                                 <Col span={12}>
-                                    <TextInput name="packages" type="number" label="Số kiện" />
+                                    <TextInput
+                                        disabled={disableEditAttribute}
+                                        name="packages"
+                                        type="number"
+                                        label="Số kiện"
+                                    />
                                 </Col>
                             </Row>
                             <Row gutter={20}>
                                 <Col span={8}>
-                                    <TextInput name="length" type="number" label="Dài (Cm)" />
+                                    <TextInput
+                                        disabled={disableEditAttribute}
+                                        name="length"
+                                        type="number"
+                                        label="Dài (Cm)"
+                                    />
                                 </Col>
                                 <Col span={8}>
-                                    <TextInput name="width" type="number" label="Rộng (Cm)" />
+                                    <TextInput
+                                        disabled={disableEditAttribute}
+                                        name="width"
+                                        type="number"
+                                        label="Rộng (Cm)"
+                                    />
                                 </Col>
                                 <Col span={8}>
-                                    <TextInput name="height" type="number" label="Cao (Cm)" />
+                                    <TextInput
+                                        disabled={disableEditAttribute}
+                                        name="height"
+                                        type="number"
+                                        label="Cao (Cm)"
+                                    />
                                 </Col>
                             </Row>
                             <OnlyAdmin>
@@ -215,10 +246,15 @@ export default ({order_id = 0, onChange, submitTitle = 'Lưu'}: Props) => {
                             </OnlyAdmin>
                             <Row gutter={20}>
                                 <Col span={8}>
-                                    <CheckInput name="shockproof" label="Chống sốc" disabled={!!order_id} />
+                                    <CheckInput
+                                        name="shockproof"
+                                        label="Chống sốc"
+                                        disabled={!!order_id || disableEditAttribute}
+                                    />
                                     {values.shockproof && (
                                         <OnlyAdmin>
                                             <TextInput
+                                                disabled={disableEditAttribute}
                                                 name="cny_shockproof_fee"
                                                 type="number"
                                                 label="Phí chống sốc (CNY)"
@@ -227,10 +263,15 @@ export default ({order_id = 0, onChange, submitTitle = 'Lưu'}: Props) => {
                                     )}
                                 </Col>
                                 <Col span={8}>
-                                    <CheckInput name="wooden_box" label="Đóng gỗ" disabled={!!order_id} />
+                                    <CheckInput
+                                        name="wooden_box"
+                                        label="Đóng gỗ"
+                                        disabled={!!order_id || disableEditAttribute}
+                                    />
                                     {values.wooden_box && (
                                         <OnlyAdmin>
                                             <TextInput
+                                                disabled={disableEditAttribute}
                                                 name="cny_wooden_box_fee"
                                                 type="number"
                                                 label="Phí đóng gỗ (CNY)"
@@ -240,9 +281,10 @@ export default ({order_id = 0, onChange, submitTitle = 'Lưu'}: Props) => {
                                 </Col>
                                 {!order_id && (
                                     <Col span={8}>
-                                        <CheckInput name="insurance" label="Bảo hiểm" />
+                                        <CheckInput name="insurance" label="Bảo hiểm" disabled={disableEditAttribute} />
                                         {values.insurance && (
                                             <TextInput
+                                                disabled={disableEditAttribute}
                                                 name="cny_insurance_value"
                                                 type="number"
                                                 label="Giá trị bảo hiểm (CNY)"

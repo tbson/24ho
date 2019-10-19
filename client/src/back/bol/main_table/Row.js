@@ -75,7 +75,7 @@ export default ({readonly = false, data, showForm, onCheck, onRemove}: RowPropTy
             <td className="center">
                 <ShowWhen value={!readonly}>
                     <span>
-                        <a onClick={() => showForm(data.id)}>
+                        <a onClick={() => showForm(data.id, data.cn_date)}>
                             <Button size="small" icon="edit" />
                         </a>
                         <span>&nbsp;&nbsp;&nbsp;</span>
