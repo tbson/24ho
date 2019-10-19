@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from django_filters import rest_framework as filters
+from rest_framework.serializers import ValidationError
 from utils.models.model import TimeStampedModel
 from apps.customer.models import Customer
 from apps.staff.models import Staff
@@ -150,6 +151,9 @@ class Bol(TimeStampedModel):
         from apps.rate.utils import RateUtils
         from .utils import BolUtils
 
+        if self.uid:
+            self.uid = self.uid.strip().upper()
+
         if self._state.adding:
             date = BolDate.objects.get_or_create(timezone.now())
             self.bol_date = date
@@ -157,13 +161,15 @@ class Bol(TimeStampedModel):
             if bag and not bag.bol_date:
                 bag.bol_date = date.id
                 bag.save()
+        else:
+            bol = Bol.objects.get(pk=self.id)
+            if bol.exported_date and self.exported_date is not None:
+                raise ValidationError({"detail": "Không thể chỉnh sửa thông tin đơn hàng đã xuất."})
+
         if self.order:
             self.shockproof = self.order.shockproof
             self.wooden_box = self.order.wooden_box
             self.count_check = self.order.count_check
-
-        if self.uid:
-            self.uid = self.uid.strip().upper()
 
         if self.purchase_code:
             try:

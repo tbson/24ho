@@ -84,9 +84,11 @@ export class Service {
             let params = {...values};
             if (id) params = {...params, id};
             if (order_id) params = {...params, order: parseInt(order_id)};
-            return Service.changeRequest(params).then(({ok, data}) =>
-                ok ? onChange({...data, checked: false}, id ? 'update' : 'add') : setErrors(Tools.setFormErrors(data))
-            );
+            return Service.changeRequest(params).then(({ok, data}) => {
+                if (ok) return onChange({...data, checked: false}, id ? 'update' : 'add');
+                const errors = Tools.setFormErrors(data);
+                return setErrors(errors);
+            });
         };
     }
 
