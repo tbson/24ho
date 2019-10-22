@@ -62,7 +62,7 @@
         "eslint-plugin-react": "^7.16.0",
         "eslint-plugin-react-hooks": "^2.1.2",
         "file-loader": "4.2.0",
-        "flow-bin": "^0.109.0",
+        "flow-bin": "^0.110.0",
         "html-webpack-plugin": "^3.2.0",
         "identity-obj-proxy": "^3.0.0",
         "jest": "^24.9.0",
@@ -80,7 +80,7 @@
         "webpack-merge": "4.2.2"
     },
     "dependencies": {
-        "antd": "^3.24.0",
+        "antd": "^3.24.2",
         "fingerprintjs2": "^2.1.0",
         "formdata-polyfill": "3.0.19",
         "formik": "^1.5.8",
