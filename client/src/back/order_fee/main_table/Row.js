@@ -38,8 +38,8 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
             <th className="row25 center">
                 <Checkbox checked={data.checked} onChange={() => onCheck(id)} />
             </th>
-            <td className="vnd mono">{Tools.numberFormat(data.from_amount)}</td>
-            <td className="vnd mono">{Tools.numberFormat(data.to_amount)}</td>
+            <td className="cny mono">{Tools.numberFormat(data.from_amount)}</td>
+            <td className="cny mono">{Tools.numberFormat(data.to_amount)}</td>
             <td className="percent mono">{Tools.numberFormat(data.fee)}</td>
             <td className="center">
                 <a onClick={() => showForm(data.id)}>
