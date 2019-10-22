@@ -14,8 +14,8 @@ class Address(models.Model):
 
     def save(self, *args, **kwargs):
         from .utils import AddressUtils
-
-        self.uid = AddressUtils.generate_uid(self.customer.pk, self.area.pk)
+        if not self.uid:
+            self.uid = AddressUtils.generate_uid(self.customer.pk, self.area.pk)
 
         if self.default:
             Address.objects.filter(customer=self.customer).update(default=False)

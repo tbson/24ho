@@ -26,7 +26,7 @@ class Customer(models.Model):
     signup_token = models.CharField(max_length=250, blank=True)
     signup_token_created = models.DateTimeField(null=True, blank=True)
 
-    phone = models.CharField(max_length=32)
+    phone = models.CharField(max_length=256)
     company = models.CharField(max_length=256, blank=True)
     address = models.CharField(max_length=256, blank=True)
 
