@@ -24,6 +24,7 @@
     "content_scripts": [
         {
             "matches": [
+                "https://*.24ho.test/*",
                 "https://*.dathang.24horder.vn/*",
                 "http://*.taobao.com/*",
                 "https://*.taobao.com/*",
