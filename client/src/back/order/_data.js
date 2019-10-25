@@ -53,15 +53,15 @@ export const apiUrls = Tools.getApiUrls(rawApiUrls);
 export const STATUS = {
     '0': 'Tất cả',
     '1': 'Chờ duyệt',
-    '2': 'Đã duyệt',
+    // '2': 'Đã duyệt',
     '3': 'Chờ thanh toán',
-    '4': 'Đã thanh toán',
-    '5': 'Đã phát hàng',
-    '6': 'Về kho TQ',
-    '7': 'Về kho VN',
-    '8': 'Đã xuất hàng',
+    // '4': 'Đã thanh toán',
+    // '5': 'Đã phát hàng',
+    // '6': 'Về kho TQ',
+    // '7': 'Về kho VN',
+    // '8': 'Đã xuất hàng',
     '9': 'Hoàn thành',
-    '10': 'Huỷ'
+    // '10': 'Huỷ'
 };
 
 export type OrderType = {
