@@ -108,13 +108,14 @@ export default ({onChange, options = {sale: [], cust_care: [], customer: []}}: P
                             <OnlyAdmin>
                                 <Row gutter={20}>
                                     <Col span={8}>
-                                        <SelectInput name="customer" options={options.customer} label="Khách hàng" />
+                                        <SelectInput allowClear name="customer" options={options.customer} label="Khách hàng" />
                                     </Col>
                                     <Col span={8}>
-                                        <SelectInput name="sale" options={options.sale} label="Nhân viên mua hàng" />
+                                        <SelectInput allowClear name="sale" options={options.sale} label="Nhân viên mua hàng" />
                                     </Col>
                                     <Col span={8}>
                                         <SelectInput
+                                            allowClear
                                             name="cust_care"
                                             options={options.sale}
                                             label="Nhân viên chăm sóc"
@@ -124,6 +125,7 @@ export default ({onChange, options = {sale: [], cust_care: [], customer: []}}: P
                                 <Row gutter={20}>
                                     <Col span={8}>
                                         <SelectInput
+                                            allowClear
                                             options={booleanOptions}
                                             blankLabel="Chọn giá trị"
                                             name="shockproof"
@@ -132,6 +134,7 @@ export default ({onChange, options = {sale: [], cust_care: [], customer: []}}: P
                                     </Col>
                                     <Col span={8}>
                                         <SelectInput
+                                            allowClear
                                             options={booleanOptions}
                                             blankLabel="Chọn giá trị"
                                             name="wooden_box"
@@ -140,6 +143,7 @@ export default ({onChange, options = {sale: [], cust_care: [], customer: []}}: P
                                     </Col>
                                     <Col span={8}>
                                         <SelectInput
+                                            allowClear
                                             options={booleanOptions}
                                             blankLabel="Chọn giá trị"
                                             name="count_check"

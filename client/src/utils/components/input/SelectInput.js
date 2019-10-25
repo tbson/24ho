@@ -21,6 +21,7 @@ type Props = {
     label?: string,
     options: SelectOptions,
     blankLabel?: string,
+    allowClear?: boolean,
     isMulti?: boolean,
     isClearable?: boolean,
     disabled?: boolean,
@@ -34,6 +35,7 @@ export default ({
     options,
     blankLabel = '',
     autoFocus = false,
+    allowClear = false,
     isMulti = false,
     disabled = false,
     isClearable = true,
@@ -75,6 +77,7 @@ export default ({
                         <>
                             <Select
                                 showSearch
+                                allowClear={allowClear}
                                 defaultValue={value}
                                 mode={isMulti ? 'multiple' : 'default'}
                                 disabled={disabled}
