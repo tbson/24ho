@@ -16,6 +16,15 @@ export class Service {
             .filter(([value, label]) => value !== '0')
             .map(([value, label]) => ({value, label: String(label)}));
     }
+    static getPaidAndMissing(data: Object): Object {
+        let paid = data.deposit;
+        let missing = data.vnd_total - data.vnd_total_discount - data.deposit;
+        if (data.status >= 8) {
+            paid = data.vnd_total - data.vnd_total_discount;
+            missing = 0;
+        }
+        return {paid, missing};
+    }
 }
 
 export default () => {

@@ -4,6 +4,7 @@ import {apiUrls} from 'src/back/order/_data';
 import Tools from 'src/utils/helpers/Tools';
 import Editable from 'src/utils/components/Editable';
 import OnlyAdmin from 'src/utils/components/OnlyAdmin';
+import {Service as OrderService} from 'src/back/order/'
 
 type Props = {
     pending: boolean,
@@ -33,6 +34,8 @@ export default ({pending = false, data, onPartialChange}: Props) => {
         deliveryFees: rate * cny_inland_delivery_fee + vnd_delivery_fee,
         discounts: rate * (cny_order_fee_discount + cny_count_check_fee_discount) + vnd_delivery_fee_discount
     };
+ 
+    const {paid, missing} = OrderService.getPaidAndMissing(data);
 
     return (
         <table className="table table-sm">
@@ -143,6 +146,16 @@ export default ({pending = false, data, onPartialChange}: Props) => {
                 <tr>
                     <td>Kiểm đếm:</td>
                     <td className="mono cny">{Tools.numberFormat(cny_count_check_fee_discount)}</td>
+                </tr>
+            </tbody>
+            <tbody>
+                <tr>
+                    <th>Đã thanh toán:</th>
+                    <td className="mono vnd">{Tools.numberFormat(paid)}</td>
+                </tr>
+                <tr>
+                    <td>Còn thiếu:</td>
+                    <td className="mono vnd">{Tools.numberFormat(missing)}</td>
                 </tr>
             </tbody>
         </table>

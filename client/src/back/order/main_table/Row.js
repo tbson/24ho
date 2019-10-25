@@ -11,6 +11,7 @@ import ListTools from 'src/utils/helpers/ListTools';
 import type {SelectOptions} from 'src/utils/helpers/Tools';
 import {apiUrls, STATUS} from '../_data';
 import type {OrderType} from '../_data';
+import {Service as OrderService} from 'src/back/order/';
 
 const complaintDecideOptions = [
     {value: 1, label: 'Chấp nhận'},
@@ -174,24 +175,32 @@ type FinInfoType = {
     data: OrderType
 };
 const FinInfo = ({data}: FinInfoType) => {
-    const missing = data.vnd_total - data.vnd_total_discount - data.deposit;
+    const {paid, missing} = OrderService.getPaidAndMissing(data);
     return (
         <>
             <Row gutter={20}>
                 <Col span={12}>Tổng tiền đơn:</Col>
-                <Col span={12} className="mono vnd">{Tools.numberFormat(data.vnd_total)}</Col>
+                <Col span={12} className="mono vnd">
+                    {Tools.numberFormat(data.vnd_total)}
+                </Col>
             </Row>
             <Row gutter={20}>
                 <Col span={12}>Đã thanh toán:</Col>
-                <Col span={12} className="mono vnd">{Tools.numberFormat(data.deposit)}</Col>
+                <Col span={12} className="mono vnd">
+                    {Tools.numberFormat(paid)}
+                </Col>
             </Row>
             <Row gutter={20}>
                 <Col span={12}>Hệ số cọc:</Col>
-                <Col span={12} className="right mono">{Tools.numberFormat(data.deposit_factor)}%</Col>
+                <Col span={12} className="right mono">
+                    {Tools.numberFormat(data.deposit_factor)}%
+                </Col>
             </Row>
             <Row gutter={20}>
                 <Col span={12}>Còn thiếu:</Col>
-                <Col span={12} className="mono vnd">{Tools.numberFormat(missing)}</Col>
+                <Col span={12} className="mono vnd">
+                    {Tools.numberFormat(missing)}
+                </Col>
             </Row>
         </>
     );

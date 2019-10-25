@@ -68,7 +68,7 @@ export default ({readonly = false, data, showForm, onCheck, onRemove}: RowPropTy
                 <div>
                     {data.length} / {data.width} / {data.height}
                 </div>
-                <div>{Tools.numberFormat(data.mass_convert_factor)}</div>
+                <div>{data.length * data.width * data.height / 1000000}</div>
             </td>
             <td className="mono right">{data.packages}</td>
             <td>{data.note}</td>
