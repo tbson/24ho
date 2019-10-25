@@ -84,6 +84,7 @@ class Order(TimeStampedModel):
     rate = models.PositiveIntegerField()
     real_rate = models.PositiveIntegerField()
 
+    cny_real_amount = models.FloatField(default=0)
     cny_amount = models.FloatField(default=0)
     vnd_amount = models.FloatField(default=0)
     cny_order_fee = models.FloatField(default=0)

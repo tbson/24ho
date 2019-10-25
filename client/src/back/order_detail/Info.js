@@ -7,6 +7,7 @@ import {Service as OrderService} from 'src/back/order/';
 import type {SelectOptions} from 'src/utils/helpers/Tools';
 import {STATUS, booleanOptions} from 'src/back/order/_data';
 import {BoolOutput} from 'src/utils/components/TableUtils';
+import OnlyAdmin from 'src/utils/components/OnlyAdmin';
 
 type Props = {
     pending: boolean,
@@ -121,7 +122,7 @@ export default ({pending = false, data, addresses, onPartialChange}: Props) => {
                             <span>{data.status_name}</span>
                         </Editable>
                     </td>
-                    <td colSpan="2">
+                    <td>
                         <span>Mã giao dịch:</span>
                         &nbsp;
                         <Editable
@@ -133,6 +134,22 @@ export default ({pending = false, data, addresses, onPartialChange}: Props) => {
                             placeholder="Mã giao dịch">
                             <span>{data.purchase_code || 'Chưa có'}</span>
                         </Editable>
+                    </td>
+                    <td>
+                        <OnlyAdmin>
+                            <span>Thanh toán thực:</span>
+                            &nbsp;
+                            <Editable
+                                disabled={!Tools.isAdmin() || pending}
+                                onChange={onPartialChange}
+                                name="value"
+                                type="number"
+                                value={data.cny_real_amount}
+                                endPoint={apiUrls.change_cny_real_amount.replace('/pk-', `/${data.id}/`)}
+                                placeholder="Thanh toán thực">
+                                <span>{data.cny_real_amount}</span>
+                            </Editable>
+                        </OnlyAdmin>
                     </td>
                 </tr>
                 <tr>

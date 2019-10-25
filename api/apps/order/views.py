@@ -180,6 +180,13 @@ class OrderViewSet(GenericViewSet):
         serializer = OrderUtils.partial_update(obj, 'count_check', value)
         return res(serializer.data)
 
+    @action(methods=['put'], detail=True)
+    def change_cny_real_amount(self, request, pk=None):
+        obj = get_object_or_404(Order, pk=pk)
+        value = request.data.get('value', obj.rate)
+        serializer = OrderUtils.partial_update(obj, 'cny_real_amount', value)
+        return res(serializer.data)
+
     @transaction.atomic
     @action(methods=['put'], detail=True)
     def batch_update(self, request, pk=None):

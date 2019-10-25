@@ -65,6 +65,10 @@ change_count_check = OrderViewSet.as_view({
     'put': 'change_count_check',
 })
 
+change_cny_real_amount = OrderViewSet.as_view({
+    'put': 'change_cny_real_amount',
+})
+
 bulk_approve = OrderViewSet.as_view({
     'put': 'bulk_approve',
 })
@@ -117,6 +121,7 @@ urlpatterns = (
     path('<int:pk>/change-shockproof/', change_shockproof),
     path('<int:pk>/change-wooden-box/', change_wooden_box),
     path('<int:pk>/change-count-check/', change_count_check),
+    path('<int:pk>/change-cny-real-amount/', change_cny_real_amount),
     path('<int:pk>/batch-update/', batch_update),
     path('bulk-approve/', bulk_approve),
     path('get-order-items-for-checking/<str:uid>', get_order_items_for_checking),
