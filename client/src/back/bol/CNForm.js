@@ -92,7 +92,7 @@ export class Service {
             return Service.changeRequest(params).then(({ok, data}) => {
                 if (ok) {
                     onChange({...data, checked: false}, params.id ? 'update' : 'add');
-                    resetForm(Service.initialValues);
+                    resetForm({values: Service.initialValues});
                     Service.focusFirstInput();
                 } else {
                     const erorrMessages = Tools.setFormErrors(data);
@@ -109,7 +109,7 @@ export class Service {
             Service.retrieveRequest(uid)
                 .then(resp => {
                     if (resp.ok) {
-                        resetForm(Tools.nullToDefault(resp.data, Service.initialValues));
+                        resetForm({values: Tools.nullToDefault(resp.data, Service.initialValues)});
                     }
                     setOrderId((resp.data && resp.data.order) || 0);
                 })
@@ -165,7 +165,7 @@ export const FormPart = ({
     const formRef = useRef<FormikProps | null>(null);
     const [orderId, setOrderId] = useState(0);
     const prepareToEdit = ({detail: uid}) => {
-        formRef.current && formRef.current.resetForm({...Service.initialValues, uid});
+        formRef.current && formRef.current.resetForm({values: {...Service.initialValues, uid}});
         Service.focusFirstInput();
     };
 
