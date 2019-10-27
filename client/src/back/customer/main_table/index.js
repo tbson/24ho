@@ -151,6 +151,7 @@ export default ({}: Props) => {
                         <th className="row25">
                             <Button size="small" icon="check" onClick={onCheckAll} />
                         </th>
+                        <th scope="col">Mã KH</th>
                         <th scope="col">Nhóm</th>
                         <th scope="col">Email</th>
                         <th scope="col">Phone</th>

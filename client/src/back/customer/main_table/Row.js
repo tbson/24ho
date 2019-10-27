@@ -39,6 +39,7 @@ export default ({data, showForm, onCheck, onRemove}: RowPropTypes) => {
             <th className="row25 center">
                 <Checkbox checked={data.checked} onChange={() => onCheck(id)} />
             </th>
+            <td>{data.id}</td>
             <td>{data.customer_group_name}</td>
             <td>{data.user_data.email}</td>
             <td>{data.phone}</td>
