@@ -58,7 +58,7 @@ class OrderViewSet(GenericViewSet):
         serializer = OrderBaseSr(order)
         data = serializer.data
         data['options'] = {
-            'addresses': AddressBaseSr(Address.objects.all(), many=True).data
+            'addresses': AddressBaseSr(Address.objects.filter(customer_id=order.customer_id), many=True).data
         }
         return res(data)
 
