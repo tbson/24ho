@@ -106,7 +106,7 @@ const Component = ({history, location, children}: Props) => {
                 {collapsed || <div style={styles.logo}>24HOrder</div>}
                 <Menu theme="light" mode="inline" selectedKeys={[location.pathname]}>
                     {renderMenu('profile')}
-                    {visibleMenu('admin') && renderMenu('admin')}
+                    {visibleMenu('staff') && renderMenu('admin')}
                     {visibleMenu('customer') && renderMenu('customer')}
                     {visibleMenu('group') && renderMenu('group')}
                     {visibleMenu('transaction') && renderMenu('transaction')}
@@ -121,7 +121,7 @@ const Component = ({history, location, children}: Props) => {
                     {visibleMenu('customerbank') && renderMenu('customerBank')}
                     {visibleMenu('variable') && renderMenu('variable')}
                     {visibleMenu('area') && renderMenu('area')}
-                    {visibleMenu('cart') && renderMenu('cart')}
+                    {renderMenu('cart')}
                     {visibleMenu('rate') && renderMenu('rate')}
                     {visibleMenu('orderfee') && renderMenu('orderFee')}
                     {visibleMenu('countcheck') && renderMenu('countCheck')}

@@ -50,7 +50,11 @@ export default ({}: Props) => {
 
     const handleMatch = (bol_uid: string, bag_uid: string) => {
         Tools.apiCall(apiUrls.match_vn, {bag_uid, bol_uid}, 'POST').then(resp => {
-            if (!resp.ok) return Tools.popMessage('Vận đơn không khớp.', 'error');
+            if (!resp.ok) {
+                Tools.failBeep();
+                return Tools.popMessage('Vận đơn không khớp.', 'error');
+            }
+            Tools.successBeep();
             setListBolMatched([...listBolMatched, resp.data]);
             setListBol([...listBol.filter(item => item.id !== resp.data.id)]);
         });
