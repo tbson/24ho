@@ -61,5 +61,5 @@ class Receipt(TimeStampedModel):
         db_table = "receipts"
         ordering = ['-id']
         permissions = (
-            ("retrieve_to_print", "Can print receipt"),
+            ("retrieve_to_print", "In"),
         )

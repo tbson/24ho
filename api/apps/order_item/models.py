@@ -38,9 +38,9 @@ class OrderItem(models.Model):
         db_table = "order_items"
         ordering = ['-id']
         permissions = (
-            ("change_color_orderitem", "Can change color"),
-            ("change_size_orderitem", "Can change size"),
-            ("change_quantity_orderitem", "Can change quantity"),
-            ("change_unit_price_orderitem", "Can change unit price"),
-            ("change_note_orderitem", "Can change note"),
+            ("change_color_orderitem", "Đổi màu"),
+            ("change_size_orderitem", "Đổi size"),
+            ("change_quantity_orderitem", "Đổi số lượng"),
+            ("change_unit_price_orderitem", "Đổi đơn giá"),
+            ("change_note_orderitem", "Đổi ghi chú"),
         )

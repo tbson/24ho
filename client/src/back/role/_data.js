@@ -47,6 +47,7 @@ export const pemGroupTrans = {
     category: 'Danh mục',
     countcheck: 'Kiểm đếm',
     customer: 'Khách hàng',
+    bank: 'Ngân hàng',
     deliveryfee: 'Phí vận chuyển',
     order: 'Đơn order',
     orderfee: 'Phí dịch vụ',

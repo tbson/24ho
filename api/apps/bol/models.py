@@ -245,15 +245,15 @@ class Bol(TimeStampedModel):
         db_table = "bols"
         ordering = ['-id']
         permissions = (
-            ("change_bag_bol", "Can change bag"),
-            ("get_date_bol", "Can get date"),
-            ("match_vn_bol", "Can get match VN bol"),
-            ("ready_to_export_list_bol", "Can get bol to export"),
-            ("export_bol", "Can export"),
-            ("export_check_bol", "Can check before export"),
-            ("mark_cn_bol", "Can mark bol arrived to CN store"),
-            ("mark_cn_by_uploading_bol", "Can mark bol arrived to CN store by uploading"),
-            ("unmark_cn_bol", "Can unmark bol arrived to CN store"),
+            ("change_bag_bol", "Đổi bao hàng"),
+            ("get_date_bol", "Xem danh sách theo ngày"),
+            ("match_vn_bol", "Bắn vận đơn VN"),
+            ("ready_to_export_list_bol", "Xem danh sách vận đơn sẵn sàng xuất"),
+            ("export_bol", "Xuất vận đơn"),
+            ("export_check_bol", "Kiểm tra vận đơn trước khi xuất"),
+            ("mark_cn_bol", "Bắn vận đơn TQ"),
+            ("mark_cn_by_uploading_bol", "Upload vận đơn TQ bằng excel"),
+            ("unmark_cn_bol", "Bỏ trạng thái vận đơn TQ"),
         )
 
 

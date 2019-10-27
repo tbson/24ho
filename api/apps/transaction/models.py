@@ -107,8 +107,8 @@ class Transaction(TimeStampedModel):
         db_table = "transactions"
         ordering = ['-id']
         permissions = (
-            ("retrieve_to_print", "Can print transaction"),
-            ("get_total_statistics", "Get total statistics"),
+            ("retrieve_to_print", "In"),
+            ("get_total_statistics", "Xem thống kê tổng"),
         )
 
 
