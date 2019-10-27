@@ -106,6 +106,7 @@ export default ({}: Props) => {
                         <th className="row25">
                             <Button size="small" icon="check" onClick={onCheckAll} />
                         </th>
+                        <th scope="col">Mã nhân viên</th>
                         <th scope="col">Email</th>
                         <th scope="col">Tên đăng nhập</th>
                         <th scope="col">Họ và tên</th>
