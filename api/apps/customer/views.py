@@ -35,6 +35,10 @@ class CustomerViewSet(GenericViewSet):
 
     def list(self, request):
         queryset = Customer.objects.all()
+        if hasattr(request.user, 'staff'):
+            staff = request.user.staff
+            if staff.is_cust_care:
+                queryset = queryset.filter(cust_care_id=staff.pk)
         queryset = self.filter_queryset(queryset)
         queryset = self.paginate_queryset(queryset)
         serializer = CustomerBaseSr(queryset, many=True)
