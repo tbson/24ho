@@ -36,6 +36,9 @@ const Component = ({history, location, children}: Props) => {
             </NavLink>
         </Menu.Item>
     );
+
+    const visibleMenus = Tools.getVisibleMenus();
+    const visibleMenu = menu => visibleMenus.includes(menu);
     const renderMenu = (menu: string) => {
         switch (menu) {
             case 'profile':
@@ -70,7 +73,7 @@ const Component = ({history, location, children}: Props) => {
             case 'printTransaction':
                 if (APP !== 'admin') return null;
                 return menuItem('print-transaction', 'Phiếu thu', 'file-protect');
-            case 'role':
+            case 'group':
                 if (APP !== 'admin') return null;
                 return menuItem('role', 'Phân quyền', 'key');
             case 'variable':
@@ -103,25 +106,25 @@ const Component = ({history, location, children}: Props) => {
                 {collapsed || <div style={styles.logo}>24HOrder</div>}
                 <Menu theme="light" mode="inline" selectedKeys={[location.pathname]}>
                     {renderMenu('profile')}
-                    {renderMenu('admin')}
-                    {renderMenu('customer')}
-                    {renderMenu('role')}
-                    {renderMenu('transaction')}
-                    {renderMenu('address')}
-                    {renderMenu('bag')}
-                    {renderMenu('order')}
-                    {renderMenu('bol')}
-                    {renderMenu('check')}
-                    {renderMenu('receipt')}
-                    {renderMenu('printTransaction')}
-                    {renderMenu('bank')}
-                    {renderMenu('customerBank')}
-                    {renderMenu('variable')}
-                    {renderMenu('area')}
-                    {renderMenu('cart')}
-                    {renderMenu('rate')}
-                    {renderMenu('orderFee')}
-                    {renderMenu('countCheck')}
+                    {visibleMenu('admin') && renderMenu('admin')}
+                    {visibleMenu('customer') && renderMenu('customer')}
+                    {visibleMenu('group') && renderMenu('group')}
+                    {visibleMenu('transaction') && renderMenu('transaction')}
+                    {visibleMenu('address') && renderMenu('address')}
+                    {visibleMenu('bag') && renderMenu('bag')}
+                    {visibleMenu('order') && renderMenu('order')}
+                    {visibleMenu('bol') && renderMenu('bol')}
+                    {visibleMenu('check') && renderMenu('check')}
+                    {visibleMenu('receipt') && renderMenu('receipt')}
+                    {visibleMenu('transaction') && renderMenu('printTransaction')}
+                    {visibleMenu('bank') && renderMenu('bank')}
+                    {visibleMenu('customerbank') && renderMenu('customerBank')}
+                    {visibleMenu('variable') && renderMenu('variable')}
+                    {visibleMenu('area') && renderMenu('area')}
+                    {visibleMenu('cart') && renderMenu('cart')}
+                    {visibleMenu('rate') && renderMenu('rate')}
+                    {visibleMenu('orderfee') && renderMenu('orderFee')}
+                    {visibleMenu('countcheck') && renderMenu('countCheck')}
                 </Menu>
             </Sider>
             <Layout>

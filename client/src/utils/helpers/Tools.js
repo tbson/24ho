@@ -194,6 +194,11 @@ export default class Tools {
         return token ? token : '';
     }
 
+    static getVisibleMenus(): Array<string> {
+        const visibleMenus = this.getStorageObj('auth').visible_menus;
+        return visibleMenus ? visibleMenus : [];
+    }
+
     static getLang(): string {
         return this.getStorageStr('lang');
     }
